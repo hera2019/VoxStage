@@ -88,3 +88,5 @@ build/
 # 最新内部审阅，含个人背景
 /docs/design/claude-hera-review-2026-09-09.md
 /docs/design/claude-hera-direction-2026-09-09.md
+/docs/astra-working-agreement.md
+/docs/current-state.md
