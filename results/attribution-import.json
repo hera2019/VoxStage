@@ -1,0 +1,110 @@
+{
+  "task": "自动分角色草稿接入",
+  "author": "Astra",
+  "date": "2026-09-10",
+  "regression": {
+    "command": ".venv/bin/python -m pytest tests -q",
+    "exit_code": 0,
+    "raw_output": "........................................................................ [ 56%]\n........................................................                 [100%]\n=============================== warnings summary ===============================\n.venv/lib/python3.12/site-packages/fastapi/testclient.py:1\n  ~/Documents/VoxStage/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n    from starlette.testclient import TestClient as TestClient  # noqa\n\n.venv/lib/python3.12/site-packages/starlette/testclient.py:53\n  ~/Documents/VoxStage/.venv/lib/python3.12/site-packages/starlette/testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.\n    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n128 passed, 2 warnings in 6.84s\n"
+  },
+  "human_acceptance": "not_performed",
+  "real_model_requests": [
+    {
+      "language": "zh",
+      "text": "小雪望着窗外说：“雨停了。”小林回答：“我们去散步吧。”",
+      "http_status": 200,
+      "seconds_measured": 5.123545040958561,
+      "response": {
+        "draft_id": "70f65ba495e34cfb87e5ec0ba428b25e",
+        "units": [
+          {
+            "id": "u0",
+            "text": "小雪望着窗外说：",
+            "start": 0,
+            "end": 8,
+            "kind": "narration",
+            "speaker": "NARRATOR"
+          },
+          {
+            "id": "u1",
+            "text": "“雨停了。”",
+            "start": 8,
+            "end": 14,
+            "kind": "dialogue",
+            "speaker": "小雪"
+          },
+          {
+            "id": "u2",
+            "text": "小林回答：",
+            "start": 14,
+            "end": 19,
+            "kind": "narration",
+            "speaker": "NARRATOR"
+          },
+          {
+            "id": "u3",
+            "text": "“我们去散步吧。”",
+            "start": 19,
+            "end": 28,
+            "kind": "dialogue",
+            "speaker": "小林"
+          }
+        ]
+      },
+      "speaker_accuracy_scored": false,
+      "source_rejoined_exactly": true,
+      "raw_model_record": "user-data/attribution-import-smoke/projects-role-drafts/70f65ba495e34cfb87e5ec0ba428b25e.json"
+    },
+    {
+      "language": "en",
+      "text": "Mira looked outside and said, \"The rain has stopped.\" Leo replied, \"Let us go for a walk.\"",
+      "http_status": 200,
+      "seconds_measured": 4.457435542019084,
+      "response": {
+        "draft_id": "ea1fb1d504694d46a4e70cedc510ba83",
+        "units": [
+          {
+            "id": "u0",
+            "text": "Mira looked outside and said, ",
+            "start": 0,
+            "end": 30,
+            "kind": "narration",
+            "speaker": "NARRATOR"
+          },
+          {
+            "id": "u1",
+            "text": "\"The rain has stopped.\"",
+            "start": 30,
+            "end": 53,
+            "kind": "dialogue",
+            "speaker": "Mira"
+          },
+          {
+            "id": "u2",
+            "text": " Leo replied, ",
+            "start": 53,
+            "end": 67,
+            "kind": "narration",
+            "speaker": "NARRATOR"
+          },
+          {
+            "id": "u3",
+            "text": "\"Let us go for a walk.\"",
+            "start": 67,
+            "end": 90,
+            "kind": "dialogue",
+            "speaker": "Leo"
+          }
+        ]
+      },
+      "speaker_accuracy_scored": false,
+      "source_rejoined_exactly": true,
+      "raw_model_record": "user-data/attribution-import-smoke/projects-role-drafts/ea1fb1d504694d46a4e70cedc510ba83.json"
+    }
+  ],
+  "frontend_build": {
+    "command": "cd frontend && npm run build",
+    "exit_code": 0,
+    "raw_output": "tsc --noEmit && vite build; 33 modules transformed; built in 468ms"
+  }
+}

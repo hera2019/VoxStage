@@ -35,3 +35,12 @@
 
 @media(max-width:650px){.block-editor .editor-transport output{min-width:116px;font-size:11px}.block-editor .editor-transport{gap:6px}}
 /* 最后更新：2026-09-09 · Astra */
+
+/* 角色草稿复核 · 最后更新：2026-09-10 · Astra */
+.role-import{width:min(760px,94vw)}
+.role-units{max-height:48vh;overflow:auto;margin:16px 0;border-top:1px solid #ddd}
+.role-unit{padding:12px 8px;border-bottom:1px solid #ddd}
+.role-unit p{white-space:pre-wrap;margin:0 0 8px}
+.role-fields{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.role-fields label{margin:0;flex:1;min-width:130px}
+.role-unknown{background:#fff3df;border-left:3px solid #b57918}

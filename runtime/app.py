@@ -23,6 +23,7 @@ from .audio import process_audio, export_audio, prepare_segment
 from .clips import clip_plan, validate_clips
 from .rhythm import analyze_file, analyze, VERSION as RHYTHM_VERSION
 from .core import Store, fingerprint
+from .attribution import RoleDraftEngine, project_segments, source_units
 from .content_check import WhisperChecker, compare_text, file_sha
 from .engines import MlxEngine, FixtureEngine, VOICES
 
@@ -32,6 +33,20 @@ class ImportRequest(BaseModel):
     name: str = Field(default='Untitled', max_length=120)
     script: str = Field(max_length=300000)
     language: Literal['zh','en']
+
+class RoleLabel(BaseModel):
+    id: str = Field(max_length=40)
+    kind: Literal['narration','dialogue']
+    speaker: str = Field(max_length=80)
+
+class RoleDraftRequest(BaseModel):
+    script: str = Field(min_length=1, max_length=3000)
+    language: Literal['zh','en']
+
+class RoleConfirmRequest(BaseModel):
+    draft_id: str = Field(pattern=r'^[a-f0-9]{32}$')
+    name: str = Field(default='Untitled', max_length=120)
+    labels: list[RoleLabel] = Field(min_length=1,max_length=80)
 
 class EditRequest(BaseModel):
     speech_rate: float | None = Field(default=None, ge=0.5, le=2.0, allow_inf_nan=False)
@@ -95,10 +110,13 @@ class ListeningRequest(BaseModel):
 class RevisionRequest(BaseModel):
     revision: int = Field(ge=0)
 
-def create_app(data_root=None, engine=None, frontend=None, checker=None):
+def create_app(data_root=None, engine=None, frontend=None, checker=None, role_engine=None):
     store = Store(data_root or ROOT/'user-data/projects')
     engine = engine or MlxEngine(os.environ.get('VOXSTAGE_MODEL', ROOT/'user-data/models/qwen-customvoice'))
     checker = checker or WhisperChecker(ROOT/'user-data/asr-settings.json')
+    role_engine = role_engine or RoleDraftEngine()
+    drafts = store.root.parent / (store.root.name + '-role-drafts')
+    drafts.mkdir(exist_ok=True)
     executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix='voxstage-render')
     cancel = threading.Event()
     active = {'project_id':None}
@@ -152,7 +170,44 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None):
     @app.get('/api/config')
     def config():
         return {'engine':engine.label, 'engine_id':engine.identity, 'ready':engine.ready,
-                'speed_ready':bool(ffmpeg_path()),'checker_ready':checker.ready, 'checker_id':checker.identity, 'voices':VOICES, 'fixed_voice_ready':getattr(engine,'reference_ready',False), 'local_only':True, 'synthetic_audio':True}
+                'attribution_ready':role_engine.ready, 'speed_ready':bool(ffmpeg_path()),'checker_ready':checker.ready, 'checker_id':checker.identity, 'voices':VOICES, 'fixed_voice_ready':getattr(engine,'reference_ready',False), 'local_only':True, 'synthetic_audio':True}
+
+    @app.post('/api/attribution/draft')
+    def role_draft(body: RoleDraftRequest):
+        from .core import uid
+        draft_id = uid()
+        with store.lock:
+            if active['project_id']:
+                raise RuntimeError('正在处理其他任务，请稍后再生成角色草稿。')
+            active['project_id'] = 'role-draft'
+        try:
+            if hasattr(engine, 'unload'):
+                engine.unload()
+            result = role_engine.annotate(body.script, drafts/(draft_id+'.log'))
+            # Validate even injected engines; no unbound model text reaches a project.
+            from evals.speaker_attribution.source_units import bind_labels
+            bind_labels(body.script,json.dumps({'labels':result['labels']}))
+            record = {**result,'draft_id':draft_id,'source_script':body.script,'language':body.language}
+            (drafts/(draft_id+'.json')).write_text(json.dumps(record,ensure_ascii=False,indent=2))
+            labels = {x['id']:x for x in result['labels']}
+            return {'draft_id':draft_id,'units':[{**unit,**{k:labels[unit['id']][k] for k in ('kind','speaker')}} for unit in source_units(body.script)]}
+        except (OSError, KeyError, TypeError) as exc:
+            raise ValueError('角色草稿生成失败，请保留原稿后重试。') from exc
+        finally:
+            with store.lock:
+                active['project_id'] = None
+
+    @app.post('/api/attribution/confirm')
+    def confirm_roles(body: RoleConfirmRequest):
+        record = json.loads((drafts/(body.draft_id+'.json')).read_text())
+        labels = [label.model_dump() for label in body.labels]
+        segments = project_segments(record['source_script'], labels, record['language'])
+        with store.lock:
+            project = store.create(body.name, record['source_script'], record['language'], segments=segments)
+            project['attribution'] = {'draft_id':body.draft_id,'model_sha256':record.get('model_sha256'),
+                'model_labels':record['labels'],'confirmed_labels':labels,'human_confirmed':True}
+            store.write(project)
+            return store.public(project, engine, checker)
 
     @app.get('/api/projects')
     def projects(include_archived: bool = False):
@@ -615,3 +670,5 @@ if __name__ == '__main__':
     main()
 
 # 最后更新：2026-09-09 · Astra
+
+# 最后更新：2026-09-10 · Astra（接入原文绑定的角色草稿）
