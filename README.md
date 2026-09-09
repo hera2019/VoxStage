@@ -181,9 +181,9 @@ HF_HUB_OFFLINE=1 .venv/bin/python tests/real_model_check.py   # writes local aud
 
 ## Licence
 
-**Not yet selected.** Until one is added, no permissions are granted beyond
-viewing. The model's licence is separate and is recorded next to the downloaded
-weights; do not infer the application's licence from it.
+[Apache-2.0](LICENSE). The speech model's licence is separate and is recorded
+next to the downloaded weights — do not infer this application's licence from
+it, or the reverse.
 
 ---
 
