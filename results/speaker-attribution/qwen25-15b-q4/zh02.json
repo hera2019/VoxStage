@@ -1,0 +1,110 @@
+{
+  "input": "阿宁看向小林。“钥匙在你那里吗？”阿宁问。\n“在这里。”小林举起钥匙。\n“那就开门吧。”阿宁说。",
+  "response": {
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```json\n{\n  \"segments\": [\n    {\n      \"text\": \"阿宁看向小林。“钥匙在你那里吗？”阿宁问。\",\n      \"kind\": \"narration or dialogue\",\n      \"speaker\": \"NARRATOR\"\n    },\n    {\n      \"text\": \"“在这里。”小林举起钥匙。\",\n      \"kind\": \"narration or dialogue\",\n      \"speaker\": \"UNKNOWN\"\n    },\n    {\n      \"text\": \"“那就开门吧。”阿宁说。\",\n      \"kind\": \"narration or dialogue\",\n      \"speaker\": \"NARRATOR\"\n    }\n  ]\n}\n```"
+        }
+      }
+    ],
+    "created": 1788958766,
+    "model": "qwen25-15b-q4",
+    "system_fingerprint": "b10700-bebc9350e",
+    "object": "chat.completion",
+    "usage": {
+      "completion_tokens": 132,
+      "prompt_tokens": 222,
+      "total_tokens": 354,
+      "prompt_tokens_details": {
+        "cached_tokens": 184
+      }
+    },
+    "id": "chatcmpl-5EkUu51fz7ug276CSOqXk4PgDnU2Bv1X",
+    "timings": {
+      "cache_n": 184,
+      "prompt_n": 38,
+      "prompt_ms": 39.784,
+      "prompt_per_token_ms": 1.0469473684210526,
+      "prompt_per_second": 955.1578524029761,
+      "predicted_n": 132,
+      "predicted_ms": 901.642,
+      "predicted_per_token_ms": 6.882763358778626,
+      "predicted_per_second": 145.29048114440099
+    }
+  },
+  "score": {
+    "case": "zh02",
+    "language": "zh",
+    "split": "development",
+    "tags": [
+      "turn_taking"
+    ],
+    "schema_valid": false,
+    "text_preserved": false,
+    "units": [
+      {
+        "text": "阿宁看向小林。",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": "“钥匙在你那里吗？”",
+        "kind": "dialogue",
+        "expected": "阿宁",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": "阿宁问。\n",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": "“在这里。”",
+        "kind": "dialogue",
+        "expected": "小林",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": "小林举起钥匙。\n",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": "“那就开门吧。”",
+        "kind": "dialogue",
+        "expected": "阿宁",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": "阿宁说。",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      }
+    ],
+    "seconds": 0.945371542009525,
+    "error": null,
+    "finish_reason": "stop"
+  }
+}

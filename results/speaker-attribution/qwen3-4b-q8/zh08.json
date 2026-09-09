@@ -1,0 +1,143 @@
+{
+  "input": "列车停下时，苏禾叫醒了赵远。\n“到了，”苏禾压低声音，“把蓝色箱子拿上。”\n赵远伸手去够行李架。“这个吗？”他问。\n“不是，靠窗的那个。”苏禾指了指另一边。\n过了一会儿，赵远把箱子放到地上。“现在齐了。”赵远说。",
+  "response": {
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"segments\":[{\"text\":\"列车停下时，苏禾叫醒了赵远。\",\"kind\":\"narration\",\"speaker\":\"NARRATOR\"},{\"text\":\"\\\"到了，\\\"苏禾压低声音，\\\"把蓝色箱子拿上。\\\"\",\"kind\":\"dialogue\",\"speaker\":\"苏禾\"},{\"text\":\"赵远伸手去够行李架。\",\"kind\":\"narration\",\"speaker\":\"NARRATOR\"},{\"text\":\"\\\"这个吗？\\\"他问。\",\"kind\":\"dialogue\",\"speaker\":\"赵远\"},{\"text\":\"\\\"不是，靠窗的那个。\\\"苏禾指了指另一边。\",\"kind\":\"dialogue\",\"speaker\":\"苏禾\"},{\"text\":\"过了一会儿，赵远把箱子放到地上。\",\"kind\":\"narration\",\"speaker\":\"NARRATOR\"},{\"text\":\"\\\"现在齐了。\\\"赵远说。\",\"kind\":\"dialogue\",\"speaker\":\"赵远\"}]}"
+        }
+      }
+    ],
+    "created": 1788958749,
+    "model": "qwen3-4b-q8",
+    "system_fingerprint": "b10700-bebc9350e",
+    "object": "chat.completion",
+    "usage": {
+      "completion_tokens": 182,
+      "prompt_tokens": 263,
+      "total_tokens": 445,
+      "prompt_tokens_details": {
+        "cached_tokens": 184
+      }
+    },
+    "id": "chatcmpl-M4xHNG7zczzQ4Wm6f43fn6ItpQrykccl",
+    "timings": {
+      "cache_n": 184,
+      "prompt_n": 79,
+      "prompt_ms": 115.883,
+      "prompt_per_token_ms": 1.466873417721519,
+      "prompt_per_second": 681.7220817548734,
+      "predicted_n": 182,
+      "predicted_ms": 3008.169,
+      "predicted_per_token_ms": 16.6197182320442,
+      "predicted_per_second": 60.169491807142485
+    }
+  },
+  "score": {
+    "case": "zh08",
+    "language": "zh",
+    "split": "heldout",
+    "tags": [
+      "interrupted_dialogue",
+      "cross_paragraph"
+    ],
+    "schema_valid": true,
+    "text_preserved": false,
+    "units": [
+      {
+        "text": "列车停下时，苏禾叫醒了赵远。\n",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": "“到了，”",
+        "kind": "dialogue",
+        "expected": "苏禾",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": "苏禾压低声音，",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": "“把蓝色箱子拿上。”",
+        "kind": "dialogue",
+        "expected": "苏禾",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": "\n赵远伸手去够行李架。",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": "“这个吗？”",
+        "kind": "dialogue",
+        "expected": "赵远",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": "他问。\n",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": "“不是，靠窗的那个。”",
+        "kind": "dialogue",
+        "expected": "苏禾",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": "苏禾指了指另一边。\n过了一会儿，赵远把箱子放到地上。",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": "“现在齐了。”",
+        "kind": "dialogue",
+        "expected": "赵远",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": "赵远说。",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      }
+    ],
+    "seconds": 3.1287104999646544,
+    "error": null,
+    "finish_reason": "stop"
+  }
+}

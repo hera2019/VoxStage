@@ -1,0 +1,72 @@
+{
+  "author": "Astra",
+  "date": "2026-09-09",
+  "automated_tests": 116,
+  "frontend_build": "passed",
+  "layout": {
+    "chrome": "wide viewport: transport directly below waveform in one row; inspector below",
+    "in_app_browser": "640 px viewport: transport below waveform, compact header, horizontal tool overflow"
+  },
+  "verified_operations": {
+    "numeric_speed": {
+      "before_display_s": 10.97,
+      "after_1_2_display_s": 10.24,
+      "undo_display_s": 10.97,
+      "redo_display_s": 10.24,
+      "invalid_2_5": "rejected with Chinese range error"
+    },
+    "keyboard": {
+      "S": "5 to 6 blocks, saved",
+      "Delete": "6 to 5 blocks, saved; undo restored",
+      "ArrowRight": "1.00 to 1.10 s",
+      "input_Backspace": "did not delete a clip",
+      "Meta_Z_and_Meta_Shift_Z": "undo and redo saved speed"
+    },
+    "loop": {
+      "final_clip_duration_display_s": 1.94,
+      "observations_s": [
+        9.416065,
+        8.837534
+      ],
+      "second_observation_after_at_least_s": 4.2,
+      "paused": false,
+      "stop_button": "paused true",
+      "closing_editor": "paused true"
+    },
+    "focus_clip_zoom": "ruler focused 8.20–10.25 s",
+    "chrome_numeric_speed": "10.25 to 9.11 s; undo restored",
+    "download": {
+      "format": "RIFF WAV",
+      "bytes": 491972,
+      "duration_measured_s": 10.2485,
+      "matches_full_export_bytes": true
+    },
+    "duplicate": {
+      "browser": "Chrome",
+      "new_project_opened": true,
+      "same_audio_bytes": true,
+      "same_segments_and_voices": true,
+      "revision": 0,
+      "undo_history_empty": true
+    }
+  },
+  "initial_failures": [
+    {
+      "stage": "layout build",
+      "cause": "new text and speaker props not yet passed at keyed component call site",
+      "resolution": "passed props and rebuilt successfully"
+    },
+    {
+      "stage": "duplication regression",
+      "cause": "test used a fixture without fixed-reference support and omitted synthetic consent",
+      "resolution": "used existing ReferenceFixture and explicit synthetic reference fixture consent; complete suite passed",
+      "evidence": "duplicate-initial-failure.md/json"
+    }
+  ],
+  "limits": [
+    "No new real-model inference or subjective audio-quality acceptance.",
+    "Looping is intended for inspection, not sample-exact seamless musical looping.",
+    "Project duplication is local independent copying, not off-device backup."
+  ],
+  "judge": "Astra: browser UI observations plus Python/Node assertions"
+}

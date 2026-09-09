@@ -1,0 +1,79 @@
+{
+  "input": "The sign read \"Closed today.\" Mira wondered whether the trip had been wasted, but said nothing.\n\"Let us wait five minutes,\" Leo said.",
+  "response": {
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```json\n[\n    {\n        \"text\": \"The sign read \\\"Closed today.\\\" Mira wondered whether the trip had been wasted, but said nothing.\",\n        \"kind\": \"narration or dialogue\",\n        \"speaker\": \"UNKNOWN\"\n    },\n    {\n        \"text\": \"Let us wait five minutes.\",\n        \"kind\": \"narration or dialogue\",\n        \"speaker\": \"Leo\"\n    }\n]\n```"
+        }
+      }
+    ],
+    "created": 1788958778,
+    "model": "qwen25-15b-q4",
+    "system_fingerprint": "b10700-bebc9350e",
+    "object": "chat.completion",
+    "usage": {
+      "completion_tokens": 88,
+      "prompt_tokens": 220,
+      "total_tokens": 308,
+      "prompt_tokens_details": {
+        "cached_tokens": 184
+      }
+    },
+    "id": "chatcmpl-ac4iZshCCKF0QfuzEB6xp6GMvL2wmODU",
+    "timings": {
+      "cache_n": 184,
+      "prompt_n": 36,
+      "prompt_ms": 39.465,
+      "prompt_per_token_ms": 1.0962500000000002,
+      "prompt_per_second": 912.200684150513,
+      "predicted_n": 88,
+      "predicted_ms": 892.059,
+      "predicted_per_token_ms": 10.25355172413793,
+      "predicted_per_second": 97.52718149808477
+    }
+  },
+  "score": {
+    "case": "en06",
+    "language": "en",
+    "split": "heldout",
+    "tags": [
+      "written_quote",
+      "thought"
+    ],
+    "schema_valid": false,
+    "text_preserved": false,
+    "units": [
+      {
+        "text": "The sign read \"Closed today.\" Mira wondered whether the trip had been wasted, but said nothing.\n",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": "\"Let us wait five minutes,\"",
+        "kind": "dialogue",
+        "expected": "Leo",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": " Leo said.",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      }
+    ],
+    "seconds": 0.935984208015725,
+    "error": null,
+    "finish_reason": "stop"
+  }
+}

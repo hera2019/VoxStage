@@ -1,0 +1,85 @@
+{
+  "input": "The sign read \"Closed today.\" Mira wondered whether the trip had been wasted, but said nothing.\n\"Let us wait five minutes,\" Leo said.",
+  "response": {
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\n  \"labels\": [\n    {\n      \"id\": \"u0\",\n      \"kind\": \"narration\",\n      \"speaker\": \"NARRATOR\"\n    },\n    {\n      \"id\": \"u1\",\n      \"kind\": \"narration\",\n      \"speaker\": \"NARRATOR\"\n    },\n    {\n      \"id\": \"u2\",\n      \"kind\": \"narration\",\n      \"speaker\": \"NARRATOR\"\n    },\n    {\n      \"id\": \"u3\",\n      \"kind\": \"narration\",\n      \"speaker\": \"NARRATOR\"\n    },\n    {\n      \"id\": \"u4\",\n      \"kind\": \"narration\",\n      \"speaker\": \"NARRATOR\"\n    }\n  ]\n}"
+        }
+      }
+    ],
+    "created": 1788959103,
+    "model": "qwen25-15b-q4-anchored",
+    "system_fingerprint": "b10700-bebc9350e",
+    "object": "chat.completion",
+    "usage": {
+      "completion_tokens": 164,
+      "prompt_tokens": 267,
+      "total_tokens": 431,
+      "prompt_tokens_details": {
+        "cached_tokens": 182
+      }
+    },
+    "id": "chatcmpl-jfTwJtQUphk1bvNoOfq3fi9Ar8V9Rd64",
+    "timings": {
+      "cache_n": 182,
+      "prompt_n": 85,
+      "prompt_ms": 51.129,
+      "prompt_per_token_ms": 0.6015176470588235,
+      "prompt_per_second": 1662.4616166950264,
+      "predicted_n": 164,
+      "predicted_ms": 1153.833,
+      "predicted_per_token_ms": 7.0787300613496935,
+      "predicted_per_second": 141.26827712502586
+    }
+  },
+  "score": {
+    "case": "en06",
+    "language": "en",
+    "split": "heldout",
+    "tags": [
+      "written_quote",
+      "thought"
+    ],
+    "schema_valid": true,
+    "text_preserved": true,
+    "units": [
+      {
+        "text": "The sign read \"Closed today.\" Mira wondered whether the trip had been wasted, but said nothing.\n",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [
+          "NARRATOR"
+        ],
+        "kind_correct": true,
+        "speaker_correct": true
+      },
+      {
+        "text": "\"Let us wait five minutes,\"",
+        "kind": "dialogue",
+        "expected": "Leo",
+        "observed": [
+          "NARRATOR"
+        ],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": " Leo said.",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [
+          "NARRATOR"
+        ],
+        "kind_correct": true,
+        "speaker_correct": true
+      }
+    ],
+    "seconds": 1.2111320829717442,
+    "error": null,
+    "finish_reason": "stop"
+  }
+}

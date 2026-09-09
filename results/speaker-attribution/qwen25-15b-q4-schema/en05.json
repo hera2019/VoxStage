@@ -1,0 +1,78 @@
+{
+  "input": "Alex and Jamie waited behind the door. The room was completely dark.\n\"Do not move,\" someone whispered.\nNeither person stepped forward.",
+  "response": {
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\n  \"segments\": [\n    {\n      \"text\": \"Alex and Jamie waited behind the door. The room was completely dark.\",\n      \"kind\": \"narration\",\n      \"speaker\": \"NARRATOR\"\n    },\n    {\n      \"text\": \"Do not move\",\n      \"kind\": \"narration\",\n      \"speaker\": \"NARRATOR\"\n    },\n    {\n      \"text\": \"Neither person stepped forward.\",\n      \"kind\": \"narration\",\n      \"speaker\": \"NARRATOR\"\n    }\n  ]\n}"
+        }
+      }
+    ],
+    "created": 1788958953,
+    "model": "qwen25-15b-q4-schema",
+    "system_fingerprint": "b10700-bebc9350e",
+    "object": "chat.completion",
+    "usage": {
+      "completion_tokens": 118,
+      "prompt_tokens": 215,
+      "total_tokens": 333,
+      "prompt_tokens_details": {
+        "cached_tokens": 184
+      }
+    },
+    "id": "chatcmpl-1o0n3Lm1wuWUwQkGkLxiJEHASXExQSOS",
+    "timings": {
+      "cache_n": 184,
+      "prompt_n": 31,
+      "prompt_ms": 33.682,
+      "prompt_per_token_ms": 1.086516129032258,
+      "prompt_per_second": 920.3728994715278,
+      "predicted_n": 118,
+      "predicted_ms": 858.508,
+      "predicted_per_token_ms": 7.337675213675214,
+      "predicted_per_second": 136.28294669356603
+    }
+  },
+  "score": {
+    "case": "en05",
+    "language": "en",
+    "split": "heldout",
+    "tags": [
+      "ambiguous"
+    ],
+    "schema_valid": true,
+    "text_preserved": false,
+    "units": [
+      {
+        "text": "Alex and Jamie waited behind the door. The room was completely dark.\n",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": "\"Do not move,\"",
+        "kind": "dialogue",
+        "expected": "UNKNOWN",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": " someone whispered.\nNeither person stepped forward.",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      }
+    ],
+    "seconds": 0.8981069580186158,
+    "error": null,
+    "finish_reason": "stop"
+  }
+}

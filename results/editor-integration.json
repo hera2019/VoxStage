@@ -1,0 +1,66 @@
+{
+  "status": "PASS",
+  "judge": "Astra / automated assertions and actual browser interaction",
+  "project_id": "b095c334c263472abab6081b9763fa45",
+  "synthetic_audio": true,
+  "human_quality_accepted": false,
+  "measured": {
+    "original_seconds": 12.0,
+    "uncut_tempo_seconds": 9.892958333333333,
+    "edited_seconds": 9.600375,
+    "original_sha256": "4668d3e9cd34bd6090c374af6b9da698ae06d0e32d0055d0110e4471d756bb31",
+    "source_unchanged": true,
+    "preview_export_bytes_equal": true
+  },
+  "mapping": [
+    {
+      "source_start": 0.0,
+      "source_end": 5.88,
+      "output_start": 0.0,
+      "output_end": 5.349625,
+      "speed": 1.1
+    },
+    {
+      "source_start": 5.88,
+      "source_end": 7.7,
+      "output_start": 5.349625,
+      "output_end": 6.700333333333333,
+      "speed": 1.35
+    },
+    {
+      "source_start": 8.1,
+      "source_end": 12.0,
+      "output_start": 6.700333333333333,
+      "output_end": 9.600375,
+      "speed": 1.35
+    }
+  ],
+  "browser": {
+    "fullscreen_editor": true,
+    "playhead_moved": {
+      "output_time": 7.809276,
+      "source_position_label": "9.17 / 12.00 秒",
+      "svg_x": 611.6551964783565
+    },
+    "paused_position_stable": "9.25 / 12.00 秒",
+    "zoom": 4,
+    "edge_drag_end": 8.539,
+    "move_selection": {
+      "start": 7.649,
+      "end": 8.688
+    },
+    "cut": {
+      "start": 7.7,
+      "end": 8.1
+    },
+    "undo_removed_cut": true,
+    "redo_restored_cut": true,
+    "return_to_workbench": true,
+    "export_revision": 3
+  },
+  "limitations": [
+    "Original text check does not validate edited output; subtitle text remains original.",
+    "Mapping is piecewise time interpolation, not word alignment.",
+    "Listening quality still needs the user."
+  ]
+}

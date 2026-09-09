@@ -1,0 +1,73 @@
+{
+  "status": "PASS",
+  "judge": "Astra; local ASR and export file assertions, no human quality verdict",
+  "project_id": "0f2c60769e134f2199b8703d7a228997",
+  "original_sha256": "4668d3e9cd34bd6090c374af6b9da698ae06d0e32d0055d0110e4471d756bb31",
+  "original_seconds": 12.0,
+  "faster_seconds": 10.000916666666667,
+  "rate": 1.2,
+  "readback": {
+    "source_fingerprint": "a88a2c68a51d7d0031a59126d26bc3b2b38d5c1aae6d3a64cdf3877cf86840bf",
+    "expected_text": "我们的小雪这四年来吃的好，睡的香，个子自然是长大了不少，后面的那个刺青也是跟着大了。",
+    "checker_id": "whisper.cpp:251050807bbe32347007c7db7e42199289e6fc24dda60df8469b85e5922bc9ce:394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2:630efba6923ff5ca8eda220aff775dd78b4cdd42ca8d52b6de9271480ed8437a:spoken-units-v2-pypinyin055-de1",
+    "checked_at": 1788947183.622386,
+    "reviewed": false,
+    "recognized_text": "我们的小雪这四年来吃得好睡得香个子自然是长大了不少后面的那个刺青也是跟着大了",
+    "seconds": 0.9911569169489667,
+    "model": {
+      "repo": "ggerganov/whisper.cpp",
+      "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+      "file": "ggml-large-v3-turbo-q5_0.bin",
+      "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
+    },
+    "decoding": {
+      "beam_size": 5,
+      "best_of": 5,
+      "temperature": 0,
+      "temperature_inc": 0,
+      "max_context": 0,
+      "no_fallback": true,
+      "threads": 4
+    },
+    "log_id": "60984ed374544e858f7ec23b3e932a7e",
+    "audio_sha256": "4668d3e9cd34bd6090c374af6b9da698ae06d0e32d0055d0110e4471d756bb31",
+    "status": "match",
+    "differences": [],
+    "equivalences": [
+      {
+        "expected": "的",
+        "recognized": "得",
+        "basis": "grammatical-de"
+      },
+      {
+        "expected": "的",
+        "recognized": "得",
+        "basis": "grammatical-de"
+      }
+    ],
+    "normalization": "spoken-units-v2-pypinyin055-de1",
+    "audio_stat": [
+      576044,
+      1788946280404606867
+    ]
+  },
+  "original_export": {
+    "full.wav": "/api/projects/0f2c60769e134f2199b8703d7a228997/export/3/full.wav",
+    "subtitles.srt": "/api/projects/0f2c60769e134f2199b8703d7a228997/export/3/subtitles.srt",
+    "timeline.json": "/api/projects/0f2c60769e134f2199b8703d7a228997/export/3/timeline.json",
+    "content-check.json": "/api/projects/0f2c60769e134f2199b8703d7a228997/export/3/content-check.json"
+  },
+  "faster_export": {
+    "full.wav": "/api/projects/0f2c60769e134f2199b8703d7a228997/export/4/full.wav",
+    "subtitles.srt": "/api/projects/0f2c60769e134f2199b8703d7a228997/export/4/subtitles.srt",
+    "timeline.json": "/api/projects/0f2c60769e134f2199b8703d7a228997/export/4/timeline.json",
+    "content-check.json": "/api/projects/0f2c60769e134f2199b8703d7a228997/export/4/content-check.json"
+  },
+  "reported_pause": {
+    "source_fingerprint": "7154375c85b1b57c3662156ecc2c6974ca4210943198c58b319c02c4dcb269d5",
+    "estimated_quiet_start": 5.79,
+    "estimated_quiet_end": 6.19,
+    "method": "10 ms RMS frames; local token timestamps approximate, not forced alignment",
+    "automatic_repair": false
+  }
+}

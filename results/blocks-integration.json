@@ -1,0 +1,209 @@
+{
+  "status": "PASS",
+  "judge": "Astra / actual browser operation and file assertions",
+  "human_quality_accepted": false,
+  "project_id": "1799258de30a477abb8d471a4a64f5d3",
+  "original_unchanged": true,
+  "source_sha256": "4668d3e9cd34bd6090c374af6b9da698ae06d0e32d0055d0110e4471d756bb31",
+  "preview_export_bytes_equal": true,
+  "measured_previews": [
+    {
+      "key": "5986a579830eb2d4778c3572378a2775cb09abdc40b931f15f8994d45130ed0d",
+      "duration": 9.853583333333333,
+      "mapping": [
+        {
+          "clip_id": "bc75d6a4-19d3-4a35-8706-3db48963e997",
+          "source_start": 2.6322916666666667,
+          "source_end": 5.88,
+          "output_start": 0.0,
+          "output_end": 3.098125,
+          "speed": 1.0531
+        },
+        {
+          "clip_id": "part-2",
+          "source_start": 5.88,
+          "source_end": 7.7,
+          "output_start": 3.098125,
+          "output_end": 4.448833333333333,
+          "speed": 1.35
+        },
+        {
+          "clip_id": "part-3",
+          "source_start": 8.1,
+          "source_end": 12.0,
+          "output_start": 4.448833333333333,
+          "output_end": 7.348875,
+          "speed": 1.35
+        },
+        {
+          "clip_id": "part-1",
+          "source_start": 0.0,
+          "source_end": 2.6322916666666667,
+          "output_start": 7.348875,
+          "output_end": 9.853583333333333,
+          "speed": 1.0531
+        }
+      ]
+    },
+    {
+      "key": "32c12898e7d7a238b8ad0673b5c4a956e79b972d0ae0758d36a382ae68e7ef3f",
+      "duration": 9.853583333333333,
+      "mapping": [
+        {
+          "clip_id": "part-1",
+          "source_start": 0.0,
+          "source_end": 2.6322916666666667,
+          "output_start": 0.0,
+          "output_end": 2.5047083333333333,
+          "speed": 1.0531
+        },
+        {
+          "clip_id": "bc75d6a4-19d3-4a35-8706-3db48963e997",
+          "source_start": 2.6322916666666667,
+          "source_end": 5.88,
+          "output_start": 2.5047083333333333,
+          "output_end": 5.602833333333334,
+          "speed": 1.0531
+        },
+        {
+          "clip_id": "part-2",
+          "source_start": 5.88,
+          "source_end": 7.7,
+          "output_start": 5.602833333333334,
+          "output_end": 6.953541666666666,
+          "speed": 1.35
+        },
+        {
+          "clip_id": "part-3",
+          "source_start": 8.1,
+          "source_end": 12.0,
+          "output_start": 6.953541666666666,
+          "output_end": 9.853583333333333,
+          "speed": 1.35
+        }
+      ]
+    },
+    {
+      "key": "eefe47bf5977acc49907e835b1d1ccbd29e87154150f53c42e9bb0d7bdd26f7c",
+      "duration": 9.835208333333334,
+      "mapping": [
+        {
+          "clip_id": "part-1",
+          "source_start": 0.0,
+          "source_end": 5.88,
+          "output_start": 0.0,
+          "output_end": 5.584458333333333,
+          "speed": 1.0531
+        },
+        {
+          "clip_id": "part-2",
+          "source_start": 5.88,
+          "source_end": 7.7,
+          "output_start": 5.584458333333333,
+          "output_end": 6.9351666666666665,
+          "speed": 1.35
+        },
+        {
+          "clip_id": "part-3",
+          "source_start": 8.1,
+          "source_end": 12.0,
+          "output_start": 6.9351666666666665,
+          "output_end": 9.835208333333334,
+          "speed": 1.35
+        }
+      ]
+    },
+    {
+      "key": "1143cadd9818f5c6ec7b121490e69f6fae576651925514e63c0d30c80385c01f",
+      "duration": 10.222041666666666,
+      "mapping": [
+        {
+          "clip_id": "part-1",
+          "source_start": 0.0,
+          "source_end": 5.88,
+          "output_start": 0.0,
+          "output_end": 5.971291666666667,
+          "speed": 0.9827
+        },
+        {
+          "clip_id": "part-2",
+          "source_start": 5.88,
+          "source_end": 7.7,
+          "output_start": 5.971291666666667,
+          "output_end": 7.322,
+          "speed": 1.35
+        },
+        {
+          "clip_id": "part-3",
+          "source_start": 8.1,
+          "source_end": 12.0,
+          "output_start": 7.322,
+          "output_end": 10.222041666666666,
+          "speed": 1.35
+        }
+      ]
+    },
+    {
+      "key": "434068fd42c70e63c71dffac85bc7f88100546cac94df2061ea91ab5e49e07f7",
+      "duration": 9.600375,
+      "mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 5.88,
+          "output_start": 0.0,
+          "output_end": 5.349625,
+          "speed": 1.1
+        },
+        {
+          "source_start": 5.88,
+          "source_end": 7.7,
+          "output_start": 5.349625,
+          "output_end": 6.700333333333333,
+          "speed": 1.35
+        },
+        {
+          "source_start": 8.1,
+          "source_end": 12.0,
+          "output_start": 6.700333333333333,
+          "output_end": 9.600375,
+          "speed": 1.35
+        }
+      ]
+    }
+  ],
+  "browser": {
+    "main_waveforms": 0,
+    "main_editor_entry": 1,
+    "right_edge_drag": {
+      "from": [
+        350,
+        450
+      ],
+      "to": [
+        390,
+        450
+      ],
+      "before_seconds": 9.600375,
+      "after_seconds": 10.222041666666666
+    },
+    "left_edge_drag": {
+      "from": [
+        21,
+        450
+      ],
+      "to": [
+        44,
+        450
+      ],
+      "after_seconds": 9.835208333333334
+    },
+    "split_at_output_seconds": 2.5,
+    "split_blocks": 4,
+    "reorder_first_to_last": true,
+    "undo_reorder_restored_order": true,
+    "actual_playback_duration": 9.853583,
+    "save_success_message_verified": true,
+    "handles": "1.5 px blue visible line; separate 14 viewBox-unit internal hit regions"
+  },
+  "prior_speed_failure": "Not reproduced with an exact user action sequence; did not claim a confirmed root cause. Replaced selection-speed workflow and verified new gestures change actual PCM durations."
+}

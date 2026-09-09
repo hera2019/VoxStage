@@ -1,0 +1,35 @@
+{
+  "date": "2026-09-09",
+  "author": "Astra",
+  "cause": "Legacy region end 3.249 and cut start 3.254 produced a 5 ms unsaveable clip. Chrome and in-app browser had different projects open.",
+  "automated_tests": 112,
+  "chrome": {
+    "right_edge_second_clip": "saved",
+    "split": "7 to 8 clips",
+    "delete": "8 to 7 clips",
+    "duration_after_stretch_seconds_displayed": 10.38,
+    "after_delete_seconds_displayed": 9.2,
+    "reload_persistence": "9.20 s retained",
+    "scrollbar_drag_ruler_start_seconds": [
+      1.8,
+      4.54
+    ],
+    "stale_revision": "rejected; reload restored 8.30 s, no overwrite"
+  },
+  "in_app_browser": {
+    "left_edge_second_clip": "saved",
+    "duration_after_shorten_seconds_displayed": 8.98,
+    "split": "saved",
+    "delete": "saved; 8.30 s",
+    "scrollbar": "visible under waveform; arrow scrolling moved ruler"
+  },
+  "final_preview_seconds_measured": 8.29875,
+  "final_clip_count": 7,
+  "export_segment_pcm_equals_preview": true,
+  "original_audio_unchanged": true,
+  "limits": [
+    "No new TTS inference or subjective listening assessment.",
+    "Legacy isolated sub-20 ms retained islands are preserved, still subject to minimum clip validation; not silently deleted."
+  ],
+  "judge": "Astra: actual Chrome extension and Codex in-app browser UI; server PCM assertions"
+}

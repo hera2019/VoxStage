@@ -1,0 +1,23 @@
+{
+  "status": "PASS",
+  "date": "2026-09-09",
+  "judge": "Astra; actual offline script run on development Mac",
+  "command": "HF_HUB_OFFLINE=1 .venv/bin/python scripts/setup_model.py --model all --verify-only",
+  "results": [
+    {
+      "model": "preset",
+      "ready": true,
+      "problems": [],
+      "downloaded": false,
+      "read_only": true
+    },
+    {
+      "model": "base",
+      "ready": true,
+      "problems": [],
+      "downloaded": false,
+      "read_only": true
+    }
+  ],
+  "scope": "Actual weight hashes and required file presence; no fresh-Mac installation or speech quality acceptance"
+}

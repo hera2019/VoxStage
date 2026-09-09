@@ -1,0 +1,211 @@
+{
+  "model": "mlx-community/Qwen3-TTS-12Hz-0.6B-CustomVoice-bf16@6415d95f88be018ff9e46813119dc3bc12261328",
+  "synthetic_audio": true,
+  "results": [
+    {
+      "language": "zh",
+      "project_id": "c138d1570f40447fa65e4a0b7f1d00bc",
+      "job": {
+        "status": "completed",
+        "total": 4,
+        "completed": 4,
+        "failed": 0,
+        "current_segment": null
+      },
+      "segments": [
+        {
+          "id": "82e231ce4e684b06956a0004608c7d8b",
+          "text": "雨点轻轻敲着窗。",
+          "speaker": "旁白",
+          "status": "ready",
+          "error": null,
+          "audio": {
+            "samples": 59520,
+            "sample_rate": 24000,
+            "speech_start_sample": 9840,
+            "speech_end_sample": 48240,
+            "speech_boundary_method": "estimated_rms_10ms",
+            "processing_version": "pcm-peak-rms-v1",
+            "synthetic_audio": true,
+            "fingerprint": "d7dd9ba1db3bb9747d8c34572700bf7f8fc7bd0e43d0998cd2b2f7afa34df454",
+            "engine": "mlx-community/Qwen3-TTS-12Hz-0.6B-CustomVoice-bf16@6415d95f88be018ff9e46813119dc3bc12261328",
+            "load_seconds": 1.8512942919041961,
+            "generation_seconds": 1.755982750095427,
+            "mlx_peak_memory_bytes": 4438254193,
+            "seed": 260909
+          }
+        },
+        {
+          "id": "62544a5bee4c45809d5f928d8c28eca1",
+          "text": "你听见了吗？",
+          "speaker": "小林",
+          "status": "ready",
+          "error": null,
+          "audio": {
+            "samples": 42240,
+            "sample_rate": 24000,
+            "speech_start_sample": 15360,
+            "speech_end_sample": 31920,
+            "speech_boundary_method": "estimated_rms_10ms",
+            "processing_version": "pcm-peak-rms-v1",
+            "synthetic_audio": true,
+            "fingerprint": "5f9e45bdee73703ddc7be2e560ea895e3788f37ba5e8f68ae5053b80fdec3899",
+            "engine": "mlx-community/Qwen3-TTS-12Hz-0.6B-CustomVoice-bf16@6415d95f88be018ff9e46813119dc3bc12261328",
+            "load_seconds": 3.7497375160455704e-07,
+            "generation_seconds": 0.7312218750594184,
+            "mlx_peak_memory_bytes": 3976118437,
+            "seed": 260909
+          }
+        },
+        {
+          "id": "42ccd3c94b3443d19db1bc21f2a59111",
+          "text": "别担心，那只是风。",
+          "speaker": "阿宁",
+          "status": "ready",
+          "error": null,
+          "audio": {
+            "samples": 55680,
+            "sample_rate": 24000,
+            "speech_start_sample": 5040,
+            "speech_end_sample": 47760,
+            "speech_boundary_method": "estimated_rms_10ms",
+            "processing_version": "pcm-peak-rms-v1",
+            "synthetic_audio": true,
+            "fingerprint": "166a42cbade09b63b910fd32e293210025421f1d16d08a5fefa70dd6e38e766c",
+            "engine": "mlx-community/Qwen3-TTS-12Hz-0.6B-CustomVoice-bf16@6415d95f88be018ff9e46813119dc3bc12261328",
+            "load_seconds": 1.25030055642128e-07,
+            "generation_seconds": 0.9476800409611315,
+            "mlx_peak_memory_bytes": 4333658613,
+            "seed": 260909
+          }
+        },
+        {
+          "id": "e64e04896519498ba7ac44893b3b3139",
+          "text": "两个人相视一笑。",
+          "speaker": "旁白",
+          "status": "ready",
+          "error": null,
+          "audio": {
+            "samples": 55680,
+            "sample_rate": 24000,
+            "speech_start_sample": 8880,
+            "speech_end_sample": 42000,
+            "speech_boundary_method": "estimated_rms_10ms",
+            "processing_version": "pcm-peak-rms-v1",
+            "synthetic_audio": true,
+            "fingerprint": "c7a7698c60873ce011579d8a88e048b3042780514d6cb2271c186895e7a168d3",
+            "engine": "mlx-community/Qwen3-TTS-12Hz-0.6B-CustomVoice-bf16@6415d95f88be018ff9e46813119dc3bc12261328",
+            "load_seconds": 2.0791776478290558e-07,
+            "generation_seconds": 0.9316256670281291,
+            "mlx_peak_memory_bytes": 4333654517,
+            "seed": 260909
+          }
+        }
+      ],
+      "export_status": 200
+    },
+    {
+      "language": "en",
+      "project_id": "42a023049d9546e0a3ba84278a3d6c07",
+      "job": {
+        "status": "completed",
+        "total": 4,
+        "completed": 4,
+        "failed": 0,
+        "current_segment": null
+      },
+      "segments": [
+        {
+          "id": "c497fc71394744a99600fc50b8e48b8b",
+          "text": "Rain tapped against the window.",
+          "speaker": "Narrator",
+          "status": "ready",
+          "error": null,
+          "audio": {
+            "samples": 80640,
+            "sample_rate": 24000,
+            "speech_start_sample": 11760,
+            "speech_end_sample": 65520,
+            "speech_boundary_method": "estimated_rms_10ms",
+            "processing_version": "pcm-peak-rms-v1",
+            "synthetic_audio": true,
+            "fingerprint": "8c3dd3e73653f7427d0a97cd05065e5109fa4347fd427451e9e1550cde1d8ca6",
+            "engine": "mlx-community/Qwen3-TTS-12Hz-0.6B-CustomVoice-bf16@6415d95f88be018ff9e46813119dc3bc12261328",
+            "load_seconds": 1.6693957149982452e-07,
+            "generation_seconds": 1.352300375001505,
+            "mlx_peak_memory_bytes": 5016558931,
+            "seed": 260909
+          }
+        },
+        {
+          "id": "83d0df7c5682493a84d6b9eeb5843e3e",
+          "text": "Did you hear that?",
+          "speaker": "Mira",
+          "status": "ready",
+          "error": null,
+          "audio": {
+            "samples": 28800,
+            "sample_rate": 24000,
+            "speech_start_sample": 5040,
+            "speech_end_sample": 20880,
+            "speech_boundary_method": "estimated_rms_10ms",
+            "processing_version": "pcm-peak-rms-v1",
+            "synthetic_audio": true,
+            "fingerprint": "4fccdf44fb0ed53a49fb66207e47c2fa806965f85af836c28479591ee442b8f9",
+            "engine": "mlx-community/Qwen3-TTS-12Hz-0.6B-CustomVoice-bf16@6415d95f88be018ff9e46813119dc3bc12261328",
+            "load_seconds": 2.4994369596242905e-07,
+            "generation_seconds": 0.510493625071831,
+            "mlx_peak_memory_bytes": 3602758169,
+            "seed": 260909
+          }
+        },
+        {
+          "id": "b1bf11ffe08441f3b31d143f9d0a6358",
+          "text": "Just the wind. We are safe here.",
+          "speaker": "Leo",
+          "status": "ready",
+          "error": null,
+          "audio": {
+            "samples": 105600,
+            "sample_rate": 24000,
+            "speech_start_sample": 12480,
+            "speech_end_sample": 93840,
+            "speech_boundary_method": "estimated_rms_10ms",
+            "processing_version": "pcm-peak-rms-v1",
+            "synthetic_audio": true,
+            "fingerprint": "328a77587807f63b84d316632845511dbecad059078cc6e436781ea4c197cb8c",
+            "engine": "mlx-community/Qwen3-TTS-12Hz-0.6B-CustomVoice-bf16@6415d95f88be018ff9e46813119dc3bc12261328",
+            "load_seconds": 1.6705598682165146e-07,
+            "generation_seconds": 1.651727040996775,
+            "mlx_peak_memory_bytes": 5496986207,
+            "seed": 260909
+          }
+        },
+        {
+          "id": "3edba61ef1594db8ba7ee230f03e4b32",
+          "text": "They smiled and went back to their books.",
+          "speaker": "Narrator",
+          "status": "ready",
+          "error": null,
+          "audio": {
+            "samples": 76800,
+            "sample_rate": 24000,
+            "speech_start_sample": 10320,
+            "speech_end_sample": 63840,
+            "speech_boundary_method": "estimated_rms_10ms",
+            "processing_version": "pcm-peak-rms-v1",
+            "synthetic_audio": true,
+            "fingerprint": "9b1534bed519d5cd79869970636b82ee6131784855d90d205d737195771450f8",
+            "engine": "mlx-community/Qwen3-TTS-12Hz-0.6B-CustomVoice-bf16@6415d95f88be018ff9e46813119dc3bc12261328",
+            "load_seconds": 4.1606836020946503e-07,
+            "generation_seconds": 1.277382708969526,
+            "mlx_peak_memory_bytes": 4925396445,
+            "seed": 260909
+          }
+        }
+      ],
+      "export_status": 200
+    }
+  ],
+  "quality_acceptance": "not judged; human listening and content verification pending"
+}

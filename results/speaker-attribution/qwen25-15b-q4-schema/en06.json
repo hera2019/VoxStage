@@ -1,0 +1,79 @@
+{
+  "input": "The sign read \"Closed today.\" Mira wondered whether the trip had been wasted, but said nothing.\n\"Let us wait five minutes,\" Leo said.",
+  "response": {
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\n  \"segments\": [\n    {\n      \"text\": \"The sign read \\\"Closed today.\\\" Mira wondered whether the trip had been wasted, but said nothing.\",\n      \"kind\": \"narration\",\n      \"speaker\": \"UNKNOWN\"\n    },\n    {\n      \"text\": \"Let us wait five minutes.\",\n      \"kind\": \"narration\",\n      \"speaker\": \"UNKNOWN\"\n    }\n  ]\n}"
+        }
+      }
+    ],
+    "created": 1788958954,
+    "model": "qwen25-15b-q4-schema",
+    "system_fingerprint": "b10700-bebc9350e",
+    "object": "chat.completion",
+    "usage": {
+      "completion_tokens": 91,
+      "prompt_tokens": 220,
+      "total_tokens": 311,
+      "prompt_tokens_details": {
+        "cached_tokens": 184
+      }
+    },
+    "id": "chatcmpl-BxD4y5Xz5MPZYE9KElsuJq7hZu4XrDgL",
+    "timings": {
+      "cache_n": 184,
+      "prompt_n": 36,
+      "prompt_ms": 38.753,
+      "prompt_per_token_ms": 1.0764722222222223,
+      "prompt_per_second": 928.9603385544344,
+      "predicted_n": 91,
+      "predicted_ms": 656.378,
+      "predicted_per_token_ms": 7.29308888888889,
+      "predicted_per_second": 137.11611297148897
+    }
+  },
+  "score": {
+    "case": "en06",
+    "language": "en",
+    "split": "heldout",
+    "tags": [
+      "written_quote",
+      "thought"
+    ],
+    "schema_valid": true,
+    "text_preserved": false,
+    "units": [
+      {
+        "text": "The sign read \"Closed today.\" Mira wondered whether the trip had been wasted, but said nothing.\n",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": "\"Let us wait five minutes,\"",
+        "kind": "dialogue",
+        "expected": "Leo",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": " Leo said.",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      }
+    ],
+    "seconds": 0.701087124994956,
+    "error": null,
+    "finish_reason": "stop"
+  }
+}

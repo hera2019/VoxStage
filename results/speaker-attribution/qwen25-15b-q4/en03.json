@@ -1,0 +1,111 @@
+{
+  "input": "Doctor Lin, whose full name was Lin Lan, met Sam at the gate.\n\"You are early,\" Dr. Lin said.\nSam put down his bag. \"The bus was quick today,\" he replied.\nLin Lan checked her watch. \"We still have ten minutes,\" she said.",
+  "response": {
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```json\n{\n  \"segments\": [\n    {\n      \"text\": \"Doctor Lin, whose full name was Lin Lan, met Sam at the gate.\",\n      \"kind\": \"narration or dialogue\",\n      \"speaker\": \"NARRATOR\"\n    },\n    {\n      \"text\": \"You are early,\" Dr. Lin said.\",\n      \"kind\": \"narration or dialogue\",\n      \"speaker\": \"NARRATOR\"\n    },\n    {\n      \"text\": \"Sam put down his bag. \\\"The bus was quick today,\\\" he replied.\",\n      \"kind\": \"narration or dialogue\",\n      \"speaker\": \"UNKNOWN\"\n    },\n    {\n      \"text\": \"Lin Lan checked her watch. \\\"We still have ten minutes,\\\" she said.\",\n      \"kind\": \"narration or dialogue\",\n      \"speaker\": \"NARRATOR\"\n    }\n  ]\n}\n```"
+        }
+      }
+    ],
+    "created": 1788958776,
+    "model": "qwen25-15b-q4",
+    "system_fingerprint": "b10700-bebc9350e",
+    "object": "chat.completion",
+    "usage": {
+      "completion_tokens": 185,
+      "prompt_tokens": 246,
+      "total_tokens": 431,
+      "prompt_tokens_details": {
+        "cached_tokens": 184
+      }
+    },
+    "id": "chatcmpl-lJxbvdqbAbddvVGXWz8IGSVu8fxSzLGP",
+    "timings": {
+      "cache_n": 184,
+      "prompt_n": 62,
+      "prompt_ms": 40.438,
+      "prompt_per_token_ms": 0.652225806451613,
+      "prompt_per_second": 1533.2113358721992,
+      "predicted_n": 185,
+      "predicted_ms": 1260.174,
+      "predicted_per_token_ms": 6.848771739130434,
+      "predicted_per_second": 146.01158252749224
+    }
+  },
+  "score": {
+    "case": "en03",
+    "language": "en",
+    "split": "heldout",
+    "tags": [
+      "alias",
+      "cross_paragraph"
+    ],
+    "schema_valid": false,
+    "text_preserved": false,
+    "units": [
+      {
+        "text": "Doctor Lin, whose full name was Lin Lan, met Sam at the gate.\n",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": "\"You are early,\"",
+        "kind": "dialogue",
+        "expected": "Lin Lan",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": " Dr. Lin said.\nSam put down his bag. ",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": "\"The bus was quick today,\"",
+        "kind": "dialogue",
+        "expected": "Sam",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": " he replied.\nLin Lan checked her watch. ",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": "\"We still have ten minutes,\"",
+        "kind": "dialogue",
+        "expected": "Lin Lan",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": " she said.",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      }
+    ],
+    "seconds": 1.3056251250673085,
+    "error": null,
+    "finish_reason": "stop"
+  }
+}

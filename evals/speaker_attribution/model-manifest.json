@@ -1,0 +1,22 @@
+{
+  "models": [
+    {
+      "label": "qwen3-4b-q8",
+      "base_card": "https://huggingface.co/Qwen/Qwen3-4B-Instruct-2507",
+      "file": "qwen3-4b-instruct-2507-q8_0.gguf",
+      "sha256": "ae916ede1c010a26955ee8ae2e908bf8815a3f135ec860439ab924701c69d5f1",
+      "source_note": "Existing local AI-Lab artifact; conversion provenance not independently reverified."
+    },
+    {
+      "label": "qwen25-15b-q4",
+      "repo": "Qwen/Qwen2.5-1.5B-Instruct-GGUF",
+      "revision": "91cad51170dc346986eccefdc2dd33a9da36ead9",
+      "file": "qwen2.5-1.5b-instruct-q4_k_m.gguf",
+      "expected_sha256": "6a1a2eb6d15622bf3c96857206351ba97e1af16c30d7a74ee38970e434e9407e",
+      "bytes": 1117320736
+    }
+  ],
+  "llama_cpp_commit": "bebc9350ecc42a31ad119da1513998386671cf5b",
+  "author": "Astra",
+  "date": "2026-09-09"
+}

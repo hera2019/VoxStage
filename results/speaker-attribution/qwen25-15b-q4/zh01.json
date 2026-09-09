@@ -1,0 +1,86 @@
+{
+  "input": "林岚推开窗户，说：“雨停了。”周明拿起外套回答：“我们现在出发。”",
+  "response": {
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```json\n{\n  \"segments\": [\n    {\n      \"text\": \"林岚推开窗户，说：\\\"雨停了。\\\"\",\n      \"kind\": \"narration or dialogue\",\n      \"speaker\": \"NARRATOR\"\n    },\n    {\n      \"text\": \"周明拿起外套回答：\\\"我们现在出发。\\\"\",\n      \"kind\": \"narration or dialogue\",\n      \"speaker\": \"UNKNOWN\"\n    }\n  ]\n}\n```"
+        }
+      }
+    ],
+    "created": 1788958766,
+    "model": "qwen25-15b-q4",
+    "system_fingerprint": "b10700-bebc9350e",
+    "object": "chat.completion",
+    "usage": {
+      "completion_tokens": 94,
+      "prompt_tokens": 209,
+      "total_tokens": 303,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "id": "chatcmpl-kFRFujjOs0a7ovMQgVGIyxhiUOEJrbxE",
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 209,
+      "prompt_ms": 208.503,
+      "prompt_per_token_ms": 0.997622009569378,
+      "prompt_per_second": 1002.3836587483154,
+      "predicted_n": 94,
+      "predicted_ms": 645.604,
+      "predicted_per_token_ms": 6.9419784946236565,
+      "predicted_per_second": 144.05115209942937
+    }
+  },
+  "score": {
+    "case": "zh01",
+    "language": "zh",
+    "split": "development",
+    "tags": [
+      "explicit"
+    ],
+    "schema_valid": false,
+    "text_preserved": false,
+    "units": [
+      {
+        "text": "林岚推开窗户，说：",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": "“雨停了。”",
+        "kind": "dialogue",
+        "expected": "林岚",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": "周明拿起外套回答：",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": "“我们现在出发。”",
+        "kind": "dialogue",
+        "expected": "周明",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      }
+    ],
+    "seconds": 0.8621247920673341,
+    "error": null,
+    "finish_reason": "stop"
+  }
+}

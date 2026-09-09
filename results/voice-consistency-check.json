@@ -1,0 +1,121 @@
+{
+  "synthetic_audio": true,
+  "date": "2026-09-09",
+  "model": {
+    "repo": "mlx-community/Qwen3-TTS-12Hz-0.6B-CustomVoice-bf16",
+    "revision": "6415d95f88be018ff9e46813119dc3bc12261328"
+  },
+  "runtime": "mlx-audio-0.5.1",
+  "speaker": "Vivian",
+  "language": "Chinese",
+  "seed": 260909,
+  "other_parameters": {
+    "top_k": 50,
+    "top_p": 1.0,
+    "max_tokens": 2048,
+    "repetition_penalty": 1.05
+  },
+  "human_feedback": "User reports two narrator lines sound substantially different in speaker/environment; not accepted for continuity.",
+  "quality_acceptance": "pending human comparison; no similarity metric or improvement claim",
+  "groups": [
+    {
+      "label": "A-original",
+      "synthetic_audio": true,
+      "path": "user-data/voice-consistency-check/A-original.wav",
+      "sha256": "a4ae098a81c20419f5270a7e19d429ed75e41e1a2070b02e7ac035d83b298d35",
+      "samples": 127200,
+      "sample_rate": 24000,
+      "segments": [
+        {
+          "text": "雨点轻轻敲着窗。",
+          "temperature": 0.9,
+          "source_fingerprint": "d7dd9ba1db3bb9747d8c34572700bf7f8fc7bd0e43d0998cd2b2f7afa34df454",
+          "synthetic_audio": true
+        },
+        {
+          "text": "两个人相视一笑。",
+          "temperature": 0.9,
+          "source_fingerprint": "c7a7698c60873ce011579d8a88e048b3042780514d6cb2271c186895e7a168d3",
+          "synthetic_audio": true
+        }
+      ]
+    },
+    {
+      "label": "B-lower-randomness",
+      "synthetic_audio": true,
+      "path": "user-data/voice-consistency-check/B-lower-randomness.wav",
+      "sha256": "ad5a50674d646dbb103cd00f655222fc56c4b31e4b42db9fb1dfe95180d7650f",
+      "samples": 154080,
+      "sample_rate": 24000,
+      "segments": [
+        {
+          "text": "雨点轻轻敲着窗。",
+          "temperature": 0.6,
+          "generation_seconds": 5.000018291990273,
+          "samples": 74880,
+          "sample_rate": 24000,
+          "speech_start_sample": 14400,
+          "speech_end_sample": 59280,
+          "speech_boundary_method": "estimated_rms_10ms",
+          "processing_version": "pcm-peak-rms-v1",
+          "synthetic_audio": true
+        },
+        {
+          "text": "两个人相视一笑。",
+          "temperature": 0.6,
+          "generation_seconds": 1.3363767500268295,
+          "samples": 67200,
+          "sample_rate": 24000,
+          "speech_start_sample": 12480,
+          "speech_end_sample": 51120,
+          "speech_boundary_method": "estimated_rms_10ms",
+          "processing_version": "pcm-peak-rms-v1",
+          "synthetic_audio": true
+        }
+      ]
+    },
+    {
+      "label": "C-greedy",
+      "synthetic_audio": true,
+      "path": "user-data/voice-consistency-check/C-greedy.wav",
+      "sha256": "4178246118b317b7adb8a2f333998006aa4913a5da147a4badd4135ea51f40af",
+      "samples": 144480,
+      "sample_rate": 24000,
+      "segments": [
+        {
+          "text": "雨点轻轻敲着窗。",
+          "temperature": 0.0,
+          "generation_seconds": 0.9717933749780059,
+          "samples": 67200,
+          "sample_rate": 24000,
+          "speech_start_sample": 12720,
+          "speech_end_sample": 52560,
+          "speech_boundary_method": "estimated_rms_10ms",
+          "processing_version": "pcm-peak-rms-v1",
+          "synthetic_audio": true
+        },
+        {
+          "text": "两个人相视一笑。",
+          "temperature": 0.0,
+          "generation_seconds": 0.9275154579663649,
+          "samples": 65280,
+          "sample_rate": 24000,
+          "speech_start_sample": 12960,
+          "speech_end_sample": 48000,
+          "speech_boundary_method": "estimated_rms_10ms",
+          "processing_version": "pcm-peak-rms-v1",
+          "synthetic_audio": true
+        }
+      ]
+    }
+  ],
+  "listening_followup": {
+    "judge": "user",
+    "feedback": "B效果更好一点。C也不错。但感觉B的声音更统一。",
+    "adoption": {
+      "zh_temperature": 0.6,
+      "en_temperature": 0.9
+    },
+    "scope": "relative preference for two Chinese Vivian lines; broader acceptance pending"
+  }
+}

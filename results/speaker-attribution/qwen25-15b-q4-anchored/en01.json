@@ -1,0 +1,104 @@
+{
+  "input": "Mira opened the window. \"The rain has stopped,\" she said. Leo picked up his coat. \"Then we can leave,\" he replied.",
+  "response": {
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\n  \"labels\": [\n    {\n      \"id\": \"u0\",\n      \"kind\": \"narration\",\n      \"speaker\": \"NARRATOR\"\n    },\n    {\n      \"id\": \"u1\",\n      \"kind\": \"dialogue\",\n      \"speaker\": \"Mira\"\n    },\n    {\n      \"id\": \"u2\",\n      \"kind\": \"dialogue\",\n      \"speaker\": \"Leo\"\n    },\n    {\n      \"id\": \"u3\",\n      \"kind\": \"dialogue\",\n      \"speaker\": \"Leo\"\n    },\n    {\n      \"id\": \"u4\",\n      \"kind\": \"dialogue\",\n      \"speaker\": \"Leo\"\n    }\n  ]\n}"
+        }
+      }
+    ],
+    "created": 1788959097,
+    "model": "qwen25-15b-q4-anchored",
+    "system_fingerprint": "b10700-bebc9350e",
+    "object": "chat.completion",
+    "usage": {
+      "completion_tokens": 153,
+      "prompt_tokens": 266,
+      "total_tokens": 419,
+      "prompt_tokens_details": {
+        "cached_tokens": 182
+      }
+    },
+    "id": "chatcmpl-1Ym4RQpC1DcglHEF7gXm5TBjp25oz4vR",
+    "timings": {
+      "cache_n": 182,
+      "prompt_n": 84,
+      "prompt_ms": 51.239,
+      "prompt_per_token_ms": 0.6099880952380952,
+      "prompt_per_second": 1639.3762563672203,
+      "predicted_n": 153,
+      "predicted_ms": 1043.146,
+      "predicted_per_token_ms": 6.862802631578947,
+      "predicted_per_second": 145.71306413483828
+    }
+  },
+  "score": {
+    "case": "en01",
+    "language": "en",
+    "split": "development",
+    "tags": [
+      "explicit"
+    ],
+    "schema_valid": true,
+    "text_preserved": true,
+    "units": [
+      {
+        "text": "Mira opened the window. ",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [
+          "NARRATOR"
+        ],
+        "kind_correct": true,
+        "speaker_correct": true
+      },
+      {
+        "text": "\"The rain has stopped,\"",
+        "kind": "dialogue",
+        "expected": "Mira",
+        "observed": [
+          "Mira"
+        ],
+        "kind_correct": true,
+        "speaker_correct": true
+      },
+      {
+        "text": " she said. Leo picked up his coat. ",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [
+          "Leo"
+        ],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": "\"Then we can leave,\"",
+        "kind": "dialogue",
+        "expected": "Leo",
+        "observed": [
+          "Leo"
+        ],
+        "kind_correct": true,
+        "speaker_correct": true
+      },
+      {
+        "text": " he replied.",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [
+          "Leo"
+        ],
+        "kind_correct": false,
+        "speaker_correct": false
+      }
+    ],
+    "seconds": 1.1034994169604033,
+    "error": null,
+    "finish_reason": "stop"
+  }
+}

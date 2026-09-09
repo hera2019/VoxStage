@@ -1,0 +1,85 @@
+{
+  "input": "方晴拿出纸条，上面只有“不要开门”四个字。她把纸条收好，没有读出声。\n门外传来一句：“里面有人吗？”方晴听不出是谁。",
+  "response": {
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"labels\":[{\"id\":\"u0\",\"kind\":\"narration\",\"speaker\":\"NARRATOR\"},{\"id\":\"u1\",\"kind\":\"dialogue\",\"speaker\":\"方晴\"},{\"id\":\"u2\",\"kind\":\"narration\",\"speaker\":\"NARRATOR\"},{\"id\":\"u3\",\"kind\":\"dialogue\",\"speaker\":\"门外的人\"},{\"id\":\"u4\",\"kind\":\"narration\",\"speaker\":\"NARRATOR\"}]}"
+        }
+      }
+    ],
+    "created": 1788959109,
+    "model": "qwen25-15b-q4-anchored",
+    "system_fingerprint": "b10700-bebc9350e",
+    "object": "chat.completion",
+    "usage": {
+      "completion_tokens": 87,
+      "prompt_tokens": 280,
+      "total_tokens": 367,
+      "prompt_tokens_details": {
+        "cached_tokens": 182
+      }
+    },
+    "id": "chatcmpl-OCIauoSslnUIJdJi0i8yYSqDU035XxXW",
+    "timings": {
+      "cache_n": 182,
+      "prompt_n": 98,
+      "prompt_ms": 66.79,
+      "prompt_per_token_ms": 0.681530612244898,
+      "prompt_per_second": 1467.2855217846982,
+      "predicted_n": 87,
+      "predicted_ms": 685.876,
+      "predicted_per_token_ms": 7.975302325581395,
+      "predicted_per_second": 125.38709620981052
+    }
+  },
+  "score": {
+    "case": "zh10",
+    "language": "zh",
+    "split": "fresh_holdout",
+    "tags": [
+      "fresh_probe"
+    ],
+    "schema_valid": true,
+    "text_preserved": true,
+    "units": [
+      {
+        "text": "方晴拿出纸条，上面只有“不要开门”四个字。她把纸条收好，没有读出声。\n门外传来一句：",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [
+          "NARRATOR",
+          "方晴"
+        ],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": "“里面有人吗？”",
+        "kind": "dialogue",
+        "expected": "UNKNOWN",
+        "observed": [
+          "门外的人"
+        ],
+        "kind_correct": true,
+        "speaker_correct": false
+      },
+      {
+        "text": "方晴听不出是谁。",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [
+          "NARRATOR"
+        ],
+        "kind_correct": true,
+        "speaker_correct": true
+      }
+    ],
+    "seconds": 0.7575476670172065,
+    "error": null,
+    "finish_reason": "stop"
+  }
+}

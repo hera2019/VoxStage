@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "project_id": "0f2c60769e134f2199b8703d7a228997",
+  "checks": [
+    "Chinese readback shows two grammatical 的/得 equivalences, no automatic discrepancy",
+    "Selected 1.1 then 1.2 rate through UI",
+    "Audio DOM playbackRate=1.2; source duration remains 12 seconds",
+    "Export links appeared for current revision at selected rate"
+  ],
+  "browser_pitch_note": "Pitch preservation requested in standard/WebKit-compatible code; runtime DOM snapshot did not expose that property, so no direct property verification is claimed",
+  "human_quality_acceptance": false,
+  "judge": "Astra; actual browser state"
+}

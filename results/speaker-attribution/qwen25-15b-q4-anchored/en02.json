@@ -1,0 +1,124 @@
+{
+  "input": "Nora looked at Eli. \"Do you have the key?\" she asked.\n\"Right here,\" Eli said, holding it up.\n\"Good. Open the door,\" Nora said.",
+  "response": {
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\n  \"labels\": [\n    {\n      \"id\": \"u0\",\n      \"kind\": \"narration\",\n      \"speaker\": \"NARRATOR\"\n    },\n    {\n      \"id\": \"u1\",\n      \"kind\": \"narration\",\n      \"speaker\": \"NARRATOR\"\n    },\n    {\n      \"id\": \"u2\",\n      \"kind\": \"narration\",\n      \"speaker\": \"NARRATOR\"\n    },\n    {\n      \"id\": \"u3\",\n      \"kind\": \"narration\",\n      \"speaker\": \"NARRATOR\"\n    },\n    {\n      \"id\": \"u4\",\n      \"kind\": \"narration\",\n      \"speaker\": \"NARRATOR\"\n    },\n    {\n      \"id\": \"u5\",\n      \"kind\": \"narration\",\n      \"speaker\": \"NARRATOR\"\n    },\n    {\n      \"id\": \"u6\",\n      \"kind\": \"narration\",\n      \"speaker\": \"NARRATOR\"\n    }\n  ]\n}"
+        }
+      }
+    ],
+    "created": 1788959098,
+    "model": "qwen25-15b-q4-anchored",
+    "system_fingerprint": "b10700-bebc9350e",
+    "object": "chat.completion",
+    "usage": {
+      "completion_tokens": 224,
+      "prompt_tokens": 298,
+      "total_tokens": 522,
+      "prompt_tokens_details": {
+        "cached_tokens": 182
+      }
+    },
+    "id": "chatcmpl-b4RFvC6KR1MOXG3NZcTXVocxQjhysQEp",
+    "timings": {
+      "cache_n": 182,
+      "prompt_n": 116,
+      "prompt_ms": 64.058,
+      "prompt_per_token_ms": 0.5522241379310345,
+      "prompt_per_second": 1810.8589091136155,
+      "predicted_n": 224,
+      "predicted_ms": 1673.254,
+      "predicted_per_token_ms": 7.503381165919282,
+      "predicted_per_second": 133.27325080352418
+    }
+  },
+  "score": {
+    "case": "en02",
+    "language": "en",
+    "split": "development",
+    "tags": [
+      "turn_taking"
+    ],
+    "schema_valid": true,
+    "text_preserved": true,
+    "units": [
+      {
+        "text": "Nora looked at Eli. ",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [
+          "NARRATOR"
+        ],
+        "kind_correct": true,
+        "speaker_correct": true
+      },
+      {
+        "text": "\"Do you have the key?\"",
+        "kind": "dialogue",
+        "expected": "Nora",
+        "observed": [
+          "NARRATOR"
+        ],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": " she asked.\n",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [
+          "NARRATOR"
+        ],
+        "kind_correct": true,
+        "speaker_correct": true
+      },
+      {
+        "text": "\"Right here,\"",
+        "kind": "dialogue",
+        "expected": "Eli",
+        "observed": [
+          "NARRATOR"
+        ],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": " Eli said, holding it up.\n",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [
+          "NARRATOR"
+        ],
+        "kind_correct": true,
+        "speaker_correct": true
+      },
+      {
+        "text": "\"Good. Open the door,\"",
+        "kind": "dialogue",
+        "expected": "Nora",
+        "observed": [
+          "NARRATOR"
+        ],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": " Nora said.",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [
+          "NARRATOR"
+        ],
+        "kind_correct": true,
+        "speaker_correct": true
+      }
+    ],
+    "seconds": 1.743550083017908,
+    "error": null,
+    "finish_reason": "stop"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "status": "PASS",
+  "judge": "Astra / actual local browser interaction",
+  "project_id": "876533cfd8d44c1cb227566b5aae71c7",
+  "criteria": {
+    "waveform_drag": "Dragged approx original 6.00–10.03 s; selected duration 4.03 s displayed",
+    "saved_region_edit": "Changed existing 5.88–12.00 s region from 1.35 to 1.40 via slider; saved without overlap error",
+    "undo_reload": "Undo and page reload restored 5.88–12.00 s at 1.35",
+    "cue_seek": "Clicked 7.50–8.34 s cue; original audio started at 7.101143 s and auto-paused at 8.984482 s, near requested end 8.94 s",
+    "processed_playback": {
+      "duration_seconds": 9.892958,
+      "playback_rate": 1,
+      "explanation": "Tempo already applied to preview file; browser does not multiply speed again"
+    },
+    "original_playback": {
+      "duration_seconds": 12,
+      "playback_rate": 1
+    },
+    "export_url": "/api/projects/876533cfd8d44c1cb227566b5aae71c7/export/6/full.wav",
+    "layout": "Waveform, selection fields and buttons inspected at natural 640 px browser width; no explicit viewport override"
+  },
+  "human_quality_accepted": false,
+  "known_limitation": "Original pace variation not detected in this real sample; explicit manual listening notice is displayed."
+}

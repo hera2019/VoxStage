@@ -1,0 +1,18 @@
+{
+  "status": "PASS",
+  "surface": "Codex desktop in-app browser",
+  "checks": [
+    "New fixed-voice controls visible",
+    "Release narrator: only narrator lines pending",
+    "Undo release: narrator fixed state and four ready lines restored",
+    "Fix Mira: only Mira pending; narrator remains fixed",
+    "Undo Mira fix and reload: original fixed narrator and four ready lines retained"
+  ],
+  "not_checked": [
+    "No audible playback during this browser check",
+    "Chinese fixed-reference listening",
+    "Other voices and mobile devices"
+  ],
+  "reviewer": "Astra",
+  "date": "2026-09-09"
+}

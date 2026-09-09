@@ -1,0 +1,156 @@
+{
+  "date": "2026-09-09",
+  "synthetic_audio": true,
+  "consent": {
+    "confirmed": true,
+    "scope": "fixed preset-generated synthetic reference only",
+    "basis": "user accepted proposed experiment: 好的，你再试试看"
+  },
+  "runtime": "mlx-audio-0.5.1",
+  "model": {
+    "repo": "mlx-community/Qwen3-TTS-12Hz-0.6B-Base-bf16",
+    "revision": "1eccf1cb2519b5a4e8a95b5f0544f3303568164f",
+    "sha256": {
+      "model.safetensors": "d7c7ed3e3464e3e59de0f955b3755891fa8319ff061c3f0307fe2e1343bc122d",
+      "speech_tokenizer/model.safetensors": "836b7b357f5ea43e889936a3709af68dfe3751881acefe4ecf0dbd30ba571258"
+    }
+  },
+  "reference": {
+    "synthetic_audio": true,
+    "text": "Rain tapped against the window.",
+    "source_model": "mlx-community/Qwen3-TTS-12Hz-0.6B-CustomVoice-bf16@6415d95f88be018ff9e46813119dc3bc12261328",
+    "source_fingerprint": "8c3dd3e73653f7427d0a97cd05065e5109fa4347fd427451e9e1550cde1d8ca6",
+    "sha256": "98ff5dafe716610138027f3c5bb9067e3457b5e26aa5ad058ffc12ffed574646",
+    "samples": 80640,
+    "sample_rate": 24000,
+    "duration_seconds": 3.36,
+    "transcript_status": "source input text; no independent ASR verification"
+  },
+  "parameters": {
+    "temperature": 0.6,
+    "top_k": 50,
+    "top_p": 1.0,
+    "repetition_penalty": 1.5,
+    "max_tokens": 2048
+  },
+  "comparison_limit": "Base+fixed reference vs CustomVoice; checkpoint and effective repetition penalty also differ, so any improvement cannot be attributed to reference alone.",
+  "quality_acceptance": "User accepted the demonstrated English fixed-reference narrator set; broader product quality remains unverified.",
+  "cases": [
+    {
+      "samples": 57600,
+      "sample_rate": 24000,
+      "speech_start_sample": 6720,
+      "speech_end_sample": 55920,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "processing_version": "pcm-peak-rms-v1",
+      "synthetic_audio": true,
+      "name": "opening",
+      "text": "Rain tapped against the window.",
+      "seed": 260909,
+      "generation_seconds": 3.530988791026175,
+      "mlx_peak_memory_bytes": 6037168221,
+      "reference_sha256": "98ff5dafe716610138027f3c5bb9067e3457b5e26aa5ad058ffc12ffed574646",
+      "reference_cache_entries": 1,
+      "status": "generated",
+      "path": "user-data/fixed-reference-check/opening.wav",
+      "sha256": "83732b70b8d666822ccbadb84d34cf769ff6c77e27f20ee6cdb5820266a4b145"
+    },
+    {
+      "samples": 63360,
+      "sample_rate": 24000,
+      "speech_start_sample": 1920,
+      "speech_end_sample": 54000,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "processing_version": "pcm-peak-rms-v1",
+      "synthetic_audio": true,
+      "name": "closing",
+      "text": "They smiled and went back to their books.",
+      "seed": 260909,
+      "generation_seconds": 1.3735129580600187,
+      "mlx_peak_memory_bytes": 6005250965,
+      "reference_sha256": "98ff5dafe716610138027f3c5bb9067e3457b5e26aa5ad058ffc12ffed574646",
+      "reference_cache_entries": 1,
+      "status": "generated",
+      "path": "user-data/fixed-reference-check/closing.wav",
+      "sha256": "8e23224cb0cb83b827ba543bf1959a245221ee0fcd4ae58858870c3ca93456e6"
+    },
+    {
+      "samples": 72960,
+      "sample_rate": 24000,
+      "speech_start_sample": 3840,
+      "speech_end_sample": 71280,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "processing_version": "pcm-peak-rms-v1",
+      "synthetic_audio": true,
+      "name": "new-line",
+      "text": "Later that evening, the house was quiet again.",
+      "seed": 260909,
+      "generation_seconds": 1.3115774159086868,
+      "mlx_peak_memory_bytes": 6216572349,
+      "reference_sha256": "98ff5dafe716610138027f3c5bb9067e3457b5e26aa5ad058ffc12ffed574646",
+      "reference_cache_entries": 1,
+      "status": "generated",
+      "path": "user-data/fixed-reference-check/new-line.wav",
+      "sha256": "6a4fd26d9095ac6d03d6aa8a0b34170be164cf2ce2c1432a685c2dc5c14402c5"
+    },
+    {
+      "samples": 76800,
+      "sample_rate": 24000,
+      "speech_start_sample": 4800,
+      "speech_end_sample": 73920,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "processing_version": "pcm-peak-rms-v1",
+      "synthetic_audio": true,
+      "name": "closing-retake",
+      "text": "They smiled and went back to their books.",
+      "seed": 260910,
+      "generation_seconds": 1.3451472079614177,
+      "mlx_peak_memory_bytes": 6301146789,
+      "reference_sha256": "98ff5dafe716610138027f3c5bb9067e3457b5e26aa5ad058ffc12ffed574646",
+      "reference_cache_entries": 1,
+      "status": "generated",
+      "path": "user-data/fixed-reference-check/closing-retake.wav",
+      "sha256": "cf6cda42f9b04da4a55767d6b2783fb4f87683163714ae32aaf2e2ce97acbe52"
+    }
+  ],
+  "comparisons": [
+    {
+      "type": "original CustomVoice 0.9 pair",
+      "synthetic_audio": true,
+      "path": "user-data/fixed-reference-check/A-original-narrator.wav",
+      "sha256": "c670898659aca05ecc569da4522ec671b1b93e4d2c95ddec4973bb60216d6540"
+    },
+    {
+      "type": "previous CustomVoice 0.6 pair",
+      "synthetic_audio": true,
+      "path": "user-data/fixed-reference-check/B-lower-randomness-narrator.wav",
+      "sha256": "f17d9d8beb94f9a772bee1195d1d625d387d3ba0bbf2ae82d3825946d46df210"
+    },
+    {
+      "type": "Base fixed-reference pair",
+      "synthetic_audio": true,
+      "path": "user-data/fixed-reference-check/C-fixed-reference-narrator.wav",
+      "sha256": "825384e5af7356ed01f1dcfee4fd59465d908082a55fd151e78f0d1b7eac92fd"
+    },
+    {
+      "type": "Base held-out line then alternate-seed closing retake",
+      "synthetic_audio": true,
+      "path": "user-data/fixed-reference-check/D-new-line-and-retake.wav",
+      "sha256": "223da042fbd62dd4efa2fd976961d3fda0de03da28107829c051705c786a8f2e"
+    }
+  ],
+  "load_seconds": 2.404390124953352,
+  "technical_status": "PASS",
+  "listening_acceptance": {
+    "judge": "user",
+    "feedback": "OK，no problem！",
+    "status": "accepted for the demonstrated English narrator comparison",
+    "scope": [
+      "opening",
+      "closing",
+      "new-line",
+      "closing-retake"
+    ],
+    "limits": "No separate numeric ratings or independent ASR verification; other voices, languages and longer scripts untested."
+  }
+}

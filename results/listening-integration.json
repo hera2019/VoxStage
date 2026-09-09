@@ -1,0 +1,112 @@
+{
+  "status": "PASS",
+  "project_id": "dc06ae381ea44366bc19c4c01830c46a",
+  "name": "听稿标错 · 验证样例",
+  "job": {
+    "kind": "generating",
+    "status": "completed",
+    "total": 1,
+    "completed": 1,
+    "failed": 0,
+    "current_segment": null
+  },
+  "changed_segments": [
+    "a16b371b930e46a29ddaed7040b57395"
+  ],
+  "first_audio": {
+    "samples": 42240,
+    "sample_rate": 24000,
+    "speech_start_sample": 4080,
+    "speech_end_sample": 40800,
+    "speech_boundary_method": "estimated_rms_10ms",
+    "processing_version": "pcm-peak-rms-v1",
+    "synthetic_audio": true,
+    "fingerprint": "f95ed4e56152a157ed99f9044ba58e0ee26cdd14532d0d18e8d3947891e0b7f3",
+    "engine": "mlx-community/Qwen3-TTS-12Hz-0.6B-Base-bf16@1eccf1cb2519b5a4e8a95b5f0544f3303568164f",
+    "load_seconds": 1.8444689590251073,
+    "generation_seconds": 2.185647499980405,
+    "mlx_peak_memory_bytes": 5681159773,
+    "seed": 260910,
+    "generation_parameters": {
+      "max_tokens": 2048,
+      "temperature": 0.6,
+      "top_k": 50,
+      "top_p": 1.0,
+      "repetition_penalty": 1.5
+    },
+    "reference_sha256": "98ff5dafe716610138027f3c5bb9067e3457b5e26aa5ad058ffc12ffed574646",
+    "generation_mode": "fixed_synthetic_reference"
+  },
+  "first_issue": {
+    "kind": "tail",
+    "note": "流程验证用标记，不代表实际音质异常。",
+    "marked_at": 1788944900.156924,
+    "source_fingerprint": "d2a7e0d76d871bd878cbb67db8b75f40069797653972706b8bc974153dc16551",
+    "audio_sha256": "83732b70b8d666822ccbadb84d34cf769ff6c77e27f20ee6cdb5820266a4b145",
+    "audio_stat": [
+      115244,
+      1788937184211020682
+    ],
+    "expected_text": "Rain tapped against the window."
+  },
+  "exported_report": {
+    "project_revision": 9,
+    "synthetic_audio": true,
+    "notice": "文字差异仅供复核；未发现差异不等于声音内容已获人工验收。",
+    "segments": [
+      {
+        "id": "a16b371b930e46a29ddaed7040b57395",
+        "text": "Rain tapped against the window.",
+        "check_status": "not_checked",
+        "content_check": null,
+        "listening_status": "needs_listening",
+        "listening_issue": {
+          "kind": "tail",
+          "note": "流程验证用标记，不代表实际音质异常。",
+          "marked_at": 1788944900.156924,
+          "source_fingerprint": "d2a7e0d76d871bd878cbb67db8b75f40069797653972706b8bc974153dc16551",
+          "audio_sha256": "83732b70b8d666822ccbadb84d34cf769ff6c77e27f20ee6cdb5820266a4b145",
+          "audio_stat": [
+            115244,
+            1788937184211020682
+          ],
+          "expected_text": "Rain tapped against the window."
+        }
+      },
+      {
+        "id": "b0b80580eea84ab6a587a466cde0a4e1",
+        "text": "Did you hear that?",
+        "check_status": "not_checked",
+        "content_check": null,
+        "listening_status": "none",
+        "listening_issue": null
+      },
+      {
+        "id": "d37817299a114e3c82ab196b595c2f65",
+        "text": "Just the wind. We are safe here.",
+        "check_status": "not_checked",
+        "content_check": null,
+        "listening_status": "none",
+        "listening_issue": null
+      },
+      {
+        "id": "34f77e9db6c9436ebc1af66bb01e1d60",
+        "text": "They smiled and went back to their books.",
+        "check_status": "not_checked",
+        "content_check": null,
+        "listening_status": "none",
+        "listening_issue": null
+      }
+    ]
+  },
+  "browser_checks": [
+    "Saved a clearly labelled workflow-test issue, not a real quality assertion",
+    "Retook only the marked sentence; new version needs listening",
+    "Renamed, archived and restored independent demo",
+    "Cleared issue, undid, and reloaded: issue restored",
+    "390px viewport: switch-project control works; document width equals viewport, no horizontal overflow; override reset"
+  ],
+  "original_audio_preserved": true,
+  "human_quality_acceptance": false,
+  "judge": "Astra; browser actions and persisted audio/manifest checks"
+}

@@ -1,0 +1,94 @@
+{
+  "input": "Mira told Leo, \"The guard said, 'Come back tomorrow,' and closed the gate.\" Leo sighed. \"Then tomorrow it is,\" he said.",
+  "response": {
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"segments\":[{\"text\":\"Mira told Leo, \\\"The guard said, 'Come back tomorrow,' and closed the gate.\\\"\",\"kind\":\"narration\",\"speaker\":\"NARRATOR\"},{\"text\":\"Leo sighed.\",\"kind\":\"narration\",\"speaker\":\"NARRATOR\"},{\"text\":\"\\\"Then tomorrow it is,\\\" he said.\",\"kind\":\"dialogue\",\"speaker\":\"Leo\"}]}"
+        }
+      }
+    ],
+    "created": 1788958929,
+    "model": "qwen3-4b-q8-schema",
+    "system_fingerprint": "b10700-bebc9350e",
+    "object": "chat.completion",
+    "usage": {
+      "completion_tokens": 78,
+      "prompt_tokens": 221,
+      "total_tokens": 299,
+      "prompt_tokens_details": {
+        "cached_tokens": 184
+      }
+    },
+    "id": "chatcmpl-73SsGGvuCizjPdSDqaCFLvEhWKooMBW0",
+    "timings": {
+      "cache_n": 184,
+      "prompt_n": 37,
+      "prompt_ms": 83.148,
+      "prompt_per_token_ms": 2.247243243243243,
+      "prompt_per_second": 444.9896569971617,
+      "predicted_n": 78,
+      "predicted_ms": 1305.974,
+      "predicted_per_token_ms": 16.9607012987013,
+      "predicted_per_second": 58.95982615274117
+    }
+  },
+  "score": {
+    "case": "en04",
+    "language": "en",
+    "split": "heldout",
+    "tags": [
+      "nested_quote"
+    ],
+    "schema_valid": true,
+    "text_preserved": false,
+    "units": [
+      {
+        "text": "Mira told Leo, ",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": "\"The guard said, 'Come back tomorrow,' and closed the gate.\"",
+        "kind": "dialogue",
+        "expected": "Mira",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": " Leo sighed. ",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": "\"Then tomorrow it is,\"",
+        "kind": "dialogue",
+        "expected": "Leo",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": " he said.",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      }
+    ],
+    "seconds": 1.3946845410391688,
+    "error": null,
+    "finish_reason": "stop"
+  }
+}

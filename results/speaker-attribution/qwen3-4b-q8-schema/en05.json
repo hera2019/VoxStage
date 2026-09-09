@@ -1,0 +1,78 @@
+{
+  "input": "Alex and Jamie waited behind the door. The room was completely dark.\n\"Do not move,\" someone whispered.\nNeither person stepped forward.",
+  "response": {
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"segments\":[{\"text\":\"Alex and Jamie waited behind the door. The room was completely dark.\",\"kind\":\"narration\",\"speaker\":\"NARRATOR\"},{\"text\":\"\\\"Do not move,\\\" someone whispered.\",\"kind\":\"dialogue\",\"speaker\":\"UNKNOWN\"},{\"text\":\"Neither person stepped forward.\",\"kind\":\"narration\",\"speaker\":\"NARRATOR\"}]}"
+        }
+      }
+    ],
+    "created": 1788958931,
+    "model": "qwen3-4b-q8-schema",
+    "system_fingerprint": "b10700-bebc9350e",
+    "object": "chat.completion",
+    "usage": {
+      "completion_tokens": 71,
+      "prompt_tokens": 215,
+      "total_tokens": 286,
+      "prompt_tokens_details": {
+        "cached_tokens": 184
+      }
+    },
+    "id": "chatcmpl-PAHk1TBJpRavc6zLkxzHMbByapQIb56f",
+    "timings": {
+      "cache_n": 184,
+      "prompt_n": 31,
+      "prompt_ms": 58.015,
+      "prompt_per_token_ms": 1.871451612903226,
+      "prompt_per_second": 534.3445660605015,
+      "predicted_n": 71,
+      "predicted_ms": 1162.784,
+      "predicted_per_token_ms": 16.6112,
+      "predicted_per_second": 60.200346753997295
+    }
+  },
+  "score": {
+    "case": "en05",
+    "language": "en",
+    "split": "heldout",
+    "tags": [
+      "ambiguous"
+    ],
+    "schema_valid": true,
+    "text_preserved": false,
+    "units": [
+      {
+        "text": "Alex and Jamie waited behind the door. The room was completely dark.\n",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": "\"Do not move,\"",
+        "kind": "dialogue",
+        "expected": "UNKNOWN",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": " someone whispered.\nNeither person stepped forward.",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      }
+    ],
+    "seconds": 1.2268839590251446,
+    "error": null,
+    "finish_reason": "stop"
+  }
+}

@@ -1,0 +1,89 @@
+# VoxStage：敏感文件与本地开发产物，首次提交前生效。
+# 内部资料仍保留在本地供协作者审核；公开版本另行整理。
+# 忽略规则不能移除已进入 Git 历史的内容，不用 git add -f 绕过。
+
+# 真人参考音、个人资料、实际用户工程
+private/
+secrets/
+credentials/
+user-data/
+*.voiceproject/
+*.voiceproject
+
+# 环境密钥和证书（不自动放行示例文件；需要时先检查）
+.env
+.env.*
+*.env
+.envrc
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+id_rsa*
+id_ed25519*
+credentials.json
+service-account*.json
+token.json
+tokens.json
+
+# 当前内部协作、讨论与实验记录，保留本地；不影响未来 docs/public/
+/AGENTS.md
+/CLAUDE.md
+/HERA协作说明.md
+/docs/decisions.md
+/docs/ai-lab-findings.md
+/docs/review-handoff.md
+/docs/design/mvp-design.md
+/docs/design/design-review.md
+/docs/design/feasibility-review-2026-09-09.md
+/docs/design/product-direction-v0.2.md
+
+# 参考和生成媒体默认不入库，今后公开合成 demo 需明确检查再调整规则
+*.wav
+*.mp3
+*.m4a
+*.aac
+*.flac
+*.aiff
+*.aif
+*.ogg
+*.opus
+*.mp4
+*.mov
+
+# 模型与缓存；不忽略源码中的 models/ 目录
+*.safetensors
+*.gguf
+*.pt
+*.pth
+*.ckpt
+*.onnx
+model-weights/
+.cache/
+.huggingface/
+cache/
+logs/
+*.log
+exports/
+
+# 本机环境、构建产物
+.DS_Store
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+node_modules/
+.pnpm-store/
+dist/
+build/
+.idea/
+*.local
+
+# 最后更新：2026-09-09 · Astra
+
+# 最新内部审阅，含个人背景
+/docs/design/claude-hera-review-2026-09-09.md

@@ -1,0 +1,79 @@
+{
+  "input": "门上写着“今天休息”。林岚心想：难道白跑一趟？她没有开口。\n“我们等五分钟吧。”周明说。",
+  "response": {
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"segments\":[{\"text\":\"门上写着“今天休息”。\",\"kind\":\"narration\",\"speaker\":\"NARRATOR\"},{\"text\":\"林岚心想：难道白跑一趟？\",\"kind\":\"narration\",\"speaker\":\"UNKNOWN\"},{\"text\":\"她没有开口。\",\"kind\":\"narration\",\"speaker\":\"NARRATOR\"},{\"text\":\"我们等五分钟吧。\",\"kind\":\"dialogue\",\"speaker\":\"周明\"}]}"
+        }
+      }
+    ],
+    "created": 1788958918,
+    "model": "qwen3-4b-q8-schema",
+    "system_fingerprint": "b10700-bebc9350e",
+    "object": "chat.completion",
+    "usage": {
+      "completion_tokens": 86,
+      "prompt_tokens": 219,
+      "total_tokens": 305,
+      "prompt_tokens_details": {
+        "cached_tokens": 184
+      }
+    },
+    "id": "chatcmpl-ikyx2GUWvJYbUZjfoPfQO92uaAfw4ugr",
+    "timings": {
+      "cache_n": 184,
+      "prompt_n": 35,
+      "prompt_ms": 78.943,
+      "prompt_per_token_ms": 2.255514285714286,
+      "prompt_per_second": 443.3578658019077,
+      "predicted_n": 86,
+      "predicted_ms": 1441.203,
+      "predicted_per_token_ms": 16.955329411764705,
+      "predicted_per_second": 58.978506150764325
+    }
+  },
+  "score": {
+    "case": "zh06",
+    "language": "zh",
+    "split": "heldout",
+    "tags": [
+      "written_quote",
+      "thought"
+    ],
+    "schema_valid": true,
+    "text_preserved": false,
+    "units": [
+      {
+        "text": "门上写着“今天休息”。林岚心想：难道白跑一趟？她没有开口。\n",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": "“我们等五分钟吧。”",
+        "kind": "dialogue",
+        "expected": "周明",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": "周明说。",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      }
+    ],
+    "seconds": 1.5275625410722569,
+    "error": null,
+    "finish_reason": "stop"
+  }
+}

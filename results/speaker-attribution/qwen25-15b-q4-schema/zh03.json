@@ -1,0 +1,103 @@
+{
+  "input": "周明在车站等林岚，大家都叫周明老周。\n“这边！”老周挥了挥手。\n林岚跑过来，把地图递给周明。\n“你看看路线。”她说。\n老周展开地图，点头道：“我们走南门。”",
+  "response": {
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\n  \"segments\": [\n    {\n      \"text\": \"周明在车站等林岚，大家都叫周明老周。\",\n      \"kind\": \"narration\",\n      \"speaker\": \"NARRATOR\"\n    },\n    {\n      \"text\": \"“这边！”老周挥了挥手。\",\n      \"kind\": \"narration\",\n      \"speaker\": \"NARRATOR\"\n    },\n    {\n      \"text\": \"林岚跑过来，把地图递给周明。\",\n      \"kind\": \"narration\",\n      \"speaker\": \"NARRATOR\"\n    },\n    {\n      \"text\": \"“你看看路线。”她说。\",\n      \"kind\": \"narration\",\n      \"speaker\": \"NARRATOR\"\n    },\n    {\n      \"text\": \"老周展开地图，点头道：“我们走南门。”\",\n      \"kind\": \"narration\",\n      \"speaker\": \"NARRATOR\"\n    }\n  ]\n}"
+        }
+      }
+    ],
+    "created": 1788958942,
+    "model": "qwen25-15b-q4-schema",
+    "system_fingerprint": "b10700-bebc9350e",
+    "object": "chat.completion",
+    "usage": {
+      "completion_tokens": 205,
+      "prompt_tokens": 244,
+      "total_tokens": 449,
+      "prompt_tokens_details": {
+        "cached_tokens": 184
+      }
+    },
+    "id": "chatcmpl-2ZxF4EbmRAxIihthyu1L5o4SxMmjDbbi",
+    "timings": {
+      "cache_n": 184,
+      "prompt_n": 60,
+      "prompt_ms": 40.605,
+      "prompt_per_token_ms": 0.67675,
+      "prompt_per_second": 1477.6505356483194,
+      "predicted_n": 205,
+      "predicted_ms": 1487.65,
+      "predicted_per_token_ms": 7.292401960784314,
+      "predicted_per_second": 137.12902900547843
+    }
+  },
+  "score": {
+    "case": "zh03",
+    "language": "zh",
+    "split": "heldout",
+    "tags": [
+      "alias",
+      "cross_paragraph"
+    ],
+    "schema_valid": true,
+    "text_preserved": false,
+    "units": [
+      {
+        "text": "周明在车站等林岚，大家都叫周明老周。\n",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": "“这边！”",
+        "kind": "dialogue",
+        "expected": "周明",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": "老周挥了挥手。\n林岚跑过来，把地图递给周明。\n",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": "“你看看路线。”",
+        "kind": "dialogue",
+        "expected": "林岚",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": "她说。\n老周展开地图，点头道：",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": "“我们走南门。”",
+        "kind": "dialogue",
+        "expected": "周明",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      }
+    ],
+    "seconds": 1.5333371249726042,
+    "error": null,
+    "finish_reason": "stop"
+  }
+}

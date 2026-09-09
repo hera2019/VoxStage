@@ -1,0 +1,94 @@
+{
+  "input": "Mira opened the window. \"The rain has stopped,\" she said. Leo picked up his coat. \"Then we can leave,\" he replied.",
+  "response": {
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```json\n[\n    {\n        \"text\": \"Mira opened the window. \\\"The rain has stopped,\\\" she said. Leo picked up his coat. \\\"Then we can leave,\\\" he replied.\",\n        \"kind\": \"narration or dialogue\",\n        \"speaker\": \"UNKNOWN\"\n    }\n]\n```"
+        }
+      }
+    ],
+    "created": 1788958774,
+    "model": "qwen25-15b-q4",
+    "system_fingerprint": "b10700-bebc9350e",
+    "object": "chat.completion",
+    "usage": {
+      "completion_tokens": 64,
+      "prompt_tokens": 219,
+      "total_tokens": 283,
+      "prompt_tokens_details": {
+        "cached_tokens": 184
+      }
+    },
+    "id": "chatcmpl-zINg3ER4bgY8jecuoYKSyuWwbuP9N3eQ",
+    "timings": {
+      "cache_n": 184,
+      "prompt_n": 35,
+      "prompt_ms": 38.728,
+      "prompt_per_token_ms": 1.1065142857142858,
+      "prompt_per_second": 903.7388969221236,
+      "predicted_n": 64,
+      "predicted_ms": 445.95,
+      "predicted_per_token_ms": 7.078571428571428,
+      "predicted_per_second": 141.27144298688194
+    }
+  },
+  "score": {
+    "case": "en01",
+    "language": "en",
+    "split": "development",
+    "tags": [
+      "explicit"
+    ],
+    "schema_valid": false,
+    "text_preserved": false,
+    "units": [
+      {
+        "text": "Mira opened the window. ",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": "\"The rain has stopped,\"",
+        "kind": "dialogue",
+        "expected": "Mira",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": " she said. Leo picked up his coat. ",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": "\"Then we can leave,\"",
+        "kind": "dialogue",
+        "expected": "Leo",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": " he replied.",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      }
+    ],
+    "seconds": 0.48980091605335474,
+    "error": null,
+    "finish_reason": "stop"
+  }
+}

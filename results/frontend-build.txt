@@ -1,0 +1,13 @@
+
+> voxstage-ui@0.1.0 build
+> tsc --noEmit && vite build
+
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 28 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.42 kB │ gzip:  0.32 kB
+dist/assets/index-CkutNJap.css    7.56 kB │ gzip:  2.40 kB
+dist/assets/index-B7nEi8bj.js   205.37 kB │ gzip: 65.16 kB
+✓ built in 474ms

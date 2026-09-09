@@ -1,0 +1,63 @@
+{
+  "date": "2026-09-09",
+  "status": "PASS",
+  "judge": "Astra; browser accessibility state and persisted job records",
+  "scope": "Desktop UI workflow, not audio quality or mobile layout acceptance",
+  "project_id": "0389b87c86a24bf18c0a6948731a3743",
+  "revision": 35,
+  "checks": [
+    "English page displays one review item, expected the and recognized a",
+    "Clicked single-sentence check; one completed, zero failed",
+    "Export displays full audio, subtitles, timeline and content-check report",
+    "Chinese page displays four matching sentences and zero review items",
+    "English Leo left selected for human listening; no confirmation recorded"
+  ],
+  "job": {
+    "kind": "checking",
+    "status": "completed",
+    "total": 1,
+    "completed": 1,
+    "failed": 0,
+    "current_segment": null
+  },
+  "checked_segment": {
+    "source_fingerprint": "328a77587807f63b84d316632845511dbecad059078cc6e436781ea4c197cb8c",
+    "expected_text": "Just the wind. We are safe here.",
+    "checker_id": "whisper.cpp:251050807bbe32347007c7db7e42199289e6fc24dda60df8469b85e5922bc9ce:394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2:630efba6923ff5ca8eda220aff775dd78b4cdd42ca8d52b6de9271480ed8437a:spoken-units-v1",
+    "checked_at": 1788941556.685845,
+    "reviewed": false,
+    "recognized_text": "Just a wind. We are safe here.",
+    "seconds": 1.1981409169966355,
+    "model": {
+      "repo": "ggerganov/whisper.cpp",
+      "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+      "file": "ggml-large-v3-turbo-q5_0.bin",
+      "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
+    },
+    "decoding": {
+      "beam_size": 5,
+      "best_of": 5,
+      "temperature": 0,
+      "temperature_inc": 0,
+      "max_context": 0,
+      "no_fallback": true,
+      "threads": 4
+    },
+    "log_id": "9e4aad20765e41bd8632927a215e7e95",
+    "audio_sha256": "4ce0d23cb5ffb1c60feaf554bffc3cfdf338412167b445628cbcb12bb8e67fd5",
+    "status": "review",
+    "differences": [
+      {
+        "kind": "replace",
+        "expected": "the",
+        "recognized": "a"
+      }
+    ],
+    "normalization": "spoken-units-v1",
+    "audio_stat": [
+      211244,
+      1788937179410607762
+    ]
+  },
+  "human_audio_confirmation": false
+}

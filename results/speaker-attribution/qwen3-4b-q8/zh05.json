@@ -1,0 +1,78 @@
+{
+  "input": "陈露和王悦都躲在门后，屋里没有灯。\n“别出声。”黑暗中有人轻声说。\n两个人都没有动。",
+  "response": {
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"segments\":[{\"text\":\"陈露和王悦都躲在门后，屋里没有灯。\",\"kind\":\"narration\",\"speaker\":\"NARRATOR\"},{\"text\":\"\\\"别出声。\\\"黑暗中有人轻声说。\",\"kind\":\"dialogue\",\"speaker\":\"UNKNOWN\"},{\"text\":\"两个人都没有动。\",\"kind\":\"narration\",\"speaker\":\"NARRATOR\"}]}"
+        }
+      }
+    ],
+    "created": 1788958742,
+    "model": "qwen3-4b-q8",
+    "system_fingerprint": "b10700-bebc9350e",
+    "object": "chat.completion",
+    "usage": {
+      "completion_tokens": 78,
+      "prompt_tokens": 219,
+      "total_tokens": 297,
+      "prompt_tokens_details": {
+        "cached_tokens": 184
+      }
+    },
+    "id": "chatcmpl-QMdZR9gx6yhRVL33xPmth9PtP3PyronQ",
+    "timings": {
+      "cache_n": 184,
+      "prompt_n": 35,
+      "prompt_ms": 79.517,
+      "prompt_per_token_ms": 2.2719142857142858,
+      "prompt_per_second": 440.1574506080461,
+      "predicted_n": 78,
+      "predicted_ms": 1277.094,
+      "predicted_per_token_ms": 16.585636363636365,
+      "predicted_per_second": 60.29313425636641
+    }
+  },
+  "score": {
+    "case": "zh05",
+    "language": "zh",
+    "split": "heldout",
+    "tags": [
+      "ambiguous"
+    ],
+    "schema_valid": true,
+    "text_preserved": false,
+    "units": [
+      {
+        "text": "陈露和王悦都躲在门后，屋里没有灯。\n",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": "“别出声。”",
+        "kind": "dialogue",
+        "expected": "UNKNOWN",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": "黑暗中有人轻声说。\n两个人都没有动。",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      }
+    ],
+    "seconds": 1.3618264580145478,
+    "error": null,
+    "finish_reason": "stop"
+  }
+}

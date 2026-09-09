@@ -1,0 +1,132 @@
+{
+  "annotation_by": "Astra before anchored runs; pending human audit",
+  "cases": [
+    {
+      "id": "zh09",
+      "language": "zh",
+      "split": "fresh_holdout",
+      "tags": [
+        "fresh_probe"
+      ],
+      "source": "Astra original, frozen before anchored outputs",
+      "text": "顾雨把红伞递给何川。“谢谢，我明天还你。”何川说。\n顾雨转身走了两步，又回头提醒：“不用着急，周五之前就好。”",
+      "gold": [
+        {
+          "text": "顾雨把红伞递给何川。",
+          "kind": "narration",
+          "speaker": "NARRATOR"
+        },
+        {
+          "text": "“谢谢，我明天还你。”",
+          "kind": "dialogue",
+          "speaker": "何川"
+        },
+        {
+          "text": "何川说。\n顾雨转身走了两步，又回头提醒：",
+          "kind": "narration",
+          "speaker": "NARRATOR"
+        },
+        {
+          "text": "“不用着急，周五之前就好。”",
+          "kind": "dialogue",
+          "speaker": "顾雨"
+        }
+      ],
+      "aliases": {}
+    },
+    {
+      "id": "zh10",
+      "language": "zh",
+      "split": "fresh_holdout",
+      "tags": [
+        "fresh_probe"
+      ],
+      "source": "Astra original, frozen before anchored outputs",
+      "text": "方晴拿出纸条，上面只有“不要开门”四个字。她把纸条收好，没有读出声。\n门外传来一句：“里面有人吗？”方晴听不出是谁。",
+      "gold": [
+        {
+          "text": "方晴拿出纸条，上面只有“不要开门”四个字。她把纸条收好，没有读出声。\n门外传来一句：",
+          "kind": "narration",
+          "speaker": "NARRATOR"
+        },
+        {
+          "text": "“里面有人吗？”",
+          "kind": "dialogue",
+          "speaker": "UNKNOWN"
+        },
+        {
+          "text": "方晴听不出是谁。",
+          "kind": "narration",
+          "speaker": "NARRATOR"
+        }
+      ],
+      "aliases": {}
+    },
+    {
+      "id": "en09",
+      "language": "en",
+      "split": "fresh_holdout",
+      "tags": [
+        "fresh_probe"
+      ],
+      "source": "Astra original, frozen before anchored outputs",
+      "text": "Iris handed the red umbrella to Ben. \"Thanks. I will return it tomorrow,\" Ben said.\nIris walked a few steps, then turned back. \"There is no hurry. Friday is fine,\" she added.",
+      "gold": [
+        {
+          "text": "Iris handed the red umbrella to Ben. ",
+          "kind": "narration",
+          "speaker": "NARRATOR"
+        },
+        {
+          "text": "\"Thanks. I will return it tomorrow,\"",
+          "kind": "dialogue",
+          "speaker": "Ben"
+        },
+        {
+          "text": " Ben said.\nIris walked a few steps, then turned back. ",
+          "kind": "narration",
+          "speaker": "NARRATOR"
+        },
+        {
+          "text": "\"There is no hurry. Friday is fine,\"",
+          "kind": "dialogue",
+          "speaker": "Iris"
+        },
+        {
+          "text": " she added.",
+          "kind": "narration",
+          "speaker": "NARRATOR"
+        }
+      ],
+      "aliases": {}
+    },
+    {
+      "id": "en10",
+      "language": "en",
+      "split": "fresh_holdout",
+      "tags": [
+        "fresh_probe"
+      ],
+      "source": "Astra original, frozen before anchored outputs",
+      "text": "Tess found a note that read \"Do not open the door.\" She put it away without reading it aloud.\nA voice outside called, \"Is anyone in there?\" Tess could not recognize the speaker.",
+      "gold": [
+        {
+          "text": "Tess found a note that read \"Do not open the door.\" She put it away without reading it aloud.\nA voice outside called, ",
+          "kind": "narration",
+          "speaker": "NARRATOR"
+        },
+        {
+          "text": "\"Is anyone in there?\"",
+          "kind": "dialogue",
+          "speaker": "UNKNOWN"
+        },
+        {
+          "text": " Tess could not recognize the speaker.",
+          "kind": "narration",
+          "speaker": "NARRATOR"
+        }
+      ],
+      "aliases": {}
+    }
+  ]
+}

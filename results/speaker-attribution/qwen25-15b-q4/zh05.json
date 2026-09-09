@@ -1,0 +1,78 @@
+{
+  "input": "陈露和王悦都躲在门后，屋里没有灯。\n“别出声。”黑暗中有人轻声说。\n两个人都没有动。",
+  "response": {
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```json\n{\n  \"segments\": [\n    {\n      \"text\": \"陈露和王悦都躲在门后，屋里没有灯。\",\n      \"kind\": \"narration or dialogue\",\n      \"speaker\": \"UNKNOWN\"\n    },\n    {\n      \"text\": \"“别出声。”黑暗中有人轻声说。\",\n      \"kind\": \"narration or dialogue\",\n      \"speaker\": \"UNKNOWN\"\n    },\n    {\n      \"text\": \"两个人都没有动。\",\n      \"kind\": \"narration or dialogue\",\n      \"speaker\": \"UNKNOWN\"\n    }\n  ]\n}\n```"
+        }
+      }
+    ],
+    "created": 1788958770,
+    "model": "qwen25-15b-q4",
+    "system_fingerprint": "b10700-bebc9350e",
+    "object": "chat.completion",
+    "usage": {
+      "completion_tokens": 125,
+      "prompt_tokens": 219,
+      "total_tokens": 344,
+      "prompt_tokens_details": {
+        "cached_tokens": 184
+      }
+    },
+    "id": "chatcmpl-UNWHckiPzxVUYEH4QI7iuvpID4Qrekpk",
+    "timings": {
+      "cache_n": 184,
+      "prompt_n": 35,
+      "prompt_ms": 38.917,
+      "prompt_per_token_ms": 1.1119142857142859,
+      "prompt_per_second": 899.34989850194,
+      "predicted_n": 125,
+      "predicted_ms": 963.717,
+      "predicted_per_token_ms": 7.77191129032258,
+      "predicted_per_second": 128.6684784018545
+    }
+  },
+  "score": {
+    "case": "zh05",
+    "language": "zh",
+    "split": "heldout",
+    "tags": [
+      "ambiguous"
+    ],
+    "schema_valid": false,
+    "text_preserved": false,
+    "units": [
+      {
+        "text": "陈露和王悦都躲在门后，屋里没有灯。\n",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": "“别出声。”",
+        "kind": "dialogue",
+        "expected": "UNKNOWN",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": "黑暗中有人轻声说。\n两个人都没有动。",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [],
+        "kind_correct": false,
+        "speaker_correct": false
+      }
+    ],
+    "seconds": 1.0083849580259994,
+    "error": null,
+    "finish_reason": "stop"
+  }
+}

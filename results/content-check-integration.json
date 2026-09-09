@@ -1,0 +1,690 @@
+{
+  "date": "2026-09-09",
+  "synthetic_audio": true,
+  "results": [
+    {
+      "project_id": "0ec22a07440547e1b4f3feb7b03adf60",
+      "language": "zh",
+      "job": {
+        "kind": "checking",
+        "status": "completed",
+        "total": 4,
+        "completed": 4,
+        "failed": 0,
+        "current_segment": null
+      },
+      "segments": [
+        {
+          "text": "雨点轻轻敲着窗。",
+          "speaker": "旁白",
+          "status": "match",
+          "result": {
+            "source_fingerprint": "b73d3faf5b98ebf751c5d09563a32b64f72ca83f2332ecb65a1160c5ad644e25",
+            "expected_text": "雨点轻轻敲着窗。",
+            "checker_id": "whisper.cpp:251050807bbe32347007c7db7e42199289e6fc24dda60df8469b85e5922bc9ce:394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2:630efba6923ff5ca8eda220aff775dd78b4cdd42ca8d52b6de9271480ed8437a:spoken-units-v1",
+            "checked_at": 1788941199.5762691,
+            "reviewed": false,
+            "recognized_text": "雨点轻轻敲着窗",
+            "seconds": 0.8829019169788808,
+            "model": {
+              "repo": "ggerganov/whisper.cpp",
+              "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+              "file": "ggml-large-v3-turbo-q5_0.bin",
+              "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
+            },
+            "decoding": {
+              "beam_size": 5,
+              "best_of": 5,
+              "temperature": 0,
+              "temperature_inc": 0,
+              "max_context": 0,
+              "no_fallback": true,
+              "threads": 4
+            },
+            "log_id": "fd95231b987542c8ba5abe7109fc6142",
+            "audio_sha256": "17b265394291e74898a4a962f59d0586a164c15eed59a6ccfa42b4f08a41f0fc",
+            "status": "match",
+            "differences": [],
+            "normalization": "spoken-units-v1",
+            "audio_stat": [
+              149804,
+              1788936699250059707
+            ]
+          }
+        },
+        {
+          "text": "你听见了吗？",
+          "speaker": "小林",
+          "status": "match",
+          "result": {
+            "source_fingerprint": "bb26524b4602bbd46e828dbf69c69a237b80fe1460e45df97c59cd8a158f9510",
+            "expected_text": "你听见了吗？",
+            "checker_id": "whisper.cpp:251050807bbe32347007c7db7e42199289e6fc24dda60df8469b85e5922bc9ce:394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2:630efba6923ff5ca8eda220aff775dd78b4cdd42ca8d52b6de9271480ed8437a:spoken-units-v1",
+            "checked_at": 1788941201.433554,
+            "reviewed": false,
+            "recognized_text": "你听见了吗?",
+            "seconds": 0.854109707986936,
+            "model": {
+              "repo": "ggerganov/whisper.cpp",
+              "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+              "file": "ggml-large-v3-turbo-q5_0.bin",
+              "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
+            },
+            "decoding": {
+              "beam_size": 5,
+              "best_of": 5,
+              "temperature": 0,
+              "temperature_inc": 0,
+              "max_context": 0,
+              "no_fallback": true,
+              "threads": 4
+            },
+            "log_id": "8db602e4842449dbbacdcd3e04165c72",
+            "audio_sha256": "7e502502583e00dff03220173030e8f63bf7ca9eea8af4494b00797eeb7dc2b5",
+            "status": "match",
+            "differences": [],
+            "normalization": "spoken-units-v1",
+            "audio_stat": [
+              119084,
+              1788936700217947688
+            ]
+          }
+        },
+        {
+          "text": "别担心，那只是风。",
+          "speaker": "阿宁",
+          "status": "match",
+          "result": {
+            "source_fingerprint": "afc2f41ebb363179b72cc971d8a446c6b2b784a49407bb88143b242058041735",
+            "expected_text": "别担心，那只是风。",
+            "checker_id": "whisper.cpp:251050807bbe32347007c7db7e42199289e6fc24dda60df8469b85e5922bc9ce:394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2:630efba6923ff5ca8eda220aff775dd78b4cdd42ca8d52b6de9271480ed8437a:spoken-units-v1",
+            "checked_at": 1788941202.293132,
+            "reviewed": false,
+            "recognized_text": "别担心那只是风",
+            "seconds": 0.8763691670028493,
+            "model": {
+              "repo": "ggerganov/whisper.cpp",
+              "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+              "file": "ggml-large-v3-turbo-q5_0.bin",
+              "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
+            },
+            "decoding": {
+              "beam_size": 5,
+              "best_of": 5,
+              "temperature": 0,
+              "temperature_inc": 0,
+              "max_context": 0,
+              "no_fallback": true,
+              "threads": 4
+            },
+            "log_id": "a5a9a2d9bed54fce83fb151d8f142b7d",
+            "audio_sha256": "bbf4c065b3862cb6aa96dffef03d2b64a464cc5b3319690a82ef882db8dbcef8",
+            "status": "match",
+            "differences": [],
+            "normalization": "spoken-units-v1",
+            "audio_stat": [
+              115244,
+              1788936701153102901
+            ]
+          }
+        },
+        {
+          "text": "两个人相视一笑。",
+          "speaker": "旁白",
+          "status": "match",
+          "result": {
+            "source_fingerprint": "ff30528d9f8b995fc3b5673b10c17ec09858396d27f5d2e7da415d755f799b09",
+            "expected_text": "两个人相视一笑。",
+            "checker_id": "whisper.cpp:251050807bbe32347007c7db7e42199289e6fc24dda60df8469b85e5922bc9ce:394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2:630efba6923ff5ca8eda220aff775dd78b4cdd42ca8d52b6de9271480ed8437a:spoken-units-v1",
+            "checked_at": 1788941203.175045,
+            "reviewed": false,
+            "recognized_text": "两个人相视一笑",
+            "seconds": 0.8541274999734014,
+            "model": {
+              "repo": "ggerganov/whisper.cpp",
+              "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+              "file": "ggml-large-v3-turbo-q5_0.bin",
+              "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
+            },
+            "decoding": {
+              "beam_size": 5,
+              "best_of": 5,
+              "temperature": 0,
+              "temperature_inc": 0,
+              "max_context": 0,
+              "no_fallback": true,
+              "threads": 4
+            },
+            "log_id": "6b14d2272e934d42ad744719ecb50d2d",
+            "audio_sha256": "4118ed229f09091b988f3eb9bc4d0d9ecf06068cbe0967e3ec0a113cfb844013",
+            "status": "match",
+            "differences": [],
+            "normalization": "spoken-units-v1",
+            "audio_stat": [
+              134444,
+              1788936702229536272
+            ]
+          }
+        }
+      ],
+      "exported_report": {
+        "project_revision": 24,
+        "synthetic_audio": true,
+        "notice": "文字差异仅供复核；未发现差异不等于声音内容已获人工验收。",
+        "segments": [
+          {
+            "id": "82e231ce4e684b06956a0004608c7d8b",
+            "text": "雨点轻轻敲着窗。",
+            "check_status": "match",
+            "content_check": {
+              "source_fingerprint": "b73d3faf5b98ebf751c5d09563a32b64f72ca83f2332ecb65a1160c5ad644e25",
+              "expected_text": "雨点轻轻敲着窗。",
+              "checker_id": "whisper.cpp:251050807bbe32347007c7db7e42199289e6fc24dda60df8469b85e5922bc9ce:394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2:630efba6923ff5ca8eda220aff775dd78b4cdd42ca8d52b6de9271480ed8437a:spoken-units-v1",
+              "checked_at": 1788941199.5762691,
+              "reviewed": false,
+              "recognized_text": "雨点轻轻敲着窗",
+              "seconds": 0.8829019169788808,
+              "model": {
+                "repo": "ggerganov/whisper.cpp",
+                "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+                "file": "ggml-large-v3-turbo-q5_0.bin",
+                "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
+              },
+              "decoding": {
+                "beam_size": 5,
+                "best_of": 5,
+                "temperature": 0,
+                "temperature_inc": 0,
+                "max_context": 0,
+                "no_fallback": true,
+                "threads": 4
+              },
+              "log_id": "fd95231b987542c8ba5abe7109fc6142",
+              "audio_sha256": "17b265394291e74898a4a962f59d0586a164c15eed59a6ccfa42b4f08a41f0fc",
+              "status": "match",
+              "differences": [],
+              "normalization": "spoken-units-v1",
+              "audio_stat": [
+                149804,
+                1788936699250059707
+              ]
+            }
+          },
+          {
+            "id": "62544a5bee4c45809d5f928d8c28eca1",
+            "text": "你听见了吗？",
+            "check_status": "match",
+            "content_check": {
+              "source_fingerprint": "bb26524b4602bbd46e828dbf69c69a237b80fe1460e45df97c59cd8a158f9510",
+              "expected_text": "你听见了吗？",
+              "checker_id": "whisper.cpp:251050807bbe32347007c7db7e42199289e6fc24dda60df8469b85e5922bc9ce:394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2:630efba6923ff5ca8eda220aff775dd78b4cdd42ca8d52b6de9271480ed8437a:spoken-units-v1",
+              "checked_at": 1788941201.433554,
+              "reviewed": false,
+              "recognized_text": "你听见了吗?",
+              "seconds": 0.854109707986936,
+              "model": {
+                "repo": "ggerganov/whisper.cpp",
+                "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+                "file": "ggml-large-v3-turbo-q5_0.bin",
+                "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
+              },
+              "decoding": {
+                "beam_size": 5,
+                "best_of": 5,
+                "temperature": 0,
+                "temperature_inc": 0,
+                "max_context": 0,
+                "no_fallback": true,
+                "threads": 4
+              },
+              "log_id": "8db602e4842449dbbacdcd3e04165c72",
+              "audio_sha256": "7e502502583e00dff03220173030e8f63bf7ca9eea8af4494b00797eeb7dc2b5",
+              "status": "match",
+              "differences": [],
+              "normalization": "spoken-units-v1",
+              "audio_stat": [
+                119084,
+                1788936700217947688
+              ]
+            }
+          },
+          {
+            "id": "42ccd3c94b3443d19db1bc21f2a59111",
+            "text": "别担心，那只是风。",
+            "check_status": "match",
+            "content_check": {
+              "source_fingerprint": "afc2f41ebb363179b72cc971d8a446c6b2b784a49407bb88143b242058041735",
+              "expected_text": "别担心，那只是风。",
+              "checker_id": "whisper.cpp:251050807bbe32347007c7db7e42199289e6fc24dda60df8469b85e5922bc9ce:394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2:630efba6923ff5ca8eda220aff775dd78b4cdd42ca8d52b6de9271480ed8437a:spoken-units-v1",
+              "checked_at": 1788941202.293132,
+              "reviewed": false,
+              "recognized_text": "别担心那只是风",
+              "seconds": 0.8763691670028493,
+              "model": {
+                "repo": "ggerganov/whisper.cpp",
+                "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+                "file": "ggml-large-v3-turbo-q5_0.bin",
+                "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
+              },
+              "decoding": {
+                "beam_size": 5,
+                "best_of": 5,
+                "temperature": 0,
+                "temperature_inc": 0,
+                "max_context": 0,
+                "no_fallback": true,
+                "threads": 4
+              },
+              "log_id": "a5a9a2d9bed54fce83fb151d8f142b7d",
+              "audio_sha256": "bbf4c065b3862cb6aa96dffef03d2b64a464cc5b3319690a82ef882db8dbcef8",
+              "status": "match",
+              "differences": [],
+              "normalization": "spoken-units-v1",
+              "audio_stat": [
+                115244,
+                1788936701153102901
+              ]
+            }
+          },
+          {
+            "id": "e64e04896519498ba7ac44893b3b3139",
+            "text": "两个人相视一笑。",
+            "check_status": "match",
+            "content_check": {
+              "source_fingerprint": "ff30528d9f8b995fc3b5673b10c17ec09858396d27f5d2e7da415d755f799b09",
+              "expected_text": "两个人相视一笑。",
+              "checker_id": "whisper.cpp:251050807bbe32347007c7db7e42199289e6fc24dda60df8469b85e5922bc9ce:394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2:630efba6923ff5ca8eda220aff775dd78b4cdd42ca8d52b6de9271480ed8437a:spoken-units-v1",
+              "checked_at": 1788941203.175045,
+              "reviewed": false,
+              "recognized_text": "两个人相视一笑",
+              "seconds": 0.8541274999734014,
+              "model": {
+                "repo": "ggerganov/whisper.cpp",
+                "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+                "file": "ggml-large-v3-turbo-q5_0.bin",
+                "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
+              },
+              "decoding": {
+                "beam_size": 5,
+                "best_of": 5,
+                "temperature": 0,
+                "temperature_inc": 0,
+                "max_context": 0,
+                "no_fallback": true,
+                "threads": 4
+              },
+              "log_id": "6b14d2272e934d42ad744719ecb50d2d",
+              "audio_sha256": "4118ed229f09091b988f3eb9bc4d0d9ecf06068cbe0967e3ec0a113cfb844013",
+              "status": "match",
+              "differences": [],
+              "normalization": "spoken-units-v1",
+              "audio_stat": [
+                134444,
+                1788936702229536272
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "project_id": "0389b87c86a24bf18c0a6948731a3743",
+      "language": "en",
+      "job": {
+        "kind": "checking",
+        "status": "completed",
+        "total": 4,
+        "completed": 4,
+        "failed": 0,
+        "current_segment": null
+      },
+      "segments": [
+        {
+          "text": "Rain tapped against the window.",
+          "speaker": "Narrator",
+          "status": "match",
+          "result": {
+            "source_fingerprint": "d2a7e0d76d871bd878cbb67db8b75f40069797653972706b8bc974153dc16551",
+            "expected_text": "Rain tapped against the window.",
+            "checker_id": "whisper.cpp:251050807bbe32347007c7db7e42199289e6fc24dda60df8469b85e5922bc9ce:394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2:630efba6923ff5ca8eda220aff775dd78b4cdd42ca8d52b6de9271480ed8437a:spoken-units-v1",
+            "checked_at": 1788941204.2741818,
+            "reviewed": false,
+            "recognized_text": "Rain tapped against the window.",
+            "seconds": 0.8511334579670802,
+            "model": {
+              "repo": "ggerganov/whisper.cpp",
+              "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+              "file": "ggml-large-v3-turbo-q5_0.bin",
+              "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
+            },
+            "decoding": {
+              "beam_size": 5,
+              "best_of": 5,
+              "temperature": 0,
+              "temperature_inc": 0,
+              "max_context": 0,
+              "no_fallback": true,
+              "threads": 4
+            },
+            "log_id": "e02676b8a9cf4a538f05e4065f78be74",
+            "audio_sha256": "83732b70b8d666822ccbadb84d34cf769ff6c77e27f20ee6cdb5820266a4b145",
+            "status": "match",
+            "differences": [],
+            "normalization": "spoken-units-v1",
+            "audio_stat": [
+              115244,
+              1788937184211020682
+            ]
+          }
+        },
+        {
+          "text": "Did you hear that?",
+          "speaker": "Mira",
+          "status": "match",
+          "result": {
+            "source_fingerprint": "4fccdf44fb0ed53a49fb66207e47c2fa806965f85af836c28479591ee442b8f9",
+            "expected_text": "Did you hear that?",
+            "checker_id": "whisper.cpp:251050807bbe32347007c7db7e42199289e6fc24dda60df8469b85e5922bc9ce:394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2:630efba6923ff5ca8eda220aff775dd78b4cdd42ca8d52b6de9271480ed8437a:spoken-units-v1",
+            "checked_at": 1788941205.131901,
+            "reviewed": false,
+            "recognized_text": "Did you hear that?",
+            "seconds": 0.8265712090069428,
+            "model": {
+              "repo": "ggerganov/whisper.cpp",
+              "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+              "file": "ggml-large-v3-turbo-q5_0.bin",
+              "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
+            },
+            "decoding": {
+              "beam_size": 5,
+              "best_of": 5,
+              "temperature": 0,
+              "temperature_inc": 0,
+              "max_context": 0,
+              "no_fallback": true,
+              "threads": 4
+            },
+            "log_id": "6110d0fd4f81410685e131c8f68c250a",
+            "audio_sha256": "4d69f14eb69db58274945d6081ba2e0111dba0e7b4aa6d7618b88b0254349357",
+            "status": "match",
+            "differences": [],
+            "normalization": "spoken-units-v1",
+            "audio_stat": [
+              57644,
+              1788937177733221404
+            ]
+          }
+        },
+        {
+          "text": "Just the wind. We are safe here.",
+          "speaker": "Leo",
+          "status": "review",
+          "result": {
+            "source_fingerprint": "328a77587807f63b84d316632845511dbecad059078cc6e436781ea4c197cb8c",
+            "expected_text": "Just the wind. We are safe here.",
+            "checker_id": "whisper.cpp:251050807bbe32347007c7db7e42199289e6fc24dda60df8469b85e5922bc9ce:394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2:630efba6923ff5ca8eda220aff775dd78b4cdd42ca8d52b6de9271480ed8437a:spoken-units-v1",
+            "checked_at": 1788941205.962427,
+            "reviewed": false,
+            "recognized_text": "Just a wind. We are safe here.",
+            "seconds": 0.8494952089386061,
+            "model": {
+              "repo": "ggerganov/whisper.cpp",
+              "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+              "file": "ggml-large-v3-turbo-q5_0.bin",
+              "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
+            },
+            "decoding": {
+              "beam_size": 5,
+              "best_of": 5,
+              "temperature": 0,
+              "temperature_inc": 0,
+              "max_context": 0,
+              "no_fallback": true,
+              "threads": 4
+            },
+            "log_id": "3659d64531b844048538b90c1b6438ff",
+            "audio_sha256": "4ce0d23cb5ffb1c60feaf554bffc3cfdf338412167b445628cbcb12bb8e67fd5",
+            "status": "review",
+            "differences": [
+              {
+                "kind": "replace",
+                "expected": "the",
+                "recognized": "a"
+              }
+            ],
+            "normalization": "spoken-units-v1",
+            "audio_stat": [
+              211244,
+              1788937179410607762
+            ]
+          }
+        },
+        {
+          "text": "They smiled and went back to their books.",
+          "speaker": "Narrator",
+          "status": "match",
+          "result": {
+            "source_fingerprint": "7ead36a8b886cb70e90f29437c8757d5467bb2d1cb4e17e915af292250d7c517",
+            "expected_text": "They smiled and went back to their books.",
+            "checker_id": "whisper.cpp:251050807bbe32347007c7db7e42199289e6fc24dda60df8469b85e5922bc9ce:394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2:630efba6923ff5ca8eda220aff775dd78b4cdd42ca8d52b6de9271480ed8437a:spoken-units-v1",
+            "checked_at": 1788941206.817131,
+            "reviewed": false,
+            "recognized_text": "They smiled and went back to their books.",
+            "seconds": 0.8719111250247806,
+            "model": {
+              "repo": "ggerganov/whisper.cpp",
+              "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+              "file": "ggml-large-v3-turbo-q5_0.bin",
+              "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
+            },
+            "decoding": {
+              "beam_size": 5,
+              "best_of": 5,
+              "temperature": 0,
+              "temperature_inc": 0,
+              "max_context": 0,
+              "no_fallback": true,
+              "threads": 4
+            },
+            "log_id": "894e0f97a8f54a1da9aa2fc1b03fa58b",
+            "audio_sha256": "cf6cda42f9b04da4a55767d6b2783fb4f87683163714ae32aaf2e2ce97acbe52",
+            "status": "match",
+            "differences": [],
+            "normalization": "spoken-units-v1",
+            "audio_stat": [
+              153644,
+              1788937187238636342
+            ]
+          }
+        }
+      ],
+      "exported_report": {
+        "project_revision": 32,
+        "synthetic_audio": true,
+        "notice": "文字差异仅供复核；未发现差异不等于声音内容已获人工验收。",
+        "segments": [
+          {
+            "id": "a16b371b930e46a29ddaed7040b57395",
+            "text": "Rain tapped against the window.",
+            "check_status": "match",
+            "content_check": {
+              "source_fingerprint": "d2a7e0d76d871bd878cbb67db8b75f40069797653972706b8bc974153dc16551",
+              "expected_text": "Rain tapped against the window.",
+              "checker_id": "whisper.cpp:251050807bbe32347007c7db7e42199289e6fc24dda60df8469b85e5922bc9ce:394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2:630efba6923ff5ca8eda220aff775dd78b4cdd42ca8d52b6de9271480ed8437a:spoken-units-v1",
+              "checked_at": 1788941204.2741818,
+              "reviewed": false,
+              "recognized_text": "Rain tapped against the window.",
+              "seconds": 0.8511334579670802,
+              "model": {
+                "repo": "ggerganov/whisper.cpp",
+                "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+                "file": "ggml-large-v3-turbo-q5_0.bin",
+                "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
+              },
+              "decoding": {
+                "beam_size": 5,
+                "best_of": 5,
+                "temperature": 0,
+                "temperature_inc": 0,
+                "max_context": 0,
+                "no_fallback": true,
+                "threads": 4
+              },
+              "log_id": "e02676b8a9cf4a538f05e4065f78be74",
+              "audio_sha256": "83732b70b8d666822ccbadb84d34cf769ff6c77e27f20ee6cdb5820266a4b145",
+              "status": "match",
+              "differences": [],
+              "normalization": "spoken-units-v1",
+              "audio_stat": [
+                115244,
+                1788937184211020682
+              ]
+            }
+          },
+          {
+            "id": "b0b80580eea84ab6a587a466cde0a4e1",
+            "text": "Did you hear that?",
+            "check_status": "match",
+            "content_check": {
+              "source_fingerprint": "4fccdf44fb0ed53a49fb66207e47c2fa806965f85af836c28479591ee442b8f9",
+              "expected_text": "Did you hear that?",
+              "checker_id": "whisper.cpp:251050807bbe32347007c7db7e42199289e6fc24dda60df8469b85e5922bc9ce:394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2:630efba6923ff5ca8eda220aff775dd78b4cdd42ca8d52b6de9271480ed8437a:spoken-units-v1",
+              "checked_at": 1788941205.131901,
+              "reviewed": false,
+              "recognized_text": "Did you hear that?",
+              "seconds": 0.8265712090069428,
+              "model": {
+                "repo": "ggerganov/whisper.cpp",
+                "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+                "file": "ggml-large-v3-turbo-q5_0.bin",
+                "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
+              },
+              "decoding": {
+                "beam_size": 5,
+                "best_of": 5,
+                "temperature": 0,
+                "temperature_inc": 0,
+                "max_context": 0,
+                "no_fallback": true,
+                "threads": 4
+              },
+              "log_id": "6110d0fd4f81410685e131c8f68c250a",
+              "audio_sha256": "4d69f14eb69db58274945d6081ba2e0111dba0e7b4aa6d7618b88b0254349357",
+              "status": "match",
+              "differences": [],
+              "normalization": "spoken-units-v1",
+              "audio_stat": [
+                57644,
+                1788937177733221404
+              ]
+            }
+          },
+          {
+            "id": "d37817299a114e3c82ab196b595c2f65",
+            "text": "Just the wind. We are safe here.",
+            "check_status": "review",
+            "content_check": {
+              "source_fingerprint": "328a77587807f63b84d316632845511dbecad059078cc6e436781ea4c197cb8c",
+              "expected_text": "Just the wind. We are safe here.",
+              "checker_id": "whisper.cpp:251050807bbe32347007c7db7e42199289e6fc24dda60df8469b85e5922bc9ce:394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2:630efba6923ff5ca8eda220aff775dd78b4cdd42ca8d52b6de9271480ed8437a:spoken-units-v1",
+              "checked_at": 1788941205.962427,
+              "reviewed": false,
+              "recognized_text": "Just a wind. We are safe here.",
+              "seconds": 0.8494952089386061,
+              "model": {
+                "repo": "ggerganov/whisper.cpp",
+                "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+                "file": "ggml-large-v3-turbo-q5_0.bin",
+                "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
+              },
+              "decoding": {
+                "beam_size": 5,
+                "best_of": 5,
+                "temperature": 0,
+                "temperature_inc": 0,
+                "max_context": 0,
+                "no_fallback": true,
+                "threads": 4
+              },
+              "log_id": "3659d64531b844048538b90c1b6438ff",
+              "audio_sha256": "4ce0d23cb5ffb1c60feaf554bffc3cfdf338412167b445628cbcb12bb8e67fd5",
+              "status": "review",
+              "differences": [
+                {
+                  "kind": "replace",
+                  "expected": "the",
+                  "recognized": "a"
+                }
+              ],
+              "normalization": "spoken-units-v1",
+              "audio_stat": [
+                211244,
+                1788937179410607762
+              ]
+            }
+          },
+          {
+            "id": "34f77e9db6c9436ebc1af66bb01e1d60",
+            "text": "They smiled and went back to their books.",
+            "check_status": "match",
+            "content_check": {
+              "source_fingerprint": "7ead36a8b886cb70e90f29437c8757d5467bb2d1cb4e17e915af292250d7c517",
+              "expected_text": "They smiled and went back to their books.",
+              "checker_id": "whisper.cpp:251050807bbe32347007c7db7e42199289e6fc24dda60df8469b85e5922bc9ce:394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2:630efba6923ff5ca8eda220aff775dd78b4cdd42ca8d52b6de9271480ed8437a:spoken-units-v1",
+              "checked_at": 1788941206.817131,
+              "reviewed": false,
+              "recognized_text": "They smiled and went back to their books.",
+              "seconds": 0.8719111250247806,
+              "model": {
+                "repo": "ggerganov/whisper.cpp",
+                "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+                "file": "ggml-large-v3-turbo-q5_0.bin",
+                "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
+              },
+              "decoding": {
+                "beam_size": 5,
+                "best_of": 5,
+                "temperature": 0,
+                "temperature_inc": 0,
+                "max_context": 0,
+                "no_fallback": true,
+                "threads": 4
+              },
+              "log_id": "894e0f97a8f54a1da9aa2fc1b03fa58b",
+              "audio_sha256": "cf6cda42f9b04da4a55767d6b2783fb4f87683163714ae32aaf2e2ce97acbe52",
+              "status": "match",
+              "differences": [],
+              "normalization": "spoken-units-v1",
+              "audio_stat": [
+                153644,
+                1788937187238636342
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "status": "PASS",
+  "checker_id": "whisper.cpp:251050807bbe32347007c7db7e42199289e6fc24dda60df8469b85e5922bc9ce:394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2:630efba6923ff5ca8eda220aff775dd78b4cdd42ca8d52b6de9271480ed8437a:spoken-units-v1",
+  "model": {
+    "repo": "ggerganov/whisper.cpp",
+    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+    "file": "ggml-large-v3-turbo-q5_0.bin",
+    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
+  },
+  "controlled_negative": {
+    "purpose": "Expected text deliberately includes an absent negation; not a measured synthesis failure",
+    "status": "review",
+    "expected_text": "Rain never tapped against the window.",
+    "recognized_text": "Rain tapped against the window.",
+    "differences": [
+      {
+        "kind": "delete",
+        "expected": "never",
+        "recognized": ""
+      }
+    ],
+    "normalization": "spoken-units-v1"
+  }
+}

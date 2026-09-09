@@ -1,0 +1,6 @@
+{
+  "pass": true,
+  "expected_exit": 2,
+  "actual_exit": 2,
+  "output": "usage: fixed_reference_check.py [-h] --model MODEL\n                                [--synthetic-reference-consent-confirmed]\nfixed_reference_check.py: error: Explicit consent for the fixed synthetic reference experiment is required.\n"
+}

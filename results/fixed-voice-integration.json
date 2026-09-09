@@ -1,0 +1,306 @@
+{
+  "synthetic_audio": true,
+  "checks": [
+    "Fix narrator, generate both lines through Base, retain other roles unchanged",
+    "Single-line retake uses unchanged preserved reference and survives reload",
+    "WAV, subtitles and timeline export succeed"
+  ],
+  "quality": "Integration only; new render requires listening. Prior experiment acceptance remains scoped.",
+  "project_id": "2f65ff7451c94cb1a26360e9b4e513f2",
+  "preset_generation": [
+    {
+      "id": "a16b371b930e46a29ddaed7040b57395",
+      "speaker": "Narrator",
+      "text": "Rain tapped against the window.",
+      "spoken_as": "",
+      "audio": {
+        "samples": 80640,
+        "sample_rate": 24000,
+        "speech_start_sample": 11760,
+        "speech_end_sample": 65520,
+        "speech_boundary_method": "estimated_rms_10ms",
+        "processing_version": "pcm-peak-rms-v1",
+        "synthetic_audio": true,
+        "fingerprint": "8c3dd3e73653f7427d0a97cd05065e5109fa4347fd427451e9e1550cde1d8ca6",
+        "engine": "mlx-community/Qwen3-TTS-12Hz-0.6B-CustomVoice-bf16@6415d95f88be018ff9e46813119dc3bc12261328",
+        "load_seconds": 2.715108250034973,
+        "generation_seconds": 2.1019762919750065,
+        "mlx_peak_memory_bytes": 5016642895,
+        "seed": 260909,
+        "generation_parameters": {
+          "max_tokens": 2048,
+          "temperature": 0.9,
+          "top_k": 50,
+          "top_p": 1.0,
+          "repetition_penalty": 1.05
+        }
+      },
+      "error": null,
+      "status": "ready"
+    },
+    {
+      "id": "b0b80580eea84ab6a587a466cde0a4e1",
+      "speaker": "Mira",
+      "text": "Did you hear that?",
+      "spoken_as": "",
+      "audio": {
+        "samples": 28800,
+        "sample_rate": 24000,
+        "speech_start_sample": 5040,
+        "speech_end_sample": 20880,
+        "speech_boundary_method": "estimated_rms_10ms",
+        "processing_version": "pcm-peak-rms-v1",
+        "synthetic_audio": true,
+        "fingerprint": "4fccdf44fb0ed53a49fb66207e47c2fa806965f85af836c28479591ee442b8f9",
+        "engine": "mlx-community/Qwen3-TTS-12Hz-0.6B-CustomVoice-bf16@6415d95f88be018ff9e46813119dc3bc12261328",
+        "load_seconds": 2.9103830456733704e-07,
+        "generation_seconds": 0.6239341250620782,
+        "mlx_peak_memory_bytes": 3602762261,
+        "seed": 260909,
+        "generation_parameters": {
+          "max_tokens": 2048,
+          "temperature": 0.9,
+          "top_k": 50,
+          "top_p": 1.0,
+          "repetition_penalty": 1.05
+        }
+      },
+      "error": null,
+      "status": "ready"
+    },
+    {
+      "id": "d37817299a114e3c82ab196b595c2f65",
+      "speaker": "Leo",
+      "text": "Just the wind. We are safe here.",
+      "spoken_as": "",
+      "audio": {
+        "samples": 105600,
+        "sample_rate": 24000,
+        "speech_start_sample": 12480,
+        "speech_end_sample": 93840,
+        "speech_boundary_method": "estimated_rms_10ms",
+        "processing_version": "pcm-peak-rms-v1",
+        "synthetic_audio": true,
+        "fingerprint": "328a77587807f63b84d316632845511dbecad059078cc6e436781ea4c197cb8c",
+        "engine": "mlx-community/Qwen3-TTS-12Hz-0.6B-CustomVoice-bf16@6415d95f88be018ff9e46813119dc3bc12261328",
+        "load_seconds": 2.919696271419525e-07,
+        "generation_seconds": 1.6728499170858413,
+        "mlx_peak_memory_bytes": 5496988143,
+        "seed": 260909,
+        "generation_parameters": {
+          "max_tokens": 2048,
+          "temperature": 0.9,
+          "top_k": 50,
+          "top_p": 1.0,
+          "repetition_penalty": 1.05
+        }
+      },
+      "error": null,
+      "status": "ready"
+    },
+    {
+      "id": "34f77e9db6c9436ebc1af66bb01e1d60",
+      "speaker": "Narrator",
+      "text": "They smiled and went back to their books.",
+      "spoken_as": "",
+      "audio": {
+        "samples": 76800,
+        "sample_rate": 24000,
+        "speech_start_sample": 10320,
+        "speech_end_sample": 63840,
+        "speech_boundary_method": "estimated_rms_10ms",
+        "processing_version": "pcm-peak-rms-v1",
+        "synthetic_audio": true,
+        "fingerprint": "9b1534bed519d5cd79869970636b82ee6131784855d90d205d737195771450f8",
+        "engine": "mlx-community/Qwen3-TTS-12Hz-0.6B-CustomVoice-bf16@6415d95f88be018ff9e46813119dc3bc12261328",
+        "load_seconds": 2.4994369596242905e-07,
+        "generation_seconds": 1.1951976669952273,
+        "mlx_peak_memory_bytes": 4912361089,
+        "seed": 260909,
+        "generation_parameters": {
+          "max_tokens": 2048,
+          "temperature": 0.9,
+          "top_k": 50,
+          "top_p": 1.0,
+          "repetition_penalty": 1.05
+        }
+      },
+      "error": null,
+      "status": "ready"
+    }
+  ],
+  "fixed_generation": [
+    {
+      "id": "a16b371b930e46a29ddaed7040b57395",
+      "speaker": "Narrator",
+      "text": "Rain tapped against the window.",
+      "spoken_as": "",
+      "audio": {
+        "samples": 57600,
+        "sample_rate": 24000,
+        "speech_start_sample": 6720,
+        "speech_end_sample": 55920,
+        "speech_boundary_method": "estimated_rms_10ms",
+        "processing_version": "pcm-peak-rms-v1",
+        "synthetic_audio": true,
+        "fingerprint": "d2a7e0d76d871bd878cbb67db8b75f40069797653972706b8bc974153dc16551",
+        "engine": "mlx-community/Qwen3-TTS-12Hz-0.6B-Base-bf16@1eccf1cb2519b5a4e8a95b5f0544f3303568164f",
+        "load_seconds": 0.39435204106848687,
+        "generation_seconds": 1.7270727920113131,
+        "mlx_peak_memory_bytes": 6037200989,
+        "seed": 260909,
+        "generation_parameters": {
+          "max_tokens": 2048,
+          "temperature": 0.6,
+          "top_k": 50,
+          "top_p": 1.0,
+          "repetition_penalty": 1.5
+        },
+        "reference_sha256": "98ff5dafe716610138027f3c5bb9067e3457b5e26aa5ad058ffc12ffed574646",
+        "generation_mode": "fixed_synthetic_reference"
+      },
+      "error": null,
+      "status": "ready"
+    },
+    {
+      "id": "b0b80580eea84ab6a587a466cde0a4e1",
+      "speaker": "Mira",
+      "text": "Did you hear that?",
+      "spoken_as": "",
+      "audio": {
+        "samples": 28800,
+        "sample_rate": 24000,
+        "speech_start_sample": 5040,
+        "speech_end_sample": 20880,
+        "speech_boundary_method": "estimated_rms_10ms",
+        "processing_version": "pcm-peak-rms-v1",
+        "synthetic_audio": true,
+        "fingerprint": "4fccdf44fb0ed53a49fb66207e47c2fa806965f85af836c28479591ee442b8f9",
+        "engine": "mlx-community/Qwen3-TTS-12Hz-0.6B-CustomVoice-bf16@6415d95f88be018ff9e46813119dc3bc12261328",
+        "load_seconds": 2.9103830456733704e-07,
+        "generation_seconds": 0.6239341250620782,
+        "mlx_peak_memory_bytes": 3602762261,
+        "seed": 260909,
+        "generation_parameters": {
+          "max_tokens": 2048,
+          "temperature": 0.9,
+          "top_k": 50,
+          "top_p": 1.0,
+          "repetition_penalty": 1.05
+        }
+      },
+      "error": null,
+      "status": "ready"
+    },
+    {
+      "id": "d37817299a114e3c82ab196b595c2f65",
+      "speaker": "Leo",
+      "text": "Just the wind. We are safe here.",
+      "spoken_as": "",
+      "audio": {
+        "samples": 105600,
+        "sample_rate": 24000,
+        "speech_start_sample": 12480,
+        "speech_end_sample": 93840,
+        "speech_boundary_method": "estimated_rms_10ms",
+        "processing_version": "pcm-peak-rms-v1",
+        "synthetic_audio": true,
+        "fingerprint": "328a77587807f63b84d316632845511dbecad059078cc6e436781ea4c197cb8c",
+        "engine": "mlx-community/Qwen3-TTS-12Hz-0.6B-CustomVoice-bf16@6415d95f88be018ff9e46813119dc3bc12261328",
+        "load_seconds": 2.919696271419525e-07,
+        "generation_seconds": 1.6728499170858413,
+        "mlx_peak_memory_bytes": 5496988143,
+        "seed": 260909,
+        "generation_parameters": {
+          "max_tokens": 2048,
+          "temperature": 0.9,
+          "top_k": 50,
+          "top_p": 1.0,
+          "repetition_penalty": 1.05
+        }
+      },
+      "error": null,
+      "status": "ready"
+    },
+    {
+      "id": "34f77e9db6c9436ebc1af66bb01e1d60",
+      "speaker": "Narrator",
+      "text": "They smiled and went back to their books.",
+      "spoken_as": "",
+      "audio": {
+        "samples": 63360,
+        "sample_rate": 24000,
+        "speech_start_sample": 1920,
+        "speech_end_sample": 54000,
+        "speech_boundary_method": "estimated_rms_10ms",
+        "processing_version": "pcm-peak-rms-v1",
+        "synthetic_audio": true,
+        "fingerprint": "4e2da6dc9ef4d48853dc347b4ea956ab18f7d77840a62337f7a9cf7bfe667fa4",
+        "engine": "mlx-community/Qwen3-TTS-12Hz-0.6B-Base-bf16@1eccf1cb2519b5a4e8a95b5f0544f3303568164f",
+        "load_seconds": 2.50060111284256e-07,
+        "generation_seconds": 1.3020709169795737,
+        "mlx_peak_memory_bytes": 6004708161,
+        "seed": 260909,
+        "generation_parameters": {
+          "max_tokens": 2048,
+          "temperature": 0.6,
+          "top_k": 50,
+          "top_p": 1.0,
+          "repetition_penalty": 1.5
+        },
+        "reference_sha256": "98ff5dafe716610138027f3c5bb9067e3457b5e26aa5ad058ffc12ffed574646",
+        "generation_mode": "fixed_synthetic_reference"
+      },
+      "error": null,
+      "status": "ready"
+    }
+  ],
+  "retake": {
+    "id": "34f77e9db6c9436ebc1af66bb01e1d60",
+    "speaker": "Narrator",
+    "text": "They smiled and went back to their books.",
+    "spoken_as": "",
+    "audio": {
+      "samples": 76800,
+      "sample_rate": 24000,
+      "speech_start_sample": 4800,
+      "speech_end_sample": 73920,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "processing_version": "pcm-peak-rms-v1",
+      "synthetic_audio": true,
+      "fingerprint": "7ead36a8b886cb70e90f29437c8757d5467bb2d1cb4e17e915af292250d7c517",
+      "engine": "mlx-community/Qwen3-TTS-12Hz-0.6B-Base-bf16@1eccf1cb2519b5a4e8a95b5f0544f3303568164f",
+      "load_seconds": 2.9103830456733704e-07,
+      "generation_seconds": 1.5655304589308798,
+      "mlx_peak_memory_bytes": 6300669215,
+      "seed": 260910,
+      "generation_parameters": {
+        "max_tokens": 2048,
+        "temperature": 0.6,
+        "top_k": 50,
+        "top_p": 1.0,
+        "repetition_penalty": 1.5
+      },
+      "reference_sha256": "98ff5dafe716610138027f3c5bb9067e3457b5e26aa5ad058ffc12ffed574646",
+      "generation_mode": "fixed_synthetic_reference"
+    },
+    "error": null,
+    "take": 1,
+    "status": "ready"
+  },
+  "exports": {
+    "full.wav": "/api/projects/2f65ff7451c94cb1a26360e9b4e513f2/export/14/full.wav",
+    "subtitles.srt": "/api/projects/2f65ff7451c94cb1a26360e9b4e513f2/export/14/subtitles.srt",
+    "timeline.json": "/api/projects/2f65ff7451c94cb1a26360e9b4e513f2/export/14/timeline.json"
+  },
+  "profile": {
+    "sha256": "98ff5dafe716610138027f3c5bb9067e3457b5e26aa5ad058ffc12ffed574646",
+    "text": "Rain tapped against the window.",
+    "voice": "Ryan",
+    "source_fingerprint": "8c3dd3e73653f7427d0a97cd05065e5109fa4347fd427451e9e1550cde1d8ca6",
+    "source_engine": "mlx-community/Qwen3-TTS-12Hz-0.6B-CustomVoice-bf16@6415d95f88be018ff9e46813119dc3bc12261328",
+    "synthetic_audio": true,
+    "consent_confirmed": true
+  },
+  "status": "PASS"
+}

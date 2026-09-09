@@ -1,0 +1,26 @@
+{
+  "status": "PASS",
+  "judge": "Astra; real local process and HTTP health response",
+  "checks": [
+    "Current Mac environment check passed",
+    "Unrecognized old preview refused without replacement",
+    "New launcher started real local server",
+    "Actual Start VoxStage.command reused running service; same PID retained"
+  ],
+  "repeat_output": "VoxStage 已在运行，直接打开已有页面。\nVoxStage：http://127.0.0.1:8765/\n",
+  "before": {
+    "app": "VoxStage",
+    "workspace_id": "484a948eb35d758beb916584e778dc1228c9a1102709649d758747246b2590ec",
+    "ready": true,
+    "pid": 21843
+  },
+  "after": {
+    "app": "VoxStage",
+    "workspace_id": "484a948eb35d758beb916584e778dc1228c9a1102709649d758747246b2590ec",
+    "ready": true,
+    "pid": 21843
+  },
+  "browser_open_fallback_reported": false,
+  "shutdown_test": "PASS: Ctrl+C exited launcher and released port",
+  "terminal_close_test": "PASS: SIGHUP exited launcher and released port"
+}

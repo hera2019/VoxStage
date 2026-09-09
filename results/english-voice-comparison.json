@@ -1,0 +1,122 @@
+{
+  "synthetic_audio": true,
+  "language": "en",
+  "voice": "Ryan",
+  "model": {
+    "repo": "mlx-community/Qwen3-TTS-12Hz-0.6B-CustomVoice-bf16",
+    "revision": "6415d95f88be018ff9e46813119dc3bc12261328"
+  },
+  "runtime": "mlx-audio-0.5.1",
+  "seed": 260909,
+  "parameters": {
+    "top_k": 50,
+    "top_p": 1.0,
+    "max_tokens": 2048,
+    "repetition_penalty": 1.05
+  },
+  "order": [
+    {
+      "speaker": "Narrator",
+      "text": "Rain tapped against the window."
+    },
+    {
+      "speaker": "Leo",
+      "text": "Just the wind. We are safe here."
+    },
+    {
+      "speaker": "Narrator",
+      "text": "They smiled and went back to their books."
+    }
+  ],
+  "quality_acceptance": "Same-narrator continuity not accepted by user; no winning English parameter candidate established.",
+  "groups": [
+    {
+      "label": "A-original",
+      "synthetic_audio": true,
+      "path": "user-data/english-voice-comparison/A-original.wav",
+      "sha256": "21e0f6e6e85bd75c147900da02922709a876c7ab7a837dc0538dadd6b5cc7636",
+      "samples": 287040,
+      "sample_rate": 24000,
+      "segments": [
+        {
+          "speaker": "Narrator",
+          "text": "Rain tapped against the window.",
+          "temperature": 0.9,
+          "source_fingerprint": "8c3dd3e73653f7427d0a97cd05065e5109fa4347fd427451e9e1550cde1d8ca6",
+          "synthetic_audio": true
+        },
+        {
+          "speaker": "Leo",
+          "text": "Just the wind. We are safe here.",
+          "temperature": 0.9,
+          "source_fingerprint": "328a77587807f63b84d316632845511dbecad059078cc6e436781ea4c197cb8c",
+          "synthetic_audio": true
+        },
+        {
+          "speaker": "Narrator",
+          "text": "They smiled and went back to their books.",
+          "temperature": 0.9,
+          "source_fingerprint": "9b1534bed519d5cd79869970636b82ee6131784855d90d205d737195771450f8",
+          "synthetic_audio": true
+        }
+      ]
+    },
+    {
+      "label": "B-lower-randomness",
+      "synthetic_audio": true,
+      "path": "user-data/english-voice-comparison/B-lower-randomness.wav",
+      "sha256": "2ae0c95cf9328fa49397a7738748660bb49d78b948facae7e8e95e819a436cb1",
+      "samples": 296640,
+      "sample_rate": 24000,
+      "segments": [
+        {
+          "speaker": "Narrator",
+          "text": "Rain tapped against the window.",
+          "temperature": 0.6,
+          "generation_seconds": 2.19978212506976,
+          "samples": 65280,
+          "sample_rate": 24000,
+          "speech_start_sample": 11040,
+          "speech_end_sample": 53280,
+          "speech_boundary_method": "estimated_rms_10ms",
+          "processing_version": "pcm-peak-rms-v1",
+          "synthetic_audio": true
+        },
+        {
+          "speaker": "Leo",
+          "text": "Just the wind. We are safe here.",
+          "temperature": 0.6,
+          "generation_seconds": 2.744763124966994,
+          "samples": 126720,
+          "sample_rate": 24000,
+          "speech_start_sample": 11040,
+          "speech_end_sample": 115680,
+          "speech_boundary_method": "estimated_rms_10ms",
+          "processing_version": "pcm-peak-rms-v1",
+          "synthetic_audio": true
+        },
+        {
+          "speaker": "Narrator",
+          "text": "They smiled and went back to their books.",
+          "temperature": 0.6,
+          "generation_seconds": 1.5609901659190655,
+          "samples": 80640,
+          "sample_rate": 24000,
+          "speech_start_sample": 10320,
+          "speech_end_sample": 68640,
+          "speech_boundary_method": "estimated_rms_10ms",
+          "processing_version": "pcm-peak-rms-v1",
+          "synthetic_audio": true
+        }
+      ]
+    }
+  ],
+  "listening_followup": {
+    "judge": "user",
+    "feedback": "我觉得前后两次旁白的声音不太一致。Leo的声音还好，至少听着跟旁白不一样。看来目前最大的问题是，同一个人的声音，不一致。",
+    "clarified_issue": "same narrator across first and last lines",
+    "leo_distinction": "acceptable in this listening session",
+    "candidate_preference": "not explicitly specified",
+    "status": "same-speaker continuity not accepted"
+  }
+}

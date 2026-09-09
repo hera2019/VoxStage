@@ -1,0 +1,27 @@
+{
+  "date": "2026-09-09",
+  "reviewer": "Astra",
+  "surface": "Codex in-app desktop browser",
+  "status": "partial; browser playback and mobile acceptance pending",
+  "passed": [
+    "Desktop layout visually inspected",
+    "Import self-written Chinese sample through dialog",
+    "Edit one sentence; unsaved state blocks conflicting actions",
+    "Save makes only changed sentence pending",
+    "Undo restores original text and audio readiness",
+    "Reload restores project",
+    "Final target service loads pinned engine as ready",
+    "Real Chinese project shows 4/4 ready and exposes WAV/SRT/timeline export links"
+  ],
+  "not_tested": [
+    "Audible browser playback and human listening",
+    "Real iPhone/iPad layouts and access",
+    "ASR content completeness",
+    "Consumer installer"
+  ],
+  "build_history": [
+    "Initial build failed on an unused empty CSS data import; removed it and rebuilt successfully. The initial terminal failure was inspected but not retained as a separate raw log.",
+    "Final TypeScript and Vite build passed in the actual project directory."
+  ],
+  "synthetic_audio": true
+}
