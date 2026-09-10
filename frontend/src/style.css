@@ -60,3 +60,57 @@ button.danger:hover:not(:disabled){background:#f6ecec}
 .speaker-choices{display:flex;flex-wrap:wrap;gap:.35rem;margin:.4rem 0 .1rem}
 .speaker-choices button{font-size:.82rem;padding:.2rem .6rem;border-radius:999px}
 .speaker-choices button.chosen{background:#2f5d4a;color:#fff;border-color:#2f5d4a}
+
+/* ─────────────────────────────────────────────────────────────
+   分区滚动：三栏各自滚动，互不牵连。
+   在此之前整页共用一个滚动条，看到列表下方就得把右侧检视器翻出视野，
+   改一个字段又要翻回去。
+   ───────────────────────────────────────────────────────────── */
+@media(min-width:851px){
+  .workspace{height:calc(100vh - 165px);min-height:0;overflow:hidden}
+  .sidebar,.inspector{overflow-y:auto;overscroll-behavior:contain}
+  main{overflow-y:auto;overscroll-behavior:contain;scroll-padding-top:56px}
+  /* 顶部定位条与底部操作条常驻，长列表也不必来回翻 */
+  .script-toolbar{position:sticky;top:0;z-index:3;background:#f6f5f1;
+    margin:0 -36px 12px;padding:14px 36px 10px;border-bottom:1px solid #e6e7dd}
+  .render-bar{position:sticky;bottom:0;z-index:3;background:#f6f5f1;
+    margin:25px -36px 0;padding:18px 36px 20px;border-top:1px solid #dcdfd3}
+}
+
+/* 卡片瘦身：说话人、状态与提示同在第一行，正文在第二行 */
+.line-main{padding:12px 16px;gap:14px}
+.speaker{margin-bottom:5px;flex-wrap:wrap;width:100%}
+.line-flags{display:flex;align-items:center;gap:10px;margin-left:auto;flex-wrap:wrap}
+.line-flags .check-badge,.line-flags .listening-badge{display:inline;margin:0;font-size:.68rem}
+.sentence{line-height:1.65;font-size:14px}
+.number{padding-top:1px}
+.script{gap:7px}
+.voice-bar{padding-bottom:16px}
+.script-toolbar{margin:18px 0 10px}
+
+@media(max-width:850px){
+  .workspace{height:auto;overflow:visible}
+  .sidebar,main,.inspector{overflow:visible}
+}
+
+/* 设置面板：音色试听 */
+.settings{width:min(660px,100%)}
+.tabs{display:flex;gap:6px;border-bottom:1px solid #dfe1d8;margin-bottom:16px}
+.tabs button{border:0;border-bottom:2px solid transparent;border-radius:0;background:none;padding:9px 12px;font-size:13px}
+.tabs button.active{border-bottom-color:#344e3d;color:#344e3d;font-weight:500}
+.audition-rate .rate-row{display:flex;align-items:center;gap:12px;margin-top:8px}
+.audition-rate input[type=range]{flex:1;margin:0;accent-color:#506e45}
+.audition-rate output{font-variant-numeric:tabular-nums;min-width:64px;font-size:12px;color:#5d6b56}
+.audition-rate button{padding:6px 10px;font-size:11px;white-space:nowrap}
+.voice-list{max-height:42vh;overflow:auto;margin:14px 0;border-top:1px solid #e2e5db}
+.voice-row{display:flex;align-items:center;gap:10px;padding:10px 4px;border-bottom:1px solid #eceee6}
+.voice-row.playing{background:#eef3e8}
+.voice-row .star{border:0;background:none;font-size:17px;color:#c3c8bb;padding:2px 4px}
+.voice-row .star.on{color:#c79a3e}
+.voice-name{flex:1;min-width:0}
+.voice-name strong{display:block;font-size:13px;font-weight:550}
+.voice-name small{font-size:11px;color:#8a8f81}
+.voice-row .heard{font-size:11px;color:#7c8a74;font-variant-numeric:tabular-nums}
+.voice-row button:not(.star){font-size:11px;padding:7px 11px;white-space:nowrap}
+.settings audio{width:100%;height:34px;margin:6px 0 10px}
+.voice-audition{font-size:11px;padding:7px 10px;align-self:center}

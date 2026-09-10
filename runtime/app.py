@@ -6,6 +6,7 @@ import json
 import logging
 import time
 import os
+import re
 import threading
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import asynccontextmanager
@@ -18,7 +19,7 @@ from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 from .launcher import workspace_id
-from .tempo import ffmpeg_path, valid_regions, valid_cuts, edit_status, VERSION as TEMPO_VERSION
+from .tempo import ffmpeg_path, valid_regions, valid_cuts, edit_status, change_tempo, VERSION as TEMPO_VERSION
 from .audio import process_audio, export_audio, prepare_segment
 from .clips import clip_plan, validate_clips
 from .rhythm import analyze_file, analyze, VERSION as RHYTHM_VERSION
@@ -48,6 +49,15 @@ class RoleConfirmRequest(BaseModel):
     draft_id: str = Field(pattern=r'^[a-f0-9]{32}$')
     name: str = Field(default='Untitled', max_length=120)
     labels: list[RoleLabel] = Field(min_length=1,max_length=80)
+
+class AuditionRequest(BaseModel):
+    voice: str = Field(max_length=40)
+    text: str = Field(min_length=1, max_length=120)
+    language: Literal['zh','en'] = 'zh'
+    rate: float = Field(default=1.0, ge=0.5, le=2.0, allow_inf_nan=False)
+
+class SettingsRequest(BaseModel):
+    favourite_voices: list[str] = Field(default_factory=list, max_length=40)
 
 class ScriptRequest(BaseModel):
     revision: int = Field(ge=0)
@@ -139,6 +149,9 @@ def _splice_source(project, segment, text):
 
 def create_app(data_root=None, engine=None, frontend=None, checker=None, role_engine=None):
     store = Store(data_root or ROOT/'user-data/projects')
+    # Settings and auditions live beside the projects folder, never inside it:
+    # Store scans its own root for project.json.
+    workspace = store.root.parent
     engine = engine or MlxEngine(os.environ.get('VOXSTAGE_MODEL', ROOT/'user-data/models/qwen-customvoice'))
     checker = checker or WhisperChecker(ROOT/'user-data/asr-settings.json')
     role_engine = role_engine or RoleDraftEngine()
@@ -198,6 +211,66 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
     def config():
         return {'engine':engine.label, 'engine_id':engine.identity, 'ready':engine.ready,
                 'attribution_ready':role_engine.ready, 'speed_ready':bool(ffmpeg_path()),'checker_ready':checker.ready, 'checker_id':checker.identity, 'voices':VOICES, 'fixed_voice_ready':getattr(engine,'reference_ready',False), 'local_only':True, 'synthetic_audio':True}
+
+    @app.get('/api/settings')
+    def read_settings():
+        path = workspace/'settings.json'
+        stored = json.loads(path.read_text()) if path.is_file() else {}
+        return {'favourite_voices': [v for v in stored.get('favourite_voices', []) if v in VOICES]}
+
+    @app.post('/api/settings')
+    def write_settings(body: SettingsRequest):
+        favourites = list(dict.fromkeys(v for v in body.favourite_voices if v in VOICES))
+        (workspace/'settings.json').write_text(
+            json.dumps({'favourite_voices': favourites}, ensure_ascii=False, indent=1))
+        return {'favourite_voices': favourites}
+
+    @app.post('/api/voices/audition')
+    def audition_voice(body: AuditionRequest):
+        """Hear a preset before committing a character to it.
+
+        Choosing a voice is the first thing anyone does in a new project, and
+        until now the only way to hear one was to build a project and generate a
+        line with it. Auditions are written to a scratch directory and never
+        touch a project.
+        """
+        if body.voice not in VOICES:
+            raise ValueError('没有这个音色。')
+        if not getattr(engine, 'ready', False):
+            raise ValueError('声音引擎未就绪。')
+        with store.lock:
+            if active['project_id']:
+                raise RuntimeError('正在处理其他任务，请稍后再试听。')
+            active['project_id'] = 'voice-audition'
+        try:
+            pcm, rate, _ = engine.synthesize(body.text, body.voice, body.language, seed=260909)
+            pcm, meta = process_audio(pcm, rate)
+            rate = meta['sample_rate']
+            # Rate here is a listening aid applied after synthesis, exactly as the
+            # project speed control is; it does not change how a line is generated.
+            if body.rate != 1.0:
+                pcm = change_tempo(pcm, rate, body.rate)
+            folder = workspace/'auditions'
+            folder.mkdir(parents=True, exist_ok=True)
+            for old in sorted(folder.glob('*.wav'))[:-8]:
+                old.unlink(missing_ok=True)
+            name = hashlib.sha256(
+                f'{body.voice}|{body.text}|{body.language}|{body.rate}'.encode()).hexdigest()[:16]
+            sf.write(folder/(name+'.wav'), pcm, rate, subtype='PCM_16')
+            return {'url': f'/api/voices/audition/{name}.wav', 'seconds': len(pcm)/rate,
+                    'voice': body.voice, 'rate': body.rate, 'synthetic_audio': True}
+        finally:
+            with store.lock:
+                active['project_id'] = None
+
+    @app.get('/api/voices/audition/{name}')
+    def audition_file(name: str):
+        if not re.fullmatch(r'[a-f0-9]{16}\.wav', name):
+            raise ValueError('无效的试听文件名。')
+        path = workspace/'auditions'/name
+        if not path.is_file():
+            raise ValueError('试听文件已清理，请重新生成。')
+        return FileResponse(path, media_type='audio/wav')
 
     @app.post('/api/attribution/draft')
     def role_draft(body: RoleDraftRequest):
