@@ -295,3 +295,33 @@ def test_a_new_line_can_be_resolved_as_narration_not_speech(client):
     quoted = [s for s in state['segments'] if '今天休息' in s['text']]
     assert quoted and quoted[0]['speaker'] == '旁白', '改判为旁白后不该再算某个人的台词'
     assert ''.join(s['text'] for s in state['segments']) == state['source_script']
+
+
+# ── the content check must not cry wolf in English ───────────────────────────
+
+from runtime.content_check import compare_text
+
+
+@pytest.mark.parametrize('expected,recognized', [
+    ('Netherfield Park', 'Nether field Park'),
+    ('“Bingley.”', 'Bing ley'),
+    ('Mr. Bennet made no answer.', 'Mr . Benn et made no answer .'),
+    ('impatiently', 'impatient ly'),
+])
+def test_english_word_boundaries_are_not_reported_as_misreadings(expected, recognized):
+    """A recogniser that splits a word has not found a reading error."""
+    result = compare_text(expected, recognized, 'en')
+    assert result['status'] == 'match', result['differences']
+    assert result['equivalences'], '分词差异应当留痕，只是不算内容差异'
+
+
+def test_a_real_english_misreading_is_still_reported():
+    result = compare_text('Netherfield Park is let at last',
+                          'Nether field Park is led at last', 'en')
+    assert result['status'] == 'review'
+    assert any(d['expected'] == 'let' and d['recognized'] == 'led' for d in result['differences'])
+
+
+def test_chinese_comparison_is_unchanged_by_the_english_rule():
+    assert compare_text('雨点敲着窗。', '雨点敲着窗', 'zh')['status'] == 'match'
+    assert compare_text('雨点敲着窗。', '雨点打着窗', 'zh')['status'] == 'review'

@@ -80,6 +80,14 @@ def inspect(text, language='zh'):
                        '连续空格。建议合并为一个。', None)
     findings += _finds(text, 'trailing_space', r'[ \t]+$', 'warning',
                        '行尾多余空白。建议删除。', None)
+    # Public-domain sources are overwhelmingly Project Gutenberg, and its plain
+    # text carries typographic apparatus that a reader would never speak.
+    findings += _finds(text, 'markup_emphasis', r'_[^_\n]{1,60}_', 'warning',
+                       '下划线是排版强调标记（常见于 Project Gutenberg），会被逐个念出。建议删除。',
+                       ['_', ''])
+    findings += _finds(text, 'editorial_block', r'\[[^\[\]\n]{0,200}\]', 'warning',
+                       '方括号内容通常是插图、注释或版权说明，不属于正文，会被念出来。建议删除。',
+                       None)
     findings += _finds(text, 'decoration', f'[{re.escape(DECORATION)}]', 'warning',
                        '装饰符号通常会被念出来。建议删除或换成文字。', None)
 
@@ -109,6 +117,15 @@ def apply_fix(text, kind):
         return re.sub('  +', ' ', text)
     if kind == 'trailing_space':
         return re.sub(r'[ \t]+$', '', text, flags=re.M)
+    if kind == 'markup_emphasis':
+        return re.sub(r'_([^_\n]{1,60})_', r'\1', text)
+    if kind == 'editorial_block':
+        # Blocks nest ([Illustration: … [_Copyright …_]]); peel from the inside.
+        while True:
+            stripped = re.sub(r'[ \t]*\[[^\[\]\n]{0,200}\][ \t]*', '', text)
+            if stripped == text:
+                return text
+            text = stripped
     if kind == 'decoration':
         return re.sub(f'[{re.escape(DECORATION)}]', '', text)
     raise ValueError('这一项需要人工修改，没有可自动套用的替换。')

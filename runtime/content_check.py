@@ -10,7 +10,7 @@ import unicodedata
 import uuid
 from pathlib import Path
 
-NORMALIZATION_VERSION = 'spoken-units-v2-pypinyin055-de1'
+NORMALIZATION_VERSION = 'spoken-units-v3-pypinyin055-de1-enwordjoin'
 from .phonetics import chinese_keys
 DECODING = {'beam_size':5,'best_of':5,'temperature':0,'temperature_inc':0,'max_context':0,'no_fallback':True,'threads':4,'timing':'max-len-1-full-json-v1'}
 
@@ -37,8 +37,15 @@ def compare_text(expected, recognized, language):
             for i,j in zip(range(a,b),range(c,d)):
                 if left[i]!=right[j]:equivalences.append({'expected':left[i],'recognized':right[j],'basis':keys_left[i][0]})
         if kind!='equal':
-            changes.append({'kind':kind,'expected':joiner.join(left[a:b]),'recognized':joiner.join(right[c:d])})
-    return {'status':'match' if left and keys_left==keys_right else 'review','expected_text':expected,
+            # Recognisers split and join English words unpredictably ("Netherfield"
+            # comes back as "Nether field"). Identical letters in a different
+            # arrangement of words is a segmentation artefact, not a misreading.
+            if language=='en' and ''.join(left[a:b])==''.join(right[c:d]) and left[a:b]:
+                equivalences.append({'expected':joiner.join(left[a:b]),
+                                     'recognized':joiner.join(right[c:d]),'basis':'word-boundary'})
+            else:
+                changes.append({'kind':kind,'expected':joiner.join(left[a:b]),'recognized':joiner.join(right[c:d])})
+    return {'status':'match' if left and not changes else 'review','expected_text':expected,
             'recognized_text':recognized,'differences':changes,'equivalences':equivalences,'normalization':NORMALIZATION_VERSION}
 
 def check_status(segment, current_fingerprint, checker_id):

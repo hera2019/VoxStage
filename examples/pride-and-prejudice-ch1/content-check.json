@@ -1,0 +1,584 @@
+{
+ "project_revision": 105,
+ "synthetic_audio": true,
+ "speech_rate": 1.0,
+ "checked_audio": "original_generated_audio",
+ "notice": "自动文字检查针对原始合成声音；剪切可能移除发音，成品文字及字幕需要重新人工核对。",
+ "segments": [
+  {
+   "speaker": "Narrator",
+   "check_status": "match",
+   "expected_text": "It is a truth universally acknowledged, that a single man in possession of a good fortune must be in want of a wife.\n",
+   "recognized_text": "It\nis\na\ntruth\nuniversally\nacknowledged\nthat\na\nsingle\nman\nin\npossession\nof\na\ngood\nfortune\nmust\nbe\nin\nwant\nof\na\nwife\n.",
+   "differences": [],
+   "word_boundary_equivalences": [],
+   "model": {
+    "repo": "ggerganov/whisper.cpp",
+    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+    "file": "ggml-large-v3-turbo-q5_0.bin",
+    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
+   },
+   "seconds": 1.1159507079282776
+  },
+  {
+   "speaker": "Narrator",
+   "check_status": "review",
+   "expected_text": "However little known the feelings or views of such a man may be on his first entering a neighbourhood, this truth is so well fixed in the minds of the surrounding families, that he is considered as the rightful property of some one or other ",
+   "recognized_text": "However\nlittle\nknown\nthe\nfeelings\nor\nviews\nof\nsuch\na\nman\nmay\nbe\non\nhis\nfirst\nentering\na\nneighborhood\n,\nthis\ntruth\nis\nso\nwell\nfixed\nin\nthe\nminds\nof\nthe\nsurrounding\nfamilies\nthat\nhe\nis\nconsidered\nas\nthe\nright\nful\nproperty\nof\nsomeone\nor\nother\n.",
+   "differences": [
+    {
+     "kind": "replace",
+     "expected": "neighbourhood",
+     "recognized": "neighborhood"
+    }
+   ],
+   "word_boundary_equivalences": [
+    {
+     "expected": "rightful",
+     "recognized": "right ful",
+     "basis": "word-boundary"
+    },
+    {
+     "expected": "some one",
+     "recognized": "someone",
+     "basis": "word-boundary"
+    }
+   ],
+   "model": {
+    "repo": "ggerganov/whisper.cpp",
+    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+    "file": "ggml-large-v3-turbo-q5_0.bin",
+    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
+   },
+   "seconds": 0.9966794999781996
+  },
+  {
+   "speaker": "Narrator",
+   "check_status": "match",
+   "expected_text": "of their daughters.\n",
+   "recognized_text": "...\nof\ntheir\ndaughters\n...",
+   "differences": [],
+   "word_boundary_equivalences": [],
+   "model": {
+    "repo": "ggerganov/whisper.cpp",
+    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+    "file": "ggml-large-v3-turbo-q5_0.bin",
+    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
+   },
+   "seconds": 0.8022463329834864
+  },
+  {
+   "speaker": "Mrs. Bennet",
+   "check_status": "review",
+   "expected_text": "“My dear Mr. Bennet,” ",
+   "recognized_text": "My\ndear\nMr\n.\nBennett\n,",
+   "differences": [
+    {
+     "kind": "replace",
+     "expected": "bennet",
+     "recognized": "bennett"
+    }
+   ],
+   "word_boundary_equivalences": [],
+   "model": {
+    "repo": "ggerganov/whisper.cpp",
+    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+    "file": "ggml-large-v3-turbo-q5_0.bin",
+    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
+   },
+   "seconds": 0.7832354579586536
+  },
+  {
+   "speaker": "Narrator",
+   "check_status": "match",
+   "expected_text": "said his lady to him one day, ",
+   "recognized_text": "said\nhis\nlady\nto\nhim\none\nday",
+   "differences": [],
+   "word_boundary_equivalences": [],
+   "model": {
+    "repo": "ggerganov/whisper.cpp",
+    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+    "file": "ggml-large-v3-turbo-q5_0.bin",
+    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
+   },
+   "seconds": 0.7967345410725102
+  },
+  {
+   "speaker": "Mrs. Bennet",
+   "check_status": "review",
+   "expected_text": "“have you heard that Netherfield Park is let at last?”\n",
+   "recognized_text": "Have\nyou\nheard\nthat\nNether\nfield\nPark\nis\nled\nat\nlast\n?",
+   "differences": [
+    {
+     "kind": "replace",
+     "expected": "let",
+     "recognized": "led"
+    }
+   ],
+   "word_boundary_equivalences": [
+    {
+     "expected": "netherfield",
+     "recognized": "nether field",
+     "basis": "word-boundary"
+    }
+   ],
+   "model": {
+    "repo": "ggerganov/whisper.cpp",
+    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+    "file": "ggml-large-v3-turbo-q5_0.bin",
+    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
+   },
+   "seconds": 0.8070645419647917
+  },
+  {
+   "speaker": "Narrator",
+   "check_status": "review",
+   "expected_text": "Mr. Bennet replied that he had not.\n",
+   "recognized_text": "Mr\n.\nBennett\nreplied\nthat\nhe\ndid\nnot\n.",
+   "differences": [
+    {
+     "kind": "replace",
+     "expected": "bennet",
+     "recognized": "bennett"
+    },
+    {
+     "kind": "replace",
+     "expected": "had",
+     "recognized": "did"
+    }
+   ],
+   "word_boundary_equivalences": [],
+   "model": {
+    "repo": "ggerganov/whisper.cpp",
+    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+    "file": "ggml-large-v3-turbo-q5_0.bin",
+    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
+   },
+   "seconds": 0.8073540839832276
+  },
+  {
+   "speaker": "Mrs. Bennet",
+   "check_status": "match",
+   "expected_text": "“But it is,” ",
+   "recognized_text": "But\nit\nis\n.",
+   "differences": [],
+   "word_boundary_equivalences": [],
+   "model": {
+    "repo": "ggerganov/whisper.cpp",
+    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+    "file": "ggml-large-v3-turbo-q5_0.bin",
+    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
+   },
+   "seconds": 0.7731785000069067
+  },
+  {
+   "speaker": "Narrator",
+   "check_status": "match",
+   "expected_text": "returned she; ",
+   "recognized_text": "Return\ned\nshe\n.",
+   "differences": [],
+   "word_boundary_equivalences": [
+    {
+     "expected": "returned",
+     "recognized": "return ed",
+     "basis": "word-boundary"
+    }
+   ],
+   "model": {
+    "repo": "ggerganov/whisper.cpp",
+    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+    "file": "ggml-large-v3-turbo-q5_0.bin",
+    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
+   },
+   "seconds": 0.7776046670041978
+  },
+  {
+   "speaker": "Mrs. Bennet",
+   "check_status": "match",
+   "expected_text": "“for Mrs. Long has just been here, and she told me all about it.”\n",
+   "recognized_text": "For\nMrs\n.\nLong\nhas\njust\nbeen\nhere\nand\nshe\ntold\nme\nall\nabout\nit\n.",
+   "differences": [],
+   "word_boundary_equivalences": [],
+   "model": {
+    "repo": "ggerganov/whisper.cpp",
+    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+    "file": "ggml-large-v3-turbo-q5_0.bin",
+    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
+   },
+   "seconds": 0.8280968749895692
+  },
+  {
+   "speaker": "Narrator",
+   "check_status": "match",
+   "expected_text": "Mr. Bennet made no answer.\n",
+   "recognized_text": "Mr\n.\nBenn\net\nmade\nno\nanswer\n.",
+   "differences": [],
+   "word_boundary_equivalences": [
+    {
+     "expected": "bennet",
+     "recognized": "benn et",
+     "basis": "word-boundary"
+    }
+   ],
+   "model": {
+    "repo": "ggerganov/whisper.cpp",
+    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+    "file": "ggml-large-v3-turbo-q5_0.bin",
+    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
+   },
+   "seconds": 0.7923463339684531
+  },
+  {
+   "speaker": "Mrs. Bennet",
+   "check_status": "match",
+   "expected_text": "“Do not you want to know who has taken it?” ",
+   "recognized_text": "Do\nnot\nyou\nwant\nto\nknow\nwho\nhas\ntaken\nit\n.",
+   "differences": [],
+   "word_boundary_equivalences": [],
+   "model": {
+    "repo": "ggerganov/whisper.cpp",
+    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+    "file": "ggml-large-v3-turbo-q5_0.bin",
+    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
+   },
+   "seconds": 0.8042995000723749
+  },
+  {
+   "speaker": "Narrator",
+   "check_status": "match",
+   "expected_text": "cried his wife, impatiently.\n",
+   "recognized_text": "cried\nhis\nwife\nimpatient\nly\n.",
+   "differences": [],
+   "word_boundary_equivalences": [
+    {
+     "expected": "impatiently",
+     "recognized": "impatient ly",
+     "basis": "word-boundary"
+    }
+   ],
+   "model": {
+    "repo": "ggerganov/whisper.cpp",
+    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+    "file": "ggml-large-v3-turbo-q5_0.bin",
+    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
+   },
+   "seconds": 0.7840909999795258
+  },
+  {
+   "speaker": "Mr. Bennet",
+   "check_status": "match",
+   "expected_text": "“You want to tell me, and I have no objection to hearing it.”\n",
+   "recognized_text": "You\nwant\nto\ntell\nme\n,\nand\nI\nhave\nno\nobjection\nto\nhearing\nit\n,",
+   "differences": [],
+   "word_boundary_equivalences": [],
+   "model": {
+    "repo": "ggerganov/whisper.cpp",
+    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+    "file": "ggml-large-v3-turbo-q5_0.bin",
+    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
+   },
+   "seconds": 0.8152464169543236
+  },
+  {
+   "speaker": "Narrator",
+   "check_status": "match",
+   "expected_text": "[Illustration:\n",
+   "recognized_text": "\"\nI\nll\nust\nration\n\"",
+   "differences": [],
+   "word_boundary_equivalences": [
+    {
+     "expected": "illustration",
+     "recognized": "i ll ust ration",
+     "basis": "word-boundary"
+    }
+   ],
+   "model": {
+    "repo": "ggerganov/whisper.cpp",
+    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+    "file": "ggml-large-v3-turbo-q5_0.bin",
+    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
+   },
+   "seconds": 0.7701393750030547
+  },
+  {
+   "speaker": "Narrator",
+   "check_status": "match",
+   "expected_text": "“He came down to see the place”\n",
+   "recognized_text": "He\ncame\ndown\nto\nsee\nthe\nplace\n.",
+   "differences": [],
+   "word_boundary_equivalences": [],
+   "model": {
+    "repo": "ggerganov/whisper.cpp",
+    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+    "file": "ggml-large-v3-turbo-q5_0.bin",
+    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
+   },
+   "seconds": 0.7924800000619143
+  },
+  {
+   "speaker": "Narrator",
+   "check_status": "match",
+   "expected_text": "]\nThis was invitation enough.\n",
+   "recognized_text": "This\nwas\ninvitation\nenough\n.",
+   "differences": [],
+   "word_boundary_equivalences": [],
+   "model": {
+    "repo": "ggerganov/whisper.cpp",
+    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+    "file": "ggml-large-v3-turbo-q5_0.bin",
+    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
+   },
+   "seconds": 0.7798197079682723
+  },
+  {
+   "speaker": "Mrs. Bennet",
+   "check_status": "match",
+   "expected_text": "“Why, my dear, you must know, Mrs. Long says that Netherfield is taken by a young man of large fortune from the north of England; ",
+   "recognized_text": "\"\nWhy\n,\nmy\ndear\n,\nyou\nmust\nknow\n,\nMrs\n.\nLong\nsays\nthat\nNether\nfield\nis\ntaken\nby\na\nyoung\nman\nof\nlarge\nfortune\nfrom\nthe\nnorth\nof\nEngland\n.",
+   "differences": [],
+   "word_boundary_equivalences": [
+    {
+     "expected": "netherfield",
+     "recognized": "nether field",
+     "basis": "word-boundary"
+    }
+   ],
+   "model": {
+    "repo": "ggerganov/whisper.cpp",
+    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+    "file": "ggml-large-v3-turbo-q5_0.bin",
+    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
+   },
+   "seconds": 0.8971937920432538
+  },
+  {
+   "speaker": "Mrs. Bennet",
+   "check_status": "match",
+   "expected_text": "that he came down on Monday in a chaise and four to see the place, and was so much delighted with it that he agreed with Mr. Morris immediately; ",
+   "recognized_text": "that\nhe\ncame\ndown\non\nMonday\nin\na\ncha\nise\nand\nfour\nto\nsee\nthe\nplace\nand\nwas\nso\nmuch\ndelighted\nwith\nit\nthat\nhe\nagreed\nwith\nMr\n.\nMorris\nimmediately\n.",
+   "differences": [],
+   "word_boundary_equivalences": [
+    {
+     "expected": "chaise",
+     "recognized": "cha ise",
+     "basis": "word-boundary"
+    }
+   ],
+   "model": {
+    "repo": "ggerganov/whisper.cpp",
+    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+    "file": "ggml-large-v3-turbo-q5_0.bin",
+    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
+   },
+   "seconds": 0.8894473750842735
+  },
+  {
+   "speaker": "Mrs. Bennet",
+   "check_status": "review",
+   "expected_text": "that he is to take possession before Michaelmas, and some of his servants are to be in the house by the end of next week.”\n",
+   "recognized_text": "that\nhe\n's\nto\ntake\npossession\nbefore\nMichael\nmas\nand\nsome\nof\nhis\nservants\nare\nto\nbe\nin\nthe\nhouse\nby\nthe\nend\nof\nnext\nweek\n.",
+   "differences": [
+    {
+     "kind": "replace",
+     "expected": "is",
+     "recognized": "s"
+    }
+   ],
+   "word_boundary_equivalences": [
+    {
+     "expected": "michaelmas",
+     "recognized": "michael mas",
+     "basis": "word-boundary"
+    }
+   ],
+   "model": {
+    "repo": "ggerganov/whisper.cpp",
+    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+    "file": "ggml-large-v3-turbo-q5_0.bin",
+    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
+   },
+   "seconds": 0.8781907089287415
+  },
+  {
+   "speaker": "Mr. Bennet",
+   "check_status": "match",
+   "expected_text": "“What is his name?”\n",
+   "recognized_text": "What\nis\nhis\nname\n?",
+   "differences": [],
+   "word_boundary_equivalences": [],
+   "model": {
+    "repo": "ggerganov/whisper.cpp",
+    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+    "file": "ggml-large-v3-turbo-q5_0.bin",
+    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
+   },
+   "seconds": 0.8012431249953806
+  },
+  {
+   "speaker": "Mrs. Bennet",
+   "check_status": "match",
+   "expected_text": "“Bingley.”\n",
+   "recognized_text": "Bing\nley",
+   "differences": [],
+   "word_boundary_equivalences": [
+    {
+     "expected": "bingley",
+     "recognized": "bing ley",
+     "basis": "word-boundary"
+    }
+   ],
+   "model": {
+    "repo": "ggerganov/whisper.cpp",
+    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+    "file": "ggml-large-v3-turbo-q5_0.bin",
+    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
+   },
+   "seconds": 0.7742484170012176
+  },
+  {
+   "speaker": "Mr. Bennet",
+   "check_status": "match",
+   "expected_text": "“Is he married or single?”\n",
+   "recognized_text": "Is\nhe\nmarried\nor\nsingle\n?",
+   "differences": [],
+   "word_boundary_equivalences": [],
+   "model": {
+    "repo": "ggerganov/whisper.cpp",
+    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+    "file": "ggml-large-v3-turbo-q5_0.bin",
+    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
+   },
+   "seconds": 0.7907244579400867
+  },
+  {
+   "speaker": "Mrs. Bennet",
+   "check_status": "match",
+   "expected_text": "“Oh, single, my dear, to be sure! A single man of large fortune; four or five thousand a year. What a fine thing for our girls!”\n",
+   "recognized_text": "Oh\n,\nsingle\n,\nmy\ndear\n,\nto\nbe\nsure\n.\nA\nsingle\nman\nof\nlarge\nfortune\n,\nfour\nor\nfive\nthousand\na\nyear\n.\nWhat\na\nfine\nthing\nfor\nour\ngirls\n.",
+   "differences": [],
+   "word_boundary_equivalences": [],
+   "model": {
+    "repo": "ggerganov/whisper.cpp",
+    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+    "file": "ggml-large-v3-turbo-q5_0.bin",
+    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
+   },
+   "seconds": 0.9066147500416264
+  },
+  {
+   "speaker": "Mr. Bennet",
+   "check_status": "match",
+   "expected_text": "“How so? how can it affect them?”\n",
+   "recognized_text": "\"\nHow\nso\n?\nHow\ncan\nit\naffect\nthem\n?\"",
+   "differences": [],
+   "word_boundary_equivalences": [],
+   "model": {
+    "repo": "ggerganov/whisper.cpp",
+    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+    "file": "ggml-large-v3-turbo-q5_0.bin",
+    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
+   },
+   "seconds": 0.8100642079953104
+  },
+  {
+   "speaker": "Mrs. Bennet",
+   "check_status": "review",
+   "expected_text": "“My dear Mr. Bennet,” ",
+   "recognized_text": "My\ndear\nMr\n.\nBennett\n,",
+   "differences": [
+    {
+     "kind": "replace",
+     "expected": "bennet",
+     "recognized": "bennett"
+    }
+   ],
+   "word_boundary_equivalences": [],
+   "model": {
+    "repo": "ggerganov/whisper.cpp",
+    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+    "file": "ggml-large-v3-turbo-q5_0.bin",
+    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
+   },
+   "seconds": 0.7969722909620032
+  },
+  {
+   "speaker": "Narrator",
+   "check_status": "match",
+   "expected_text": "replied his wife, ",
+   "recognized_text": "replied\nhis\nwife\n.",
+   "differences": [],
+   "word_boundary_equivalences": [],
+   "model": {
+    "repo": "ggerganov/whisper.cpp",
+    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+    "file": "ggml-large-v3-turbo-q5_0.bin",
+    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
+   },
+   "seconds": 0.7837637079646811
+  },
+  {
+   "speaker": "Mrs. Bennet",
+   "check_status": "match",
+   "expected_text": "“how can you be so tiresome? You must know that I am thinking of his marrying one of them.”\n",
+   "recognized_text": "How\ncan\nyou\nbe\nso\ntires\nome\n?\nYou\nmust\nknow\nthat\nI\nam\nthinking\nof\nhis\nmarrying\none\nof\nthem\n.",
+   "differences": [],
+   "word_boundary_equivalences": [
+    {
+     "expected": "tiresome",
+     "recognized": "tires ome",
+     "basis": "word-boundary"
+    }
+   ],
+   "model": {
+    "repo": "ggerganov/whisper.cpp",
+    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+    "file": "ggml-large-v3-turbo-q5_0.bin",
+    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
+   },
+   "seconds": 0.8498147920472547
+  },
+  {
+   "speaker": "Mr. Bennet",
+   "check_status": "review",
+   "expected_text": "“Is that his design in settling here?”\n",
+   "recognized_text": "Is\nthat\nhis\ndesign\nand\nsettling\nhere\n?",
+   "differences": [
+    {
+     "kind": "replace",
+     "expected": "in",
+     "recognized": "and"
+    }
+   ],
+   "word_boundary_equivalences": [],
+   "model": {
+    "repo": "ggerganov/whisper.cpp",
+    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+    "file": "ggml-large-v3-turbo-q5_0.bin",
+    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
+   },
+   "seconds": 0.7787790420698002
+  },
+  {
+   "speaker": "Mrs. Bennet",
+   "check_status": "review",
+   "expected_text": "“Design? Nonsense, how can you talk so! But it is very likely that he may fall in love with one of them, and therefore you must visit him as soon as he comes.”\n",
+   "recognized_text": "D\niz\nai\n?\nN\nonsense\n!\nHow\ncan\nyou\ntalk\nso\n?\nBut\nit\nis\nvery\nlikely\nthat\nhe\nmay\nfall\nin\nlove\nwith\none\nof\nthem\n,\nand\ntherefore\nyou\nmust\nvisit\nhim\nas\nsoon\nas\nhe\ncomes\n.",
+   "differences": [
+    {
+     "kind": "replace",
+     "expected": "design nonsense",
+     "recognized": "d iz ai n onsense"
+    }
+   ],
+   "word_boundary_equivalences": [],
+   "model": {
+    "repo": "ggerganov/whisper.cpp",
+    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+    "file": "ggml-large-v3-turbo-q5_0.bin",
+    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
+   },
+   "seconds": 0.9405656249728054
+  }
+ ],
+ "note_slim": "样例只保留比对结论。完整识别输出（含逐词时间戳、解码参数、音频哈希）留在本机工程内，未随样例发布。"
+}

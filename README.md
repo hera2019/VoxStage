@@ -76,6 +76,14 @@ For the content check, install a compatible `whisper-cli`, then
 
 This is a developer setup, not a consumer installer.
 
+## A finished sample
+
+[*Pride and Prejudice*, opening of Chapter 1](examples/pride-and-prejudice-ch1/) —
+unlabelled public-domain prose in, three-character audio and subtitles out, run
+end to end on one Mac. Attribution made **one mistake in 35 units**, and the
+sample says which one and why that particular kind of mistake matters. Timings,
+the transcribe-back results and the known limitations are all in that folder.
+
 ## What works today
 
 | Capability | State |
