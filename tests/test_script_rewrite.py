@@ -277,3 +277,21 @@ def test_spoken_as_never_touches_the_script(client):
                          json={'revision': project['revision'], 'segment_id': project['segments'][0]['id'],
                                'spoken_as': '雨点敲着窗户'}).json()
     assert after['source_script'] == before, '朗读文本是读法覆盖，不是原文'
+
+
+def test_a_new_line_can_be_resolved_as_narration_not_speech(client):
+    """A notice on a door is quoted text, not someone talking."""
+    project = make(client)
+    grown = project['source_script'] + '门上写着“今天休息”。'
+    preview = client.post(f"/api/projects/{project['id']}/script",
+                          json={'revision': project['revision'], 'source_script': grown}).json()
+    assert preview['unresolved'], '引号里的新内容应当先问人'
+    labels = [{**l, 'kind': 'narration', 'speaker': '旁白'}
+              if l['id'] == preview['unresolved'][0]['id'] else l for l in preview['labels']]
+    applied = client.post(f"/api/projects/{project['id']}/script",
+                          json={'revision': project['revision'], 'source_script': grown, 'labels': labels})
+    assert applied.status_code == 200, applied.text
+    state = applied.json()
+    quoted = [s for s in state['segments'] if '今天休息' in s['text']]
+    assert quoted and quoted[0]['speaker'] == '旁白', '改判为旁白后不该再算某个人的台词'
+    assert ''.join(s['text'] for s in state['segments']) == state['source_script']

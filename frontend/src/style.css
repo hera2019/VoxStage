@@ -55,3 +55,8 @@
 .inline-error button{flex:0 0 auto;font-size:.78rem;padding:.15rem .5rem}
 button.danger{color:#8a2f2f;border-color:#d9bcbc}
 button.danger:hover:not(:disabled){background:#f6ecec}
+
+/* 未指定说话人：已知角色一键选择，旁白在最前 */
+.speaker-choices{display:flex;flex-wrap:wrap;gap:.35rem;margin:.4rem 0 .1rem}
+.speaker-choices button{font-size:.82rem;padding:.2rem .6rem;border-radius:999px}
+.speaker-choices button.chosen{background:#2f5d4a;color:#fff;border-color:#2f5d4a}

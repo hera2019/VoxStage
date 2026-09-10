@@ -3,7 +3,7 @@ type Finding={kind:string;level:'error'|'warning';index:number;excerpt:string;me
 type Report={findings:Finding[];units:number;characters:number;blocking:boolean};
 type Unit={id:string;text:string;kind:'narration'|'dialogue';speaker:string};
 type Preview={preview:true;labels:{id:string;kind:string;speaker:string}[];unresolved:Unit[];report:Report;segments:number;kept:number;kept_audio:number;fresh:number};
-type Props={project:{id:string;revision:number;source_script:string;segments:{text:string}[]};request:(path:string,method?:string,data?:unknown)=>Promise<any>;onUpdated:(project:any)=>void;onClose:()=>void};
+type Props={project:{id:string;revision:number;source_script:string;language:'zh'|'en';voices:Record<string,string>;segments:{text:string}[]};request:(path:string,method?:string,data?:unknown)=>Promise<any>;onUpdated:(project:any)=>void;onClose:()=>void};
 
 const fixable:Record<string,string>={ellipsis_dots:'改为 ……',dash_ascii:'改为 ——',ideographic_space:'删除全角空格',repeated_space:'合并空格',trailing_space:'删除行尾空白',decoration:'删除装饰符号'};
 
@@ -19,6 +19,14 @@ export function ScriptEditor({project,request,onUpdated,onClose}:Props){
  const unresolved=preview?.unresolved??[];
  const blocked=unresolved.some(u=>!u.speaker.trim()||u.speaker.trim().toUpperCase()==='UNKNOWN');
  const base='/projects/'+project.id+'/script';
+ const narrator=project.language==='zh'?'旁白':'Narrator';
+ // Known speakers are almost always the answer; the narrator covers written
+ // notices the model mistook for speech. No value is pre-filled: a guess shown
+ // as an answer is the one thing review is supposed to prevent.
+ const known=[narrator,...Object.keys(project.voices).filter(x=>x!==narrator)];
+ function assign(id:string,speaker:string){setPreview(p=>p&&({...p,
+  unresolved:p.unresolved.map(x=>x.id===id?{...x,speaker,kind:speaker===narrator?'narration':'dialogue'}:x),
+  labels:p.labels.map(l=>l.id===id?{...l,speaker,kind:speaker===narrator?'narration':'dialogue'}:l)}))}
  async function run(task:()=>Promise<void>){setWaiting(true);setError('');try{await task()}catch(e){setError((e as Error).message)}finally{setWaiting(false)}}
  // Any edit invalidates a preview: never let someone apply a plan they cannot see.
  function edit(value:string){setText(value);setPreview(null);setReport(null)}
@@ -41,13 +49,16 @@ export function ScriptEditor({project,request,onUpdated,onClose}:Props){
 
   {preview&&<>
    <p>保留 {preview.kept} 句，其中 {preview.kept_audio} 句可直接沿用已生成的声音；需要重新生成 {preview.fresh} 句。共 {preview.segments} 句。</p>
-   {unresolved.length>0&&<><div className="hint">新出现的对白需要指定角色，其余会自动沿用。</div>
-    <div className="role-units">{unresolved.map(u=><article className={'role-unit '+(!u.speaker.trim()||u.speaker.trim().toUpperCase()==='UNKNOWN'?'role-unknown':'')} key={u.id}>
-     <p><small>新增对白</small><br/>{u.text}</p>
-     <div className="role-fields"><label>说话人<input aria-label={`${u.text.slice(0,10)} 的说话人`} value={u.speaker.toUpperCase()==='UNKNOWN'?'':u.speaker} maxLength={80} disabled={waiting}
-      onChange={e=>setPreview(p=>p&&({...p,unresolved:p.unresolved.map(x=>x.id===u.id?{...x,speaker:e.target.value}:x),
-       labels:p.labels.map(l=>l.id===u.id?{...l,speaker:e.target.value}:l)}))}/></label></div>
-    </article>)}</div></>}
+   {unresolved.length>0&&<><div className="hint">新出现的这几句需要指定说话人，其余会自动沿用。如果它其实是念出来的文字（告示、纸条、书上的话），选「{narrator}」。</div>
+    <div className="role-units">{unresolved.map(u=>{const named=u.speaker.trim()&&u.speaker.trim().toUpperCase()!=='UNKNOWN';
+     return <article className={'role-unit '+(named?'':'role-unknown')} key={u.id}>
+     <p><small>{named?(u.kind==='narration'?'已设为'+narrator:'说话人：'+u.speaker):'待指定'}</small><br/>{u.text}</p>
+     <div className="speaker-choices">{known.map(name=><button key={name} type="button" disabled={waiting}
+       className={u.speaker.trim()===name?'chosen':''} onClick={()=>assign(u.id,name)}>{name}</button>)}</div>
+     <div className="role-fields"><label>或填写新角色<input aria-label={`${u.text.slice(0,10)} 的说话人`}
+      value={u.speaker.toUpperCase()==='UNKNOWN'?'':u.speaker} maxLength={80} disabled={waiting}
+      placeholder="新角色名称" onChange={e=>assign(u.id,e.target.value)}/></label></div>
+    </article>})}</div></>}
   </>}
 
   <div className="buttons script-actions">
