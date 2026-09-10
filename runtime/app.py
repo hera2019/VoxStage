@@ -312,7 +312,10 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
     @app.get('/api/projects')
     def projects(include_archived: bool = False):
         with store.lock:
-            return [{'id':p['id'],'name':p['name'],'language':p['language'],'archived':p.get('archived',False)}
+            # Most recently touched first: a list ordered by folder name is a
+            # list ordered by nothing anyone can see.
+            return [{'id':p['id'],'name':p['name'],'language':p['language'],
+                     'archived':p.get('archived',False),'updated_at':path.stat().st_mtime}
                     for path in sorted(store.root.glob('*/project.json'))
                     for p in [json.loads(path.read_text())] if include_archived or not p.get('archived',False)]
 

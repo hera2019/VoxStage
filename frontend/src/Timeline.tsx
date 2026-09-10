@@ -18,6 +18,8 @@ export function Timeline(props:Props){
  const blocks=useMemo(()=>draft?layoutClips(draft,props.globalSpeed):actual,[draft,props.globalSpeed,actual]);
  const duration=blocks.at(-1)?.end??0;const span=duration/zoom||1;const origin=Math.min(viewStart,Math.max(0,duration-span));const x=(v:number)=>(v-origin)/span*800;
  const chosen=blocks.find(b=>b.id===selected);const playbackBlock=blocks.find(b=>cursor>b.start+.001&&cursor<b.end-.001);
+ useEffect(()=>{const open=()=>{if(!props.disabled){props.player.current?.pause();setExpanded(true)}};
+ window.addEventListener('voxstage:open-editor',open);return()=>window.removeEventListener('voxstage:open-editor',open)},[props.disabled]);
  useEffect(()=>{if(!expanded)return;return()=>{if(props.context.current.loop){props.player.current?.pause();props.context.current.loop=false}}},[expanded]);
  useEffect(()=>{setSpeedInput(String(chosen?.effectiveSpeed??1))},[selected,chosen?.effectiveSpeed]);
  useEffect(()=>{if(!expanded||preparedRevision.current===props.revision)return;let ended=false;setLoading(true);setError('');props.player.current?.pause();
@@ -64,7 +66,7 @@ export function Timeline(props:Props){
   else if((key==='delete'||key==='backspace')&&!target.closest('button,summary')&&chosen&&clips.length>1){e.preventDefault();void save(clips.filter(c=>c.id!==selected))}
   else if((key==='arrowleft'||key==='arrowright')&&!target.closest('button,summary')&&!target.closest('.timeline-scrollbar')){e.preventDefault();props.player.current?.pause();const t=Math.max(0,Math.min(duration,cursor+(key==='arrowright'?1:-1)*(e.shiftKey?1:.1)));setCursor(t);if(t<origin||t>origin+span)setViewStart(Math.max(0,t-span*.1))}
  }
- if(!expanded)return <div className="editor-entry"><span>细调停顿和局部节奏，进入独立剪辑界面。</span><button disabled={props.disabled} onClick={()=>{props.player.current?.pause();setExpanded(true)}}>打开精细剪辑 ↗</button></div>;
+ if(!expanded)return null;
  return <section ref={panel} tabIndex={-1} role="dialog" aria-modal="true" className="timeline-editor editor-expanded block-editor" aria-label="精细剪辑" onKeyDown={shortcut}>
  <div className="timeline-heading"><div><span className="section-label">VOXSTAGE / AUDIO EDITOR</span><h3>精细剪辑 <small>{props.speaker}</small></h3></div><button disabled={saving||loading} onClick={()=>setExpanded(false)}>返回工作台</button></div>
  <div className="editor-caption"><p title={props.text}>{props.text}</p><p role="status" className={'save-state '+(error?'failed':'')}>{loading?'正在准备时间线…':saving?'正在保存…':draft?'松手自动保存':error?message:'✓ 已保存到本机'}</p></div>

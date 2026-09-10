@@ -155,3 +155,39 @@ button.danger:hover:not(:disabled){background:#f6ecec}
   .panel-tabs button{flex:1;font-size:12px;padding:12px 4px}
   .panel-body{padding:16px 14px 24px}
 }
+
+/* ── 页眉并入左栏；底部条只占中间 ── */
+.sidebar .brand{font-size:20px;letter-spacing:-.8px;margin-bottom:4px}
+.sidebar .mark{width:28px;height:30px;font-size:26px}
+.sidebar .local{margin:0 0 18px;font-size:10px;display:block;line-height:1.7}
+.sidebar h1{font-size:28px;margin:14px 0 6px}
+
+@media(min-width:851px){
+  .workspace{height:100vh}
+  footer{position:relative;min-height:64px;padding:10px 24px}
+  /* 播放条与主栏对齐，不横跨侧栏 */
+}
+.footer-actions{display:flex;align-items:center;gap:14px}
+
+/* ── 手机竖屏：剧本区限高一屏，分页折叠在下方 ── */
+@media(max-width:850px){
+  main{display:flex;flex-direction:column;min-height:0}
+  .script{max-height:58vh;overflow-y:auto;overscroll-behavior:contain;
+    border:1px solid #e4e6dc;border-radius:10px;padding:8px;background:#fbfbf6}
+  .panel-tabs{position:sticky;top:0;z-index:4}
+  .panel-body{max-height:none}
+  .sidebar .local{display:none}
+}
+
+/* 播放条现在是主栏的底部行，只占中间区域 */
+main{display:flex;flex-direction:column;min-height:0}
+.main-scroll{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+main>footer{flex-shrink:0;margin:0 -36px -38px;border-top:1px solid #d5dccb}
+@media(min-width:851px){
+  main{overflow:hidden}
+  .workspace{height:calc(100vh - 0px)}
+}
+@media(max-width:850px){
+  main>footer{margin:0 -22px -25px}
+  .main-scroll{overflow:visible}
+}
