@@ -48,6 +48,30 @@ def _finds(text, kind, pattern, level, message, replace=None):
     return out
 
 
+ILLUSTRATION = re.compile(r'\[\s*Illustration\b', re.I)
+
+
+def _illustration_spans(text):
+    """Find balanced [Illustration: … ] blocks, which nest and span lines.
+
+    Gutenberg wraps the caption and the plate's copyright line inside the same
+    block, so removing only the brackets leaves the caption behind as a stray
+    quoted line — which then has to be attributed to somebody.
+    """
+    spans = []
+    for m in ILLUSTRATION.finditer(text):
+        depth = 0
+        for i in range(m.start(), len(text)):
+            if text[i] == '[':
+                depth += 1
+            elif text[i] == ']':
+                depth -= 1
+                if depth == 0:
+                    spans.append((m.start(), i + 1))
+                    break
+    return spans
+
+
 def inspect(text, language='zh'):
     """Return findings plus the numbers that decide whether slicing will work."""
     findings = []
@@ -85,6 +109,13 @@ def inspect(text, language='zh'):
     findings += _finds(text, 'markup_emphasis', r'_[^_\n]{1,60}_', 'warning',
                        '下划线是排版强调标记（常见于 Project Gutenberg），会被逐个念出。建议删除。',
                        ['_', ''])
+    for a, b in _illustration_spans(text):
+        findings.append({
+            'kind': 'illustration_block', 'level': 'warning', 'index': a,
+            'excerpt': _excerpt(text, a, 26),
+            'message': f'整段插图说明（{b - a} 个字符，含图注与版权行）不属于正文，'
+                       f'会被逐字念出。建议整块删除。',
+            'replace': ['[Illustration: …]', '']})
     findings += _finds(text, 'editorial_block', r'\[[^\[\]\n]{0,200}\]', 'warning',
                        '方括号内容通常是插图、注释或版权说明，不属于正文，会被念出来。建议删除。',
                        None)
@@ -100,6 +131,10 @@ def inspect(text, language='zh'):
                        f'请分几次导入，或缩短原稿。',
             'replace': None})
 
+    # An illustration block already covers its own brackets; do not advise twice.
+    covered = _illustration_spans(text)
+    findings = [f for f in findings if not (f['kind'] == 'editorial_block'
+                and any(a <= f['index'] < b for a, b in covered))]
     findings.sort(key=lambda f: (f['level'] != 'error', f['index']))
     return {'findings': findings, 'units': len(units), 'characters': len(text),
             'blocking': any(f['level'] == 'error' for f in findings)}
@@ -119,6 +154,10 @@ def apply_fix(text, kind):
         return re.sub(r'[ \t]+$', '', text, flags=re.M)
     if kind == 'markup_emphasis':
         return re.sub(r'_([^_\n]{1,60})_', r'\1', text)
+    if kind == 'illustration_block':
+        for a, b in reversed(_illustration_spans(text)):
+            text = text[:a].rstrip(' \t') + text[b:].lstrip(' \t')
+        return re.sub(r'\n{3,}', '\n\n', text)
     if kind == 'editorial_block':
         # Blocks nest ([Illustration: … [_Copyright …_]]); peel from the inside.
         while True:

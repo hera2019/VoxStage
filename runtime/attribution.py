@@ -33,9 +33,14 @@ def project_segments(source, labels, language):
             end = min(start + limit, unit['end'])
             # Prefer an existing sentence boundary; never ask the model to rewrite.
             if end < unit['end']:
-                boundaries = [i+1 for i in range(start, end) if source[i] in '。！？；.!?;\n']
-                if boundaries:
-                    end = boundaries[-1]
+                # Prefer a sentence break; fall back to a clause, then a space.
+                # A cut at the character limit lands mid-phrase, which both reads
+                # badly and leaves a stranded fragment to synthesise on its own.
+                for marks in ('。！？；.!?;\n', '，、,:—–', ' \u3000'):
+                    boundaries = [i+1 for i in range(start, end) if source[i] in marks]
+                    if boundaries:
+                        end = boundaries[-1]
+                        break
             pieces.append({'speaker': speaker, 'kind': label['kind'], 'start': start, 'end': end})
             start = end
     segments = _tidy(source, pieces)

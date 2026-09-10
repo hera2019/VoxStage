@@ -113,7 +113,9 @@ def test_rhythm_check_survives_asr_failure_and_recheck_tracks_new_audio(client):
     response=c.post(url+'/checks/start',json={'revision':p['revision']});assert response.status_code==200
     p=wait(c,p['id']);s=p['segments'][0]
     assert s['check_status']=='error' and s['rhythm_status']=='review'
-    assert len(s['rhythm_check']['markers'])==1
+    # 原断言为 markers==1；时长线索加入后同一夹具会合理地产生第二个标记。
+    # 本测试要证明的是「ASR 失败时停顿线索仍然算得出来」，故直接断言该线索存在。
+    assert any(m['kind']=='pause' for m in s['rhythm_check']['markers'])
     p=generate(c,p,segment_id=s['id'],force=True)
     assert p['segments'][0]['rhythm_status']=='stale'
 

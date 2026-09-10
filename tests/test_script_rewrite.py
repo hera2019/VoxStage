@@ -325,3 +325,75 @@ def test_a_real_english_misreading_is_still_reported():
 def test_chinese_comparison_is_unchanged_by_the_english_rule():
     assert compare_text('雨点敲着窗。', '雨点敲着窗', 'zh')['status'] == 'match'
     assert compare_text('雨点敲着窗。', '雨点打着窗', 'zh')['status'] == 'review'
+
+
+# ── slicing a long run of prose ──────────────────────────────────────────────
+
+def test_a_long_paragraph_breaks_at_a_clause_not_at_the_character_limit():
+    """A cut at the limit strands a fragment and reads badly."""
+    long = ('However little known the feelings or views of such a man may be on his '
+            'first entering a neighbourhood, this truth is so well fixed in the minds '
+            'of the surrounding families, that he is considered as the rightful '
+            'property of some one or other of their daughters.')
+    segments = project_segments(long, labels_for(long), 'en')
+    assert len(segments) > 1, '这段超过单句上限，应当被切开'
+    assert all(s['text'].strip()[-1] in '.,;:' or s is segments[-1] for s in segments), \
+        '每一段都应当停在标点上'
+    assert ''.join(s['text'] for s in segments) == long
+    # 最短的一段不应该只是被挤出来的尾巴
+    assert min(len(s['text'].strip()) for s in segments) > 30, '不应留下极短的碎片'
+
+
+# ── duration anomalies: the mirror image of a skip ───────────────────────────
+
+from runtime.rhythm import duration_marker
+
+
+def test_a_line_that_takes_far_too_long_is_flagged():
+    """Sampling occasionally drags a line to several times its natural length."""
+    text = 'Mr. Bennet replied that he had not.'
+    assert duration_marker(text, 6.72, 'en'), '6.7 秒读七个词应当被标记'
+    assert duration_marker(text, 2.86, 'en') is None, '正常时长不应报警'
+
+
+def test_short_lines_are_not_judged_on_duration():
+    """Variance on a two-word line is too wide to draw a conclusion from."""
+    assert duration_marker('“Bingley.”', 1.44, 'en') is None
+    assert duration_marker('of their daughters.', 2.32, 'en') is None
+
+
+def test_the_duration_marker_explains_the_remedy():
+    marker = duration_marker('Mr. Bennet replied that he had not.', 6.72, 'en')
+    assert '重做' in marker['basis'], '标记应当说明怎么处理，不只是报告异常'
+
+
+# ── Gutenberg apparatus ──────────────────────────────────────────────────────
+
+from runtime.script_check import inspect as inspect_script, apply_fix as fix_script
+
+GUTENBERG = ('“You want to tell me.”\n[Illustration:\n\n'
+             '“He came down to see the place”\n\n'
+             '[_Copyright 1894 by George Allen._]]\nThis was invitation enough.')
+
+
+def test_an_illustration_block_is_removed_whole_including_its_caption():
+    """Removing only the brackets strands the caption as a quoted line."""
+    kinds = {f['kind'] for f in inspect_script(GUTENBERG, 'en')['findings']}
+    assert 'illustration_block' in kinds
+    cleaned = fix_script(GUTENBERG, 'illustration_block')
+    assert 'He came down' not in cleaned, '图注必须随整块一起删除'
+    assert 'Copyright' not in cleaned
+    assert '“You want to tell me.”' in cleaned and 'This was invitation enough.' in cleaned
+    assert fix_script(cleaned, 'illustration_block') == cleaned
+
+
+def test_the_same_region_is_not_reported_twice():
+    findings = inspect_script(GUTENBERG, 'en')['findings']
+    spans = [f for f in findings if f['kind'] == 'editorial_block']
+    assert not spans, '插图块已覆盖自己的方括号，不应再重复提示'
+
+
+def test_underscore_emphasis_is_still_reported_outside_a_block():
+    findings = inspect_script('He _may_ fall in love.', 'en')['findings']
+    assert any(f['kind'] == 'markup_emphasis' for f in findings)
+    assert fix_script('He _may_ fall in love.', 'markup_emphasis') == 'He may fall in love.'

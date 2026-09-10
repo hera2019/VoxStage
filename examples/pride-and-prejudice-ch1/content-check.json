@@ -1,5 +1,5 @@
 {
- "project_revision": 105,
+ "project_revision": 70,
  "synthetic_audio": true,
  "speech_rate": 1.0,
  "checked_audio": "original_generated_audio",
@@ -12,19 +12,13 @@
    "recognized_text": "It\nis\na\ntruth\nuniversally\nacknowledged\nthat\na\nsingle\nman\nin\npossession\nof\na\ngood\nfortune\nmust\nbe\nin\nwant\nof\na\nwife\n.",
    "differences": [],
    "word_boundary_equivalences": [],
-   "model": {
-    "repo": "ggerganov/whisper.cpp",
-    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
-    "file": "ggml-large-v3-turbo-q5_0.bin",
-    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
-   },
-   "seconds": 1.1159507079282776
+   "duration_markers": []
   },
   {
    "speaker": "Narrator",
    "check_status": "review",
-   "expected_text": "However little known the feelings or views of such a man may be on his first entering a neighbourhood, this truth is so well fixed in the minds of the surrounding families, that he is considered as the rightful property of some one or other ",
-   "recognized_text": "However\nlittle\nknown\nthe\nfeelings\nor\nviews\nof\nsuch\na\nman\nmay\nbe\non\nhis\nfirst\nentering\na\nneighborhood\n,\nthis\ntruth\nis\nso\nwell\nfixed\nin\nthe\nminds\nof\nthe\nsurrounding\nfamilies\nthat\nhe\nis\nconsidered\nas\nthe\nright\nful\nproperty\nof\nsomeone\nor\nother\n.",
+   "expected_text": "However little known the feelings or views of such a man may be on his first entering a neighbourhood, this truth is so well fixed in the minds of the surrounding families, ",
+   "recognized_text": "However\nlittle\nknown\nthe\nfeelings\nor\nviews\nof\nsuch\na\nman\nmay\nbe\non\nhis\nfirst\nentering\na\nneighborhood\n,\nthis\ntruth\nis\nso\nwell\nfixed\nin\nthe\nminds\nof\nthe\nsurrounding\nfamilies\n.",
    "differences": [
     {
      "kind": "replace",
@@ -32,40 +26,23 @@
      "recognized": "neighborhood"
     }
    ],
+   "word_boundary_equivalences": [],
+   "duration_markers": []
+  },
+  {
+   "speaker": "Narrator",
+   "check_status": "match",
+   "expected_text": "that he is considered as the rightful property of some one or other of their daughters.\n",
+   "recognized_text": "\"\nThat\nhe\nis\nconsidered\nas\nthe\nright\nful\nproperty\nof\nsome\none\nor\nother\nof\ntheir\ndaughters\n.\"",
+   "differences": [],
    "word_boundary_equivalences": [
     {
      "expected": "rightful",
      "recognized": "right ful",
      "basis": "word-boundary"
-    },
-    {
-     "expected": "some one",
-     "recognized": "someone",
-     "basis": "word-boundary"
     }
    ],
-   "model": {
-    "repo": "ggerganov/whisper.cpp",
-    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
-    "file": "ggml-large-v3-turbo-q5_0.bin",
-    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
-   },
-   "seconds": 0.9966794999781996
-  },
-  {
-   "speaker": "Narrator",
-   "check_status": "match",
-   "expected_text": "of their daughters.\n",
-   "recognized_text": "...\nof\ntheir\ndaughters\n...",
-   "differences": [],
-   "word_boundary_equivalences": [],
-   "model": {
-    "repo": "ggerganov/whisper.cpp",
-    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
-    "file": "ggml-large-v3-turbo-q5_0.bin",
-    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
-   },
-   "seconds": 0.8022463329834864
+   "duration_markers": []
   },
   {
    "speaker": "Mrs. Bennet",
@@ -80,13 +57,7 @@
     }
    ],
    "word_boundary_equivalences": [],
-   "model": {
-    "repo": "ggerganov/whisper.cpp",
-    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
-    "file": "ggml-large-v3-turbo-q5_0.bin",
-    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
-   },
-   "seconds": 0.7832354579586536
+   "duration_markers": []
   },
   {
    "speaker": "Narrator",
@@ -95,13 +66,7 @@
    "recognized_text": "said\nhis\nlady\nto\nhim\none\nday",
    "differences": [],
    "word_boundary_equivalences": [],
-   "model": {
-    "repo": "ggerganov/whisper.cpp",
-    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
-    "file": "ggml-large-v3-turbo-q5_0.bin",
-    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
-   },
-   "seconds": 0.7967345410725102
+   "duration_markers": []
   },
   {
    "speaker": "Mrs. Bennet",
@@ -122,39 +87,22 @@
      "basis": "word-boundary"
     }
    ],
-   "model": {
-    "repo": "ggerganov/whisper.cpp",
-    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
-    "file": "ggml-large-v3-turbo-q5_0.bin",
-    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
-   },
-   "seconds": 0.8070645419647917
+   "duration_markers": []
   },
   {
    "speaker": "Narrator",
    "check_status": "review",
    "expected_text": "Mr. Bennet replied that he had not.\n",
-   "recognized_text": "Mr\n.\nBennett\nreplied\nthat\nhe\ndid\nnot\n.",
+   "recognized_text": "Mr\n.\nBennett\nreplied\nthat\nhe\nhad\nnot\n.",
    "differences": [
     {
      "kind": "replace",
      "expected": "bennet",
      "recognized": "bennett"
-    },
-    {
-     "kind": "replace",
-     "expected": "had",
-     "recognized": "did"
     }
    ],
    "word_boundary_equivalences": [],
-   "model": {
-    "repo": "ggerganov/whisper.cpp",
-    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
-    "file": "ggml-large-v3-turbo-q5_0.bin",
-    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
-   },
-   "seconds": 0.8073540839832276
+   "duration_markers": []
   },
   {
    "speaker": "Mrs. Bennet",
@@ -163,13 +111,7 @@
    "recognized_text": "But\nit\nis\n.",
    "differences": [],
    "word_boundary_equivalences": [],
-   "model": {
-    "repo": "ggerganov/whisper.cpp",
-    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
-    "file": "ggml-large-v3-turbo-q5_0.bin",
-    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
-   },
-   "seconds": 0.7731785000069067
+   "duration_markers": []
   },
   {
    "speaker": "Narrator",
@@ -184,13 +126,7 @@
      "basis": "word-boundary"
     }
    ],
-   "model": {
-    "repo": "ggerganov/whisper.cpp",
-    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
-    "file": "ggml-large-v3-turbo-q5_0.bin",
-    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
-   },
-   "seconds": 0.7776046670041978
+   "duration_markers": []
   },
   {
    "speaker": "Mrs. Bennet",
@@ -199,13 +135,7 @@
    "recognized_text": "For\nMrs\n.\nLong\nhas\njust\nbeen\nhere\nand\nshe\ntold\nme\nall\nabout\nit\n.",
    "differences": [],
    "word_boundary_equivalences": [],
-   "model": {
-    "repo": "ggerganov/whisper.cpp",
-    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
-    "file": "ggml-large-v3-turbo-q5_0.bin",
-    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
-   },
-   "seconds": 0.8280968749895692
+   "duration_markers": []
   },
   {
    "speaker": "Narrator",
@@ -220,13 +150,7 @@
      "basis": "word-boundary"
     }
    ],
-   "model": {
-    "repo": "ggerganov/whisper.cpp",
-    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
-    "file": "ggml-large-v3-turbo-q5_0.bin",
-    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
-   },
-   "seconds": 0.7923463339684531
+   "duration_markers": []
   },
   {
    "speaker": "Mrs. Bennet",
@@ -235,13 +159,7 @@
    "recognized_text": "Do\nnot\nyou\nwant\nto\nknow\nwho\nhas\ntaken\nit\n.",
    "differences": [],
    "word_boundary_equivalences": [],
-   "model": {
-    "repo": "ggerganov/whisper.cpp",
-    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
-    "file": "ggml-large-v3-turbo-q5_0.bin",
-    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
-   },
-   "seconds": 0.8042995000723749
+   "duration_markers": []
   },
   {
    "speaker": "Narrator",
@@ -256,79 +174,25 @@
      "basis": "word-boundary"
     }
    ],
-   "model": {
-    "repo": "ggerganov/whisper.cpp",
-    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
-    "file": "ggml-large-v3-turbo-q5_0.bin",
-    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
-   },
-   "seconds": 0.7840909999795258
+   "duration_markers": []
   },
   {
    "speaker": "Mr. Bennet",
    "check_status": "match",
-   "expected_text": "“You want to tell me, and I have no objection to hearing it.”\n",
+   "expected_text": "“You want to tell me, and I have no objection to hearing it.”\n\n",
    "recognized_text": "You\nwant\nto\ntell\nme\n,\nand\nI\nhave\nno\nobjection\nto\nhearing\nit\n,",
    "differences": [],
    "word_boundary_equivalences": [],
-   "model": {
-    "repo": "ggerganov/whisper.cpp",
-    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
-    "file": "ggml-large-v3-turbo-q5_0.bin",
-    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
-   },
-   "seconds": 0.8152464169543236
+   "duration_markers": []
   },
   {
    "speaker": "Narrator",
    "check_status": "match",
-   "expected_text": "[Illustration:\n",
-   "recognized_text": "\"\nI\nll\nust\nration\n\"",
-   "differences": [],
-   "word_boundary_equivalences": [
-    {
-     "expected": "illustration",
-     "recognized": "i ll ust ration",
-     "basis": "word-boundary"
-    }
-   ],
-   "model": {
-    "repo": "ggerganov/whisper.cpp",
-    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
-    "file": "ggml-large-v3-turbo-q5_0.bin",
-    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
-   },
-   "seconds": 0.7701393750030547
-  },
-  {
-   "speaker": "Narrator",
-   "check_status": "match",
-   "expected_text": "“He came down to see the place”\n",
-   "recognized_text": "He\ncame\ndown\nto\nsee\nthe\nplace\n.",
-   "differences": [],
-   "word_boundary_equivalences": [],
-   "model": {
-    "repo": "ggerganov/whisper.cpp",
-    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
-    "file": "ggml-large-v3-turbo-q5_0.bin",
-    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
-   },
-   "seconds": 0.7924800000619143
-  },
-  {
-   "speaker": "Narrator",
-   "check_status": "match",
-   "expected_text": "]\nThis was invitation enough.\n",
+   "expected_text": "This was invitation enough.\n",
    "recognized_text": "This\nwas\ninvitation\nenough\n.",
    "differences": [],
    "word_boundary_equivalences": [],
-   "model": {
-    "repo": "ggerganov/whisper.cpp",
-    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
-    "file": "ggml-large-v3-turbo-q5_0.bin",
-    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
-   },
-   "seconds": 0.7798197079682723
+   "duration_markers": []
   },
   {
    "speaker": "Mrs. Bennet",
@@ -343,13 +207,7 @@
      "basis": "word-boundary"
     }
    ],
-   "model": {
-    "repo": "ggerganov/whisper.cpp",
-    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
-    "file": "ggml-large-v3-turbo-q5_0.bin",
-    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
-   },
-   "seconds": 0.8971937920432538
+   "duration_markers": []
   },
   {
    "speaker": "Mrs. Bennet",
@@ -364,13 +222,7 @@
      "basis": "word-boundary"
     }
    ],
-   "model": {
-    "repo": "ggerganov/whisper.cpp",
-    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
-    "file": "ggml-large-v3-turbo-q5_0.bin",
-    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
-   },
-   "seconds": 0.8894473750842735
+   "duration_markers": []
   },
   {
    "speaker": "Mrs. Bennet",
@@ -391,13 +243,7 @@
      "basis": "word-boundary"
     }
    ],
-   "model": {
-    "repo": "ggerganov/whisper.cpp",
-    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
-    "file": "ggml-large-v3-turbo-q5_0.bin",
-    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
-   },
-   "seconds": 0.8781907089287415
+   "duration_markers": []
   },
   {
    "speaker": "Mr. Bennet",
@@ -406,13 +252,7 @@
    "recognized_text": "What\nis\nhis\nname\n?",
    "differences": [],
    "word_boundary_equivalences": [],
-   "model": {
-    "repo": "ggerganov/whisper.cpp",
-    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
-    "file": "ggml-large-v3-turbo-q5_0.bin",
-    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
-   },
-   "seconds": 0.8012431249953806
+   "duration_markers": []
   },
   {
    "speaker": "Mrs. Bennet",
@@ -427,13 +267,7 @@
      "basis": "word-boundary"
     }
    ],
-   "model": {
-    "repo": "ggerganov/whisper.cpp",
-    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
-    "file": "ggml-large-v3-turbo-q5_0.bin",
-    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
-   },
-   "seconds": 0.7742484170012176
+   "duration_markers": []
   },
   {
    "speaker": "Mr. Bennet",
@@ -442,13 +276,7 @@
    "recognized_text": "Is\nhe\nmarried\nor\nsingle\n?",
    "differences": [],
    "word_boundary_equivalences": [],
-   "model": {
-    "repo": "ggerganov/whisper.cpp",
-    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
-    "file": "ggml-large-v3-turbo-q5_0.bin",
-    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
-   },
-   "seconds": 0.7907244579400867
+   "duration_markers": []
   },
   {
    "speaker": "Mrs. Bennet",
@@ -457,13 +285,7 @@
    "recognized_text": "Oh\n,\nsingle\n,\nmy\ndear\n,\nto\nbe\nsure\n.\nA\nsingle\nman\nof\nlarge\nfortune\n,\nfour\nor\nfive\nthousand\na\nyear\n.\nWhat\na\nfine\nthing\nfor\nour\ngirls\n.",
    "differences": [],
    "word_boundary_equivalences": [],
-   "model": {
-    "repo": "ggerganov/whisper.cpp",
-    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
-    "file": "ggml-large-v3-turbo-q5_0.bin",
-    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
-   },
-   "seconds": 0.9066147500416264
+   "duration_markers": []
   },
   {
    "speaker": "Mr. Bennet",
@@ -472,13 +294,7 @@
    "recognized_text": "\"\nHow\nso\n?\nHow\ncan\nit\naffect\nthem\n?\"",
    "differences": [],
    "word_boundary_equivalences": [],
-   "model": {
-    "repo": "ggerganov/whisper.cpp",
-    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
-    "file": "ggml-large-v3-turbo-q5_0.bin",
-    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
-   },
-   "seconds": 0.8100642079953104
+   "duration_markers": []
   },
   {
    "speaker": "Mrs. Bennet",
@@ -493,13 +309,7 @@
     }
    ],
    "word_boundary_equivalences": [],
-   "model": {
-    "repo": "ggerganov/whisper.cpp",
-    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
-    "file": "ggml-large-v3-turbo-q5_0.bin",
-    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
-   },
-   "seconds": 0.7969722909620032
+   "duration_markers": []
   },
   {
    "speaker": "Narrator",
@@ -508,13 +318,7 @@
    "recognized_text": "replied\nhis\nwife\n.",
    "differences": [],
    "word_boundary_equivalences": [],
-   "model": {
-    "repo": "ggerganov/whisper.cpp",
-    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
-    "file": "ggml-large-v3-turbo-q5_0.bin",
-    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
-   },
-   "seconds": 0.7837637079646811
+   "duration_markers": []
   },
   {
    "speaker": "Mrs. Bennet",
@@ -529,13 +333,7 @@
      "basis": "word-boundary"
     }
    ],
-   "model": {
-    "repo": "ggerganov/whisper.cpp",
-    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
-    "file": "ggml-large-v3-turbo-q5_0.bin",
-    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
-   },
-   "seconds": 0.8498147920472547
+   "duration_markers": []
   },
   {
    "speaker": "Mr. Bennet",
@@ -550,13 +348,7 @@
     }
    ],
    "word_boundary_equivalences": [],
-   "model": {
-    "repo": "ggerganov/whisper.cpp",
-    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
-    "file": "ggml-large-v3-turbo-q5_0.bin",
-    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
-   },
-   "seconds": 0.7787790420698002
+   "duration_markers": []
   },
   {
    "speaker": "Mrs. Bennet",
@@ -571,14 +363,8 @@
     }
    ],
    "word_boundary_equivalences": [],
-   "model": {
-    "repo": "ggerganov/whisper.cpp",
-    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
-    "file": "ggml-large-v3-turbo-q5_0.bin",
-    "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
-   },
-   "seconds": 0.9405656249728054
+   "duration_markers": []
   }
  ],
- "note_slim": "样例只保留比对结论。完整识别输出（含逐词时间戳、解码参数、音频哈希）留在本机工程内，未随样例发布。"
+ "note_slim": "样例只保留比对结论；完整识别输出（含逐词时间、解码参数、音频哈希）留在本机工程内。"
 }

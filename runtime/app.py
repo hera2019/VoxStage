@@ -542,7 +542,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                     p['job']['current_segment']=sid;store.write(p)
                 rhythm={'source_fingerprint':digest,'version':RHYTHM_VERSION,'expected_text':expected}
                 try:
-                    rhythm.update(analyze_file(source,language=p['language']))
+                    rhythm.update(analyze_file(source,language=p['language'],expected_text=expected))
                     stat=source.stat();rhythm.update(audio_sha256=file_sha(source),audio_stat=[stat.st_size,stat.st_mtime_ns])
                 except Exception:
                     logging.exception('Rhythm analysis failed for %s',sid)
@@ -566,7 +566,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                     p=store.read(project_id)
                     target=next(s for s in p['segments'] if s['id']==sid)
                     if result.get('timed_text') and not rhythm.get('error'):
-                        try:rhythm.update(analyze_file(source,result['timed_text'],p['language']))
+                        try:rhythm.update(analyze_file(source,result['timed_text'],p['language'],expected))
                         except Exception:
                             logging.exception('Pace timing analysis failed for %s',sid)
                             rhythm['pace']={'status':'unavailable','reason':'语速起伏估计失败，请人工试听。'}
@@ -662,7 +662,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             p,s,path=ready_segment(project_id,segment_id)
             public=next(x for x in store.public(p,engine,checker)['segments'] if x['id']==segment_id)
             timed=s.get('content_check',{}).get('timed_text') if public['check_status'] not in ('stale','not_checked','error') else None
-            result=analyze_file(path,timed,p['language'])
+            result=analyze_file(path,timed,p['language'],segment.get('spoken_as') or segment['text'])
             result.update(source_fingerprint=s['audio']['fingerprint'],revision=p['revision'])
             return result
 

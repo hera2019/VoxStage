@@ -2,10 +2,10 @@
   "synthetic_audio": true,
   "speech_rate": 1.0,
   "sample_rate": 24000,
-  "total_samples": 3616560,
+  "total_samples": 3472080,
   "segments": [
     {
-      "id": "e2fd0dc915a64b718cd56fa2acbc29f5",
+      "id": "664b1dd0bfcf488bbecad619d2622a47",
       "speaker": "Narrator",
       "text": "It is a truth universally acknowledged, that a single man in possession of a good fortune must be in want of a wife.\n",
       "file_start_sample": 0,
@@ -25,7 +25,7 @@
         }
       ],
       "processed_checks": {
-        "version": "listening-cues-v1",
+        "version": "listening-cues-v2-duration",
         "duration": 12.4,
         "markers": [],
         "pace": {
@@ -42,33 +42,33 @@
       "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
     },
     {
-      "id": "4607646aa460495b982e2dec1eac1104",
+      "id": "41a8ab3ad633414b947ce859c2003283",
       "speaker": "Narrator",
-      "text": "However little known the feelings or views of such a man may be on his first entering a neighbourhood, this truth is so well fixed in the minds of the surrounding families, that he is considered as the rightful property of some one or other ",
+      "text": "However little known the feelings or views of such a man may be on his first entering a neighbourhood, this truth is so well fixed in the minds of the surrounding families, ",
       "file_start_sample": 303600,
-      "file_end_sample": 676080,
+      "file_end_sample": 603120,
       "speech_start_sample": 313920,
-      "speech_end_sample": 663840,
+      "speech_end_sample": 590160,
       "speech_boundary_method": "estimated_rms_10ms",
       "synthetic_audio": true,
       "speech_rate": 1.0,
       "tempo_mapping": [
         {
           "source_start": 0.0,
-          "source_end": 15.52,
+          "source_end": 12.48,
           "output_start": 0.0,
-          "output_end": 15.52,
+          "output_end": 12.48,
           "speed": 1.0
         }
       ],
       "processed_checks": {
-        "version": "listening-cues-v1",
-        "duration": 15.52,
+        "version": "listening-cues-v2-duration",
+        "duration": 12.48,
         "markers": [
           {
             "kind": "pause",
-            "start": 10.87,
-            "end": 11.43,
+            "start": 7.12,
+            "end": 7.52,
             "label": "较长停顿 · 请试听",
             "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
           }
@@ -87,29 +87,37 @@
       "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
     },
     {
-      "id": "725d93c0f6744eb58e10b8f5fbec88e5",
+      "id": "8e2fb8145be7408ba100d9d10dc638ef",
       "speaker": "Narrator",
-      "text": "of their daughters.\n",
-      "file_start_sample": 682080,
-      "file_end_sample": 737760,
-      "speech_start_sample": 692400,
-      "speech_end_sample": 726240,
+      "text": "that he is considered as the rightful property of some one or other of their daughters.\n",
+      "file_start_sample": 609120,
+      "file_end_sample": 804960,
+      "speech_start_sample": 619920,
+      "speech_end_sample": 793680,
       "speech_boundary_method": "estimated_rms_10ms",
       "synthetic_audio": true,
       "speech_rate": 1.0,
       "tempo_mapping": [
         {
           "source_start": 0.0,
-          "source_end": 2.32,
+          "source_end": 8.16,
           "output_start": 0.0,
-          "output_end": 2.32,
+          "output_end": 8.16,
           "speed": 1.0
         }
       ],
       "processed_checks": {
-        "version": "listening-cues-v1",
-        "duration": 2.32,
-        "markers": [],
+        "version": "listening-cues-v2-duration",
+        "duration": 8.16,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 0.06,
+            "end": 0.43,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
         "pace": {
           "status": "unavailable",
           "reason": "文字时间信息不足，语速起伏请人工试听。"
@@ -124,13 +132,13 @@
       "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
     },
     {
-      "id": "999cf09c024b4a95820995ec1063b792",
+      "id": "4938f4f824a042a282433e66e1fb65f6",
       "speaker": "Mrs. Bennet",
       "text": "“My dear Mr. Bennet,” ",
-      "file_start_sample": 743760,
-      "file_end_sample": 791760,
-      "speech_start_sample": 752160,
-      "speech_end_sample": 778560,
+      "file_start_sample": 810960,
+      "file_end_sample": 858960,
+      "speech_start_sample": 819360,
+      "speech_end_sample": 845760,
       "speech_boundary_method": "estimated_rms_10ms",
       "synthetic_audio": true,
       "speech_rate": 1.0,
@@ -144,7 +152,7 @@
         }
       ],
       "processed_checks": {
-        "version": "listening-cues-v1",
+        "version": "listening-cues-v2-duration",
         "duration": 2.0,
         "markers": [],
         "pace": {
@@ -161,13 +169,13 @@
       "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
     },
     {
-      "id": "28f72787ea394e04a94bb449ed49172a",
+      "id": "cd55e29af46e4bcbbb87fd7a6d2ed055",
       "speaker": "Narrator",
       "text": "said his lady to him one day, ",
-      "file_start_sample": 797760,
-      "file_end_sample": 866880,
-      "speech_start_sample": 807120,
-      "speech_end_sample": 855600,
+      "file_start_sample": 864960,
+      "file_end_sample": 934080,
+      "speech_start_sample": 874320,
+      "speech_end_sample": 922800,
       "speech_boundary_method": "estimated_rms_10ms",
       "synthetic_audio": true,
       "speech_rate": 1.0,
@@ -181,7 +189,7 @@
         }
       ],
       "processed_checks": {
-        "version": "listening-cues-v1",
+        "version": "listening-cues-v2-duration",
         "duration": 2.88,
         "markers": [],
         "pace": {
@@ -198,13 +206,13 @@
       "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
     },
     {
-      "id": "0df1a0d01c034077b97649ff1b5d2e6a",
+      "id": "d38b899be669442a9d4744a6539fa10a",
       "speaker": "Mrs. Bennet",
       "text": "“have you heard that Netherfield Park is let at last?”\n",
-      "file_start_sample": 872880,
-      "file_end_sample": 966960,
-      "speech_start_sample": 882960,
-      "speech_end_sample": 953040,
+      "file_start_sample": 940080,
+      "file_end_sample": 1034160,
+      "speech_start_sample": 950160,
+      "speech_end_sample": 1020240,
       "speech_boundary_method": "estimated_rms_10ms",
       "synthetic_audio": true,
       "speech_rate": 1.0,
@@ -218,7 +226,7 @@
         }
       ],
       "processed_checks": {
-        "version": "listening-cues-v1",
+        "version": "listening-cues-v2-duration",
         "duration": 3.92,
         "markers": [],
         "pace": {
@@ -235,28 +243,28 @@
       "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
     },
     {
-      "id": "240fe742f98449df8cb1b1201843bdb0",
+      "id": "3a90e941815e48508b4b4289a853dbe6",
       "speaker": "Narrator",
       "text": "Mr. Bennet replied that he had not.\n",
-      "file_start_sample": 972960,
-      "file_end_sample": 1157280,
-      "speech_start_sample": 986400,
-      "speech_end_sample": 1147920,
+      "file_start_sample": 1040160,
+      "file_end_sample": 1122720,
+      "speech_start_sample": 1050480,
+      "speech_end_sample": 1109520,
       "speech_boundary_method": "estimated_rms_10ms",
       "synthetic_audio": true,
       "speech_rate": 1.0,
       "tempo_mapping": [
         {
           "source_start": 0.0,
-          "source_end": 7.68,
+          "source_end": 3.44,
           "output_start": 0.0,
-          "output_end": 7.68,
+          "output_end": 3.44,
           "speed": 1.0
         }
       ],
       "processed_checks": {
-        "version": "listening-cues-v1",
-        "duration": 7.68,
+        "version": "listening-cues-v2-duration",
+        "duration": 3.44,
         "markers": [],
         "pace": {
           "status": "unavailable",
@@ -272,13 +280,13 @@
       "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
     },
     {
-      "id": "c4bf4cf652b04c90bb2b950ec8278db0",
+      "id": "01af48b021e343abaf913d208100eccf",
       "speaker": "Mrs. Bennet",
       "text": "“But it is,” ",
-      "file_start_sample": 1163280,
-      "file_end_sample": 1209360,
-      "speech_start_sample": 1170960,
-      "speech_end_sample": 1201440,
+      "file_start_sample": 1128720,
+      "file_end_sample": 1174800,
+      "speech_start_sample": 1136400,
+      "speech_end_sample": 1166880,
       "speech_boundary_method": "estimated_rms_10ms",
       "synthetic_audio": true,
       "speech_rate": 1.0,
@@ -292,7 +300,7 @@
         }
       ],
       "processed_checks": {
-        "version": "listening-cues-v1",
+        "version": "listening-cues-v2-duration",
         "duration": 1.92,
         "markers": [],
         "pace": {
@@ -309,13 +317,13 @@
       "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
     },
     {
-      "id": "71bb37ab1f5d4151951aa1a3619150ac",
+      "id": "8d2bf1fa27224e45a3052f5a170dffdd",
       "speaker": "Narrator",
       "text": "returned she; ",
-      "file_start_sample": 1215360,
-      "file_end_sample": 1255680,
-      "speech_start_sample": 1224000,
-      "speech_end_sample": 1248240,
+      "file_start_sample": 1180800,
+      "file_end_sample": 1221120,
+      "speech_start_sample": 1189440,
+      "speech_end_sample": 1213680,
       "speech_boundary_method": "estimated_rms_10ms",
       "synthetic_audio": true,
       "speech_rate": 1.0,
@@ -329,7 +337,7 @@
         }
       ],
       "processed_checks": {
-        "version": "listening-cues-v1",
+        "version": "listening-cues-v2-duration",
         "duration": 1.68,
         "markers": [],
         "pace": {
@@ -346,13 +354,13 @@
       "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
     },
     {
-      "id": "d19c8c02dd5f46539b7f181af02359ca",
+      "id": "8f4a1c16a2474bfdaeed78c81b3d5a8a",
       "speaker": "Mrs. Bennet",
       "text": "“for Mrs. Long has just been here, and she told me all about it.”\n",
-      "file_start_sample": 1261680,
-      "file_end_sample": 1371120,
-      "speech_start_sample": 1272960,
-      "speech_end_sample": 1360080,
+      "file_start_sample": 1227120,
+      "file_end_sample": 1336560,
+      "speech_start_sample": 1238400,
+      "speech_end_sample": 1325520,
       "speech_boundary_method": "estimated_rms_10ms",
       "synthetic_audio": true,
       "speech_rate": 1.0,
@@ -366,7 +374,7 @@
         }
       ],
       "processed_checks": {
-        "version": "listening-cues-v1",
+        "version": "listening-cues-v2-duration",
         "duration": 4.56,
         "markers": [],
         "pace": {
@@ -383,13 +391,13 @@
       "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
     },
     {
-      "id": "bee2c1a870964494adf205315eada5ea",
+      "id": "d31c2dab46d8404795f062d3e4d337c0",
       "speaker": "Narrator",
       "text": "Mr. Bennet made no answer.\n",
-      "file_start_sample": 1377120,
-      "file_end_sample": 1457760,
-      "speech_start_sample": 1390560,
-      "speech_end_sample": 1445520,
+      "file_start_sample": 1342560,
+      "file_end_sample": 1423200,
+      "speech_start_sample": 1356000,
+      "speech_end_sample": 1410960,
       "speech_boundary_method": "estimated_rms_10ms",
       "synthetic_audio": true,
       "speech_rate": 1.0,
@@ -403,7 +411,7 @@
         }
       ],
       "processed_checks": {
-        "version": "listening-cues-v1",
+        "version": "listening-cues-v2-duration",
         "duration": 3.36,
         "markers": [],
         "pace": {
@@ -420,13 +428,13 @@
       "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
     },
     {
-      "id": "3a8fe224b449430786834a9e0c66ca4b",
+      "id": "0d56d8ced64e47e59f44a6655f42539c",
       "speaker": "Mrs. Bennet",
       "text": "“Do not you want to know who has taken it?” ",
-      "file_start_sample": 1463760,
-      "file_end_sample": 1540560,
-      "speech_start_sample": 1475040,
-      "speech_end_sample": 1526880,
+      "file_start_sample": 1429200,
+      "file_end_sample": 1506000,
+      "speech_start_sample": 1440480,
+      "speech_end_sample": 1492320,
       "speech_boundary_method": "estimated_rms_10ms",
       "synthetic_audio": true,
       "speech_rate": 1.0,
@@ -440,7 +448,7 @@
         }
       ],
       "processed_checks": {
-        "version": "listening-cues-v1",
+        "version": "listening-cues-v2-duration",
         "duration": 3.2,
         "markers": [],
         "pace": {
@@ -457,13 +465,13 @@
       "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
     },
     {
-      "id": "5cdbb777ca2f4477818face33ed56e37",
+      "id": "3fed9034c1164fe58fc8e44d237148b5",
       "speaker": "Narrator",
       "text": "cried his wife, impatiently.\n",
-      "file_start_sample": 1546560,
-      "file_end_sample": 1604160,
-      "speech_start_sample": 1557360,
-      "speech_end_sample": 1592880,
+      "file_start_sample": 1512000,
+      "file_end_sample": 1569600,
+      "speech_start_sample": 1522800,
+      "speech_end_sample": 1558320,
       "speech_boundary_method": "estimated_rms_10ms",
       "synthetic_audio": true,
       "speech_rate": 1.0,
@@ -477,7 +485,7 @@
         }
       ],
       "processed_checks": {
-        "version": "listening-cues-v1",
+        "version": "listening-cues-v2-duration",
         "duration": 2.4,
         "markers": [],
         "pace": {
@@ -494,33 +502,33 @@
       "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
     },
     {
-      "id": "d32ee1cbbc8942d6b4c3e90159722924",
+      "id": "a23d7a924d794c468b73acac63704094",
       "speaker": "Mr. Bennet",
-      "text": "“You want to tell me, and I have no objection to hearing it.”\n",
-      "file_start_sample": 1610160,
-      "file_end_sample": 1698480,
-      "speech_start_sample": 1615200,
-      "speech_end_sample": 1690320,
+      "text": "“You want to tell me, and I have no objection to hearing it.”\n\n",
+      "file_start_sample": 1575600,
+      "file_end_sample": 1660080,
+      "speech_start_sample": 1580640,
+      "speech_end_sample": 1653600,
       "speech_boundary_method": "estimated_rms_10ms",
       "synthetic_audio": true,
       "speech_rate": 1.0,
       "tempo_mapping": [
         {
           "source_start": 0.0,
-          "source_end": 3.68,
+          "source_end": 3.52,
           "output_start": 0.0,
-          "output_end": 3.68,
+          "output_end": 3.52,
           "speed": 1.0
         }
       ],
       "processed_checks": {
-        "version": "listening-cues-v1",
-        "duration": 3.68,
+        "version": "listening-cues-v2-duration",
+        "duration": 3.52,
         "markers": [
           {
             "kind": "pause",
-            "start": 1.08,
-            "end": 1.54,
+            "start": 1.07,
+            "end": 1.47,
             "label": "较长停顿 · 请试听",
             "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
           }
@@ -539,28 +547,28 @@
       "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
     },
     {
-      "id": "a1d9c0923f8f4c3ca0fef96bdc83dd2d",
+      "id": "0e3502b7116745438cf8a8f338d8718a",
       "speaker": "Narrator",
-      "text": "[Illustration:\n",
-      "file_start_sample": 1704480,
-      "file_end_sample": 1748640,
-      "speech_start_sample": 1715040,
-      "speech_end_sample": 1736160,
+      "text": "This was invitation enough.\n",
+      "file_start_sample": 1666080,
+      "file_end_sample": 1739040,
+      "speech_start_sample": 1674240,
+      "speech_end_sample": 1727760,
       "speech_boundary_method": "estimated_rms_10ms",
       "synthetic_audio": true,
       "speech_rate": 1.0,
       "tempo_mapping": [
         {
           "source_start": 0.0,
-          "source_end": 1.84,
+          "source_end": 3.04,
           "output_start": 0.0,
-          "output_end": 1.84,
+          "output_end": 3.04,
           "speed": 1.0
         }
       ],
       "processed_checks": {
-        "version": "listening-cues-v1",
-        "duration": 1.84,
+        "version": "listening-cues-v2-duration",
+        "duration": 3.04,
         "markers": [],
         "pace": {
           "status": "unavailable",
@@ -576,87 +584,13 @@
       "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
     },
     {
-      "id": "a31aac3f61574318962ffd7fc00e6da6",
-      "speaker": "Narrator",
-      "text": "“He came down to see the place”\n",
-      "file_start_sample": 1754640,
-      "file_end_sample": 1818000,
-      "speech_start_sample": 1764960,
-      "speech_end_sample": 1806480,
-      "speech_boundary_method": "estimated_rms_10ms",
-      "synthetic_audio": true,
-      "speech_rate": 1.0,
-      "tempo_mapping": [
-        {
-          "source_start": 0.0,
-          "source_end": 2.64,
-          "output_start": 0.0,
-          "output_end": 2.64,
-          "speed": 1.0
-        }
-      ],
-      "processed_checks": {
-        "version": "listening-cues-v1",
-        "duration": 2.64,
-        "markers": [],
-        "pace": {
-          "status": "unavailable",
-          "reason": "文字时间信息不足，语速起伏请人工试听。"
-        },
-        "manual_checkpoints": [
-          "尾音是否自然、是否拖音",
-          "同一角色声线是否一致",
-          "停顿是否符合句意、前后语速是否合适"
-        ],
-        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
-      },
-      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
-    },
-    {
-      "id": "c493d5c6ddb3480a8212d477f2be9ba3",
-      "speaker": "Narrator",
-      "text": "]\nThis was invitation enough.\n",
-      "file_start_sample": 1824000,
-      "file_end_sample": 1883520,
-      "speech_start_sample": 1834560,
-      "speech_end_sample": 1867680,
-      "speech_boundary_method": "estimated_rms_10ms",
-      "synthetic_audio": true,
-      "speech_rate": 1.0,
-      "tempo_mapping": [
-        {
-          "source_start": 0.0,
-          "source_end": 2.48,
-          "output_start": 0.0,
-          "output_end": 2.48,
-          "speed": 1.0
-        }
-      ],
-      "processed_checks": {
-        "version": "listening-cues-v1",
-        "duration": 2.48,
-        "markers": [],
-        "pace": {
-          "status": "unavailable",
-          "reason": "文字时间信息不足，语速起伏请人工试听。"
-        },
-        "manual_checkpoints": [
-          "尾音是否自然、是否拖音",
-          "同一角色声线是否一致",
-          "停顿是否符合句意、前后语速是否合适"
-        ],
-        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
-      },
-      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
-    },
-    {
-      "id": "f795a5023ced49d8b7204d837045e82b",
+      "id": "26144df17a5741f89fb231381c274175",
       "speaker": "Mrs. Bennet",
       "text": "“Why, my dear, you must know, Mrs. Long says that Netherfield is taken by a young man of large fortune from the north of England; ",
-      "file_start_sample": 1889520,
-      "file_end_sample": 2100720,
-      "speech_start_sample": 1897680,
-      "speech_end_sample": 2091600,
+      "file_start_sample": 1745040,
+      "file_end_sample": 1956240,
+      "speech_start_sample": 1753200,
+      "speech_end_sample": 1947120,
       "speech_boundary_method": "estimated_rms_10ms",
       "synthetic_audio": true,
       "speech_rate": 1.0,
@@ -670,7 +604,7 @@
         }
       ],
       "processed_checks": {
-        "version": "listening-cues-v1",
+        "version": "listening-cues-v2-duration",
         "duration": 8.8,
         "markers": [
           {
@@ -695,13 +629,13 @@
       "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
     },
     {
-      "id": "c3f5193be5af4c00976912ba0053ed8d",
+      "id": "9ec3d67b40e84cc7a8bba7c4f89fb448",
       "speaker": "Mrs. Bennet",
       "text": "that he came down on Monday in a chaise and four to see the place, and was so much delighted with it that he agreed with Mr. Morris immediately; ",
-      "file_start_sample": 2106720,
-      "file_end_sample": 2294880,
-      "speech_start_sample": 2111520,
-      "speech_end_sample": 2287200,
+      "file_start_sample": 1962240,
+      "file_end_sample": 2150400,
+      "speech_start_sample": 1967040,
+      "speech_end_sample": 2142720,
       "speech_boundary_method": "estimated_rms_10ms",
       "synthetic_audio": true,
       "speech_rate": 1.0,
@@ -715,7 +649,7 @@
         }
       ],
       "processed_checks": {
-        "version": "listening-cues-v1",
+        "version": "listening-cues-v2-duration",
         "duration": 7.84,
         "markers": [
           {
@@ -740,13 +674,13 @@
       "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
     },
     {
-      "id": "361ac1cb5ae048dfae2187436c7e82ff",
+      "id": "8d01a0ab500f4fedbabe3efcdbec6e2e",
       "speaker": "Mrs. Bennet",
       "text": "that he is to take possession before Michaelmas, and some of his servants are to be in the house by the end of next week.”\n",
-      "file_start_sample": 2300880,
-      "file_end_sample": 2462160,
-      "speech_start_sample": 2305440,
-      "speech_end_sample": 2453760,
+      "file_start_sample": 2156400,
+      "file_end_sample": 2317680,
+      "speech_start_sample": 2160960,
+      "speech_end_sample": 2309280,
       "speech_boundary_method": "estimated_rms_10ms",
       "synthetic_audio": true,
       "speech_rate": 1.0,
@@ -760,7 +694,7 @@
         }
       ],
       "processed_checks": {
-        "version": "listening-cues-v1",
+        "version": "listening-cues-v2-duration",
         "duration": 6.72,
         "markers": [],
         "pace": {
@@ -777,13 +711,13 @@
       "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
     },
     {
-      "id": "15d45c4a22884b3c9e868f4d4d307834",
+      "id": "feee4bb286a548b1b23a36a18bf51ca5",
       "speaker": "Mr. Bennet",
       "text": "“What is his name?”\n",
-      "file_start_sample": 2468160,
-      "file_end_sample": 2512320,
-      "speech_start_sample": 2473200,
-      "speech_end_sample": 2505360,
+      "file_start_sample": 2323680,
+      "file_end_sample": 2367840,
+      "speech_start_sample": 2328720,
+      "speech_end_sample": 2360880,
       "speech_boundary_method": "estimated_rms_10ms",
       "synthetic_audio": true,
       "speech_rate": 1.0,
@@ -797,7 +731,7 @@
         }
       ],
       "processed_checks": {
-        "version": "listening-cues-v1",
+        "version": "listening-cues-v2-duration",
         "duration": 1.84,
         "markers": [],
         "pace": {
@@ -814,13 +748,13 @@
       "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
     },
     {
-      "id": "d5940bf20032443f8cc4b5884034ec00",
+      "id": "180afab1a0cf4c8591f745ea518df367",
       "speaker": "Mrs. Bennet",
       "text": "“Bingley.”\n",
-      "file_start_sample": 2518320,
-      "file_end_sample": 2552880,
-      "speech_start_sample": 2527920,
-      "speech_end_sample": 2543520,
+      "file_start_sample": 2373840,
+      "file_end_sample": 2408400,
+      "speech_start_sample": 2383440,
+      "speech_end_sample": 2399040,
       "speech_boundary_method": "estimated_rms_10ms",
       "synthetic_audio": true,
       "speech_rate": 1.0,
@@ -834,7 +768,7 @@
         }
       ],
       "processed_checks": {
-        "version": "listening-cues-v1",
+        "version": "listening-cues-v2-duration",
         "duration": 1.44,
         "markers": [],
         "pace": {
@@ -851,13 +785,13 @@
       "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
     },
     {
-      "id": "54fae72086f048ae8fa563346995ebee",
+      "id": "8a5bf51602454d1c9fdfffaec039f9ba",
       "speaker": "Mr. Bennet",
       "text": "“Is he married or single?”\n",
-      "file_start_sample": 2558880,
-      "file_end_sample": 2608800,
-      "speech_start_sample": 2564640,
-      "speech_end_sample": 2603040,
+      "file_start_sample": 2414400,
+      "file_end_sample": 2464320,
+      "speech_start_sample": 2420160,
+      "speech_end_sample": 2458560,
       "speech_boundary_method": "estimated_rms_10ms",
       "synthetic_audio": true,
       "speech_rate": 1.0,
@@ -871,7 +805,7 @@
         }
       ],
       "processed_checks": {
-        "version": "listening-cues-v1",
+        "version": "listening-cues-v2-duration",
         "duration": 2.08,
         "markers": [],
         "pace": {
@@ -888,13 +822,13 @@
       "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
     },
     {
-      "id": "fdfcbe7d4862429f8a20b0d64ec5752d",
+      "id": "df153bddd4314e1abf09c9e3d54f7b86",
       "speaker": "Mrs. Bennet",
       "text": "“Oh, single, my dear, to be sure! A single man of large fortune; four or five thousand a year. What a fine thing for our girls!”\n",
-      "file_start_sample": 2614800,
-      "file_end_sample": 2887440,
-      "speech_start_sample": 2625120,
-      "speech_end_sample": 2876400,
+      "file_start_sample": 2470320,
+      "file_end_sample": 2742960,
+      "speech_start_sample": 2480640,
+      "speech_end_sample": 2731920,
       "speech_boundary_method": "estimated_rms_10ms",
       "synthetic_audio": true,
       "speech_rate": 1.0,
@@ -908,7 +842,7 @@
         }
       ],
       "processed_checks": {
-        "version": "listening-cues-v1",
+        "version": "listening-cues-v2-duration",
         "duration": 11.36,
         "markers": [
           {
@@ -947,13 +881,13 @@
       "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
     },
     {
-      "id": "af855c13d3c3424c8f4245a831c6fc87",
+      "id": "ceb8669b8ad34b85b5f956269347c34a",
       "speaker": "Mr. Bennet",
       "text": "“How so? how can it affect them?”\n",
-      "file_start_sample": 2893440,
-      "file_end_sample": 2960640,
-      "speech_start_sample": 2898960,
-      "speech_end_sample": 2953920,
+      "file_start_sample": 2748960,
+      "file_end_sample": 2816160,
+      "speech_start_sample": 2754480,
+      "speech_end_sample": 2809440,
       "speech_boundary_method": "estimated_rms_10ms",
       "synthetic_audio": true,
       "speech_rate": 1.0,
@@ -967,7 +901,7 @@
         }
       ],
       "processed_checks": {
-        "version": "listening-cues-v1",
+        "version": "listening-cues-v2-duration",
         "duration": 2.8,
         "markers": [
           {
@@ -992,13 +926,13 @@
       "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
     },
     {
-      "id": "8d80a873572e41c9918dab8e6d0703c3",
+      "id": "f87ca587e7a64ce08b2e893277db7464",
       "speaker": "Mrs. Bennet",
       "text": "“My dear Mr. Bennet,” ",
-      "file_start_sample": 2966640,
-      "file_end_sample": 3014640,
-      "speech_start_sample": 2975040,
-      "speech_end_sample": 3001440,
+      "file_start_sample": 2822160,
+      "file_end_sample": 2870160,
+      "speech_start_sample": 2830560,
+      "speech_end_sample": 2856960,
       "speech_boundary_method": "estimated_rms_10ms",
       "synthetic_audio": true,
       "speech_rate": 1.0,
@@ -1012,7 +946,7 @@
         }
       ],
       "processed_checks": {
-        "version": "listening-cues-v1",
+        "version": "listening-cues-v2-duration",
         "duration": 2.0,
         "markers": [],
         "pace": {
@@ -1029,13 +963,13 @@
       "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
     },
     {
-      "id": "66a20ce06d9146f3bec8b5f7d5ff4172",
+      "id": "4baf6cbc6ebe411c98918b97a77b2a3f",
       "speaker": "Narrator",
       "text": "replied his wife, ",
-      "file_start_sample": 3020640,
-      "file_end_sample": 3072480,
-      "speech_start_sample": 3030960,
-      "speech_end_sample": 3062400,
+      "file_start_sample": 2876160,
+      "file_end_sample": 2928000,
+      "speech_start_sample": 2886480,
+      "speech_end_sample": 2917920,
       "speech_boundary_method": "estimated_rms_10ms",
       "synthetic_audio": true,
       "speech_rate": 1.0,
@@ -1049,7 +983,7 @@
         }
       ],
       "processed_checks": {
-        "version": "listening-cues-v1",
+        "version": "listening-cues-v2-duration",
         "duration": 2.16,
         "markers": [
           {
@@ -1074,13 +1008,13 @@
       "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
     },
     {
-      "id": "3399589ddb414ff3ae2d12c46990b564",
+      "id": "afdb3b62e0aa46269d6afe55457be452",
       "speaker": "Mrs. Bennet",
       "text": "“how can you be so tiresome? You must know that I am thinking of his marrying one of them.”\n",
-      "file_start_sample": 3078480,
-      "file_end_sample": 3258960,
-      "speech_start_sample": 3089040,
-      "speech_end_sample": 3246960,
+      "file_start_sample": 2934000,
+      "file_end_sample": 3114480,
+      "speech_start_sample": 2944560,
+      "speech_end_sample": 3102480,
       "speech_boundary_method": "estimated_rms_10ms",
       "synthetic_audio": true,
       "speech_rate": 1.0,
@@ -1094,7 +1028,7 @@
         }
       ],
       "processed_checks": {
-        "version": "listening-cues-v1",
+        "version": "listening-cues-v2-duration",
         "duration": 7.52,
         "markers": [
           {
@@ -1119,13 +1053,13 @@
       "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
     },
     {
-      "id": "6b6285fbb50345acb8b3944bb148e922",
+      "id": "4a50fc270a214734b5251b3f506790df",
       "speaker": "Mr. Bennet",
       "text": "“Is that his design in settling here?”\n",
-      "file_start_sample": 3264960,
-      "file_end_sample": 3328320,
-      "speech_start_sample": 3270000,
-      "speech_end_sample": 3321840,
+      "file_start_sample": 3120480,
+      "file_end_sample": 3183840,
+      "speech_start_sample": 3125520,
+      "speech_end_sample": 3177360,
       "speech_boundary_method": "estimated_rms_10ms",
       "synthetic_audio": true,
       "speech_rate": 1.0,
@@ -1139,7 +1073,7 @@
         }
       ],
       "processed_checks": {
-        "version": "listening-cues-v1",
+        "version": "listening-cues-v2-duration",
         "duration": 2.64,
         "markers": [],
         "pace": {
@@ -1156,13 +1090,13 @@
       "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
     },
     {
-      "id": "28442fe309164b6f9d514ea776d883ca",
+      "id": "5bd4be05d6204e46be601c66ac12be9f",
       "speaker": "Mrs. Bennet",
       "text": "“Design? Nonsense, how can you talk so! But it is very likely that he may fall in love with one of them, and therefore you must visit him as soon as he comes.”\n",
-      "file_start_sample": 3334320,
-      "file_end_sample": 3616560,
-      "speech_start_sample": 3345360,
-      "speech_end_sample": 3605040,
+      "file_start_sample": 3189840,
+      "file_end_sample": 3472080,
+      "speech_start_sample": 3200880,
+      "speech_end_sample": 3460560,
       "speech_boundary_method": "estimated_rms_10ms",
       "synthetic_audio": true,
       "speech_rate": 1.0,
@@ -1176,7 +1110,7 @@
         }
       ],
       "processed_checks": {
-        "version": "listening-cues-v1",
+        "version": "listening-cues-v2-duration",
         "duration": 11.76,
         "markers": [
           {
@@ -1222,5 +1156,5 @@
       "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
     }
   ],
-  "project_revision": 105
+  "project_revision": 70
 }
