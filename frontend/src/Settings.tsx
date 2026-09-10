@@ -38,15 +38,7 @@ export function Settings({request,voices,language,speedReady,onClose,onPick,pick
   {pickFor&&<p className="hint">正在为「{pickFor}」挑选音色。选定后点「用于此角色」。</p>}
 
   <label>试听文字<textarea rows={2} maxLength={120} value={text} onChange={e=>setText(e.target.value)}/></label>
-  <label className="audition-rate">试听语速 <small>只影响这里的试听，不改变生成出来的声音；正式作品的语速在工作区设置。</small>
-   <div className="rate-row">
-    <input type="range" min={0.5} max={2} step={0.1} value={rate} disabled={!speedReady}
-     aria-label="试听语速" onChange={e=>setRate(Number(e.target.value))}/>
-    <output>{rate===1?'原速':rate.toFixed(1)+' 倍'}</output>
-    {rate!==1&&<button onClick={()=>setRate(1)}>回到原速</button>}
-   </div>
-   {!speedReady&&<small className="line-error">本机没有 FFmpeg，试听只能用原速。</small>}
-  </label>
+
 
   <div className="voice-list">{ordered.map(voice=>{
    const fav=favourites.includes(voice);
@@ -60,6 +52,15 @@ export function Settings({request,voices,language,speedReady,onClose,onPick,pick
    </article>})}
   </div>
   <audio ref={player} controls preload="none"/>
+  <label className="audition-rate">试听语速 <small>只影响这里的试听，不改变生成出来的声音；正式作品的语速在工作区设置。</small>
+   <div className="rate-row">
+    <input type="range" min={0.5} max={2} step={0.1} value={rate} disabled={!speedReady}
+     aria-label="试听语速" onChange={e=>setRate(Number(e.target.value))}/>
+    <output>{rate===1?'原速':rate.toFixed(1)+' 倍'}</output>
+    {rate!==1&&<button onClick={()=>setRate(1)}>回到原速</button>}
+   </div>
+   {!speedReady&&<small className="line-error">本机没有 FFmpeg，试听只能用原速。</small>}
+  </label>
   <p className="muted">试听是本机即时合成的，不会写进任何工程；语速在合成之后处理。</p>
   {error&&<p role="alert" className="line-error">{error}</p>}
  </section></div>;
