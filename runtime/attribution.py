@@ -19,7 +19,7 @@ def project_segments(source, labels, language):
     # Validate IDs against preserved source, including duplicate/missing labels.
     bind_labels(source, json.dumps({'labels': labels}))
     by_id = {x['id']: x for x in labels}
-    segments = []
+    pieces = []
     limit = 60 if language == 'zh' else 240
     for unit in source_units(source):
         label = by_id[unit['id']]
@@ -36,15 +36,44 @@ def project_segments(source, labels, language):
                 boundaries = [i+1 for i in range(start, end) if source[i] in '。！？；.!?;\n']
                 if boundaries:
                     end = boundaries[-1]
-            text = source[start:end]
-            if text.strip():
-                segments.append({'id': uuid.uuid4().hex, 'speaker': speaker, 'text': text,
-                    'spoken_as': '', 'audio': None, 'error': None, 'kind': label['kind'],
-                    'source_start': start, 'source_end': end})
+            pieces.append({'speaker': speaker, 'kind': label['kind'], 'start': start, 'end': end})
             start = end
+    segments = _tidy(source, pieces)
     if not 1 <= len(segments) <= 500:
         raise ValueError('原稿切片数量超出范围。')
     return segments
+
+
+# Punctuation that closes the sentence before it, plus whitespace. A slice must
+# never begin with these: after a closing quote the following comma or full stop
+# belongs to the line just spoken, and a subtitle should not open with it.
+TRAILING = '。！？，、；：…·．!?,;:. \t\n\r\u3000'
+
+
+def _tidy(source, pieces):
+    """Attach orphaned punctuation and blank runs to the line they belong to.
+
+    Character coverage is unchanged: every index in the source still appears in
+    exactly one segment, so the project keeps reconstructing the script exactly.
+    """
+    kept = []
+    for piece in pieces:
+        text = source[piece['start']:piece['end']]
+        moved = len(text) - len(text.lstrip(TRAILING))
+        if moved and kept:
+            kept[-1]['end'] = piece['start'] + moved
+            piece = {**piece, 'start': piece['start'] + moved}
+        if source[piece['start']:piece['end']].strip():
+            kept.append(dict(piece))
+        elif kept:
+            kept[-1]['end'] = piece['end']          # blank run joins the line before
+        elif piece['end'] > piece['start']:
+            kept.append(dict(piece))                # nothing before it yet; keep as is
+    for a, b in zip(kept, kept[1:]):
+        b['start'] = a['end']                       # no gaps, no overlaps
+    return [{'id': uuid.uuid4().hex, 'speaker': x['speaker'], 'text': source[x['start']:x['end']],
+             'spoken_as': '', 'audio': None, 'error': None, 'kind': x['kind'],
+             'source_start': x['start'], 'source_end': x['end']} for x in kept]
 
 
 class RoleDraftEngine:

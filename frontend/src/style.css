@@ -44,3 +44,14 @@
 .role-fields{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .role-fields label{margin:0;flex:1;min-width:130px}
 .role-unknown{background:#fff3df;border-left:3px solid #b57918}
+
+/* 原稿编辑：四个动作排一行，窄屏时自动换行 */
+.script-actions{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+.script-actions button{flex:1 1 auto;min-width:6.5rem;white-space:nowrap}
+/* 句子编辑：保存与放弃并排，出错就在编辑框下面 */
+.edit-actions{display:flex;gap:.5rem;margin:.35rem 0}
+.edit-actions button{flex:1 1 0;min-width:0}
+.inline-error{display:flex;align-items:flex-start;gap:.5rem;justify-content:space-between}
+.inline-error button{flex:0 0 auto;font-size:.78rem;padding:.15rem .5rem}
+button.danger{color:#8a2f2f;border-color:#d9bcbc}
+button.danger:hover:not(:disabled){background:#f6ecec}

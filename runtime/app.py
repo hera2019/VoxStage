@@ -120,6 +120,23 @@ class ListeningRequest(BaseModel):
 class RevisionRequest(BaseModel):
     revision: int = Field(ge=0)
 
+def _splice_source(project, segment, text):
+    """Write an edited line back into the source script and shift what follows."""
+    start, end = segment.get('source_start'), segment.get('source_end')
+    if start is None or end is None or not project.get('source_script'):
+        return
+    script = project['source_script']
+    if script[start:end] != segment['text']:
+        return                                   # already out of step; do not guess
+    project['source_script'] = script[:start] + text + script[end:]
+    shift = len(text) - (end - start)
+    segment['source_end'] = start + len(text)
+    for other in project['segments']:
+        if other is not segment and other.get('source_start') is not None and other['source_start'] >= end:
+            other['source_start'] += shift
+            other['source_end'] += shift
+
+
 def create_app(data_root=None, engine=None, frontend=None, checker=None, role_engine=None):
     store = Store(data_root or ROOT/'user-data/projects')
     engine = engine or MlxEngine(os.environ.get('VOXSTAGE_MODEL', ROOT/'user-data/models/qwen-customvoice'))
@@ -252,11 +269,22 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 s = next((s for s in p['segments'] if s['id']==body.segment_id), None)
                 if s is None:
                     raise ValueError('Unknown segment')
+                limit = 60 if p['language'] == 'zh' else 240
                 for field in ('text','spoken_as'):
                     value = getattr(body, field)
                     if value is not None:
-                        if (field == 'text' and not value.strip()) or '\n' in value or len(value) > (60 if p['language']=='zh' else 240):
-                            raise ValueError('Use one short sentence per line (Chinese ≤60 characters, English ≤240)')
+                        # One message per rule: a vague error sends people hunting.
+                        if field == 'text' and not value.strip():
+                            raise ValueError('这一句不能为空。要去掉它，请用「删除这一句」。')
+                        if '\n' in value:
+                            raise ValueError('一句里不能有换行。请删掉换行，或在「原稿编辑」里重新分句。')
+                        if len(value) > limit:
+                            raise ValueError(f'一句最多 {limit} 个字符，当前 {len(value)} 个。请在「原稿编辑」里拆成两句。')
+                        if field == 'text' and value != s['text']:
+                            # Keep the script and the lines telling the same story:
+                            # otherwise the script editor would show stale text and
+                            # applying it would silently undo this edit.
+                            _splice_source(p, s, value)
                         s[field] = value
                 if body.speaker is not None:
                     if body.speaker not in p['voices']:
@@ -273,6 +301,35 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                     if s['speaker'] == body.speaker:
                         s['error'] = None
         return store.public(store.edit(project_id, body.revision, apply), engine, checker)
+
+    @app.post('/api/projects/{project_id}/segments/{segment_id}/delete')
+    def delete_segment(project_id: str, segment_id: str, body: RevisionRequest):
+        """Drop one line and the source text behind it, so script and lines agree.
+
+        Audio files are left on disk: a deletion should be undoable without
+        needing to synthesise anything again.
+        """
+        def change(p):
+            index = next((i for i, s in enumerate(p['segments']) if s['id'] == segment_id), None)
+            if index is None:
+                raise ValueError('找不到这一句。')
+            if len(p['segments']) <= 1:
+                raise ValueError('工程至少要保留一句。')
+            removed = p['segments'].pop(index)
+            start, end = removed.get('source_start'), removed.get('source_end')
+            if start is not None and end is not None and p.get('source_script'):
+                span = end - start
+                p['source_script'] = p['source_script'][:start] + p['source_script'][end:]
+                for s in p['segments']:
+                    if s.get('source_start') is not None and s['source_start'] >= end:
+                        s['source_start'] -= span
+                        s['source_end'] -= span
+            used = {s['speaker'] for s in p['segments']}
+            for speaker in [x for x in p['voices'] if x not in used]:
+                p['voices'].pop(speaker, None)
+                p.get('voice_profiles', {}).pop(speaker, None)
+        with store.lock:
+            return store.public(store.edit(project_id, body.revision, change), engine, checker)
 
     @app.post('/api/projects/{project_id}/script/check')
     def check_script(project_id: str, body: ScriptFixRequest | None = None, source_script: str = ''):
