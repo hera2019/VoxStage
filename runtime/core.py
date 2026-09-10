@@ -14,6 +14,7 @@ from .listening import listening_status
 from .tempo import edit_status
 from .rhythm import VERSION as RHYTHM_VERSION
 from .engines import VOICES, generation_parameters, reference_parameters
+from .voices import custom_id
 
 def uid():
     return uuid.uuid4().hex
@@ -36,11 +37,21 @@ def parse_script(script, language):
         raise ValueError('A project needs 1–500 labelled lines')
     return segments
 
-def fingerprint(project, segment, engine):
+def fingerprint(project, segment, engine, library=None):
     data = {'text':segment.get('spoken_as') or segment['text'], 'voice':project['voices'][segment['speaker']],
             'language':project['language'], 'engine':engine.identity, 'seed':260909+segment.get('take',0),
             **generation_parameters(project['language']),
             'runtime':'mlx-audio-0.5.1', 'processing':PROCESSING_VERSION}
+    # A library voice is a reference like a fixed profile is, so its identity has
+    # to reach the fingerprint: renaming may not invalidate audio, but pointing a
+    # character at different reference audio must.
+    voice_ref = custom_id(project['voices'][segment['speaker']])
+    if voice_ref and library:
+        entry = library.get(voice_ref)
+        data.update(reference_parameters())
+        data.update({'engine':getattr(engine,'reference_identity','unavailable'),
+                     'reference_sha256':entry['sha256'],'reference_text':entry['reference_text'],
+                     'mode':'library_reference-v1'})
     profile = project.get('voice_profiles',{}).get(segment['speaker'])
     if profile:
         data.update(reference_parameters())
@@ -57,6 +68,7 @@ class Store:
         self.root = Path(root)
         self.root.mkdir(parents=True, exist_ok=True)
         self.lock = threading.RLock()
+        self.library = None          # set by create_app; see runtime/voices.py
         for path in self.root.glob('*/project.json'):
             data = json.loads(path.read_text())
             if data.get('job',{}).get('status') == 'running':
@@ -144,7 +156,8 @@ class Store:
             self.write(p)
             return p
 
-    def public(self, p, engine, checker=None):
+    def public(self, p, engine, checker=None, library=None):
+        library = library or self.library
         result = copy.deepcopy(p)
         result.setdefault('voice_profiles',{})
         result.setdefault('archived',False)
@@ -152,7 +165,7 @@ class Store:
         result['can_undo'], result['can_redo'] = bool(p['history']), bool(p['future'])
         result.pop('history'); result.pop('future')
         for s in result['segments']:
-            current = fingerprint(p, s, engine)
+            current = fingerprint(p, s, engine, library)
             audio = s.get('audio')
             s['status'] = 'failed' if s.get('error') else 'pending'
             if audio and audio['fingerprint'] == current and (self.directory(p['id'])/'audio'/(current+'.wav')).exists():

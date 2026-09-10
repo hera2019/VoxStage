@@ -24,6 +24,7 @@ from .audio import process_audio, export_audio, prepare_segment
 from .clips import clip_plan, validate_clips
 from .rhythm import analyze_file, analyze, VERSION as RHYTHM_VERSION
 from .core import Store, fingerprint
+from .voices import VoiceLibrary, is_custom, custom_id, PREFIX as CUSTOM_PREFIX
 from .script_check import inspect as inspect_script, apply_fix
 from .attribution import RoleDraftEngine, project_segments, source_units
 from .content_check import WhisperChecker, compare_text, file_sha
@@ -55,6 +56,17 @@ class AuditionRequest(BaseModel):
     text: str = Field(min_length=1, max_length=120)
     language: Literal['zh','en'] = 'zh'
     rate: float = Field(default=1.0, ge=0.5, le=2.0, allow_inf_nan=False)
+
+class VoiceSaveRequest(BaseModel):
+    name: str = Field(min_length=1, max_length=40)
+    language: Literal['zh','en'] = 'zh'
+    reference_text: str = Field(min_length=1, max_length=400)
+    from_voice: str | None = Field(default=None, max_length=80)
+    audio_base64: str | None = Field(default=None, max_length=8_000_000)
+    consent_confirmed: bool = False
+
+class VoiceRenameRequest(BaseModel):
+    name: str = Field(min_length=1, max_length=40)
 
 class SettingsRequest(BaseModel):
     favourite_voices: list[str] = Field(default_factory=list, max_length=40)
@@ -152,6 +164,8 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
     # Settings and auditions live beside the projects folder, never inside it:
     # Store scans its own root for project.json.
     workspace = store.root.parent
+    library = VoiceLibrary(workspace/'voices')
+    store.library = library
     engine = engine or MlxEngine(os.environ.get('VOXSTAGE_MODEL', ROOT/'user-data/models/qwen-customvoice'))
     checker = checker or WhisperChecker(ROOT/'user-data/asr-settings.json')
     role_engine = role_engine or RoleDraftEngine()
@@ -224,6 +238,72 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
         (workspace/'settings.json').write_text(
             json.dumps({'favourite_voices': favourites}, ensure_ascii=False, indent=1))
         return {'favourite_voices': favourites}
+
+    @app.get('/api/voices/custom')
+    def list_custom_voices():
+        return library.list()
+
+    @app.post('/api/voices/custom')
+    def create_custom_voice(body: VoiceSaveRequest):
+        """Keep a voice: either one the model just produced, or one supplied.
+
+        Saving an audition means a good sample never has to be hunted for again,
+        and a reference steadies delivery — which is the whole reason to keep it.
+        """
+        if bool(body.from_voice) == bool(body.audio_base64):
+            raise ValueError('请二选一：从现有音色生成，或提供一段参考声音。')
+        with store.lock:
+            if active['project_id']:
+                raise RuntimeError('正在处理其他任务，请稍后再建立音色。')
+            active['project_id'] = 'voice-library'
+        try:
+            if body.from_voice:
+                if body.from_voice not in VOICES and not (is_custom(body.from_voice) and library.label(body.from_voice)):
+                    raise ValueError('没有这个音色。')
+                if is_custom(body.from_voice):
+                    source_entry = library.get(custom_id(body.from_voice))
+                    pcm, rate, _ = engine.synthesize_reference(
+                        body.reference_text, body.language, library.audio_path(source_entry['id']),
+                        source_entry['reference_text'], 260909,
+                        consent_confirmed=True, expected_sha256=source_entry['sha256'])
+                else:
+                    pcm, rate, _ = engine.synthesize(body.reference_text, body.from_voice, body.language, seed=260909)
+                pcm, meta = process_audio(pcm, rate)
+                entry = library.create(name=body.name, pcm=pcm, rate=meta['sample_rate'],
+                    reference_text=body.reference_text, language=body.language,
+                    source='generated', consent_confirmed=True, derived_from=body.from_voice)
+            else:
+                import base64, io
+                try:
+                    raw = base64.b64decode(body.audio_base64 or '', validate=True)
+                    pcm, rate = sf.read(io.BytesIO(raw), dtype='float32')
+                except (ValueError, RuntimeError, sf.LibsndfileError) as exc:
+                    raise ValueError('无法读取这段声音；请提供 WAV 等常见未压缩格式。') from exc
+                if getattr(pcm, 'ndim', 1) > 1:
+                    pcm = pcm.mean(axis=1)
+                entry = library.create(name=body.name, pcm=pcm, rate=rate,
+                    reference_text=body.reference_text, language=body.language,
+                    source='provided', consent_confirmed=body.consent_confirmed)
+            return entry
+        finally:
+            with store.lock:
+                active['project_id'] = None
+
+    @app.patch('/api/voices/custom/{voice_id}')
+    def rename_custom_voice(voice_id: str, body: VoiceRenameRequest):
+        return library.rename(voice_id, body.name)
+
+    @app.delete('/api/voices/custom/{voice_id}')
+    def delete_custom_voice(voice_id: str):
+        with store.lock:
+            used = {json.loads(path.read_text())['name']
+                    for path in store.root.glob('*/project.json')
+                    if CUSTOM_PREFIX + voice_id in json.loads(path.read_text()).get('voices', {}).values()}
+            return library.delete(voice_id, used)
+
+    @app.get('/api/voices/custom/{voice_id}/audio')
+    def custom_voice_audio(voice_id: str):
+        return FileResponse(library.audio_path(voice_id), media_type='audio/wav')
 
     @app.post('/api/voices/audition')
     def audition_voice(body: AuditionRequest):
@@ -368,7 +448,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                     s['speaker'] = body.speaker
                 s['error'] = None
             if body.voice is not None:
-                if body.voice not in VOICES or body.speaker not in p['voices']:
+                if (body.voice not in VOICES and not (is_custom(body.voice) and library.label(body.voice))) or body.speaker not in p['voices']:
                     raise ValueError('Unknown voice or speaker')
                 if p['voices'][body.speaker] != body.voice:
                     p.get('voice_profiles',{}).pop(body.speaker,None)
@@ -514,7 +594,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                         # D33: advance only when this sentence starts; cancellation preserves untouched issues.
                         s['take']=s.get('take',0)+1
                         s['error']=None
-                    digest = fingerprint(p, s, engine)
+                    digest = fingerprint(p, s, engine, library)
                     folder = store.directory(project_id)/'audio'
                     folder.mkdir(exist_ok=True)
                     path = folder/(digest+'.wav')
@@ -538,6 +618,11 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                             pcm,rate,metrics=engine.synthesize_reference(s.get('spoken_as') or s['text'],p['language'],
                                 store.directory(project_id)/'references'/(digest_ref+'.wav'),profile['text'],
                                 260909+s.get('take',0),consent_confirmed=True,expected_sha256=digest_ref)
+                        elif is_custom(p['voices'][s['speaker']]):
+                            entry = library.get(custom_id(p['voices'][s['speaker']]))
+                            pcm,rate,metrics=engine.synthesize_reference(s.get('spoken_as') or s['text'],p['language'],
+                                library.audio_path(entry['id']),entry['reference_text'],
+                                260909+s.get('take',0),consent_confirmed=True,expected_sha256=entry['sha256'])
                         else:
                             pcm, rate, metrics = engine.synthesize(s.get('spoken_as') or s['text'],
                                 p['voices'][s['speaker']], p['language'], 260909+s.get('take',0))
@@ -612,7 +697,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 with store.lock:
                     p=store.read(project_id)
                     segment=next(s for s in p['segments'] if s['id']==sid)
-                    digest=fingerprint(p,segment,engine)
+                    digest=fingerprint(p,segment,engine,library)
                     expected=segment.get('spoken_as') or segment['text']
                     source=store.directory(project_id)/'audio'/(digest+'.wav')
                     p['job']['current_segment']=sid;store.write(p)

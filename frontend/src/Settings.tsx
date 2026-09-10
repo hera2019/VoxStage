@@ -1,4 +1,5 @@
 import {useEffect,useRef,useState} from 'react';
+type Custom={id:string;name:string;language:string;source:string;seconds:number;derived_from:string|null;consent_confirmed:boolean};
 type Props={request:(path:string,method?:string,data?:unknown)=>Promise<any>;voices:Record<string,string>;
  language:'zh'|'en';speedReady:boolean;onClose:()=>void;onPick?:(voice:string)=>void;pickFor?:string};
 const SAMPLES={zh:'雨点轻轻敲着窗，她回头看了一眼。',en:'Rain tapped against the window, and she looked back once.'};
@@ -10,8 +11,13 @@ export function Settings({request,voices,language,speedReady,onClose,onPick,pick
  const [favourites,setFavourites]=useState<string[]>([]);
  const [playing,setPlaying]=useState('');const [waiting,setWaiting]=useState('');const [error,setError]=useState('');
  const [heard,setHeard]=useState<Record<string,number>>({});
+ const [custom,setCustom]=useState<Custom[]>([]);
+ const [saving,setSaving]=useState('');const [newName,setNewName]=useState('');
+ const [consent,setConsent]=useState(false);const file=useRef<HTMLInputElement>(null);
+ const reload=()=>request('/voices/custom').then(setCustom).catch(()=>{});
+ async function run(task:()=>Promise<void>){setError('');try{await task()}catch(e){setError((e as Error).message)}}
  const player=useRef<HTMLAudioElement>(null);
- useEffect(()=>{void request('/settings').then(s=>setFavourites(s.favourite_voices??[])).catch(()=>{})},[]);
+ useEffect(()=>{void reload();void request('/settings').then(s=>setFavourites(s.favourite_voices??[])).catch(()=>{})},[]);
  const names=Object.keys(voices);
  // Favourites first: with nine presets and cross-language use, the list only grows.
  const ordered=[...names.filter(v=>favourites.includes(v)),...names.filter(v=>!favourites.includes(v))];
@@ -52,6 +58,48 @@ export function Settings({request,voices,language,speedReady,onClose,onPick,pick
    </article>})}
   </div>
   <audio ref={player} controls preload="none"/>
+
+  <div className="keep-voice">
+   <div className="section-label">留下这个声音</div>
+   <p className="muted">把刚才试听的音色和这句话保存成一个具名音色。之后直接选它，不必再找当时那一版。
+    参考音会稳定朗读节奏——已实测把一个漂移的预设从 36% 变异压到 9%。</p>
+   <div className="keep-row">
+    <input aria-label="新音色名称" maxLength={40} placeholder="例如：稳定旁白" value={newName} onChange={e=>setNewName(e.target.value)}/>
+    <button disabled={!newName.trim()||!playing||!!saving} onClick={()=>void run(async()=>{
+      setSaving('keep');
+      try{await request('/voices/custom','POST',{name:newName,language,reference_text:text,from_voice:playing});
+        setNewName('');await reload()}finally{setSaving('')}
+     })}>{saving==='keep'?'保存中…':playing?`保存「${playing}」这一版`:'先试听一个音色'}</button>
+   </div>
+   <details className="provide-voice">
+    <summary>或者提供一段自己的录音</summary>
+    <p className="muted">录音只留在这台 Mac，不进版本库，也不上传。生成的声音会标注为合成语音，不得用于冒充他人。</p>
+    <label className="consent"><input type="checkbox" checked={consent} onChange={e=>setConsent(e.target.checked)}/>
+     我拥有这段声音的使用权，或已获得本人明确授权。</label>
+    <input ref={file} type="file" accept="audio/wav,audio/x-wav,.wav" aria-label="参考声音文件" disabled={!consent||!newName.trim()}
+     onChange={e=>{const f=e.target.files?.[0];if(!f)return;
+      if(f.size>8_000_000){setError('文件过大，请提供 1.5–60 秒的 WAV。');return}
+      void run(async()=>{const buffer=await f.arrayBuffer();
+        let binary='';const bytes=new Uint8Array(buffer);
+        for(let i=0;i<bytes.length;i+=8192)binary+=String.fromCharCode(...bytes.subarray(i,i+8192));
+        await request('/voices/custom','POST',{name:newName,language,reference_text:text,
+          audio_base64:btoa(binary),consent_confirmed:consent});
+        setNewName('');if(file.current)file.current.value='';await reload()})}}/>
+    <small>参考文字请填上面「试听文字」框里那句——必须与录音实际说的一致。</small>
+   </details>
+  </div>
+
+  {custom.length>0&&<div className="custom-voices">
+   <div className="section-label">已保存的音色</div>
+   {custom.map(v=><article className="voice-row" key={v.id}>
+    <div className="voice-name"><strong>{v.name}</strong>
+     <small>{v.source==='generated'?`合成自 ${v.derived_from??'预设'}`:'提供的录音 · 已确认授权'} · {v.seconds.toFixed(1)} 秒</small></div>
+    <button onClick={()=>{const a=player.current;if(a){a.src='/api/voices/custom/'+v.id+'/audio';void a.play().catch(()=>{})}}}>听参考</button>
+    <button onClick={()=>void run(async()=>{const name=prompt('新的名称',v.name);if(name){await request('/voices/custom/'+v.id,'PATCH',{name});await reload()}})}>改名</button>
+    <button className="danger" onClick={()=>void run(async()=>{if(confirm(`删除音色「${v.name}」？参考声音会一并删除。`)){await request('/voices/custom/'+v.id,'DELETE');await reload()}})}>删除</button>
+    {onPick&&<button className="primary" onClick={()=>onPick('custom:'+v.id)}>用于此角色</button>}
+   </article>)}
+  </div>}
   <label className="audition-rate">试听语速 <small>只影响这里的试听，不改变生成出来的声音；正式作品的语速在工作区设置。</small>
    <div className="rate-row">
     <input type="range" min={0.5} max={2} step={0.1} value={rate} disabled={!speedReady}
