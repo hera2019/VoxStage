@@ -23,6 +23,7 @@ from .audio import process_audio, export_audio, prepare_segment
 from .clips import clip_plan, validate_clips
 from .rhythm import analyze_file, analyze, VERSION as RHYTHM_VERSION
 from .core import Store, fingerprint
+from .script_check import inspect as inspect_script, apply_fix
 from .attribution import RoleDraftEngine, project_segments, source_units
 from .content_check import WhisperChecker, compare_text, file_sha
 from .engines import MlxEngine, FixtureEngine, VOICES
@@ -47,6 +48,15 @@ class RoleConfirmRequest(BaseModel):
     draft_id: str = Field(pattern=r'^[a-f0-9]{32}$')
     name: str = Field(default='Untitled', max_length=120)
     labels: list[RoleLabel] = Field(min_length=1,max_length=80)
+
+class ScriptRequest(BaseModel):
+    revision: int = Field(ge=0)
+    source_script: str = Field(min_length=1, max_length=3000)
+    labels: list[RoleLabel] | None = Field(default=None, max_length=200)
+
+class ScriptFixRequest(BaseModel):
+    source_script: str = Field(min_length=1, max_length=3000)
+    kind: str = Field(max_length=40)
 
 class EditRequest(BaseModel):
     speech_rate: float | None = Field(default=None, ge=0.5, le=2.0, allow_inf_nan=False)
@@ -263,6 +273,53 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                     if s['speaker'] == body.speaker:
                         s['error'] = None
         return store.public(store.edit(project_id, body.revision, apply), engine, checker)
+
+    @app.post('/api/projects/{project_id}/script/check')
+    def check_script(project_id: str, body: ScriptFixRequest | None = None, source_script: str = ''):
+        # Rule-based only: no model, no project mutation, safe to call while typing.
+        return inspect_script(source_script or (body.source_script if body else ''))
+
+    @app.post('/api/projects/{project_id}/script/fix')
+    def fix_script(project_id: str, body: ScriptFixRequest):
+        return {'source_script': apply_fix(body.source_script, body.kind)}
+
+    @app.post('/api/projects/{project_id}/script')
+    def rewrite_script(project_id: str, body: ScriptRequest):
+        """Preview or apply a source rewrite. Without labels this only previews."""
+        from .attribution import carry_labels, carry_state
+        with store.lock:
+            project = store.read(project_id)
+            if project['revision'] != body.revision or project['job']['status'] == 'running':
+                raise RuntimeError('工程已改变或正在处理，请重新载入后再修改原稿。')
+            language = project['language']
+            report = inspect_script(body.source_script)
+            if report['blocking']:
+                raise ValueError(report['findings'][0]['message'])
+            labels = ([label.model_dump() for label in body.labels] if body.labels
+                      else carry_labels(project['segments'], body.source_script, language))
+            if body.labels is None:
+                unresolved = [{**unit, **{k: label[k] for k in ('kind', 'speaker')}}
+                              for unit, label in zip(source_units(body.source_script), labels)
+                              if label['kind'] == 'dialogue'
+                              and label['speaker'].strip().upper() in ('', 'UNKNOWN')]
+                # Slicing rejects UNKNOWN, so count with a placeholder that never persists.
+                probe = [{**l, 'speaker': ('待指定' if l['speaker'].strip().upper() in ('', 'UNKNOWN')
+                                           else l['speaker'])} for l in labels]
+                sliced = project_segments(body.source_script, probe, language)
+                _, stats = carry_state(project['segments'], [dict(s) for s in sliced])
+                return {'preview': True, 'labels': labels, 'unresolved': unresolved,
+                        'report': report, 'segments': len(sliced), **stats}
+            segments = project_segments(body.source_script, labels, language)
+            preview, stats = carry_state(project['segments'], [dict(s) for s in segments])
+            presets = ['Vivian','Uncle_Fu','Serena','Dylan'] if language == 'zh' else ['Ryan','Aiden']
+            def change(p):
+                p['source_script'] = body.source_script
+                p['segments'] = preview
+                for i, speaker in enumerate(dict.fromkeys(s['speaker'] for s in preview)):
+                    p['voices'].setdefault(speaker, presets[i % len(presets)])
+                p['attribution'] = {**p.get('attribution', {}), 'confirmed_labels': labels,
+                                    'human_confirmed': True, 'rewritten': True}
+            return store.public(store.edit(project_id, body.revision, change), engine, checker)
 
     @app.post('/api/projects/{project_id}/duplicate')
     def duplicate_project(project_id: str, body: RevisionRequest):

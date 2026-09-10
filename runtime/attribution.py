@@ -9,7 +9,7 @@ import urllib.error
 import urllib.request
 import uuid
 from pathlib import Path
-from evals.speaker_attribution.source_units import source_units, bind_labels
+from evals.speaker_attribution.source_units import source_units, bind_labels, PAIRS
 
 ROOT = Path(__file__).resolve().parents[1]
 MODEL_SHA = 'ae916ede1c010a26955ee8ae2e908bf8815a3f135ec860439ab924701c69d5f1'
@@ -108,4 +108,59 @@ class RoleDraftEngine:
                 except subprocess.TimeoutExpired:
                     proc.kill(); proc.wait()
 
-# 最后更新：2026-09-10 · Astra
+
+def narration_name(language):
+    return '旁白' if language == 'zh' else 'Narrator'
+
+
+def carry_labels(segments, source, language):
+    """Infer each new unit's kind and speaker from the segments already reviewed.
+
+    Old segment texts are slices of old units, so a segment whose text still sits
+    inside a new unit describes that unit. Anything genuinely new is left for the
+    person: new narration resolves itself, new dialogue asks.
+    """
+    narrator = narration_name(language)
+    known = [s for s in segments if s.get('text', '').strip()]
+    labels = []
+    for unit in source_units(source):
+        speaker, kind = '', ''
+        for old in known:
+            text = old['text'].strip()
+            if text and text in unit['text']:
+                speaker = old['speaker']
+                kind = old.get('kind') or ('narration' if speaker == narrator else 'dialogue')
+                break
+        if not kind:
+            # Unseen text: a quoted unit needs a person, prose does not.
+            kind = 'dialogue' if unit['text'][:1] in PAIRS else 'narration'
+            speaker = 'UNKNOWN' if kind == 'dialogue' else narrator
+        labels.append({'id': unit['id'], 'kind': kind, 'speaker': speaker})
+    return labels
+
+
+def carry_state(old_segments, new_segments):
+    """Move generated audio and review state onto identical lines after a reslice.
+
+    Matching is by (speaker, text) because that is what the audio fingerprint is
+    built from: an unchanged line keeps its identity, its audio file and every
+    check already performed on it. Nothing is deleted; unmatched audio simply
+    stops being referenced and remains on disk.
+    """
+    pools = {}
+    for old in old_segments:
+        pools.setdefault((old['speaker'], old['text']), []).append(old)
+    kept = kept_audio = fresh = 0
+    for new in new_segments:
+        pool = pools.get((new['speaker'], new['text']))
+        if pool:
+            old = pool.pop(0)
+            carried = {k: v for k, v in old.items() if k not in ('source_start', 'source_end', 'kind')}
+            new.update(carried)
+            kept += 1
+            kept_audio += bool(old.get('audio'))
+        else:
+            fresh += 1
+    return new_segments, {'kept': kept, 'kept_audio': kept_audio, 'fresh': fresh}
+
+# 最后更新：2026-09-10 · Astra／2026-09-10 · Claude Hera（新增重新切分的标签与状态承接）
