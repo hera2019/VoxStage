@@ -191,3 +191,16 @@ main>footer{flex-shrink:0;margin:0 -36px -38px;border-top:1px solid #d5dccb}
   main>footer{margin:0 -22px -25px}
   .main-scroll{overflow:visible}
 }
+
+/* ── 卡片提示统一为标签，紧跟「已生成」依次排列，排不下换行 ── */
+.line-flags{margin-left:0;gap:6px}
+.speaker{gap:8px;align-items:center}
+.line-flags .check-badge,.line-flags .listening-badge{
+  display:inline-block;margin:0;padding:2px 7px;border-radius:4px;
+  font-size:.68rem;line-height:1.6;white-space:nowrap;
+  background:#f0f0e9;color:#7c7d72;border:1px solid #e3e4d9}
+.line-flags .check-badge[data-state=match]{background:#ebf1e3;color:#5f7a4e;border-color:#dbe6cf}
+.line-flags .check-badge[data-state=confirmed]{background:#e6efe0;color:#4a6b3d;border-color:#cfe0c4}
+.line-flags .check-badge[data-state=review],
+.line-flags .check-badge[data-state=error]{background:#fbeee7;color:#a04c3e;border-color:#eed6c9}
+.line-flags .listening-badge{background:#fbf3df;color:#8a6a2c;border-color:#eddfbe}
