@@ -10,8 +10,9 @@ import unicodedata
 import uuid
 from pathlib import Path
 
-NORMALIZATION_VERSION = 'spoken-units-v3-pypinyin055-de1-enwordjoin'
+NORMALIZATION_VERSION = 'spoken-units-v4-visible-chinese-integers'
 from .phonetics import chinese_keys
+from .numbers import numeric_spans, BASIS as NUMBER_BASIS, NOTICE as NUMBER_NOTICE
 DECODING = {'beam_size':5,'best_of':5,'temperature':0,'temperature_inc':0,'max_context':0,'no_fallback':True,'threads':4,'timing':'max-len-1-full-json-v1'}
 
 def file_sha(path):
@@ -26,11 +27,34 @@ def text_units(text, language):
     return [c for i,c in enumerate(text) if unicodedata.category(c)[0] in 'LNMS' or c in '%-'
             or (c in '.,:/' and i>0 and i+1<len(text) and text[i-1].isdigit() and text[i+1].isdigit())]
 
+def comparison_side(text, language):
+    units=text_units(text,language)
+    if language!='zh':return units,units
+    keys=chinese_keys(units)
+    normalized=unicodedata.normalize('NFKC',text).casefold().replace('’',"'")
+    # ASR timed chunks may split a digit run across whitespace (3\n20).
+    # Chinese text_units already ignores whitespace; keep the same comparison view.
+    normalized=re.sub(r'\s+','',normalized)
+    spans={}
+    for start,end,value in numeric_spans(normalized):
+        a=len(text_units(normalized[:start],language))
+        b=a+len(text_units(normalized[start:end],language))
+        spans[a]=(b,value)
+    grouped,grouped_keys=[],[]
+    i=0
+    while i<len(units):
+        if i in spans:
+            end,value=spans[i]
+            grouped.append(''.join(units[i:end]));grouped_keys.append((NUMBER_BASIS,value));i=end
+        else:
+            grouped.append(units[i]);grouped_keys.append(keys[i]);i+=1
+    return grouped,grouped_keys
+
+
 def compare_text(expected, recognized, language):
-    left,right=text_units(expected,language),text_units(recognized,language)
+    left,keys_left=comparison_side(expected,language)
+    right,keys_right=comparison_side(recognized,language)
     joiner=' ' if language=='en' else ''
-    keys_left=chinese_keys(left) if language=='zh' else left
-    keys_right=chinese_keys(right) if language=='zh' else right
     changes=[];equivalences=[]
     for kind,a,b,c,d in difflib.SequenceMatcher(a=keys_left,b=keys_right,autojunk=False).get_opcodes():
         if kind=='equal':
@@ -46,7 +70,8 @@ def compare_text(expected, recognized, language):
             else:
                 changes.append({'kind':kind,'expected':joiner.join(left[a:b]),'recognized':joiner.join(right[c:d])})
     return {'status':'match' if left and not changes else 'review','expected_text':expected,
-            'recognized_text':recognized,'differences':changes,'equivalences':equivalences,'normalization':NORMALIZATION_VERSION}
+            'recognized_text':recognized,'differences':changes,'equivalences':equivalences,'normalization':NORMALIZATION_VERSION,
+            'compatibility_notices':[NUMBER_NOTICE] if any(e['basis']==NUMBER_BASIS for e in equivalences) else []}
 
 def check_status(segment, current_fingerprint, checker_id):
     check=segment.get('content_check')
@@ -109,3 +134,5 @@ class WhisperChecker:
                 'log_id':folder.name,'audio_sha256':file_sha(audio_file)}
 
 # 最后更新：2026-09-09 · Astra
+
+# 最后更新：2026-09-11 · Astra（可见的中文数字写法兼容）

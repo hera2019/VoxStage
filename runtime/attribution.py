@@ -43,10 +43,25 @@ def project_segments(source, labels, language):
                         break
             pieces.append({'speaker': speaker, 'kind': label['kind'], 'start': start, 'end': end})
             start = end
-    segments = _tidy(source, pieces)
+    segments = merge_adjacent(_tidy(source, pieces), limit)
     if not 1 <= len(segments) <= 500:
         raise ValueError('原稿切片数量超出范围。')
     return segments
+
+
+def merge_adjacent(segments, limit):
+    """Only during explicit import/reslicing; retain exact source spans."""
+    merged=[]
+    for segment in segments:
+        previous=merged[-1] if merged else None
+        if (previous and previous['speaker']==segment['speaker'] and previous['kind']==segment['kind']
+            and previous['source_end']==segment['source_start']
+            and len(previous['text'])+len(segment['text'])<=limit):
+            previous['text']+=segment['text']
+            previous['source_end']=segment['source_end']
+        else:
+            merged.append(dict(segment))
+    return merged
 
 
 # Punctuation that closes the sentence before it, plus whitespace. A slice must
@@ -160,6 +175,12 @@ def carry_labels(segments, source, language):
     for unit in source_units(source):
         speaker, kind = '', ''
         for old in known:
+            start,end=old.get('source_start'),old.get('source_end')
+            if (isinstance(start,int) and isinstance(end,int) and start<=unit['start']<unit['end']<=end
+                and source[start:end]==old['text']):
+                speaker=old['speaker']
+                kind=old.get('kind') or ('narration' if speaker==narrator else 'dialogue')
+                break
             text = old['text'].strip()
             if text and text in unit['text']:
                 speaker = old['speaker']
@@ -198,3 +219,5 @@ def carry_state(old_segments, new_segments):
     return new_segments, {'kept': kept, 'kept_audio': kept_audio, 'fresh': fresh}
 
 # 最后更新：2026-09-10 · Astra／2026-09-10 · Claude Hera（新增重新切分的标签与状态承接）
+
+# 最后更新：2026-09-11 · Astra（显式导入与重新切分时合并同角色同类型片段）

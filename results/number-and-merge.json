@@ -1,0 +1,649 @@
+{
+  "task": "数字写法与片段合并",
+  "criteria_file": "docs/task-number-and-merge.md",
+  "criteria_author": "Claude Hera",
+  "author": "Astra",
+  "date": "2026-09-11",
+  "regression_runs": [
+    {
+      "command": ".venv/bin/python -m pytest tests -q",
+      "exit_code": 1,
+      "raw_output": "........................................................................ [ 29%]\n............................................F........................... [ 58%]\n........................................................................ [ 87%]\n...............................                                          [100%]\n=================================== FAILURES ===================================\n_______________ test_visible_equivalence_and_existing_homophones _______________\n\n    def test_visible_equivalence_and_existing_homophones():\n        r=compare_text('他只花了三百二，剩下一千零八十。','他只花了320，剩下1080。','zh')\n>       assert r['status']=='match' and len(r['equivalences'])==2\nE       AssertionError: assert ('review' == 'match'\nE         \nE         - match\nE         + review)\n\ntests/test_number_and_merge.py:30: AssertionError\n=============================== warnings summary ===============================\n.venv/lib/python3.12/site-packages/fastapi/testclient.py:1\n  /Users/Hera/Documents/VoxStage/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n    from starlette.testclient import TestClient as TestClient  # noqa\n\n.venv/lib/python3.12/site-packages/starlette/testclient.py:53\n  /Users/Hera/Documents/VoxStage/.venv/lib/python3.12/site-packages/starlette/testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.\n    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_number_and_merge.py::test_visible_equivalence_and_existing_homophones\n1 failed, 246 passed, 2 warnings in 11.00s\n"
+    },
+    {
+      "command": ".venv/bin/python -m pytest tests -q",
+      "exit_code": 0,
+      "raw_output": "........................................................................ [ 28%]\n........................................................................ [ 57%]\n........................................................................ [ 86%]\n.................................                                        [100%]\n=============================== warnings summary ===============================\n.venv/lib/python3.12/site-packages/fastapi/testclient.py:1\n  /Users/Hera/Documents/VoxStage/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n    from starlette.testclient import TestClient as TestClient  # noqa\n\n.venv/lib/python3.12/site-packages/starlette/testclient.py:53\n  /Users/Hera/Documents/VoxStage/.venv/lib/python3.12/site-packages/starlette/testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.\n    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n249 passed, 2 warnings in 10.97s\n",
+      "change_since_previous": "Distinguish sentence punctuation from numeric separators."
+    },
+    {
+      "command": ".venv/bin/python -m pytest tests -q",
+      "exit_code": 0,
+      "raw_output": "........................................................................ [ 28%]\n........................................................................ [ 57%]\n........................................................................ [ 86%]\n..................................                                       [100%]\n=============================== warnings summary ===============================\n.venv/lib/python3.12/site-packages/fastapi/testclient.py:1\n  /Users/Hera/Documents/VoxStage/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n    from starlette.testclient import TestClient as TestClient  # noqa\n\n.venv/lib/python3.12/site-packages/starlette/testclient.py:53\n  /Users/Hera/Documents/VoxStage/.venv/lib/python3.12/site-packages/starlette/testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.\n    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n250 passed, 2 warnings in 11.07s\n",
+      "change_since_previous": "Keep existing Chinese whitespace normalization when grouping saved ASR digit chunks."
+    }
+  ],
+  "human_acceptance": "not_performed",
+  "existing_samples": [
+    {
+      "project_id": "339de611b9bd427d9e11bf0b20a5c0fb",
+      "language": "zh",
+      "source_sha256": "60983ae07a45d5bf54998512e37fff70c1b2c6a77843a12800dbf26235e95e66",
+      "before_segments": 32,
+      "after_segments": 28,
+      "exact_source_reconstruction": true,
+      "exact_source_offsets": true,
+      "project_unchanged": true,
+      "labels_origin": "existing project roles via carry_labels; no model re-run",
+      "segments": [
+        {
+          "speaker": "旁白",
+          "kind": "narration",
+          "text": "门上贴着一张纸，写着“今日盘点，暂停营业”。\n林小雪把伞收起来，抖了抖水。她抬头看了看招牌，又低头核对手机上的地址。\n",
+          "source_start": 0,
+          "source_end": 59
+        },
+        {
+          "speaker": "林小雪",
+          "kind": "dialogue",
+          "text": "“应该就是这儿。”\n",
+          "source_start": 59,
+          "source_end": 69
+        },
+        {
+          "speaker": "周远",
+          "kind": "dialogue",
+          "text": "“可门关着。”",
+          "source_start": 69,
+          "source_end": 76
+        },
+        {
+          "speaker": "旁白",
+          "kind": "narration",
+          "text": "周远把手插进口袋，",
+          "source_start": 76,
+          "source_end": 85
+        },
+        {
+          "speaker": "周远",
+          "kind": "dialogue",
+          "text": "“我早说了先打个电话。”\n",
+          "source_start": 85,
+          "source_end": 98
+        },
+        {
+          "speaker": "旁白",
+          "kind": "narration",
+          "text": "那姑娘没理他，绕到侧门去敲了三下。\n里面传来拖沓的脚步声。门开了一条缝，露出半张脸。\n",
+          "source_start": 98,
+          "source_end": 141
+        },
+        {
+          "speaker": "张师傅",
+          "kind": "dialogue",
+          "text": "“盘点呢。”\n",
+          "source_start": 141,
+          "source_end": 148
+        },
+        {
+          "speaker": "林小雪",
+          "kind": "dialogue",
+          "text": "“我们约好的。”",
+          "source_start": 148,
+          "source_end": 156
+        },
+        {
+          "speaker": "旁白",
+          "kind": "narration",
+          "text": "林小雪说。\n",
+          "source_start": 156,
+          "source_end": 162
+        },
+        {
+          "speaker": "张师傅",
+          "kind": "dialogue",
+          "text": "“约好的也得等。”\n",
+          "source_start": 162,
+          "source_end": 172
+        },
+        {
+          "speaker": "旁白",
+          "kind": "narration",
+          "text": "周远刚要开口，被她拦住了。\n他想，这人怕是记错了日子。\n",
+          "source_start": 172,
+          "source_end": 200
+        },
+        {
+          "speaker": "林小雪",
+          "kind": "dialogue",
+          "text": "“三点十五，张师傅亲口说的。”",
+          "source_start": 200,
+          "source_end": 215
+        },
+        {
+          "speaker": "旁白",
+          "kind": "narration",
+          "text": "她把手机屏幕转过去，",
+          "source_start": 215,
+          "source_end": 225
+        },
+        {
+          "speaker": "林小雪",
+          "kind": "dialogue",
+          "text": "“您看，短信还在。”\n",
+          "source_start": 225,
+          "source_end": 236
+        },
+        {
+          "speaker": "旁白",
+          "kind": "narration",
+          "text": "门后的人沉默了几秒，把门推开了。\n",
+          "source_start": 236,
+          "source_end": 253
+        },
+        {
+          "speaker": "张师傅",
+          "kind": "dialogue",
+          "text": "“进来吧。”\n",
+          "source_start": 253,
+          "source_end": 260
+        },
+        {
+          "speaker": "旁白",
+          "kind": "narration",
+          "text": "店里堆着半人高的纸箱。一个中年男人从柜台后面站起来，手里还捏着计算器。\n",
+          "source_start": 260,
+          "source_end": 296
+        },
+        {
+          "speaker": "张师傅",
+          "kind": "dialogue",
+          "text": "“你们是来取那台 CD 机的？”\n",
+          "source_start": 296,
+          "source_end": 313
+        },
+        {
+          "speaker": "周远",
+          "kind": "dialogue",
+          "text": "“是。”\n",
+          "source_start": 313,
+          "source_end": 318
+        },
+        {
+          "speaker": "张师傅",
+          "kind": "dialogue",
+          "text": "“押金三百二，机器一千零八十。”",
+          "source_start": 318,
+          "source_end": 334
+        },
+        {
+          "speaker": "旁白",
+          "kind": "narration",
+          "text": "张师傅翻了翻本子，",
+          "source_start": 334,
+          "source_end": 343
+        },
+        {
+          "speaker": "张师傅",
+          "kind": "dialogue",
+          "text": "“上回登记的是周先生吧？”\n",
+          "source_start": 343,
+          "source_end": 357
+        },
+        {
+          "speaker": "旁白",
+          "kind": "narration",
+          "text": "周远点点头。\n林小雪凑过去看那本子。上面一行字被水洇开了，只剩下半个“雪”字。\n",
+          "source_start": 357,
+          "source_end": 397
+        },
+        {
+          "speaker": "林小雪",
+          "kind": "dialogue",
+          "text": "“这单子还能用吗？”",
+          "source_start": 397,
+          "source_end": 407
+        },
+        {
+          "speaker": "旁白",
+          "kind": "narration",
+          "text": "她问。\n",
+          "source_start": 407,
+          "source_end": 411
+        },
+        {
+          "speaker": "张师傅",
+          "kind": "dialogue",
+          "text": "“能用。”",
+          "source_start": 411,
+          "source_end": 416
+        },
+        {
+          "speaker": "旁白",
+          "kind": "narration",
+          "text": "张师傅说完又补了一句，",
+          "source_start": 416,
+          "source_end": 427
+        },
+        {
+          "speaker": "张师傅",
+          "kind": "dialogue",
+          "text": "“不过下次别淋着雨来。”\n",
+          "source_start": 427,
+          "source_end": 440
+        }
+      ]
+    },
+    {
+      "project_id": "24ce2be2cd4c49e280ca64920ad6007a",
+      "language": "en",
+      "source_sha256": "603bf9850d290fb1ecac38439f8f1718ad16730bdf7c1359a897270d30cb1ec2",
+      "before_segments": 28,
+      "after_segments": 28,
+      "exact_source_reconstruction": true,
+      "exact_source_offsets": true,
+      "project_unchanged": true,
+      "labels_origin": "existing project roles via carry_labels; no model re-run",
+      "segments": [
+        {
+          "speaker": "Narrator",
+          "kind": "narration",
+          "text": "It is a truth universally acknowledged, that a single man in possession of a good fortune must be in want of a wife.\n",
+          "source_start": 0,
+          "source_end": 117
+        },
+        {
+          "speaker": "Narrator",
+          "kind": "narration",
+          "text": "However little known the feelings or views of such a man may be on his first entering a neighbourhood, this truth is so well fixed in the minds of the surrounding families, ",
+          "source_start": 117,
+          "source_end": 290
+        },
+        {
+          "speaker": "Narrator",
+          "kind": "narration",
+          "text": "that he is considered as the rightful property of some one or other of their daughters.\n",
+          "source_start": 290,
+          "source_end": 378
+        },
+        {
+          "speaker": "Mrs. Bennet",
+          "kind": "dialogue",
+          "text": "“My dear Mr. Bennet,” ",
+          "source_start": 378,
+          "source_end": 400
+        },
+        {
+          "speaker": "Narrator",
+          "kind": "narration",
+          "text": "said his lady to him one day, ",
+          "source_start": 400,
+          "source_end": 430
+        },
+        {
+          "speaker": "Mrs. Bennet",
+          "kind": "dialogue",
+          "text": "“have you heard that Netherfield Park is let at last?”\n",
+          "source_start": 430,
+          "source_end": 485
+        },
+        {
+          "speaker": "Narrator",
+          "kind": "narration",
+          "text": "Mr. Bennet replied that he had not.\n",
+          "source_start": 485,
+          "source_end": 521
+        },
+        {
+          "speaker": "Mrs. Bennet",
+          "kind": "dialogue",
+          "text": "“But it is,” ",
+          "source_start": 521,
+          "source_end": 534
+        },
+        {
+          "speaker": "Narrator",
+          "kind": "narration",
+          "text": "returned she; ",
+          "source_start": 534,
+          "source_end": 548
+        },
+        {
+          "speaker": "Mrs. Bennet",
+          "kind": "dialogue",
+          "text": "“for Mrs. Long has just been here, and she told me all about it.”\n",
+          "source_start": 548,
+          "source_end": 614
+        },
+        {
+          "speaker": "Narrator",
+          "kind": "narration",
+          "text": "Mr. Bennet made no answer.\n",
+          "source_start": 614,
+          "source_end": 641
+        },
+        {
+          "speaker": "Mrs. Bennet",
+          "kind": "dialogue",
+          "text": "“Do not you want to know who has taken it?” ",
+          "source_start": 641,
+          "source_end": 685
+        },
+        {
+          "speaker": "Narrator",
+          "kind": "narration",
+          "text": "cried his wife, impatiently.\n",
+          "source_start": 685,
+          "source_end": 714
+        },
+        {
+          "speaker": "Mr. Bennet",
+          "kind": "dialogue",
+          "text": "“You want to tell me, and I have no objection to hearing it.”\n\n",
+          "source_start": 714,
+          "source_end": 777
+        },
+        {
+          "speaker": "Narrator",
+          "kind": "narration",
+          "text": "This was invitation enough.\n",
+          "source_start": 777,
+          "source_end": 805
+        },
+        {
+          "speaker": "Mrs. Bennet",
+          "kind": "dialogue",
+          "text": "“Why, my dear, you must know, Mrs. Long says that Netherfield is taken by a young man of large fortune from the north of England; ",
+          "source_start": 805,
+          "source_end": 935
+        },
+        {
+          "speaker": "Mrs. Bennet",
+          "kind": "dialogue",
+          "text": "that he came down on Monday in a chaise and four to see the place, and was so much delighted with it that he agreed with Mr. Morris immediately; ",
+          "source_start": 935,
+          "source_end": 1080
+        },
+        {
+          "speaker": "Mrs. Bennet",
+          "kind": "dialogue",
+          "text": "that he is to take possession before Michaelmas, and some of his servants are to be in the house by the end of next week.”\n",
+          "source_start": 1080,
+          "source_end": 1203
+        },
+        {
+          "speaker": "Mr. Bennet",
+          "kind": "dialogue",
+          "text": "“What is his name?”\n",
+          "source_start": 1203,
+          "source_end": 1223
+        },
+        {
+          "speaker": "Mrs. Bennet",
+          "kind": "dialogue",
+          "text": "“Bingley.”\n",
+          "source_start": 1223,
+          "source_end": 1234
+        },
+        {
+          "speaker": "Mr. Bennet",
+          "kind": "dialogue",
+          "text": "“Is he married or single?”\n",
+          "source_start": 1234,
+          "source_end": 1261
+        },
+        {
+          "speaker": "Mrs. Bennet",
+          "kind": "dialogue",
+          "text": "“Oh, single, my dear, to be sure! A single man of large fortune; four or five thousand a year. What a fine thing for our girls!”\n",
+          "source_start": 1261,
+          "source_end": 1390
+        },
+        {
+          "speaker": "Mr. Bennet",
+          "kind": "dialogue",
+          "text": "“How so? how can it affect them?”\n",
+          "source_start": 1390,
+          "source_end": 1424
+        },
+        {
+          "speaker": "Mrs. Bennet",
+          "kind": "dialogue",
+          "text": "“My dear Mr. Bennet,” ",
+          "source_start": 1424,
+          "source_end": 1446
+        },
+        {
+          "speaker": "Narrator",
+          "kind": "narration",
+          "text": "replied his wife, ",
+          "source_start": 1446,
+          "source_end": 1464
+        },
+        {
+          "speaker": "Mrs. Bennet",
+          "kind": "dialogue",
+          "text": "“how can you be so tiresome? You must know that I am thinking of his marrying one of them.”\n",
+          "source_start": 1464,
+          "source_end": 1556
+        },
+        {
+          "speaker": "Mr. Bennet",
+          "kind": "dialogue",
+          "text": "“Is that his design in settling here?”\n",
+          "source_start": 1556,
+          "source_end": 1595
+        },
+        {
+          "speaker": "Mrs. Bennet",
+          "kind": "dialogue",
+          "text": "“Design? Nonsense, how can you talk so! But it is very likely that he may fall in love with one of them, and therefore you must visit him as soon as he comes.”\n",
+          "source_start": 1595,
+          "source_end": 1755
+        }
+      ]
+    }
+  ],
+  "existing_number_examples": [
+    {
+      "old_status": "review",
+      "new_comparison": {
+        "status": "review",
+        "expected_text": "“押金三百二，机器一千零八十。”",
+        "recognized_text": "销\n金\n3\n20\n机\n器\n10\n80",
+        "differences": [
+          {
+            "kind": "replace",
+            "expected": "押",
+            "recognized": "销"
+          }
+        ],
+        "equivalences": [
+          {
+            "expected": "三百二",
+            "recognized": "320",
+            "basis": "数字写法"
+          },
+          {
+            "expected": "一千零八十",
+            "recognized": "1080",
+            "basis": "数字写法"
+          }
+        ],
+        "normalization": "spoken-units-v4-visible-chinese-integers",
+        "compatibility_notices": [
+          "按数值兼容可能掩盖漏读“零”等读音差异，请试听确认。"
+        ]
+      }
+    }
+  ],
+  "number_comparison_before_asr_whitespace_fix": [
+    {
+      "old_status": "review",
+      "new_comparison": {
+        "status": "review",
+        "expected_text": "“押金三百二，机器一千零八十。”",
+        "recognized_text": "销\n金\n3\n20\n机\n器\n10\n80",
+        "differences": [
+          {
+            "kind": "replace",
+            "expected": "押",
+            "recognized": "销"
+          },
+          {
+            "kind": "replace",
+            "expected": "三百二",
+            "recognized": "320"
+          },
+          {
+            "kind": "replace",
+            "expected": "一千零八十",
+            "recognized": "1080"
+          }
+        ],
+        "equivalences": [],
+        "normalization": "spoken-units-v4-visible-chinese-integers",
+        "compatibility_notices": []
+      }
+    }
+  ],
+  "service_after_restart": {
+    "app": "VoxStage",
+    "workspace_id": "484a948eb35d758beb916584e778dc1228c9a1102709649d758747246b2590ec",
+    "ready": true,
+    "pid": 12891
+  },
+  "live_service": {
+    "project_id": "5774392b2a9f4aefa3ecaf35a854dc83",
+    "number_check": {
+      "source_fingerprint": "fea21947a0d3bf33a511d1700dabac0a04177540dff51cea3cb1bd5d1f8b5270",
+      "expected_text": "“押金三百二，机器一千零八十。”",
+      "checker_id": "whisper.cpp:251050807bbe32347007c7db7e42199289e6fc24dda60df8469b85e5922bc9ce:394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2:d0701a22a47bd3863a8ab6b7603a16109534daf07f4ba49ab8687b2228ae2f5e:spoken-units-v4-visible-chinese-integers",
+      "checked_at": 1789112072.256416,
+      "reviewed": false,
+      "timed_text": [
+        {
+          "text": "押",
+          "start": 0.0,
+          "end": 0.84
+        },
+        {
+          "text": "金",
+          "start": 0.84,
+          "end": 0.94
+        },
+        {
+          "text": "3",
+          "start": 0.94,
+          "end": 1.79
+        },
+        {
+          "text": "20",
+          "start": 1.79,
+          "end": 2.76
+        },
+        {
+          "text": ",",
+          "start": 2.76,
+          "end": 3.09
+        },
+        {
+          "text": "机",
+          "start": 3.09,
+          "end": 3.2
+        },
+        {
+          "text": "器",
+          "start": 3.2,
+          "end": 3.29
+        },
+        {
+          "text": "10",
+          "start": 3.29,
+          "end": 3.86
+        },
+        {
+          "text": "80",
+          "start": 3.86,
+          "end": 4.54
+        }
+      ],
+      "recognized_text": "押\n金\n3\n20\n,\n机\n器\n10\n80",
+      "seconds": 1.1207368748728186,
+      "model": {
+        "repo": "ggerganov/whisper.cpp",
+        "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+        "file": "ggml-large-v3-turbo-q5_0.bin",
+        "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
+      },
+      "decoding": {
+        "beam_size": 5,
+        "best_of": 5,
+        "temperature": 0,
+        "temperature_inc": 0,
+        "max_context": 0,
+        "no_fallback": true,
+        "threads": 4,
+        "timing": "max-len-1-full-json-v1"
+      },
+      "log_id": "e9033d80696143e58ebec0d8d35067bd",
+      "audio_sha256": "a6452879730d766b1e4f70b862bd6bc37df04c2b9e0391b8cbcca923ce14c7a4",
+      "status": "match",
+      "differences": [],
+      "equivalences": [
+        {
+          "expected": "三百二",
+          "recognized": "320",
+          "basis": "数字写法"
+        },
+        {
+          "expected": "一千零八十",
+          "recognized": "1080",
+          "basis": "数字写法"
+        }
+      ],
+      "normalization": "spoken-units-v4-visible-chinese-integers",
+      "compatibility_notices": [
+        "按数值兼容可能掩盖漏读“零”等读音差异，请试听确认。"
+      ],
+      "audio_stat": [
+        314924,
+        1789110309063498312
+      ]
+    },
+    "number_check_status": "match",
+    "reslice_preview": {
+      "segments": 28,
+      "kept": 26,
+      "kept_audio": 26,
+      "fresh": 2
+    },
+    "after_segments": 28,
+    "pending_sentences": 2,
+    "exact_source_reconstruction": true,
+    "exact_source_offsets": true,
+    "original_project_unchanged": true,
+    "old_audio_bytes_and_mtime_unchanged": true
+  },
+  "frontend_build": {
+    "command": "cd frontend && npm run build",
+    "exit_code": 0,
+    "raw_output": "tsc --noEmit && vite build\n35 modules transformed\nbuilt in 513ms"
+  },
+  "source_sha256": {
+    "runtime/numbers.py": "491f2d507c314e81ddd2a5796428400f1ff0f8abe2b811c1226803862a3c6144",
+    "runtime/content_check.py": "d67c8026f0f6e9784694b09fe6cfcd8de231055daa954ba1382d9a10dfd5a3c6",
+    "runtime/attribution.py": "cf6f85614a1dbecc2167b9241eb1e50cff43b1b900dc432fc8daa2902311fbb2",
+    "frontend/src/main.tsx": "bbd2afc2f9799f7f066f6acc9fdf34eaf0c944f5e07f35068a7c5d58d425d240",
+    "tests/test_number_and_merge.py": "751e77c23b2c37cf3fdc36c233d53e192b38e0dfdb57de2c64a679e4a986374d"
+  },
+  "documentation_handoff": {
+    "product_document": "docs/public/number-and-merge.md",
+    "sample_readme_note_for_Claude": "数字按数值兼容可能掩盖漏读“零”；兼容项可见，不代表发音已通过。旧识别记录的“押 / 销”差异仍由比较器保留；本轮真实重查识别为“押”，原始新旧结果均已记录。Astra 未修改样例或仓库 README。"
+  },
+  "unverified": [
+    "本人和 Claude Hera 的验收",
+    "合并后新语音的自然度（未重新合成）",
+    "浏览器界面本轮未手动操作"
+  ]
+}
