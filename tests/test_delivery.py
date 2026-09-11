@@ -90,3 +90,16 @@ def test_portable_package_matches_final_audio_and_legacy_exports(tmp_path,monkey
         assert c.get(base+'/export/'+str(p['revision'])+'/other.zip').status_code==422
 
 # 最后更新：2026-09-11 · Astra
+
+
+def test_filename_carries_the_line_within_a_byte_budget(tmp_path):
+    """Resolve labels a timeline clip with the file name and ignores the XML's
+    name field, so the line has to be in the file name to be visible at all."""
+    from runtime.delivery import _slug
+    assert _slug('门上贴着一张纸，写着', 84) == '_门上贴着一张纸_写着'
+    assert _slug('“……”', 84) == ''                     # punctuation only: no suffix
+    assert _slug('', 84) == ''
+    long = _slug('林' * 200, 84)
+    assert len(long.encode()) <= 84 and long.startswith('_林')
+    # A multi-byte character is never cut in half.
+    assert long.encode().decode() == long

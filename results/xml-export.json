@@ -1,0 +1,4326 @@
+{
+  "task": "行业时间轴导出 FCP7 XML",
+  "author": "Astra",
+  "baseline": {
+    "zh": {
+      "project_id": "339de611b9bd427d9e11bf0b20a5c0fb",
+      "revision": 101,
+      "segments": 32,
+      "original_project_sha256": "f2ff0d68fb65023c13ff9042d08f714c3366cb5b616938428dcf603dda91a5a3",
+      "source_audio": {
+        "8bee89e10180d432de3d4b2a2c6b5af4147fea6dbd57603e463b257c27670a6d.wav": [
+          "7f10f14456667b3b677503d8f4cad4a8cfc1eaf63b1f012e12436974af220394",
+          1789109042298977686
+        ],
+        "89f6979888b6d4f3ccc3e752fefbccfd4cc6fd16def2197ca68aa0ce308993d9.wav": [
+          "9c685dc4556d0fd32d18154b16f7c1faae9c80d82adecab8d5cf8d98fcce5a5f",
+          1789109029439636636
+        ],
+        "9fe6574bb09b8400b210e547dd515f4883c20ce33575bff879196f0f46b0b430.wav": [
+          "c43fa8ad0bbe5b72e73ad60b9f6d9040ffb53bd04f1f14945aa4fef4724670aa",
+          1789109033106041558
+        ],
+        "062a5d2fc0e21f8260ca44efea84a3c9bc48bceeecb40f5fbc8028ccc9f9afab.wav": [
+          "8b72d41b9f6f3761a70137b3c64515bbe2bf20e953238e923941a65cad21202b",
+          1789109042744004060
+        ],
+        "e0a0aee0768318cecc957905248d32e6dfbbf50dd85a45364b8e7a1edfcf7c5c.wav": [
+          "9b21b170663c922d7fe37b05daeda9e44c996a53461cdb2d1778f963286fa490",
+          1789109027373292776
+        ],
+        "57d3ef6d1abcdac9a3efdefbe066a4edd67e24b576bd6375f16ca4a13a837534.wav": [
+          "8a185bcdfcc8b2649e4ea6213d89b609e88550eca6c88862a9c5b9e5acf149a3",
+          1789109013593997021
+        ],
+        "220499f3e52562af796d211618567f056d7fc15b80cbfb2003d69f6b33757f88.wav": [
+          "298037b476b0731b6d587103bcc1b35be3967e02c270a4cd79e28acd823ca969",
+          1789109014466249959
+        ],
+        "7eabeded70f71623b4042fffe0baa1715c5bd481c3dfe979cc6f429ae9039664.wav": [
+          "d8fe10f9ee81a33dbb110fd9ae6acbc4d5ac478dc192b5946e7405c5635e319e",
+          1789109035459862536
+        ],
+        "7ee9c80af5147454f41aabc6449864ce506f20ca8e74c840fb7d429970a56be6.wav": [
+          "c2ba870a2c921ff561b18e17887d27aea06f03584283a5d78cb45e38f8e53176",
+          1789109007128376868
+        ],
+        "7abcf96b9e99642da5ff9740a886689eaf1e8f064f2cd0baed77f45fec07dbe8.wav": [
+          "438a0cd3bded2bb486d2ffa29fd0ad94c8ed2b5f8c6278c163f89c24a839f540",
+          1789109006096041528
+        ],
+        "1278e75a271d9e73c48bda15e78973d49be9bab8e93801e8147a149c72b6583e.wav": [
+          "8b681a878684d9c9be4c6712afb433aec178ef95197f913c105d6dbb38cabd9a",
+          1789109043778501709
+        ],
+        "548d81b2a517039c29aab818786978d13452538088b65a58637d10c1dc163e81.wav": [
+          "16cc7ed883a0d9bcce03fa9dd0f1d4d3114603708376b4fa38449ec58747101e",
+          1789109019994434888
+        ],
+        "3fec1a880618d9c2904ae11a1cc952616798057ed95fd8198ff391d634b9f712.wav": [
+          "c8031f93ec40f76838590258d0eb5d1c56643c6898602be981837302e62a366d",
+          1789109031837059143
+        ],
+        "8ef690ca0b25e9cd068cdf7af360b5078e0c2f0eb159f07d8ceb7000582131b5.wav": [
+          "58946952cf2784392217f4d166a261543acce25e5f704e810fdc51ac35da7a81",
+          1789109044769733753
+        ],
+        "c4aca1b78b00db4a58d4b3ce3592bac742b9b7616dc47df459f02524649e9daf.wav": [
+          "de07ac627d6c7133508952a37bf653d42858005d37f49fca5a96316541264aa0",
+          1789109044127644795
+        ],
+        "fea21947a0d3bf33a511d1700dabac0a04177540dff51cea3cb1bd5d1f8b5270.wav": [
+          "a6452879730d766b1e4f70b862bd6bc37df04c2b9e0391b8cbcca923ce14c7a4",
+          1789110309063498312
+        ],
+        "2b7775c9577fc03df98657998e5bb83ee17a94ec9b31b327160ccc5e808f899c.wav": [
+          "ecdee0e775e1843bce4c5fee76719877c549fcfdcd9d48983f0b6d9c3df8d880",
+          1789109024471614490
+        ],
+        "d8d561806d22aa900ee1095662ce1d1c7229757c67ed6c7e3353c8afa022a2b5.wav": [
+          "6e1404273649e90e1dd9a32845a28d4d88160bf42d8fc87f40205d642d686a87",
+          1789109018236130774
+        ],
+        "11402ce31fc6feba99de1d4056cb4fb171848b8356317923ea91dd8639d89240.wav": [
+          "ec13246a495b739434f4d3e4ff57490de4924282872ab5bc34209bcfe6e4665d",
+          1789109010966910540
+        ],
+        "d2ed8a3bae30e210726ba4c4d16d5075cb702a6928c867687b0f63a03b27cebb.wav": [
+          "e152841326aadeea78dc6b9bfa7fe4658340095453a2b8a5e85a7816aebc4242",
+          1789109036170947480
+        ],
+        "c881203bab11a9c1a08e7f531f742b52b5c1bb59fed504650223f6948ff7f848.wav": [
+          "535467af7a24713dddf225f5c6ab4c1e249dcc1d49d1b9e49cf4ea2016e7ba08",
+          1789109022319013127
+        ],
+        "615f6fb085bec81c524da6bc25dcd254059439bdad58bebe75e0e5e4dfbde040.wav": [
+          "81b84f5491142f2e2915230b8819e8092bf799ecc8e152b41c1248fd8eb1384e",
+          1789109041626697645
+        ],
+        "e4ba22e2aec52a31d6d7979950b39dc5f71e7b4fa13803725ecd0fff41981553.wav": [
+          "b7337b793a28f4c0cbd89ec596d6561ad42fbbfb1a8804d1bf29c7e73144690e",
+          1789109047304528141
+        ],
+        "1b35d15b0d61af9ae22d4df9e97e3df02c00a3a1e766f247b43b63962c320f25.wav": [
+          "0069b912644b524b9936b9d61654ce10c199a71541b09c178427a886c15833a5",
+          1789110186969910658
+        ],
+        "104b0818f77aea0e1fe9135f0c4ef5a04cf5a1e8e54a08484eecd503b314a8b1.wav": [
+          "75c204c97491b9cd95bba70b0912a11d7fbb2241d4934fb677981b907fd4b55d",
+          1789109025649288985
+        ],
+        "1a2bb1e36f89290a2cf7baf1d024fb9517655c89a8c5d060ff65b018daf97017.wav": [
+          "fc86adfd3649652da7128170404967494460bddd524a2140943b5e32e90d7aec",
+          1789109020545889807
+        ],
+        "6be6cebce73746ea0884b06c736944ddcfc6e2abe69b5c2b87a4339c0684ab25.wav": [
+          "f0036a2ab9273e5cd49c6b774ef3e9b485e7f82a7b278d915999f32779ef7d3f",
+          1789109012875656102
+        ],
+        "6626dccb143163e720ca6771075e438d4f3047a81e47a36adb0cfee77ee68e76.wav": [
+          "a166f010ea63ea79b1dd272b793152b088bf0827d9fc87f5993f8ca9b79454b3",
+          1789109038146361217
+        ],
+        "9e5cbb70a654cfa8de4a4c14f48eea94b683f51b69870639879a91a5897f84f9.wav": [
+          "11effb1e2a3964573a89387c269fdb37e6f99fca5c40967c0c2f626c3518da72",
+          1789109026427899777
+        ],
+        "f3e0738ea20cf4f595363ed18ca213b363496db139fef26f61162b8a76667fdb.wav": [
+          "f454d7e4738d5588afc05f53c1ac0aab19af8e77507430d1e712bcf395d2fab8",
+          1789110240715295510
+        ],
+        "22ae2fa07515ce3371eecf324b4cc5890c7b36af61df0fce6014668095d1ed46.wav": [
+          "9c85978f64a38c95937ca11dcc95e09298a92be928e7f429ad4d4e4f886d1bf2",
+          1789109045456836248
+        ],
+        "981a535282d0670f4ff4cb328db43deadbadc479e5bbd7e1aeab34a41c01360a.wav": [
+          "5d2e85d7fc0bf4baf39dc721d70a0736b5cdaa322fd7fa64b54d48cca2e49c72",
+          1789109019322751644
+        ],
+        "71a2a1d70a6c0cd1ff05dd66f0149eefe6b6d61a3738699797817bb815989e50.wav": [
+          "d839a693d34f2971b3164ab34879c26a301bf3f6d616b197f746d867e62fed3a",
+          1789109011829631023
+        ],
+        "dd7c663fd53112f5ee43f4f187c229e94c8b79d879f113744621ac2cae843d14.wav": [
+          "b9b13555578200e2066fa0a9179b8bece81c86b23030cd7fb18e6bd417db8bb1",
+          1789109033624537080
+        ],
+        "036f7b5a8bd6e6a15bf4c78acfb6c27ba6c0042627747abfff6bfe812935b7f4.wav": [
+          "ebd014ebae7daf93477f3e92dc36532985107851071e9a11c2157a2d24f96b05",
+          1789109028483661843
+        ]
+      },
+      "output": "user-data/xml-export-verification/before/zh",
+      "total_samples": 2826000
+    },
+    "en": {
+      "project_id": "24ce2be2cd4c49e280ca64920ad6007a",
+      "revision": 149,
+      "segments": 28,
+      "original_project_sha256": "0160f8f095935e84f8345be4d9df9b18e8e8c2d064f3bd3702e60daac95e0319",
+      "source_audio": {
+        "191a3e7eb03c12efbad2b4950f5ff170fac63e7c614d0ef19d97d51cec665298.wav": [
+          "ae43b7893bdf55bea87c297c4bf6cc825a4a6085dd897b73281abc0c1330fe0d",
+          1789053795593068059
+        ],
+        "05758a2753a6744e889c3a8550ca5a6a8ebbcc3c722b06d7f6634fe8a17a5a37.wav": [
+          "2f58222ee796011666aba21239f06975c66e92049e179947415cd952bf63fa59",
+          1789050463450142717
+        ],
+        "d9ab69b9683b10c23fcf1fae36d52ae859132ec55158aa78765bedbca83ededa.wav": [
+          "10703307645b7844a332b9d9b9243743f9dd453ba19fd1905978f412a9b41054",
+          1789053809874249125
+        ],
+        "8cdcf4058ee77663f8297d8185fe1212cd3964ea01df5ce278a49d84b6dd3f64.wav": [
+          "736fc18df5b7694070a2d0bebc9326c13b6c5d1de00688a8f4b0c40fb0dfd797",
+          1789050491806393472
+        ],
+        "e6f7ab798aaba79abccd2566bcd57f46f78dffa382be588430de52b220f7ebe7.wav": [
+          "a058b377ad203a2ad41d1097b8103c935467cde767224e849bc8e10fa436848a",
+          1789053816617042491
+        ],
+        "e023570f6aaaa8125ac6c97e72da3fc18eb109ff4b3cc3beb9493661d4e1b784.wav": [
+          "772e50e55209a3ae68df0a372f1ece74bf1c38552e9f7e4493289045d74d164c",
+          1789050480081623617
+        ],
+        "fa78dca665cd06672e91f52956dce1899f79ff4e80c9636ac2ac18b353e435b3.wav": [
+          "ab6063b41ef4844220c636578c514d308ba129e7bc60e42b0e33c9608e529b90",
+          1789051246363960717
+        ],
+        "1278b542c9067f422ca8b5c04d5403061aeac2c8de8374c11a946ba1b04d38f3.wav": [
+          "9d7e0f27ab974d7b4c0d3d591a1c340e42f2484822350bc89742f928385f97bd",
+          1789050474080741728
+        ],
+        "004eda9d9eaafb9b785b7536bed3000ec3dac05c2d4ce12d8f2a7d46b9d4a428.wav": [
+          "70366f5bf7284a92579e22521ebe019e47e3c5eb7005e24cb081a8b8876143b8",
+          1789050469758985536
+        ],
+        "88d80b319658bc1301683874b36474bf75c843385c09a6ea4fcffec5ed777d98.wav": [
+          "a33842326b9f36a74302a9e27e9d9754a6288ba6e1eb2c772192ee69ac384f4f",
+          1789050486783233329
+        ],
+        "38187e2767aac97a44f1b1524b3c36724fc5d954cb527f4cb132b544cf39015c.wav": [
+          "2c7b6ec8202badf7ff152f7377a8d3c318f1232f069229ed509622ecf141fbad",
+          1789053814249827318
+        ],
+        "813fe061080e81bd11ff0ca175552f755cc2948347aee562005d15b86f022631.wav": [
+          "0889542565b15c4aa5deba95a84e5455bbe7a7bec7e943db85ebb2dfaf852107",
+          1789050474902301081
+        ],
+        "540dc8a42a6c8083e0a1b57a15bba908d83492eca1c93a283532e4627de3606c.wav": [
+          "ddf3a120bedb6afd5ce5ef1e95adbe2d1faf5f929c1ae9fa3e30960a11be6340",
+          1789105760534586723
+        ],
+        "edf768d59526b009157c3a414aa142c02cb94a6dd8d895e820d3c3e6eeea413e.wav": [
+          "c2f22d743a8037d220fa28986d6464df4480ff0d65db7bda19f0bc98ea543a0c",
+          1789050460760217708
+        ],
+        "05645413a4bd2b25a5c9836b443ad6d33767da60b2daae9fe9bc4c0511e734b0.wav": [
+          "5e263d0780e8b95c85bff19240affdbc2ba9928b05033975d3cc39a4affc1519",
+          1789051209686826212
+        ],
+        "cc8a53eef52c507cefd0b8aee086a31e949478ecbcd0eb997c6a14d2855969af.wav": [
+          "68337f082180a18377e36eb5d521eed2ddfde1f2e21e665a38e077f7c6074037",
+          1789105747833741070
+        ],
+        "ef1362067052cb2a4f212c31706cdbf28c57ce870a89a648a052e4c2ce7f9fa2.wav": [
+          "7bbc65996faf513d5e96687976db51d10a01a40052239683b94efc5f1d630fc8",
+          1789105756689907848
+        ],
+        "8ff6b9600e85b6a3460784e3d49b5fb24831efecfba873a9e94c98cd082d9d74.wav": [
+          "baac7c6d4e3f307c0302c1d1d0e998a95d6840e8a24d7a3def189023bdd18905",
+          1789105750247828145
+        ],
+        "4edab3dca721f5a449dc026a23f4bca830de97e93e1fc90c4c742749a02b4dfc.wav": [
+          "143080f9d1077a8afabc3a0014469f81f0ab6dd5ff4df273a45c1f2314258a94",
+          1789053803062148390
+        ],
+        "0962b24e96df44c4b7e1a5e32c95b952bc4ad54dc5e17b9c6256c6731292a99c.wav": [
+          "16bc72ab1ea14b0e5480265598333ae80496927efbe4718feaf7fb54fc0ba2ab",
+          1789105745635840209
+        ],
+        "8fa5ff9a74d5428d70853b2e0fee4209c498b273bebfa706ea4db75f6e27b7df.wav": [
+          "bc127cfd7109015064eb171d0fb2c2225c4914c5384cb3f398334868374a610f",
+          1789050490819491089
+        ],
+        "523c1a98cb29210e9b19c0e6fcbc7a8451e379b2ed38270466b404bb17965967.wav": [
+          "a4088b8852af5d03eef22a7f6b74f4fd170dea975c54a3431f5c6456e79de594",
+          1789050473012425235
+        ],
+        "30adc3d7adbe105b4d20dd9ad10f8ed7f095f84ae7c8b950c08ae233e03e679b.wav": [
+          "9cd5291df0b8edae9b233ac43527fa58089a968f6700ba260cf5375d49b33cb8",
+          1789050486069537915
+        ],
+        "c1d2d2442f96b5dc27946b11c675f61c024f11418107aa4362a623a4f534db6a.wav": [
+          "56280f4eecc213c9e54663bfdec59e50179697818e015ebb08a6930da10fb53f",
+          1789053812161260799
+        ],
+        "444a90832623779d4a2c1047562fe26ff559875b1f46e792e60ecfae490e897c.wav": [
+          "7ebae6c25770a1f26a313b420192eddf61ec1917c0c535651387cb68cb009faf",
+          1789050495004185750
+        ],
+        "f1817c6046e202fb8df55d26ba1e46b92b3d3e659a78716811c0aaa66c23628c.wav": [
+          "5f7823fc6b67fc5d0baf40a25c7dcf751bfcc1a4dd13a0a234d6f0d37688ab80",
+          1789105758763703038
+        ],
+        "a98cfb28057912b796759b9ebeb477505bdbf54a32471c8f567e2d00d2181ee4.wav": [
+          "e13cf42801099cd77b16ec439332b12ab1441d39b75cba4d8f6ff726879db6f0",
+          1789050456411021653
+        ],
+        "51ecd466027794750258b733fd0e4d2b7f1371b9169646b66af9c93c45f11493.wav": [
+          "30cd3b0f9ce96a1bff0fd5436b354d689ee9d07ac778b18ff2ad3159a5475326",
+          1789050546914314235
+        ],
+        "837e07efccd5506a48032f1db7e1e56215b9e6536ac21dc6ca47a31306f6574d.wav": [
+          "45b5e14cbcdc8479397c721ae560eff1f49342588c93028832261d9529f98d90",
+          1789050464176039248
+        ],
+        "b5aefe82dcdc24a8b26b6451b5fbdea2147d26b744ad1d6c4b41e5f338683d5b.wav": [
+          "050efb5b1814ed04abf485d5eb8ae048d68a956a46822e56533e86a07bcd5a62",
+          1789050466468874205
+        ],
+        "375ef8a9987523fb1186a820d7a7f2c958940cba3535cebfec45df4b9068138e.wav": [
+          "054f23b2e31523873bd2c8780b0249eb6abd10ac7ab202dc1f708773021670a3",
+          1789050495910674531
+        ],
+        "683850925154f6059609605df1ea49ed73eec93a0e870d461d9e0cf2768e9b30.wav": [
+          "57a18fee5ea6029a28e76e47bd42a5a5937ed2b316c4cca7fd333653bc141537",
+          1789105735836577648
+        ],
+        "c5e38f9112e7aec6dddc2db64812acba9c2593720305f56beadf28b8b92b2fdc.wav": [
+          "5f83b66f16fe524b28c03516f4ffccc957f30fb0c4ed911fd7314f78aab2edf5",
+          1789050492550185280
+        ],
+        "5b82c4c90b0efb4871449e25930803fc3b07dbc4befcdb491d1f8f61cfe2c60f.wav": [
+          "7b2bcaa6cc05d97af8080060eb246d05c571464dc8f4e6a61087c71c4d2abcc2",
+          1789053818872675118
+        ],
+        "3325b15000b9bd0c5cddb0040d7fdae89c4542501012ef719fa377261001d780.wav": [
+          "6bdf1915e4f86ac88c789122928e7df0dd665f0c267690163eb82abcc2a812c3",
+          1789050476074916979
+        ],
+        "c5ac557d63af1c9b32af1665efd2c6ef09039a4e09393485262b6066b647e1f5.wav": [
+          "ee64604677093ec40397aa5877867532ec1a8a5b6a5cdb8ec8981c71038428bf",
+          1789050484905847005
+        ],
+        "32383d398c382aebf4532f2bb07704753903f0f46f285b3f5ad839cf2a926c1b.wav": [
+          "4e2d5c8e4efc7ace02e9eee83c04bdd3ec0d85d0bd67d94e3431f945b349662d",
+          1789050465147750797
+        ],
+        "ba97820035d3be6a73406558567b38ccdd18a58e652c195d6c9dd75845ef7d61.wav": [
+          "3e1e09ab5230fd992b37e78bbc9d9325d12b6238f5d040dcf755b83ea57d32a8",
+          1789050477100722684
+        ],
+        "44abe187017f0c0325bbeaf74d9a554992ea8f9599fca782d3e0dd099efeae0d.wav": [
+          "555ca6ce5e5c7a271423d94c5689c86d955c233c26612790ed86a71fc7e6b10a",
+          1789105741925151177
+        ],
+        "26cf4e06cc4fb833d2633b0c037ed0ecd8a61abb8030b4d758ffc3c59df8ebee.wav": [
+          "1e73f420b547b821f9022f2d908acd9b188fe95c162874b019aec92acc05e869",
+          1789051272837144161
+        ],
+        "59b3cc9e9a337c34a80c8f3509054b764ce7d67a46c98d005e5db4bfcabb6e7b.wav": [
+          "37df0f4f81e428fb6e0dfa3d9bc9fdac985aa227753bc1b7cda0f9bb75bde064",
+          1789050485558493215
+        ],
+        "1acb460f1c7e78e733b2e024518854740b6f0bdf273d38a4249c8758a9b3b9d8.wav": [
+          "6c15fadb89c840f228c8e73c1d38eb7e2b75c7e2adb8a30b8feff95b285a5817",
+          1789050471872701524
+        ],
+        "fbf5596f6671c5bc8b90c4cc6358c749b5544712d1b576388c637311ed524e62.wav": [
+          "58f070f2430ee07724ff9bb1e5f5ba3e122f5883cb0f092effc71fc776f8d68b",
+          1789050469076618432
+        ],
+        "1fb24796a8c288d3719f62523815450b020de40fad71b5dcaad2bda3cd6304d0.wav": [
+          "1255f6859b0772a1fc994e749148355a42d99fc00d0fd7d7ad327e9f8b2fc7c2",
+          1789053823446669758
+        ],
+        "354fa7eca85159c3ccf6eff6c598e1b686c92419ab1dc4ad2069d70c78e39c95.wav": [
+          "50d5daec7725e8532a988cd098df002ad782e33fdc7ad049867695bc1fa219c2",
+          1789050470344446876
+        ],
+        "8f4639a64300c86c287ded6762f6b9a1ff25800d7e33d44e3565d2cecb95f7f5.wav": [
+          "1de27a58b4f4a1a2fcccf80cbc481f1357d23f4e9c6f77224c2ab9b46d252c7d",
+          1789050499828574445
+        ],
+        "3fd68739e693ccf6bb519c009e8b4a8ed808e8684611ffd5ac876f4830aca25d.wav": [
+          "728bc36ec7ec7a61d44e4a6dd1e42baf8b5d7c66636397aca23930e0ca9e635c",
+          1789105754366006050
+        ],
+        "0a4face238df1b0e2d76ef41b4bfaa5a0731f5ce71c7b653863466d8f9bbfd01.wav": [
+          "ec39cfe34df0779606dd68946cbbd916b2595dba65216aa3b026abd6009a46fc",
+          1789050482680039982
+        ],
+        "7fe1a4161d0e6a54afeb7a11c865767c367fedceca977b08f682877b8ac470d9.wav": [
+          "a1fba7e0bdee26b03cc90717ab25b5010e84ff90589876b6ec09b1ff04765d12",
+          1789105751984169309
+        ],
+        "1c4276bb9c5d5871ef6cbdf75f7161a373f25c1f0cb13ad90a4365373a68a5a4.wav": [
+          "63a54e06e18ba949dd470460e744a5d19ccf77b5feaa4e2166bae4d1cccb9977",
+          1789051197785922748
+        ],
+        "7e9876525b5893137278a1e09c2b3098b9693d63da57fe61df5fdcca1afffe3b.wav": [
+          "de554279e686d640b8d5e6602800ebbac4a4ef94eb72663e80c9d1395f94cf51",
+          1789053807503367229
+        ],
+        "abd55e5a1b76e7bb058011fa758a521b665254621f9c3190fe2ff6232642b9e2.wav": [
+          "8b87a0039efcb3e94c05f58efff8dfa0589142af89377b79f77c2a11fff1430a",
+          1789053821261433171
+        ]
+      },
+      "output": "user-data/xml-export-verification/before/en",
+      "total_samples": 3047760
+    }
+  },
+  "runs": [
+    {
+      "stage": "implementation edit script",
+      "exit_code": 1,
+      "stderr": "ValueError: substring not found (class insertion anchor); corrected to _splice_source function boundary"
+    },
+    {
+      "command": ".venv/bin/python -m pytest -q",
+      "exit_code": 0,
+      "stdout": "........................................................................ [ 25%]\n........................................................................ [ 51%]\n........................................................................ [ 76%]\n.................................................................        [100%]\n=============================== warnings summary ===============================\n.venv/lib/python3.12/site-packages/fastapi/testclient.py:1\n  <repo>/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n    from starlette.testclient import TestClient as TestClient  # noqa\n\n.venv/lib/python3.12/site-packages/starlette/testclient.py:53\n  <repo>/.venv/lib/python3.12/site-packages/starlette/testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.\n    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n281 passed, 2 warnings in 13.87s\n",
+      "stderr": ""
+    },
+    {
+      "command": "npm run build",
+      "exit_code": 0,
+      "stdout": "\n> voxstage-ui@0.1.0 build\n> tsc --noEmit && vite build\n\nvite v7.3.6 building client environment for production...\ntransforming...\n✓ 35 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/index.html                   0.42 kB │ gzip:  0.32 kB\ndist/assets/index-BdPAiwI6.css   26.89 kB │ gzip:  6.66 kB\ndist/assets/index-DrXhph6i.js   259.25 kB │ gzip: 82.02 kB\n✓ built in 489ms\n",
+      "stderr": ""
+    }
+  ],
+  "restarted_service": {
+    "app": "VoxStage",
+    "pid": 47908,
+    "workspace_matches": true
+  },
+  "existing_exports": {
+    "zh": {
+      "full.wav": true,
+      "subtitles.srt": true,
+      "zip_member_bytes_identical": true,
+      "np_array_equal": true,
+      "project_bytes_unchanged": true,
+      "source_audio_bytes_and_mtimes_unchanged": true
+    },
+    "en": {
+      "full.wav": true,
+      "subtitles.srt": true,
+      "zip_member_bytes_identical": true,
+      "np_array_equal": true,
+      "project_bytes_unchanged": true,
+      "source_audio_bytes_and_mtimes_unchanged": true
+    }
+  },
+  "frame_measurements": {
+    "24": {
+      "rows": [
+        {
+          "index": 1,
+          "text": "门上贴着一张纸，写着",
+          "source_start_sample": 0,
+          "source_end_sample": 67200,
+          "xml_start_frame": 0,
+          "xml_end_frame": 67,
+          "start_error_ms": 0.0,
+          "end_error_ms": -8.333333333333334
+        },
+        {
+          "index": 2,
+          "text": "“今日盘点，暂停营业”。\n",
+          "source_start_sample": 73200,
+          "source_end_sample": 126960,
+          "xml_start_frame": 73,
+          "xml_end_frame": 127,
+          "start_error_ms": -8.333333333333334,
+          "end_error_ms": 1.6666666666666667
+        },
+        {
+          "index": 3,
+          "text": "林小雪把伞收起来，抖了抖水。她抬头看了看招牌，又低头核对手机上的地址。\n",
+          "source_start_sample": 132960,
+          "source_end_sample": 313440,
+          "xml_start_frame": 133,
+          "xml_end_frame": 313,
+          "start_error_ms": 1.6666666666666667,
+          "end_error_ms": -18.333333333333332
+        },
+        {
+          "index": 4,
+          "text": "“应该就是这儿。”\n",
+          "source_start_sample": 319440,
+          "source_end_sample": 361680,
+          "xml_start_frame": 319,
+          "xml_end_frame": 362,
+          "start_error_ms": -18.333333333333332,
+          "end_error_ms": 13.333333333333334
+        },
+        {
+          "index": 5,
+          "text": "“可门关着。”",
+          "source_start_sample": 367680,
+          "source_end_sample": 434880,
+          "xml_start_frame": 368,
+          "xml_end_frame": 435,
+          "start_error_ms": 13.333333333333334,
+          "end_error_ms": 5.0
+        },
+        {
+          "index": 6,
+          "text": "周远把手插进口袋，",
+          "source_start_sample": 440880,
+          "source_end_sample": 488880,
+          "xml_start_frame": 441,
+          "xml_end_frame": 489,
+          "start_error_ms": 5.0,
+          "end_error_ms": 5.0
+        },
+        {
+          "index": 7,
+          "text": "“我早说了先打个电话。”\n",
+          "source_start_sample": 494880,
+          "source_end_sample": 554400,
+          "xml_start_frame": 495,
+          "xml_end_frame": 554,
+          "start_error_ms": 5.0,
+          "end_error_ms": -16.666666666666668
+        },
+        {
+          "index": 8,
+          "text": "那姑娘没理他，绕到侧门去敲了三下。\n里面传来拖沓的脚步声。门开了一条缝，露出半张脸。\n",
+          "source_start_sample": 560400,
+          "source_end_sample": 785040,
+          "xml_start_frame": 560,
+          "xml_end_frame": 785,
+          "start_error_ms": -16.666666666666668,
+          "end_error_ms": -1.6666666666666667
+        },
+        {
+          "index": 9,
+          "text": "“盘点呢。”\n",
+          "source_start_sample": 791040,
+          "source_end_sample": 850560,
+          "xml_start_frame": 791,
+          "xml_end_frame": 851,
+          "start_error_ms": -1.6666666666666667,
+          "end_error_ms": 18.333333333333332
+        },
+        {
+          "index": 10,
+          "text": "“我们约好的。”",
+          "source_start_sample": 856560,
+          "source_end_sample": 900720,
+          "xml_start_frame": 857,
+          "xml_end_frame": 901,
+          "start_error_ms": 18.333333333333332,
+          "end_error_ms": 11.666666666666666
+        },
+        {
+          "index": 11,
+          "text": "林小雪说。\n",
+          "source_start_sample": 906720,
+          "source_end_sample": 943200,
+          "xml_start_frame": 907,
+          "xml_end_frame": 943,
+          "start_error_ms": 11.666666666666666,
+          "end_error_ms": -8.333333333333334
+        },
+        {
+          "index": 12,
+          "text": "“约好的也得等。”\n",
+          "source_start_sample": 949200,
+          "source_end_sample": 1072080,
+          "xml_start_frame": 949,
+          "xml_end_frame": 1072,
+          "start_error_ms": -8.333333333333334,
+          "end_error_ms": -3.3333333333333335
+        },
+        {
+          "index": 13,
+          "text": "周远刚要开口，被她拦住了。\n他想，这人怕是记错了日子。\n",
+          "source_start_sample": 1078080,
+          "source_end_sample": 1224000,
+          "xml_start_frame": 1078,
+          "xml_end_frame": 1224,
+          "start_error_ms": -3.3333333333333335,
+          "end_error_ms": 0.0
+        },
+        {
+          "index": 14,
+          "text": "“三点十五，张师傅亲口说的。”",
+          "source_start_sample": 1230000,
+          "source_end_sample": 1310640,
+          "xml_start_frame": 1230,
+          "xml_end_frame": 1311,
+          "start_error_ms": 0.0,
+          "end_error_ms": 15.0
+        },
+        {
+          "index": 15,
+          "text": "她把手机屏幕转过去，",
+          "source_start_sample": 1316640,
+          "source_end_sample": 1368480,
+          "xml_start_frame": 1317,
+          "xml_end_frame": 1368,
+          "start_error_ms": 15.0,
+          "end_error_ms": -20.0
+        },
+        {
+          "index": 16,
+          "text": "“您看，短信还在。”\n",
+          "source_start_sample": 1374480,
+          "source_end_sample": 1439760,
+          "xml_start_frame": 1374,
+          "xml_end_frame": 1440,
+          "start_error_ms": -20.0,
+          "end_error_ms": 10.0
+        },
+        {
+          "index": 17,
+          "text": "门后的人沉默了几秒，把门推开了。\n",
+          "source_start_sample": 1445760,
+          "source_end_sample": 1522560,
+          "xml_start_frame": 1446,
+          "xml_end_frame": 1523,
+          "start_error_ms": 10.0,
+          "end_error_ms": 18.333333333333332
+        },
+        {
+          "index": 18,
+          "text": "“进来吧。”\n",
+          "source_start_sample": 1528560,
+          "source_end_sample": 1593840,
+          "xml_start_frame": 1529,
+          "xml_end_frame": 1594,
+          "start_error_ms": 18.333333333333332,
+          "end_error_ms": 6.666666666666667
+        },
+        {
+          "index": 19,
+          "text": "店里堆着半人高的纸箱。一个中年男人从柜台后面站起来，手里还捏着计算器。\n",
+          "source_start_sample": 1599840,
+          "source_end_sample": 1757280,
+          "xml_start_frame": 1600,
+          "xml_end_frame": 1757,
+          "start_error_ms": 6.666666666666667,
+          "end_error_ms": -11.666666666666666
+        },
+        {
+          "index": 20,
+          "text": "“你们是来取那台 CD 机的？”\n",
+          "source_start_sample": 1763280,
+          "source_end_sample": 1843920,
+          "xml_start_frame": 1763,
+          "xml_end_frame": 1844,
+          "start_error_ms": -11.666666666666666,
+          "end_error_ms": 3.3333333333333335
+        },
+        {
+          "index": 21,
+          "text": "“是。”\n",
+          "source_start_sample": 1849920,
+          "source_end_sample": 1874880,
+          "xml_start_frame": 1850,
+          "xml_end_frame": 1875,
+          "start_error_ms": 3.3333333333333335,
+          "end_error_ms": 5.0
+        },
+        {
+          "index": 22,
+          "text": "“押金三百二，机器一千零八十。”",
+          "source_start_sample": 1880880,
+          "source_end_sample": 2038320,
+          "xml_start_frame": 1881,
+          "xml_end_frame": 2038,
+          "start_error_ms": 5.0,
+          "end_error_ms": -13.333333333333334
+        },
+        {
+          "index": 23,
+          "text": "张师傅翻了翻本子，",
+          "source_start_sample": 2044320,
+          "source_end_sample": 2090400,
+          "xml_start_frame": 2044,
+          "xml_end_frame": 2090,
+          "start_error_ms": -13.333333333333334,
+          "end_error_ms": -16.666666666666668
+        },
+        {
+          "index": 24,
+          "text": "“上回登记的是周先生吧？”\n",
+          "source_start_sample": 2096400,
+          "source_end_sample": 2213520,
+          "xml_start_frame": 2096,
+          "xml_end_frame": 2214,
+          "start_error_ms": -16.666666666666668,
+          "end_error_ms": 20.0
+        },
+        {
+          "index": 25,
+          "text": "周远点点头。\n林小雪凑过去看那本子。上面一行字被水洇开了，只剩下半个",
+          "source_start_sample": 2219520,
+          "source_end_sample": 2423040,
+          "xml_start_frame": 2220,
+          "xml_end_frame": 2423,
+          "start_error_ms": 20.0,
+          "end_error_ms": -1.6666666666666667
+        },
+        {
+          "index": 26,
+          "text": "“雪”",
+          "source_start_sample": 2429040,
+          "source_end_sample": 2457840,
+          "xml_start_frame": 2429,
+          "xml_end_frame": 2458,
+          "start_error_ms": -1.6666666666666667,
+          "end_error_ms": 6.666666666666667
+        },
+        {
+          "index": 27,
+          "text": "字。\n",
+          "source_start_sample": 2463840,
+          "source_end_sample": 2492640,
+          "xml_start_frame": 2464,
+          "xml_end_frame": 2493,
+          "start_error_ms": 6.666666666666667,
+          "end_error_ms": 15.0
+        },
+        {
+          "index": 28,
+          "text": "“这单子还能用吗？”",
+          "source_start_sample": 2498640,
+          "source_end_sample": 2563920,
+          "xml_start_frame": 2499,
+          "xml_end_frame": 2564,
+          "start_error_ms": 15.0,
+          "end_error_ms": 3.3333333333333335
+        },
+        {
+          "index": 29,
+          "text": "她问。\n",
+          "source_start_sample": 2569920,
+          "source_end_sample": 2591040,
+          "xml_start_frame": 2570,
+          "xml_end_frame": 2591,
+          "start_error_ms": 3.3333333333333335,
+          "end_error_ms": -1.6666666666666667
+        },
+        {
+          "index": 30,
+          "text": "“能用。”",
+          "source_start_sample": 2597040,
+          "source_end_sample": 2639280,
+          "xml_start_frame": 2597,
+          "xml_end_frame": 2639,
+          "start_error_ms": -1.6666666666666667,
+          "end_error_ms": -11.666666666666666
+        },
+        {
+          "index": 31,
+          "text": "张师傅说完又补了一句，",
+          "source_start_sample": 2645280,
+          "source_end_sample": 2691360,
+          "xml_start_frame": 2645,
+          "xml_end_frame": 2691,
+          "start_error_ms": -11.666666666666666,
+          "end_error_ms": -15.0
+        },
+        {
+          "index": 32,
+          "text": "“不过下次别淋着雨来。”\n",
+          "source_start_sample": 2697360,
+          "source_end_sample": 2826000,
+          "xml_start_frame": 2697,
+          "xml_end_frame": 2826,
+          "start_error_ms": -15.0,
+          "end_error_ms": 0.0
+        }
+      ],
+      "half_frame_ms": 20.833333333333332,
+      "max_start_error_ms": 20.0,
+      "max_end_error_ms": 20.0,
+      "last_minus_first_start_error_ms": -15.0
+    },
+    "25": {
+      "rows": [
+        {
+          "index": 1,
+          "text": "门上贴着一张纸，写着",
+          "source_start_sample": 0,
+          "source_end_sample": 67200,
+          "xml_start_frame": 0,
+          "xml_end_frame": 70,
+          "start_error_ms": 0.0,
+          "end_error_ms": 0.0
+        },
+        {
+          "index": 2,
+          "text": "“今日盘点，暂停营业”。\n",
+          "source_start_sample": 73200,
+          "source_end_sample": 126960,
+          "xml_start_frame": 76,
+          "xml_end_frame": 132,
+          "start_error_ms": -10.0,
+          "end_error_ms": -10.0
+        },
+        {
+          "index": 3,
+          "text": "林小雪把伞收起来，抖了抖水。她抬头看了看招牌，又低头核对手机上的地址。\n",
+          "source_start_sample": 132960,
+          "source_end_sample": 313440,
+          "xml_start_frame": 139,
+          "xml_end_frame": 327,
+          "start_error_ms": 20.0,
+          "end_error_ms": 20.0
+        },
+        {
+          "index": 4,
+          "text": "“应该就是这儿。”\n",
+          "source_start_sample": 319440,
+          "source_end_sample": 361680,
+          "xml_start_frame": 333,
+          "xml_end_frame": 377,
+          "start_error_ms": 10.0,
+          "end_error_ms": 10.0
+        },
+        {
+          "index": 5,
+          "text": "“可门关着。”",
+          "source_start_sample": 367680,
+          "source_end_sample": 434880,
+          "xml_start_frame": 383,
+          "xml_end_frame": 453,
+          "start_error_ms": 0.0,
+          "end_error_ms": 0.0
+        },
+        {
+          "index": 6,
+          "text": "周远把手插进口袋，",
+          "source_start_sample": 440880,
+          "source_end_sample": 488880,
+          "xml_start_frame": 459,
+          "xml_end_frame": 509,
+          "start_error_ms": -10.0,
+          "end_error_ms": -10.0
+        },
+        {
+          "index": 7,
+          "text": "“我早说了先打个电话。”\n",
+          "source_start_sample": 494880,
+          "source_end_sample": 554400,
+          "xml_start_frame": 516,
+          "xml_end_frame": 578,
+          "start_error_ms": 20.0,
+          "end_error_ms": 20.0
+        },
+        {
+          "index": 8,
+          "text": "那姑娘没理他，绕到侧门去敲了三下。\n里面传来拖沓的脚步声。门开了一条缝，露出半张脸。\n",
+          "source_start_sample": 560400,
+          "source_end_sample": 785040,
+          "xml_start_frame": 584,
+          "xml_end_frame": 818,
+          "start_error_ms": 10.0,
+          "end_error_ms": 10.0
+        },
+        {
+          "index": 9,
+          "text": "“盘点呢。”\n",
+          "source_start_sample": 791040,
+          "source_end_sample": 850560,
+          "xml_start_frame": 824,
+          "xml_end_frame": 886,
+          "start_error_ms": 0.0,
+          "end_error_ms": 0.0
+        },
+        {
+          "index": 10,
+          "text": "“我们约好的。”",
+          "source_start_sample": 856560,
+          "source_end_sample": 900720,
+          "xml_start_frame": 892,
+          "xml_end_frame": 938,
+          "start_error_ms": -10.0,
+          "end_error_ms": -10.0
+        },
+        {
+          "index": 11,
+          "text": "林小雪说。\n",
+          "source_start_sample": 906720,
+          "source_end_sample": 943200,
+          "xml_start_frame": 945,
+          "xml_end_frame": 983,
+          "start_error_ms": 20.0,
+          "end_error_ms": 20.0
+        },
+        {
+          "index": 12,
+          "text": "“约好的也得等。”\n",
+          "source_start_sample": 949200,
+          "source_end_sample": 1072080,
+          "xml_start_frame": 989,
+          "xml_end_frame": 1117,
+          "start_error_ms": 10.0,
+          "end_error_ms": 10.0
+        },
+        {
+          "index": 13,
+          "text": "周远刚要开口，被她拦住了。\n他想，这人怕是记错了日子。\n",
+          "source_start_sample": 1078080,
+          "source_end_sample": 1224000,
+          "xml_start_frame": 1123,
+          "xml_end_frame": 1275,
+          "start_error_ms": 0.0,
+          "end_error_ms": 0.0
+        },
+        {
+          "index": 14,
+          "text": "“三点十五，张师傅亲口说的。”",
+          "source_start_sample": 1230000,
+          "source_end_sample": 1310640,
+          "xml_start_frame": 1281,
+          "xml_end_frame": 1365,
+          "start_error_ms": -10.0,
+          "end_error_ms": -10.0
+        },
+        {
+          "index": 15,
+          "text": "她把手机屏幕转过去，",
+          "source_start_sample": 1316640,
+          "source_end_sample": 1368480,
+          "xml_start_frame": 1372,
+          "xml_end_frame": 1426,
+          "start_error_ms": 20.0,
+          "end_error_ms": 20.0
+        },
+        {
+          "index": 16,
+          "text": "“您看，短信还在。”\n",
+          "source_start_sample": 1374480,
+          "source_end_sample": 1439760,
+          "xml_start_frame": 1432,
+          "xml_end_frame": 1500,
+          "start_error_ms": 10.0,
+          "end_error_ms": 10.0
+        },
+        {
+          "index": 17,
+          "text": "门后的人沉默了几秒，把门推开了。\n",
+          "source_start_sample": 1445760,
+          "source_end_sample": 1522560,
+          "xml_start_frame": 1506,
+          "xml_end_frame": 1586,
+          "start_error_ms": 0.0,
+          "end_error_ms": 0.0
+        },
+        {
+          "index": 18,
+          "text": "“进来吧。”\n",
+          "source_start_sample": 1528560,
+          "source_end_sample": 1593840,
+          "xml_start_frame": 1592,
+          "xml_end_frame": 1660,
+          "start_error_ms": -10.0,
+          "end_error_ms": -10.0
+        },
+        {
+          "index": 19,
+          "text": "店里堆着半人高的纸箱。一个中年男人从柜台后面站起来，手里还捏着计算器。\n",
+          "source_start_sample": 1599840,
+          "source_end_sample": 1757280,
+          "xml_start_frame": 1667,
+          "xml_end_frame": 1831,
+          "start_error_ms": 20.0,
+          "end_error_ms": 20.0
+        },
+        {
+          "index": 20,
+          "text": "“你们是来取那台 CD 机的？”\n",
+          "source_start_sample": 1763280,
+          "source_end_sample": 1843920,
+          "xml_start_frame": 1837,
+          "xml_end_frame": 1921,
+          "start_error_ms": 10.0,
+          "end_error_ms": 10.0
+        },
+        {
+          "index": 21,
+          "text": "“是。”\n",
+          "source_start_sample": 1849920,
+          "source_end_sample": 1874880,
+          "xml_start_frame": 1927,
+          "xml_end_frame": 1953,
+          "start_error_ms": 0.0,
+          "end_error_ms": 0.0
+        },
+        {
+          "index": 22,
+          "text": "“押金三百二，机器一千零八十。”",
+          "source_start_sample": 1880880,
+          "source_end_sample": 2038320,
+          "xml_start_frame": 1959,
+          "xml_end_frame": 2123,
+          "start_error_ms": -10.0,
+          "end_error_ms": -10.0
+        },
+        {
+          "index": 23,
+          "text": "张师傅翻了翻本子，",
+          "source_start_sample": 2044320,
+          "source_end_sample": 2090400,
+          "xml_start_frame": 2130,
+          "xml_end_frame": 2178,
+          "start_error_ms": 20.0,
+          "end_error_ms": 20.0
+        },
+        {
+          "index": 24,
+          "text": "“上回登记的是周先生吧？”\n",
+          "source_start_sample": 2096400,
+          "source_end_sample": 2213520,
+          "xml_start_frame": 2184,
+          "xml_end_frame": 2306,
+          "start_error_ms": 10.0,
+          "end_error_ms": 10.0
+        },
+        {
+          "index": 25,
+          "text": "周远点点头。\n林小雪凑过去看那本子。上面一行字被水洇开了，只剩下半个",
+          "source_start_sample": 2219520,
+          "source_end_sample": 2423040,
+          "xml_start_frame": 2312,
+          "xml_end_frame": 2524,
+          "start_error_ms": 0.0,
+          "end_error_ms": 0.0
+        },
+        {
+          "index": 26,
+          "text": "“雪”",
+          "source_start_sample": 2429040,
+          "source_end_sample": 2457840,
+          "xml_start_frame": 2530,
+          "xml_end_frame": 2560,
+          "start_error_ms": -10.0,
+          "end_error_ms": -10.0
+        },
+        {
+          "index": 27,
+          "text": "字。\n",
+          "source_start_sample": 2463840,
+          "source_end_sample": 2492640,
+          "xml_start_frame": 2567,
+          "xml_end_frame": 2597,
+          "start_error_ms": 20.0,
+          "end_error_ms": 20.0
+        },
+        {
+          "index": 28,
+          "text": "“这单子还能用吗？”",
+          "source_start_sample": 2498640,
+          "source_end_sample": 2563920,
+          "xml_start_frame": 2603,
+          "xml_end_frame": 2671,
+          "start_error_ms": 10.0,
+          "end_error_ms": 10.0
+        },
+        {
+          "index": 29,
+          "text": "她问。\n",
+          "source_start_sample": 2569920,
+          "source_end_sample": 2591040,
+          "xml_start_frame": 2677,
+          "xml_end_frame": 2699,
+          "start_error_ms": 0.0,
+          "end_error_ms": 0.0
+        },
+        {
+          "index": 30,
+          "text": "“能用。”",
+          "source_start_sample": 2597040,
+          "source_end_sample": 2639280,
+          "xml_start_frame": 2705,
+          "xml_end_frame": 2749,
+          "start_error_ms": -10.0,
+          "end_error_ms": -10.0
+        },
+        {
+          "index": 31,
+          "text": "张师傅说完又补了一句，",
+          "source_start_sample": 2645280,
+          "source_end_sample": 2691360,
+          "xml_start_frame": 2756,
+          "xml_end_frame": 2804,
+          "start_error_ms": 20.0,
+          "end_error_ms": 20.0
+        },
+        {
+          "index": 32,
+          "text": "“不过下次别淋着雨来。”\n",
+          "source_start_sample": 2697360,
+          "source_end_sample": 2826000,
+          "xml_start_frame": 2810,
+          "xml_end_frame": 2944,
+          "start_error_ms": 10.0,
+          "end_error_ms": 10.0
+        }
+      ],
+      "half_frame_ms": 20.0,
+      "max_start_error_ms": 20.0,
+      "max_end_error_ms": 20.0,
+      "last_minus_first_start_error_ms": 10.0
+    },
+    "30": {
+      "rows": [
+        {
+          "index": 1,
+          "text": "门上贴着一张纸，写着",
+          "source_start_sample": 0,
+          "source_end_sample": 67200,
+          "xml_start_frame": 0,
+          "xml_end_frame": 84,
+          "start_error_ms": 0.0,
+          "end_error_ms": 0.0
+        },
+        {
+          "index": 2,
+          "text": "“今日盘点，暂停营业”。\n",
+          "source_start_sample": 73200,
+          "source_end_sample": 126960,
+          "xml_start_frame": 92,
+          "xml_end_frame": 159,
+          "start_error_ms": 16.666666666666668,
+          "end_error_ms": 10.0
+        },
+        {
+          "index": 3,
+          "text": "林小雪把伞收起来，抖了抖水。她抬头看了看招牌，又低头核对手机上的地址。\n",
+          "source_start_sample": 132960,
+          "source_end_sample": 313440,
+          "xml_start_frame": 166,
+          "xml_end_frame": 392,
+          "start_error_ms": -6.666666666666667,
+          "end_error_ms": 6.666666666666667
+        },
+        {
+          "index": 4,
+          "text": "“应该就是这儿。”\n",
+          "source_start_sample": 319440,
+          "source_end_sample": 361680,
+          "xml_start_frame": 399,
+          "xml_end_frame": 452,
+          "start_error_ms": -10.0,
+          "end_error_ms": -3.3333333333333335
+        },
+        {
+          "index": 5,
+          "text": "“可门关着。”",
+          "source_start_sample": 367680,
+          "source_end_sample": 434880,
+          "xml_start_frame": 460,
+          "xml_end_frame": 544,
+          "start_error_ms": 13.333333333333334,
+          "end_error_ms": 13.333333333333334
+        },
+        {
+          "index": 6,
+          "text": "周远把手插进口袋，",
+          "source_start_sample": 440880,
+          "source_end_sample": 488880,
+          "xml_start_frame": 551,
+          "xml_end_frame": 611,
+          "start_error_ms": -3.3333333333333335,
+          "end_error_ms": -3.3333333333333335
+        },
+        {
+          "index": 7,
+          "text": "“我早说了先打个电话。”\n",
+          "source_start_sample": 494880,
+          "source_end_sample": 554400,
+          "xml_start_frame": 619,
+          "xml_end_frame": 693,
+          "start_error_ms": 13.333333333333334,
+          "end_error_ms": 0.0
+        },
+        {
+          "index": 8,
+          "text": "那姑娘没理他，绕到侧门去敲了三下。\n里面传来拖沓的脚步声。门开了一条缝，露出半张脸。\n",
+          "source_start_sample": 560400,
+          "source_end_sample": 785040,
+          "xml_start_frame": 701,
+          "xml_end_frame": 981,
+          "start_error_ms": 16.666666666666668,
+          "end_error_ms": -10.0
+        },
+        {
+          "index": 9,
+          "text": "“盘点呢。”\n",
+          "source_start_sample": 791040,
+          "source_end_sample": 850560,
+          "xml_start_frame": 989,
+          "xml_end_frame": 1063,
+          "start_error_ms": 6.666666666666667,
+          "end_error_ms": -6.666666666666667
+        },
+        {
+          "index": 10,
+          "text": "“我们约好的。”",
+          "source_start_sample": 856560,
+          "source_end_sample": 900720,
+          "xml_start_frame": 1071,
+          "xml_end_frame": 1126,
+          "start_error_ms": 10.0,
+          "end_error_ms": 3.3333333333333335
+        },
+        {
+          "index": 11,
+          "text": "林小雪说。\n",
+          "source_start_sample": 906720,
+          "source_end_sample": 943200,
+          "xml_start_frame": 1133,
+          "xml_end_frame": 1179,
+          "start_error_ms": -13.333333333333334,
+          "end_error_ms": 0.0
+        },
+        {
+          "index": 12,
+          "text": "“约好的也得等。”\n",
+          "source_start_sample": 949200,
+          "source_end_sample": 1072080,
+          "xml_start_frame": 1187,
+          "xml_end_frame": 1340,
+          "start_error_ms": 16.666666666666668,
+          "end_error_ms": -3.3333333333333335
+        },
+        {
+          "index": 13,
+          "text": "周远刚要开口，被她拦住了。\n他想，这人怕是记错了日子。\n",
+          "source_start_sample": 1078080,
+          "source_end_sample": 1224000,
+          "xml_start_frame": 1348,
+          "xml_end_frame": 1530,
+          "start_error_ms": 13.333333333333334,
+          "end_error_ms": 0.0
+        },
+        {
+          "index": 14,
+          "text": "“三点十五，张师傅亲口说的。”",
+          "source_start_sample": 1230000,
+          "source_end_sample": 1310640,
+          "xml_start_frame": 1538,
+          "xml_end_frame": 1638,
+          "start_error_ms": 16.666666666666668,
+          "end_error_ms": -10.0
+        },
+        {
+          "index": 15,
+          "text": "她把手机屏幕转过去，",
+          "source_start_sample": 1316640,
+          "source_end_sample": 1368480,
+          "xml_start_frame": 1646,
+          "xml_end_frame": 1711,
+          "start_error_ms": 6.666666666666667,
+          "end_error_ms": 13.333333333333334
+        },
+        {
+          "index": 16,
+          "text": "“您看，短信还在。”\n",
+          "source_start_sample": 1374480,
+          "source_end_sample": 1439760,
+          "xml_start_frame": 1718,
+          "xml_end_frame": 1800,
+          "start_error_ms": -3.3333333333333335,
+          "end_error_ms": 10.0
+        },
+        {
+          "index": 17,
+          "text": "门后的人沉默了几秒，把门推开了。\n",
+          "source_start_sample": 1445760,
+          "source_end_sample": 1522560,
+          "xml_start_frame": 1807,
+          "xml_end_frame": 1903,
+          "start_error_ms": -6.666666666666667,
+          "end_error_ms": -6.666666666666667
+        },
+        {
+          "index": 18,
+          "text": "“进来吧。”\n",
+          "source_start_sample": 1528560,
+          "source_end_sample": 1593840,
+          "xml_start_frame": 1911,
+          "xml_end_frame": 1992,
+          "start_error_ms": 10.0,
+          "end_error_ms": -10.0
+        },
+        {
+          "index": 19,
+          "text": "店里堆着半人高的纸箱。一个中年男人从柜台后面站起来，手里还捏着计算器。\n",
+          "source_start_sample": 1599840,
+          "source_end_sample": 1757280,
+          "xml_start_frame": 2000,
+          "xml_end_frame": 2197,
+          "start_error_ms": 6.666666666666667,
+          "end_error_ms": 13.333333333333334
+        },
+        {
+          "index": 20,
+          "text": "“你们是来取那台 CD 机的？”\n",
+          "source_start_sample": 1763280,
+          "source_end_sample": 1843920,
+          "xml_start_frame": 2204,
+          "xml_end_frame": 2305,
+          "start_error_ms": -3.3333333333333335,
+          "end_error_ms": 3.3333333333333335
+        },
+        {
+          "index": 21,
+          "text": "“是。”\n",
+          "source_start_sample": 1849920,
+          "source_end_sample": 1874880,
+          "xml_start_frame": 2312,
+          "xml_end_frame": 2344,
+          "start_error_ms": -13.333333333333334,
+          "end_error_ms": 13.333333333333334
+        },
+        {
+          "index": 22,
+          "text": "“押金三百二，机器一千零八十。”",
+          "source_start_sample": 1880880,
+          "source_end_sample": 2038320,
+          "xml_start_frame": 2351,
+          "xml_end_frame": 2548,
+          "start_error_ms": -3.3333333333333335,
+          "end_error_ms": 3.3333333333333335
+        },
+        {
+          "index": 23,
+          "text": "张师傅翻了翻本子，",
+          "source_start_sample": 2044320,
+          "source_end_sample": 2090400,
+          "xml_start_frame": 2555,
+          "xml_end_frame": 2613,
+          "start_error_ms": -13.333333333333334,
+          "end_error_ms": 0.0
+        },
+        {
+          "index": 24,
+          "text": "“上回登记的是周先生吧？”\n",
+          "source_start_sample": 2096400,
+          "source_end_sample": 2213520,
+          "xml_start_frame": 2621,
+          "xml_end_frame": 2767,
+          "start_error_ms": 16.666666666666668,
+          "end_error_ms": 3.3333333333333335
+        },
+        {
+          "index": 25,
+          "text": "周远点点头。\n林小雪凑过去看那本子。上面一行字被水洇开了，只剩下半个",
+          "source_start_sample": 2219520,
+          "source_end_sample": 2423040,
+          "xml_start_frame": 2774,
+          "xml_end_frame": 3029,
+          "start_error_ms": -13.333333333333334,
+          "end_error_ms": 6.666666666666667
+        },
+        {
+          "index": 26,
+          "text": "“雪”",
+          "source_start_sample": 2429040,
+          "source_end_sample": 2457840,
+          "xml_start_frame": 3036,
+          "xml_end_frame": 3072,
+          "start_error_ms": -10.0,
+          "end_error_ms": -10.0
+        },
+        {
+          "index": 27,
+          "text": "字。\n",
+          "source_start_sample": 2463840,
+          "source_end_sample": 2492640,
+          "xml_start_frame": 3080,
+          "xml_end_frame": 3116,
+          "start_error_ms": 6.666666666666667,
+          "end_error_ms": 6.666666666666667
+        },
+        {
+          "index": 28,
+          "text": "“这单子还能用吗？”",
+          "source_start_sample": 2498640,
+          "source_end_sample": 2563920,
+          "xml_start_frame": 3123,
+          "xml_end_frame": 3205,
+          "start_error_ms": -10.0,
+          "end_error_ms": 3.3333333333333335
+        },
+        {
+          "index": 29,
+          "text": "她问。\n",
+          "source_start_sample": 2569920,
+          "source_end_sample": 2591040,
+          "xml_start_frame": 3212,
+          "xml_end_frame": 3239,
+          "start_error_ms": -13.333333333333334,
+          "end_error_ms": 6.666666666666667
+        },
+        {
+          "index": 30,
+          "text": "“能用。”",
+          "source_start_sample": 2597040,
+          "source_end_sample": 2639280,
+          "xml_start_frame": 3246,
+          "xml_end_frame": 3299,
+          "start_error_ms": -10.0,
+          "end_error_ms": -3.3333333333333335
+        },
+        {
+          "index": 31,
+          "text": "张师傅说完又补了一句，",
+          "source_start_sample": 2645280,
+          "source_end_sample": 2691360,
+          "xml_start_frame": 3307,
+          "xml_end_frame": 3364,
+          "start_error_ms": 13.333333333333334,
+          "end_error_ms": -6.666666666666667
+        },
+        {
+          "index": 32,
+          "text": "“不过下次别淋着雨来。”\n",
+          "source_start_sample": 2697360,
+          "source_end_sample": 2826000,
+          "xml_start_frame": 3372,
+          "xml_end_frame": 3533,
+          "start_error_ms": 10.0,
+          "end_error_ms": 16.666666666666668
+        }
+      ],
+      "half_frame_ms": 16.666666666666668,
+      "max_start_error_ms": 16.666666666666668,
+      "max_end_error_ms": 16.666666666666668,
+      "last_minus_first_start_error_ms": 10.0
+    },
+    "50": {
+      "rows": [
+        {
+          "index": 1,
+          "text": "门上贴着一张纸，写着",
+          "source_start_sample": 0,
+          "source_end_sample": 67200,
+          "xml_start_frame": 0,
+          "xml_end_frame": 140,
+          "start_error_ms": 0.0,
+          "end_error_ms": 0.0
+        },
+        {
+          "index": 2,
+          "text": "“今日盘点，暂停营业”。\n",
+          "source_start_sample": 73200,
+          "source_end_sample": 126960,
+          "xml_start_frame": 153,
+          "xml_end_frame": 265,
+          "start_error_ms": 10.0,
+          "end_error_ms": 10.0
+        },
+        {
+          "index": 3,
+          "text": "林小雪把伞收起来，抖了抖水。她抬头看了看招牌，又低头核对手机上的地址。\n",
+          "source_start_sample": 132960,
+          "source_end_sample": 313440,
+          "xml_start_frame": 277,
+          "xml_end_frame": 653,
+          "start_error_ms": 0.0,
+          "end_error_ms": 0.0
+        },
+        {
+          "index": 4,
+          "text": "“应该就是这儿。”\n",
+          "source_start_sample": 319440,
+          "source_end_sample": 361680,
+          "xml_start_frame": 666,
+          "xml_end_frame": 754,
+          "start_error_ms": 10.0,
+          "end_error_ms": 10.0
+        },
+        {
+          "index": 5,
+          "text": "“可门关着。”",
+          "source_start_sample": 367680,
+          "source_end_sample": 434880,
+          "xml_start_frame": 766,
+          "xml_end_frame": 906,
+          "start_error_ms": 0.0,
+          "end_error_ms": 0.0
+        },
+        {
+          "index": 6,
+          "text": "周远把手插进口袋，",
+          "source_start_sample": 440880,
+          "source_end_sample": 488880,
+          "xml_start_frame": 919,
+          "xml_end_frame": 1019,
+          "start_error_ms": 10.0,
+          "end_error_ms": 10.0
+        },
+        {
+          "index": 7,
+          "text": "“我早说了先打个电话。”\n",
+          "source_start_sample": 494880,
+          "source_end_sample": 554400,
+          "xml_start_frame": 1031,
+          "xml_end_frame": 1155,
+          "start_error_ms": 0.0,
+          "end_error_ms": 0.0
+        },
+        {
+          "index": 8,
+          "text": "那姑娘没理他，绕到侧门去敲了三下。\n里面传来拖沓的脚步声。门开了一条缝，露出半张脸。\n",
+          "source_start_sample": 560400,
+          "source_end_sample": 785040,
+          "xml_start_frame": 1168,
+          "xml_end_frame": 1636,
+          "start_error_ms": 10.0,
+          "end_error_ms": 10.0
+        },
+        {
+          "index": 9,
+          "text": "“盘点呢。”\n",
+          "source_start_sample": 791040,
+          "source_end_sample": 850560,
+          "xml_start_frame": 1648,
+          "xml_end_frame": 1772,
+          "start_error_ms": 0.0,
+          "end_error_ms": 0.0
+        },
+        {
+          "index": 10,
+          "text": "“我们约好的。”",
+          "source_start_sample": 856560,
+          "source_end_sample": 900720,
+          "xml_start_frame": 1785,
+          "xml_end_frame": 1877,
+          "start_error_ms": 10.0,
+          "end_error_ms": 10.0
+        },
+        {
+          "index": 11,
+          "text": "林小雪说。\n",
+          "source_start_sample": 906720,
+          "source_end_sample": 943200,
+          "xml_start_frame": 1889,
+          "xml_end_frame": 1965,
+          "start_error_ms": 0.0,
+          "end_error_ms": 0.0
+        },
+        {
+          "index": 12,
+          "text": "“约好的也得等。”\n",
+          "source_start_sample": 949200,
+          "source_end_sample": 1072080,
+          "xml_start_frame": 1978,
+          "xml_end_frame": 2234,
+          "start_error_ms": 10.0,
+          "end_error_ms": 10.0
+        },
+        {
+          "index": 13,
+          "text": "周远刚要开口，被她拦住了。\n他想，这人怕是记错了日子。\n",
+          "source_start_sample": 1078080,
+          "source_end_sample": 1224000,
+          "xml_start_frame": 2246,
+          "xml_end_frame": 2550,
+          "start_error_ms": 0.0,
+          "end_error_ms": 0.0
+        },
+        {
+          "index": 14,
+          "text": "“三点十五，张师傅亲口说的。”",
+          "source_start_sample": 1230000,
+          "source_end_sample": 1310640,
+          "xml_start_frame": 2563,
+          "xml_end_frame": 2731,
+          "start_error_ms": 10.0,
+          "end_error_ms": 10.0
+        },
+        {
+          "index": 15,
+          "text": "她把手机屏幕转过去，",
+          "source_start_sample": 1316640,
+          "source_end_sample": 1368480,
+          "xml_start_frame": 2743,
+          "xml_end_frame": 2851,
+          "start_error_ms": 0.0,
+          "end_error_ms": 0.0
+        },
+        {
+          "index": 16,
+          "text": "“您看，短信还在。”\n",
+          "source_start_sample": 1374480,
+          "source_end_sample": 1439760,
+          "xml_start_frame": 2864,
+          "xml_end_frame": 3000,
+          "start_error_ms": 10.0,
+          "end_error_ms": 10.0
+        },
+        {
+          "index": 17,
+          "text": "门后的人沉默了几秒，把门推开了。\n",
+          "source_start_sample": 1445760,
+          "source_end_sample": 1522560,
+          "xml_start_frame": 3012,
+          "xml_end_frame": 3172,
+          "start_error_ms": 0.0,
+          "end_error_ms": 0.0
+        },
+        {
+          "index": 18,
+          "text": "“进来吧。”\n",
+          "source_start_sample": 1528560,
+          "source_end_sample": 1593840,
+          "xml_start_frame": 3185,
+          "xml_end_frame": 3321,
+          "start_error_ms": 10.0,
+          "end_error_ms": 10.0
+        },
+        {
+          "index": 19,
+          "text": "店里堆着半人高的纸箱。一个中年男人从柜台后面站起来，手里还捏着计算器。\n",
+          "source_start_sample": 1599840,
+          "source_end_sample": 1757280,
+          "xml_start_frame": 3333,
+          "xml_end_frame": 3661,
+          "start_error_ms": 0.0,
+          "end_error_ms": 0.0
+        },
+        {
+          "index": 20,
+          "text": "“你们是来取那台 CD 机的？”\n",
+          "source_start_sample": 1763280,
+          "source_end_sample": 1843920,
+          "xml_start_frame": 3674,
+          "xml_end_frame": 3842,
+          "start_error_ms": 10.0,
+          "end_error_ms": 10.0
+        },
+        {
+          "index": 21,
+          "text": "“是。”\n",
+          "source_start_sample": 1849920,
+          "source_end_sample": 1874880,
+          "xml_start_frame": 3854,
+          "xml_end_frame": 3906,
+          "start_error_ms": 0.0,
+          "end_error_ms": 0.0
+        },
+        {
+          "index": 22,
+          "text": "“押金三百二，机器一千零八十。”",
+          "source_start_sample": 1880880,
+          "source_end_sample": 2038320,
+          "xml_start_frame": 3919,
+          "xml_end_frame": 4247,
+          "start_error_ms": 10.0,
+          "end_error_ms": 10.0
+        },
+        {
+          "index": 23,
+          "text": "张师傅翻了翻本子，",
+          "source_start_sample": 2044320,
+          "source_end_sample": 2090400,
+          "xml_start_frame": 4259,
+          "xml_end_frame": 4355,
+          "start_error_ms": 0.0,
+          "end_error_ms": 0.0
+        },
+        {
+          "index": 24,
+          "text": "“上回登记的是周先生吧？”\n",
+          "source_start_sample": 2096400,
+          "source_end_sample": 2213520,
+          "xml_start_frame": 4368,
+          "xml_end_frame": 4612,
+          "start_error_ms": 10.0,
+          "end_error_ms": 10.0
+        },
+        {
+          "index": 25,
+          "text": "周远点点头。\n林小雪凑过去看那本子。上面一行字被水洇开了，只剩下半个",
+          "source_start_sample": 2219520,
+          "source_end_sample": 2423040,
+          "xml_start_frame": 4624,
+          "xml_end_frame": 5048,
+          "start_error_ms": 0.0,
+          "end_error_ms": 0.0
+        },
+        {
+          "index": 26,
+          "text": "“雪”",
+          "source_start_sample": 2429040,
+          "source_end_sample": 2457840,
+          "xml_start_frame": 5061,
+          "xml_end_frame": 5121,
+          "start_error_ms": 10.0,
+          "end_error_ms": 10.0
+        },
+        {
+          "index": 27,
+          "text": "字。\n",
+          "source_start_sample": 2463840,
+          "source_end_sample": 2492640,
+          "xml_start_frame": 5133,
+          "xml_end_frame": 5193,
+          "start_error_ms": 0.0,
+          "end_error_ms": 0.0
+        },
+        {
+          "index": 28,
+          "text": "“这单子还能用吗？”",
+          "source_start_sample": 2498640,
+          "source_end_sample": 2563920,
+          "xml_start_frame": 5206,
+          "xml_end_frame": 5342,
+          "start_error_ms": 10.0,
+          "end_error_ms": 10.0
+        },
+        {
+          "index": 29,
+          "text": "她问。\n",
+          "source_start_sample": 2569920,
+          "source_end_sample": 2591040,
+          "xml_start_frame": 5354,
+          "xml_end_frame": 5398,
+          "start_error_ms": 0.0,
+          "end_error_ms": 0.0
+        },
+        {
+          "index": 30,
+          "text": "“能用。”",
+          "source_start_sample": 2597040,
+          "source_end_sample": 2639280,
+          "xml_start_frame": 5411,
+          "xml_end_frame": 5499,
+          "start_error_ms": 10.0,
+          "end_error_ms": 10.0
+        },
+        {
+          "index": 31,
+          "text": "张师傅说完又补了一句，",
+          "source_start_sample": 2645280,
+          "source_end_sample": 2691360,
+          "xml_start_frame": 5511,
+          "xml_end_frame": 5607,
+          "start_error_ms": 0.0,
+          "end_error_ms": 0.0
+        },
+        {
+          "index": 32,
+          "text": "“不过下次别淋着雨来。”\n",
+          "source_start_sample": 2697360,
+          "source_end_sample": 2826000,
+          "xml_start_frame": 5620,
+          "xml_end_frame": 5888,
+          "start_error_ms": 10.0,
+          "end_error_ms": 10.0
+        }
+      ],
+      "half_frame_ms": 10.0,
+      "max_start_error_ms": 10.0,
+      "max_end_error_ms": 10.0,
+      "last_minus_first_start_error_ms": 10.0
+    },
+    "60": {
+      "rows": [
+        {
+          "index": 1,
+          "text": "门上贴着一张纸，写着",
+          "source_start_sample": 0,
+          "source_end_sample": 67200,
+          "xml_start_frame": 0,
+          "xml_end_frame": 168,
+          "start_error_ms": 0.0,
+          "end_error_ms": 0.0
+        },
+        {
+          "index": 2,
+          "text": "“今日盘点，暂停营业”。\n",
+          "source_start_sample": 73200,
+          "source_end_sample": 126960,
+          "xml_start_frame": 183,
+          "xml_end_frame": 317,
+          "start_error_ms": 0.0,
+          "end_error_ms": -6.666666666666667
+        },
+        {
+          "index": 3,
+          "text": "林小雪把伞收起来，抖了抖水。她抬头看了看招牌，又低头核对手机上的地址。\n",
+          "source_start_sample": 132960,
+          "source_end_sample": 313440,
+          "xml_start_frame": 332,
+          "xml_end_frame": 784,
+          "start_error_ms": -6.666666666666667,
+          "end_error_ms": 6.666666666666667
+        },
+        {
+          "index": 4,
+          "text": "“应该就是这儿。”\n",
+          "source_start_sample": 319440,
+          "source_end_sample": 361680,
+          "xml_start_frame": 799,
+          "xml_end_frame": 904,
+          "start_error_ms": 6.666666666666667,
+          "end_error_ms": -3.3333333333333335
+        },
+        {
+          "index": 5,
+          "text": "“可门关着。”",
+          "source_start_sample": 367680,
+          "source_end_sample": 434880,
+          "xml_start_frame": 919,
+          "xml_end_frame": 1087,
+          "start_error_ms": -3.3333333333333335,
+          "end_error_ms": -3.3333333333333335
+        },
+        {
+          "index": 6,
+          "text": "周远把手插进口袋，",
+          "source_start_sample": 440880,
+          "source_end_sample": 488880,
+          "xml_start_frame": 1102,
+          "xml_end_frame": 1222,
+          "start_error_ms": -3.3333333333333335,
+          "end_error_ms": -3.3333333333333335
+        },
+        {
+          "index": 7,
+          "text": "“我早说了先打个电话。”\n",
+          "source_start_sample": 494880,
+          "source_end_sample": 554400,
+          "xml_start_frame": 1237,
+          "xml_end_frame": 1386,
+          "start_error_ms": -3.3333333333333335,
+          "end_error_ms": 0.0
+        },
+        {
+          "index": 8,
+          "text": "那姑娘没理他，绕到侧门去敲了三下。\n里面传来拖沓的脚步声。门开了一条缝，露出半张脸。\n",
+          "source_start_sample": 560400,
+          "source_end_sample": 785040,
+          "xml_start_frame": 1401,
+          "xml_end_frame": 1963,
+          "start_error_ms": 0.0,
+          "end_error_ms": 6.666666666666667
+        },
+        {
+          "index": 9,
+          "text": "“盘点呢。”\n",
+          "source_start_sample": 791040,
+          "source_end_sample": 850560,
+          "xml_start_frame": 1978,
+          "xml_end_frame": 2126,
+          "start_error_ms": 6.666666666666667,
+          "end_error_ms": -6.666666666666667
+        },
+        {
+          "index": 10,
+          "text": "“我们约好的。”",
+          "source_start_sample": 856560,
+          "source_end_sample": 900720,
+          "xml_start_frame": 2141,
+          "xml_end_frame": 2252,
+          "start_error_ms": -6.666666666666667,
+          "end_error_ms": 3.3333333333333335
+        },
+        {
+          "index": 11,
+          "text": "林小雪说。\n",
+          "source_start_sample": 906720,
+          "source_end_sample": 943200,
+          "xml_start_frame": 2267,
+          "xml_end_frame": 2358,
+          "start_error_ms": 3.3333333333333335,
+          "end_error_ms": 0.0
+        },
+        {
+          "index": 12,
+          "text": "“约好的也得等。”\n",
+          "source_start_sample": 949200,
+          "source_end_sample": 1072080,
+          "xml_start_frame": 2373,
+          "xml_end_frame": 2680,
+          "start_error_ms": 0.0,
+          "end_error_ms": -3.3333333333333335
+        },
+        {
+          "index": 13,
+          "text": "周远刚要开口，被她拦住了。\n他想，这人怕是记错了日子。\n",
+          "source_start_sample": 1078080,
+          "source_end_sample": 1224000,
+          "xml_start_frame": 2695,
+          "xml_end_frame": 3060,
+          "start_error_ms": -3.3333333333333335,
+          "end_error_ms": 0.0
+        },
+        {
+          "index": 14,
+          "text": "“三点十五，张师傅亲口说的。”",
+          "source_start_sample": 1230000,
+          "source_end_sample": 1310640,
+          "xml_start_frame": 3075,
+          "xml_end_frame": 3277,
+          "start_error_ms": 0.0,
+          "end_error_ms": 6.666666666666667
+        },
+        {
+          "index": 15,
+          "text": "她把手机屏幕转过去，",
+          "source_start_sample": 1316640,
+          "source_end_sample": 1368480,
+          "xml_start_frame": 3292,
+          "xml_end_frame": 3421,
+          "start_error_ms": 6.666666666666667,
+          "end_error_ms": -3.3333333333333335
+        },
+        {
+          "index": 16,
+          "text": "“您看，短信还在。”\n",
+          "source_start_sample": 1374480,
+          "source_end_sample": 1439760,
+          "xml_start_frame": 3436,
+          "xml_end_frame": 3599,
+          "start_error_ms": -3.3333333333333335,
+          "end_error_ms": -6.666666666666667
+        },
+        {
+          "index": 17,
+          "text": "门后的人沉默了几秒，把门推开了。\n",
+          "source_start_sample": 1445760,
+          "source_end_sample": 1522560,
+          "xml_start_frame": 3614,
+          "xml_end_frame": 3806,
+          "start_error_ms": -6.666666666666667,
+          "end_error_ms": -6.666666666666667
+        },
+        {
+          "index": 18,
+          "text": "“进来吧。”\n",
+          "source_start_sample": 1528560,
+          "source_end_sample": 1593840,
+          "xml_start_frame": 3821,
+          "xml_end_frame": 3985,
+          "start_error_ms": -6.666666666666667,
+          "end_error_ms": 6.666666666666667
+        },
+        {
+          "index": 19,
+          "text": "店里堆着半人高的纸箱。一个中年男人从柜台后面站起来，手里还捏着计算器。\n",
+          "source_start_sample": 1599840,
+          "source_end_sample": 1757280,
+          "xml_start_frame": 4000,
+          "xml_end_frame": 4393,
+          "start_error_ms": 6.666666666666667,
+          "end_error_ms": -3.3333333333333335
+        },
+        {
+          "index": 20,
+          "text": "“你们是来取那台 CD 机的？”\n",
+          "source_start_sample": 1763280,
+          "source_end_sample": 1843920,
+          "xml_start_frame": 4408,
+          "xml_end_frame": 4610,
+          "start_error_ms": -3.3333333333333335,
+          "end_error_ms": 3.3333333333333335
+        },
+        {
+          "index": 21,
+          "text": "“是。”\n",
+          "source_start_sample": 1849920,
+          "source_end_sample": 1874880,
+          "xml_start_frame": 4625,
+          "xml_end_frame": 4687,
+          "start_error_ms": 3.3333333333333335,
+          "end_error_ms": -3.3333333333333335
+        },
+        {
+          "index": 22,
+          "text": "“押金三百二，机器一千零八十。”",
+          "source_start_sample": 1880880,
+          "source_end_sample": 2038320,
+          "xml_start_frame": 4702,
+          "xml_end_frame": 5096,
+          "start_error_ms": -3.3333333333333335,
+          "end_error_ms": 3.3333333333333335
+        },
+        {
+          "index": 23,
+          "text": "张师傅翻了翻本子，",
+          "source_start_sample": 2044320,
+          "source_end_sample": 2090400,
+          "xml_start_frame": 5111,
+          "xml_end_frame": 5226,
+          "start_error_ms": 3.3333333333333335,
+          "end_error_ms": 0.0
+        },
+        {
+          "index": 24,
+          "text": "“上回登记的是周先生吧？”\n",
+          "source_start_sample": 2096400,
+          "source_end_sample": 2213520,
+          "xml_start_frame": 5241,
+          "xml_end_frame": 5534,
+          "start_error_ms": 0.0,
+          "end_error_ms": 3.3333333333333335
+        },
+        {
+          "index": 25,
+          "text": "周远点点头。\n林小雪凑过去看那本子。上面一行字被水洇开了，只剩下半个",
+          "source_start_sample": 2219520,
+          "source_end_sample": 2423040,
+          "xml_start_frame": 5549,
+          "xml_end_frame": 6058,
+          "start_error_ms": 3.3333333333333335,
+          "end_error_ms": 6.666666666666667
+        },
+        {
+          "index": 26,
+          "text": "“雪”",
+          "source_start_sample": 2429040,
+          "source_end_sample": 2457840,
+          "xml_start_frame": 6073,
+          "xml_end_frame": 6145,
+          "start_error_ms": 6.666666666666667,
+          "end_error_ms": 6.666666666666667
+        },
+        {
+          "index": 27,
+          "text": "字。\n",
+          "source_start_sample": 2463840,
+          "source_end_sample": 2492640,
+          "xml_start_frame": 6160,
+          "xml_end_frame": 6232,
+          "start_error_ms": 6.666666666666667,
+          "end_error_ms": 6.666666666666667
+        },
+        {
+          "index": 28,
+          "text": "“这单子还能用吗？”",
+          "source_start_sample": 2498640,
+          "source_end_sample": 2563920,
+          "xml_start_frame": 6247,
+          "xml_end_frame": 6410,
+          "start_error_ms": 6.666666666666667,
+          "end_error_ms": 3.3333333333333335
+        },
+        {
+          "index": 29,
+          "text": "她问。\n",
+          "source_start_sample": 2569920,
+          "source_end_sample": 2591040,
+          "xml_start_frame": 6425,
+          "xml_end_frame": 6478,
+          "start_error_ms": 3.3333333333333335,
+          "end_error_ms": 6.666666666666667
+        },
+        {
+          "index": 30,
+          "text": "“能用。”",
+          "source_start_sample": 2597040,
+          "source_end_sample": 2639280,
+          "xml_start_frame": 6493,
+          "xml_end_frame": 6598,
+          "start_error_ms": 6.666666666666667,
+          "end_error_ms": -3.3333333333333335
+        },
+        {
+          "index": 31,
+          "text": "张师傅说完又补了一句，",
+          "source_start_sample": 2645280,
+          "source_end_sample": 2691360,
+          "xml_start_frame": 6613,
+          "xml_end_frame": 6728,
+          "start_error_ms": -3.3333333333333335,
+          "end_error_ms": -6.666666666666667
+        },
+        {
+          "index": 32,
+          "text": "“不过下次别淋着雨来。”\n",
+          "source_start_sample": 2697360,
+          "source_end_sample": 2826000,
+          "xml_start_frame": 6743,
+          "xml_end_frame": 7065,
+          "start_error_ms": -6.666666666666667,
+          "end_error_ms": 0.0
+        }
+      ],
+      "half_frame_ms": 8.333333333333334,
+      "max_start_error_ms": 6.666666666666667,
+      "max_end_error_ms": 6.666666666666667,
+      "last_minus_first_start_error_ms": -6.666666666666667
+    }
+  },
+  "criterion_conflict": {
+    "text": "末句偏差不比首句大",
+    "status": "已提请用户澄清；独立取整只保证每句半帧有界，并不保证末句小于首句",
+    "no_source_timing_adjustment": true
+  },
+  "resolve_readback": {
+    "24": {
+      "clips": 32,
+      "fps": 24,
+      "max_start_minus_xml_ms": 0.0,
+      "max_end_minus_xml_ms": 0.0,
+      "dialogue_names": 0,
+      "rows": [
+        {
+          "index": 1,
+          "actual_start_seconds": "0",
+          "actual_end_seconds": "67/24",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0001_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 2,
+          "actual_start_seconds": "73/24",
+          "actual_end_seconds": "127/24",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0002_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 3,
+          "actual_start_seconds": "133/24",
+          "actual_end_seconds": "313/24",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0003_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 4,
+          "actual_start_seconds": "319/24",
+          "actual_end_seconds": "181/12",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0004_林小雪.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 5,
+          "actual_start_seconds": "46/3",
+          "actual_end_seconds": "145/8",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0005_周远.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 6,
+          "actual_start_seconds": "147/8",
+          "actual_end_seconds": "163/8",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0006_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 7,
+          "actual_start_seconds": "165/8",
+          "actual_end_seconds": "277/12",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0007_周远.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 8,
+          "actual_start_seconds": "70/3",
+          "actual_end_seconds": "785/24",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0008_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 9,
+          "actual_start_seconds": "791/24",
+          "actual_end_seconds": "851/24",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0009_张师傅.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 10,
+          "actual_start_seconds": "857/24",
+          "actual_end_seconds": "901/24",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0010_林小雪.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 11,
+          "actual_start_seconds": "907/24",
+          "actual_end_seconds": "943/24",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0011_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 12,
+          "actual_start_seconds": "949/24",
+          "actual_end_seconds": "134/3",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0012_张师傅.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 13,
+          "actual_start_seconds": "539/12",
+          "actual_end_seconds": "51",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0013_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 14,
+          "actual_start_seconds": "205/4",
+          "actual_end_seconds": "437/8",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0014_林小雪.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 15,
+          "actual_start_seconds": "439/8",
+          "actual_end_seconds": "57",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0015_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 16,
+          "actual_start_seconds": "229/4",
+          "actual_end_seconds": "60",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0016_林小雪.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 17,
+          "actual_start_seconds": "241/4",
+          "actual_end_seconds": "1523/24",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0017_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 18,
+          "actual_start_seconds": "1529/24",
+          "actual_end_seconds": "797/12",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0018_张师傅.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 19,
+          "actual_start_seconds": "200/3",
+          "actual_end_seconds": "1757/24",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0019_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 20,
+          "actual_start_seconds": "1763/24",
+          "actual_end_seconds": "461/6",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0020_张师傅.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 21,
+          "actual_start_seconds": "925/12",
+          "actual_end_seconds": "625/8",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0021_周远.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 22,
+          "actual_start_seconds": "627/8",
+          "actual_end_seconds": "1019/12",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0022_张师傅.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 23,
+          "actual_start_seconds": "511/6",
+          "actual_end_seconds": "1045/12",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0023_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 24,
+          "actual_start_seconds": "262/3",
+          "actual_end_seconds": "369/4",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0024_张师傅.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 25,
+          "actual_start_seconds": "185/2",
+          "actual_end_seconds": "2423/24",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0025_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 26,
+          "actual_start_seconds": "2429/24",
+          "actual_end_seconds": "1229/12",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0026_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 27,
+          "actual_start_seconds": "308/3",
+          "actual_end_seconds": "831/8",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0027_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 28,
+          "actual_start_seconds": "833/8",
+          "actual_end_seconds": "641/6",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0028_林小雪.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 29,
+          "actual_start_seconds": "1285/12",
+          "actual_end_seconds": "2591/24",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0029_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 30,
+          "actual_start_seconds": "2597/24",
+          "actual_end_seconds": "2639/24",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0030_张师傅.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 31,
+          "actual_start_seconds": "2645/24",
+          "actual_end_seconds": "897/8",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0031_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 32,
+          "actual_start_seconds": "899/8",
+          "actual_end_seconds": "471/4",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0032_张师傅.wav",
+          "name_equals_text": false
+        }
+      ],
+      "assets": [
+        {
+          "file": "0001_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0002_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0003_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0004_林小雪.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0005_周远.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0006_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0007_周远.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0008_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0009_张师傅.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0010_林小雪.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0011_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0012_张师傅.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0013_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0014_林小雪.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0015_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0016_林小雪.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0017_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0018_张师傅.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0019_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0020_张师傅.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0021_周远.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0022_张师傅.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0023_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0024_张师傅.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0025_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0026_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0027_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0028_林小雪.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0029_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0030_张师傅.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0031_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0032_张师傅.wav",
+          "matches_delivery_audio": true
+        }
+      ],
+      "readback_file": "user-data/xml-export-verification/resolve-24.fcpxml",
+      "readback_sha256": "7b9875e30b5bcb8655bb40862328ff15a518357f9a7547014edff4bb46e31128"
+    },
+    "25": {
+      "clips": 32,
+      "fps": 25,
+      "max_start_minus_xml_ms": 0.0,
+      "max_end_minus_xml_ms": 0.0,
+      "dialogue_names": 0,
+      "rows": [
+        {
+          "index": 1,
+          "actual_start_seconds": "0",
+          "actual_end_seconds": "14/5",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0001_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 2,
+          "actual_start_seconds": "76/25",
+          "actual_end_seconds": "132/25",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0002_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 3,
+          "actual_start_seconds": "139/25",
+          "actual_end_seconds": "327/25",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0003_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 4,
+          "actual_start_seconds": "333/25",
+          "actual_end_seconds": "377/25",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0004_林小雪.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 5,
+          "actual_start_seconds": "383/25",
+          "actual_end_seconds": "453/25",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0005_周远.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 6,
+          "actual_start_seconds": "459/25",
+          "actual_end_seconds": "509/25",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0006_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 7,
+          "actual_start_seconds": "516/25",
+          "actual_end_seconds": "578/25",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0007_周远.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 8,
+          "actual_start_seconds": "584/25",
+          "actual_end_seconds": "818/25",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0008_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 9,
+          "actual_start_seconds": "824/25",
+          "actual_end_seconds": "886/25",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0009_张师傅.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 10,
+          "actual_start_seconds": "892/25",
+          "actual_end_seconds": "938/25",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0010_林小雪.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 11,
+          "actual_start_seconds": "189/5",
+          "actual_end_seconds": "983/25",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0011_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 12,
+          "actual_start_seconds": "989/25",
+          "actual_end_seconds": "1117/25",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0012_张师傅.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 13,
+          "actual_start_seconds": "1123/25",
+          "actual_end_seconds": "51",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0013_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 14,
+          "actual_start_seconds": "1281/25",
+          "actual_end_seconds": "273/5",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0014_林小雪.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 15,
+          "actual_start_seconds": "1372/25",
+          "actual_end_seconds": "1426/25",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0015_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 16,
+          "actual_start_seconds": "1432/25",
+          "actual_end_seconds": "60",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0016_林小雪.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 17,
+          "actual_start_seconds": "1506/25",
+          "actual_end_seconds": "1586/25",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0017_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 18,
+          "actual_start_seconds": "1592/25",
+          "actual_end_seconds": "332/5",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0018_张师傅.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 19,
+          "actual_start_seconds": "1667/25",
+          "actual_end_seconds": "1831/25",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0019_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 20,
+          "actual_start_seconds": "1837/25",
+          "actual_end_seconds": "1921/25",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0020_张师傅.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 21,
+          "actual_start_seconds": "1927/25",
+          "actual_end_seconds": "1953/25",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0021_周远.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 22,
+          "actual_start_seconds": "1959/25",
+          "actual_end_seconds": "2123/25",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0022_张师傅.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 23,
+          "actual_start_seconds": "426/5",
+          "actual_end_seconds": "2178/25",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0023_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 24,
+          "actual_start_seconds": "2184/25",
+          "actual_end_seconds": "2306/25",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0024_张师傅.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 25,
+          "actual_start_seconds": "2312/25",
+          "actual_end_seconds": "2524/25",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0025_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 26,
+          "actual_start_seconds": "506/5",
+          "actual_end_seconds": "512/5",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0026_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 27,
+          "actual_start_seconds": "2567/25",
+          "actual_end_seconds": "2597/25",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0027_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 28,
+          "actual_start_seconds": "2603/25",
+          "actual_end_seconds": "2671/25",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0028_林小雪.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 29,
+          "actual_start_seconds": "2677/25",
+          "actual_end_seconds": "2699/25",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0029_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 30,
+          "actual_start_seconds": "541/5",
+          "actual_end_seconds": "2749/25",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0030_张师傅.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 31,
+          "actual_start_seconds": "2756/25",
+          "actual_end_seconds": "2804/25",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0031_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 32,
+          "actual_start_seconds": "562/5",
+          "actual_end_seconds": "2944/25",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0032_张师傅.wav",
+          "name_equals_text": false
+        }
+      ],
+      "assets": [
+        {
+          "file": "0001_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0002_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0003_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0004_林小雪.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0005_周远.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0006_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0007_周远.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0008_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0009_张师傅.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0010_林小雪.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0011_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0012_张师傅.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0013_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0014_林小雪.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0015_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0016_林小雪.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0017_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0018_张师傅.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0019_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0020_张师傅.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0021_周远.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0022_张师傅.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0023_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0024_张师傅.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0025_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0026_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0027_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0028_林小雪.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0029_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0030_张师傅.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0031_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0032_张师傅.wav",
+          "matches_delivery_audio": true
+        }
+      ],
+      "readback_file": "user-data/xml-export-verification/resolve-25.fcpxml",
+      "readback_sha256": "9fc54c05185c9d213cbdfc5daa721e3c472a940a7ab309ddc11c93601dd059e8"
+    },
+    "30": {
+      "clips": 32,
+      "fps": 30,
+      "max_start_minus_xml_ms": 0.0,
+      "max_end_minus_xml_ms": 0.0,
+      "dialogue_names": 0,
+      "rows": [
+        {
+          "index": 1,
+          "actual_start_seconds": "0",
+          "actual_end_seconds": "14/5",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0001_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 2,
+          "actual_start_seconds": "46/15",
+          "actual_end_seconds": "53/10",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0002_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 3,
+          "actual_start_seconds": "83/15",
+          "actual_end_seconds": "196/15",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0003_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 4,
+          "actual_start_seconds": "133/10",
+          "actual_end_seconds": "226/15",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0004_林小雪.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 5,
+          "actual_start_seconds": "46/3",
+          "actual_end_seconds": "272/15",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0005_周远.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 6,
+          "actual_start_seconds": "551/30",
+          "actual_end_seconds": "611/30",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0006_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 7,
+          "actual_start_seconds": "619/30",
+          "actual_end_seconds": "231/10",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0007_周远.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 8,
+          "actual_start_seconds": "701/30",
+          "actual_end_seconds": "327/10",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0008_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 9,
+          "actual_start_seconds": "989/30",
+          "actual_end_seconds": "1063/30",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0009_张师傅.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 10,
+          "actual_start_seconds": "357/10",
+          "actual_end_seconds": "563/15",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0010_林小雪.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 11,
+          "actual_start_seconds": "1133/30",
+          "actual_end_seconds": "393/10",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0011_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 12,
+          "actual_start_seconds": "1187/30",
+          "actual_end_seconds": "134/3",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0012_张师傅.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 13,
+          "actual_start_seconds": "674/15",
+          "actual_end_seconds": "51",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0013_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 14,
+          "actual_start_seconds": "769/15",
+          "actual_end_seconds": "273/5",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0014_林小雪.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 15,
+          "actual_start_seconds": "823/15",
+          "actual_end_seconds": "1711/30",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0015_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 16,
+          "actual_start_seconds": "859/15",
+          "actual_end_seconds": "60",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0016_林小雪.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 17,
+          "actual_start_seconds": "1807/30",
+          "actual_end_seconds": "1903/30",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0017_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 18,
+          "actual_start_seconds": "637/10",
+          "actual_end_seconds": "332/5",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0018_张师傅.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 19,
+          "actual_start_seconds": "200/3",
+          "actual_end_seconds": "2197/30",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0019_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 20,
+          "actual_start_seconds": "1102/15",
+          "actual_end_seconds": "461/6",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0020_张师傅.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 21,
+          "actual_start_seconds": "1156/15",
+          "actual_end_seconds": "1172/15",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0021_周远.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 22,
+          "actual_start_seconds": "2351/30",
+          "actual_end_seconds": "1274/15",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0022_张师傅.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 23,
+          "actual_start_seconds": "511/6",
+          "actual_end_seconds": "871/10",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0023_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 24,
+          "actual_start_seconds": "2621/30",
+          "actual_end_seconds": "2767/30",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0024_张师傅.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 25,
+          "actual_start_seconds": "1387/15",
+          "actual_end_seconds": "3029/30",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0025_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 26,
+          "actual_start_seconds": "506/5",
+          "actual_end_seconds": "512/5",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0026_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 27,
+          "actual_start_seconds": "308/3",
+          "actual_end_seconds": "1558/15",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0027_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 28,
+          "actual_start_seconds": "1041/10",
+          "actual_end_seconds": "641/6",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0028_林小雪.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 29,
+          "actual_start_seconds": "1606/15",
+          "actual_end_seconds": "3239/30",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0029_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 30,
+          "actual_start_seconds": "541/5",
+          "actual_end_seconds": "3299/30",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0030_张师傅.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 31,
+          "actual_start_seconds": "3307/30",
+          "actual_end_seconds": "1682/15",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0031_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 32,
+          "actual_start_seconds": "562/5",
+          "actual_end_seconds": "3533/30",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0032_张师傅.wav",
+          "name_equals_text": false
+        }
+      ],
+      "assets": [
+        {
+          "file": "0001_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0002_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0003_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0004_林小雪.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0005_周远.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0006_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0007_周远.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0008_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0009_张师傅.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0010_林小雪.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0011_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0012_张师傅.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0013_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0014_林小雪.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0015_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0016_林小雪.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0017_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0018_张师傅.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0019_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0020_张师傅.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0021_周远.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0022_张师傅.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0023_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0024_张师傅.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0025_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0026_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0027_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0028_林小雪.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0029_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0030_张师傅.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0031_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0032_张师傅.wav",
+          "matches_delivery_audio": true
+        }
+      ],
+      "readback_file": "user-data/xml-export-verification/resolve-30.fcpxml",
+      "readback_sha256": "3795b962e1464c985599b3b15ff7eb2d763020be45bcb4f34b68feebbf1be4c0"
+    },
+    "50": {
+      "clips": 32,
+      "fps": 50,
+      "max_start_minus_xml_ms": 0.0,
+      "max_end_minus_xml_ms": 0.0,
+      "dialogue_names": 0,
+      "rows": [
+        {
+          "index": 1,
+          "actual_start_seconds": "0",
+          "actual_end_seconds": "14/5",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0001_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 2,
+          "actual_start_seconds": "153/50",
+          "actual_end_seconds": "53/10",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0002_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 3,
+          "actual_start_seconds": "277/50",
+          "actual_end_seconds": "653/50",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0003_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 4,
+          "actual_start_seconds": "333/25",
+          "actual_end_seconds": "377/25",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0004_林小雪.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 5,
+          "actual_start_seconds": "383/25",
+          "actual_end_seconds": "453/25",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0005_周远.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 6,
+          "actual_start_seconds": "919/50",
+          "actual_end_seconds": "1019/50",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0006_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 7,
+          "actual_start_seconds": "1031/50",
+          "actual_end_seconds": "231/10",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0007_周远.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 8,
+          "actual_start_seconds": "584/25",
+          "actual_end_seconds": "818/25",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0008_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 9,
+          "actual_start_seconds": "824/25",
+          "actual_end_seconds": "886/25",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0009_张师傅.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 10,
+          "actual_start_seconds": "357/10",
+          "actual_end_seconds": "1877/50",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0010_林小雪.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 11,
+          "actual_start_seconds": "1889/50",
+          "actual_end_seconds": "393/10",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0011_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 12,
+          "actual_start_seconds": "989/25",
+          "actual_end_seconds": "1117/25",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0012_张师傅.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 13,
+          "actual_start_seconds": "1123/25",
+          "actual_end_seconds": "51",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0013_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 14,
+          "actual_start_seconds": "2563/50",
+          "actual_end_seconds": "2731/50",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0014_林小雪.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 15,
+          "actual_start_seconds": "2743/50",
+          "actual_end_seconds": "2851/50",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0015_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 16,
+          "actual_start_seconds": "1432/25",
+          "actual_end_seconds": "60",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0016_林小雪.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 17,
+          "actual_start_seconds": "1506/25",
+          "actual_end_seconds": "1586/25",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0017_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 18,
+          "actual_start_seconds": "637/10",
+          "actual_end_seconds": "3321/50",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0018_张师傅.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 19,
+          "actual_start_seconds": "3333/50",
+          "actual_end_seconds": "3661/50",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0019_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 20,
+          "actual_start_seconds": "1837/25",
+          "actual_end_seconds": "1921/25",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0020_张师傅.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 21,
+          "actual_start_seconds": "1927/25",
+          "actual_end_seconds": "1953/25",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0021_周远.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 22,
+          "actual_start_seconds": "3919/50",
+          "actual_end_seconds": "4247/50",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0022_张师傅.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 23,
+          "actual_start_seconds": "4259/50",
+          "actual_end_seconds": "871/10",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0023_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 24,
+          "actual_start_seconds": "2184/25",
+          "actual_end_seconds": "2306/25",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0024_张师傅.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 25,
+          "actual_start_seconds": "2312/25",
+          "actual_end_seconds": "2524/25",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0025_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 26,
+          "actual_start_seconds": "5061/50",
+          "actual_end_seconds": "5121/50",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0026_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 27,
+          "actual_start_seconds": "5133/50",
+          "actual_end_seconds": "5193/50",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0027_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 28,
+          "actual_start_seconds": "2603/25",
+          "actual_end_seconds": "2671/25",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0028_林小雪.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 29,
+          "actual_start_seconds": "2677/25",
+          "actual_end_seconds": "2699/25",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0029_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 30,
+          "actual_start_seconds": "5411/50",
+          "actual_end_seconds": "5499/50",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0030_张师傅.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 31,
+          "actual_start_seconds": "5511/50",
+          "actual_end_seconds": "5607/50",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0031_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 32,
+          "actual_start_seconds": "562/5",
+          "actual_end_seconds": "2944/25",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0032_张师傅.wav",
+          "name_equals_text": false
+        }
+      ],
+      "assets": [
+        {
+          "file": "0001_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0002_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0003_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0004_林小雪.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0005_周远.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0006_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0007_周远.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0008_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0009_张师傅.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0010_林小雪.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0011_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0012_张师傅.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0013_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0014_林小雪.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0015_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0016_林小雪.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0017_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0018_张师傅.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0019_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0020_张师傅.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0021_周远.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0022_张师傅.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0023_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0024_张师傅.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0025_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0026_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0027_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0028_林小雪.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0029_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0030_张师傅.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0031_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0032_张师傅.wav",
+          "matches_delivery_audio": true
+        }
+      ],
+      "readback_file": "user-data/xml-export-verification/resolve-50.fcpxml",
+      "readback_sha256": "07997b07440a38e4a4792a138cfc8b0a865cee9fe09b87fca7821b374597a25f"
+    },
+    "60": {
+      "clips": 32,
+      "fps": 60,
+      "max_start_minus_xml_ms": 0.0,
+      "max_end_minus_xml_ms": 0.0,
+      "dialogue_names": 0,
+      "rows": [
+        {
+          "index": 1,
+          "actual_start_seconds": "0",
+          "actual_end_seconds": "14/5",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0001_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 2,
+          "actual_start_seconds": "61/20",
+          "actual_end_seconds": "317/60",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0002_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 3,
+          "actual_start_seconds": "83/15",
+          "actual_end_seconds": "196/15",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0003_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 4,
+          "actual_start_seconds": "799/60",
+          "actual_end_seconds": "226/15",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0004_林小雪.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 5,
+          "actual_start_seconds": "919/60",
+          "actual_end_seconds": "1087/60",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0005_周远.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 6,
+          "actual_start_seconds": "551/30",
+          "actual_end_seconds": "611/30",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0006_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 7,
+          "actual_start_seconds": "1237/60",
+          "actual_end_seconds": "231/10",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0007_周远.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 8,
+          "actual_start_seconds": "467/20",
+          "actual_end_seconds": "1963/60",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0008_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 9,
+          "actual_start_seconds": "989/30",
+          "actual_end_seconds": "1063/30",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0009_张师傅.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 10,
+          "actual_start_seconds": "2141/60",
+          "actual_end_seconds": "563/15",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0010_林小雪.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 11,
+          "actual_start_seconds": "2267/60",
+          "actual_end_seconds": "393/10",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0011_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 12,
+          "actual_start_seconds": "791/20",
+          "actual_end_seconds": "134/3",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0012_张师傅.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 13,
+          "actual_start_seconds": "539/12",
+          "actual_end_seconds": "51",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0013_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 14,
+          "actual_start_seconds": "205/4",
+          "actual_end_seconds": "3277/60",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0014_林小雪.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 15,
+          "actual_start_seconds": "823/15",
+          "actual_end_seconds": "3421/60",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0015_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 16,
+          "actual_start_seconds": "859/15",
+          "actual_end_seconds": "3599/60",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0016_林小雪.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 17,
+          "actual_start_seconds": "1807/30",
+          "actual_end_seconds": "1903/30",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0017_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 18,
+          "actual_start_seconds": "3821/60",
+          "actual_end_seconds": "797/12",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0018_张师傅.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 19,
+          "actual_start_seconds": "200/3",
+          "actual_end_seconds": "4393/60",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0019_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 20,
+          "actual_start_seconds": "1102/15",
+          "actual_end_seconds": "461/6",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0020_张师傅.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 21,
+          "actual_start_seconds": "925/12",
+          "actual_end_seconds": "4687/60",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0021_周远.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 22,
+          "actual_start_seconds": "2351/30",
+          "actual_end_seconds": "1274/15",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0022_张师傅.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 23,
+          "actual_start_seconds": "5111/60",
+          "actual_end_seconds": "871/10",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0023_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 24,
+          "actual_start_seconds": "1747/20",
+          "actual_end_seconds": "2767/30",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0024_张师傅.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 25,
+          "actual_start_seconds": "5549/60",
+          "actual_end_seconds": "3029/30",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0025_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 26,
+          "actual_start_seconds": "6073/60",
+          "actual_end_seconds": "1229/12",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0026_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 27,
+          "actual_start_seconds": "308/3",
+          "actual_end_seconds": "1558/15",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0027_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 28,
+          "actual_start_seconds": "6247/60",
+          "actual_end_seconds": "641/6",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0028_林小雪.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 29,
+          "actual_start_seconds": "1285/12",
+          "actual_end_seconds": "3239/30",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0029_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 30,
+          "actual_start_seconds": "6493/60",
+          "actual_end_seconds": "3299/30",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0030_张师傅.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 31,
+          "actual_start_seconds": "6613/60",
+          "actual_end_seconds": "1682/15",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0031_旁白.wav",
+          "name_equals_text": false
+        },
+        {
+          "index": 32,
+          "actual_start_seconds": "6743/60",
+          "actual_end_seconds": "471/4",
+          "start_minus_xml_ms": 0.0,
+          "end_minus_xml_ms": 0.0,
+          "actual_name": "0032_张师傅.wav",
+          "name_equals_text": false
+        }
+      ],
+      "assets": [
+        {
+          "file": "0001_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0002_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0003_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0004_林小雪.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0005_周远.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0006_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0007_周远.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0008_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0009_张师傅.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0010_林小雪.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0011_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0012_张师傅.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0013_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0014_林小雪.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0015_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0016_林小雪.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0017_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0018_张师傅.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0019_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0020_张师傅.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0021_周远.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0022_张师傅.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0023_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0024_张师傅.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0025_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0026_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0027_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0028_林小雪.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0029_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0030_张师傅.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0031_旁白.wav",
+          "matches_delivery_audio": true
+        },
+        {
+          "file": "0032_张师傅.wav",
+          "matches_delivery_audio": true
+        }
+      ],
+      "readback_file": "user-data/xml-export-verification/resolve-60.fcpxml",
+      "readback_sha256": "1dc5871aeb11e821821bbf6f26498b6b17ed41341fb7642ef8c74a41d537f75e"
+    }
+  },
+  "name_probe": {
+    "change": "Only file/name additionally set to dialogue; actual fresh-project import and relink",
+    "result": "Timeline still displays WAV filename; no production change from this probe",
+    "display_toggle": "View > Show File Names toggled and restored, no visible dialogue name",
+    "project": "VoxStage XML Names",
+    "manual_name_attempt": "Inspector File Name field set through AX, export still WAV filename; actual persisted rename not established. Not counted as a successful name roundtrip.",
+    "general_options": "Viewed Conform Options, no setting changed."
+  },
+  "ui": {
+    "browser": "Codex in-app browser",
+    "project": "中文难例样例",
+    "default_fps": 30,
+    "options": [
+      24,
+      25,
+      30,
+      50,
+      60
+    ],
+    "label": "视频项目帧率",
+    "help": "选你的视频项目正在用的帧率",
+    "error_numbers_visible": false,
+    "clicked_export_button": true,
+    "links_visible": [
+      "full.wav",
+      "subtitles.srt",
+      "timeline.json",
+      "content-check.json",
+      "delivery.zip",
+      "timeline-30fps.xml",
+      "timeline-README.txt"
+    ],
+    "chrome_attempt": "net::ERR_BLOCKED_BY_CLIENT before app load; Chrome UI not verified"
+  },
+  "known_not_met": [
+    "Resolve 21.0.4 实際导入后 160/160 名称仍为 WAV 文件名；XML clipitem/name 正确写入台词，标准中的实际显示台词尚未满足。",
+    "任务书末句偏差不比首句大与独立取整的数学性质冲突，已提请澄清，未自行改动标准。"
+  ],
+  "known_unverified": [
+    "Premiere / Final Cut Pro / other NLEs",
+    "23.976 / 29.97 fps",
+    "Resolve final rendered audio sample-level comparison",
+    "Chrome UI export (browser blocked localhost navigation)"
+  ],
+  "resolve_workflow": {
+    "version": "21.0.4 Free",
+    "project_for_24": "New Project 1",
+    "project_for_25_30_50_60": "VoxStage XML Names",
+    "timeline_names": [
+      "VoxStage 24fps",
+      "VoxStage 25fps",
+      "VoxStage 30fps",
+      "VoxStage 50fps",
+      "VoxStage 60fps"
+    ],
+    "all_five_imported_using_gui": true,
+    "all_five_exported_by_resolve_as": "FCPXML 1.9",
+    "source_audio_identity_verified": true,
+    "relocation": "25/30/50/60 relinked to copied package in Movies/VoxStage-XML-Check-20260911; exact WAV bytes verified",
+    "readback_note": "Positions measured from Resolve exports, not input XML; source frame rounding measured independently for each absolute start/end. Readback does not establish internal engine sample accuracy."
+  },
+  "documentation_handoff": [
+    "根 README 由 Claude Hera 维护；加入 XML 的帧率选择、下载 ZIP + XML + 导入说明、重新定位素材及独立导入 SRT。",
+    "当前台词名称未在 Resolve 实际显示，文档不得写成已支持。",
+    "WAV/ZIP 采样复原约定不变；XML 使用视频帧，不能承诺零采样。"
+  ],
+  "reproduce": {
+    "unit_and_regression": "cd /path/to/VoxStage && .venv/bin/python -m pytest -q",
+    "ui": "生成与检查 → 视频项目帧率 → 导出剪辑时间轴（XML）；下载 ZIP、XML 和导入说明。",
+    "readback": "Actual Resolve exports are in user-data/xml-export-verification/resolve-{24,25,30,50,60}.fcpxml. Compare sequence/spine/asset-clip offset/duration Fractions against frame_measurements rows divided by fps; all 32 rows recorded per fps.",
+    "zip": "Extract exported delivery.zip; allocate int16 zeros(total_samples), place each audio WAV in [start_sample:end_sample]; compare against full.wav with np.array_equal."
+  },
+  "tool_attempts": [
+    {
+      "operation": "GoTo and folder navigation",
+      "failure": "ArrowDown keyNotFound; use supported Down key. Some app states changed externally; read state again before further actions."
+    },
+    {
+      "operation": "Chrome new test tab",
+      "failure": "net::ERR_BLOCKED_BY_CLIENT"
+    },
+    {
+      "operation": "browser project select by visible label",
+      "failure": "Select did not retain the requested option; selected by actual project id next."
+    }
+  ],
+  "final_service": {
+    "app": "VoxStage",
+    "pid": 50325,
+    "workspace_matches": true,
+    "default_xml_identical_to_resolve_tested_input": true,
+    "guide_discloses_name_limitation": true,
+    "download_statuses": {
+      "full.wav": 200,
+      "subtitles.srt": 200,
+      "timeline.json": 200,
+      "content-check.json": 200,
+      "delivery.zip": 200,
+      "timeline-30fps.xml": 200,
+      "timeline-README.txt": 200
+    }
+  },
+  "name_master_probe": {
+    "input": "user-data/xml-export-verification/probe-master-names.xml",
+    "structure": "project/children master clips with masterclipid linkage; debug-only absolute media paths",
+    "observation": "Initial visible timeline reported 0 Clips; subsequent menus disabled, import completion not established. This is an inconclusive probe, not proof that master clips are unsupported.",
+    "followup": "probe-master-names-unique.xml removes duplicate clipitem ids; prepared but NOT imported because UI menus were unavailable",
+    "production_unchanged": true,
+    "prior_five_readback_files_unchanged": true
+  },
+  "sources": [
+    {
+      "url": "https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/FinalCutPro_XML/Basics/Basics.html",
+      "purpose": "XML masterclip syntax only; compatibility judged from actual imports"
+    }
+  ]
+}

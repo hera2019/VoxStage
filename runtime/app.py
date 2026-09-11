@@ -22,6 +22,7 @@ from .launcher import workspace_id
 from .tempo import ffmpeg_path, valid_regions, valid_cuts, edit_status, change_tempo, VERSION as TEMPO_VERSION
 from .audio import process_audio, export_audio, prepare_segment
 from .clips import clip_plan, validate_clips
+from .fcp7 import timeline_xml, IMPORT_GUIDE
 from .rhythm import analyze_file, analyze, VERSION as RHYTHM_VERSION
 from .core import Store, fingerprint
 from .voices import VoiceLibrary, is_custom, custom_id, PREFIX as CUSTOM_PREFIX
@@ -142,6 +143,10 @@ class ListeningRequest(BaseModel):
 
 class RevisionRequest(BaseModel):
     revision: int = Field(ge=0)
+
+class ExportXmlRequest(RevisionRequest):
+    video_fps: int = Field(default=30, strict=True)
+
 
 def _splice_source(project, segment, text):
     """Write an edited line back into the source script and shift what follows."""
@@ -936,8 +941,26 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             (out/'timeline.json').write_text(json.dumps(timeline, ensure_ascii=False, indent=2))
             return {name:f'/api/projects/{project_id}/export/{p["revision"]}/{name}' for name in ('full.wav','subtitles.srt','timeline.json','content-check.json','delivery.zip')}
 
+    @app.post('/api/projects/{project_id}/export/xml')
+    def export_xml(project_id: str, body: ExportXmlRequest):
+        from .fcp7 import FPS_CHOICES
+        if body.video_fps not in FPS_CHOICES:
+            raise ValueError('视频项目帧率请选择 24、25、30、50 或 60')
+        with store.lock:
+            links = export(project_id, body)
+            out = store.directory(project_id)/'exports'/str(body.revision)
+            manifest = json.loads((out/'delivery'/'timeline.json').read_text())
+            payload = timeline_xml(manifest, body.video_fps)
+            name = f'timeline-{body.video_fps}fps.xml'
+            for filename, data in ((name, payload), ('timeline-README.txt', IMPORT_GUIDE.encode('utf-8'))):
+                temp = out/(filename+'.tmp')
+                temp.write_bytes(data)
+                temp.replace(out/filename)
+                links[filename] = f'/api/projects/{project_id}/export/{body.revision}/{filename}'
+            return links
+
     @app.get('/api/projects/{project_id}/export/{revision}/{name}')
-    def download(project_id: str, revision: int, name: Literal['full.wav','subtitles.srt','timeline.json','content-check.json','delivery.zip']):
+    def download(project_id: str, revision: int, name: Literal['full.wav','subtitles.srt','timeline.json','content-check.json','delivery.zip','timeline-24fps.xml','timeline-25fps.xml','timeline-30fps.xml','timeline-50fps.xml','timeline-60fps.xml','timeline-README.txt']):
         if revision < 0:
             raise HTTPException(404)
         path = store.directory(project_id)/'exports'/str(revision)/name

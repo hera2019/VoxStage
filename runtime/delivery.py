@@ -16,6 +16,20 @@ def _vtt_time(sample, rate):
     return f'{ms//3600000:02}:{ms//60000%60:02}:{ms//1000%60:02}.{ms%1000:03}'
 
 
+def _slug(text, budget):
+    """A filename-safe fragment of the line, trimmed to a byte budget."""
+    clean = re.sub(r'[^\w.-]', '_', text, flags=re.UNICODE).strip('._')
+    clean = re.sub(r'_+', '_', clean)
+    kept, used = [], 1          # the leading separator spends a byte of the budget
+    for char in clean:
+        size = len(char.encode())
+        if used + size > budget:
+            break
+        kept.append(char); used += size
+    out = ''.join(kept).strip('._')
+    return '_' + out if out else ''
+
+
 def write_delivery(output, entries, rendered, rate, total_samples):
     """Use the exact PCM arrays already rendered for full.wav, not raw sources."""
     output = Path(output)
@@ -27,7 +41,12 @@ def write_delivery(output, entries, rendered, rate, total_samples):
         for index, (entry, pcm) in enumerate(zip(entries, rendered, strict=True), 1):
             # Ordinals prevent collisions; metadata retains the original role name.
             role = re.sub(r'[^\w.-]', '_', entry['speaker'], flags=re.UNICODE).strip('._')[:40] or 'speaker'
-            filename = f'audio/{index:04d}_{role}.wav'
+            # The line itself goes in the name because that is the only label an
+            # editor actually sees: Resolve shows the file name on the timeline and
+            # ignores the name carried in the XML. Budgeted in bytes, not characters,
+            # so a CJK line cannot overflow the filesystem limit.
+            line = _slug(entry['text'], 90 - len(role.encode()))
+            filename = f'audio/{index:04d}_{role}{line}.wav'
             sf.write(staging / filename, pcm, rate, subtype='PCM_16')
             start, end = entry['file_start_sample'], entry['file_end_sample']
             rows.append({'index':index, 'speaker':entry['speaker'], 'start':start/rate,
