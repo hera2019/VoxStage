@@ -39,10 +39,12 @@ def inspect_package(folder,full,rate,project,legacy):
         reconstructed[entry['start_sample']:entry['end_sample']]=pcm
         assert entry['speech_start_sample']==old['speech_start_sample']
         assert entry['speech_end_sample']==old['speech_end_sample']
-        start=timestamp(entry['speech_start_sample'],rate);end=timestamp(entry['speech_end_sample'],rate)
-        assert start+' --> '+end in srt
-        assert start.replace(',','.')+' --> '+end.replace(',','.') in vtt
-        assert html.escape(entry['text'],quote=False) in vtt
+        # Subtitles are split on the pauses in the audio and stripped for the
+        # screen, so a cue no longer spans exactly one segment — but one always
+        # opens where the segment's speech opens, in both files alike.
+        start=timestamp(entry['speech_start_sample'],rate)
+        assert start+' --> ' in srt
+        assert start.replace(',','.')+' --> ' in vtt
     assert len(reconstructed)==len(full) and np.array_equal(reconstructed,full)
     assert not list(folder.rglob('*.safetensors'))
     return manifest

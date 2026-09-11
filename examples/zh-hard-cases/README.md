@@ -105,15 +105,22 @@ Zero duration anomalies in this run.
 
 ## Subtitles are shorter here than in English
 
-Longest cue: 41 characters, one cue over 40. The English sample's longest runs
-173. The per-line limit is 60 characters for Chinese against 240 for English,
-and Chinese sentences are shorter to begin with, so one line per cue produces
-something much closer to usable subtitles in Chinese than it does in English.
+Subtitles are not the segments. The 29 lines of audio become **48 cues**, cut
+where the voice actually stops rather than where the script has a full stop,
+then stripped of what a screen does not need — quotation marks and sentence-final
+punctuation go, commas become spaces, and `？` and `！` stay because losing them
+changes how a line reads.
 
-One cue still runs 41 characters over 8.9 seconds, which is too long to read
-comfortably. A segment is a synthesis unit and a subtitle cue at once, and those
-two want opposite things; splitting cues independently of audio is the open
-problem here, not a solved one.
+| | |
+|---|---|
+| Longest line | **15 characters** |
+| Lines per cue | 1 |
+| Cue length | 0.5 – 3.1 s |
+
+Before this, one cue ran 41 characters over 8.9 seconds and overflowed the frame.
+A segment has to serve a voice, which wants whole sentences; a cue has to serve a
+reader, who has two seconds. They are now separate objects, and the timing comes
+from measuring the silences in the finished audio.
 
 ## Known limits
 

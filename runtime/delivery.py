@@ -30,14 +30,14 @@ def _slug(text, budget):
     return '_' + out if out else ''
 
 
-def write_delivery(output, entries, rendered, rate, total_samples):
+def write_delivery(output, entries, rendered, rate, total_samples, cues=None):
     """Use the exact PCM arrays already rendered for full.wav, not raw sources."""
     output = Path(output)
     with tempfile.TemporaryDirectory(prefix='.delivery-', dir=output) as temp:
         staging = Path(temp) / 'delivery'
         audio = staging / 'audio'
         audio.mkdir(parents=True)
-        rows, cues = [], ['WEBVTT\n']
+        rows = []
         for index, (entry, pcm) in enumerate(zip(entries, rendered, strict=True), 1):
             # Ordinals prevent collisions; metadata retains the original role name.
             role = re.sub(r'[^\w.-]', '_', entry['speaker'], flags=re.UNICODE).strip('._')[:40] or 'speaker'
@@ -54,7 +54,7 @@ def write_delivery(output, entries, rendered, rate, total_samples):
                 'id':entry['id'], 'start_sample':start, 'end_sample':end, 'samples':len(pcm),
                 'sample_rate':rate, 'speech_start_sample':entry['speech_start_sample'],
                 'speech_end_sample':entry['speech_end_sample'], 'synthetic_audio':True})
-            cues.append(f"{index}\n{_vtt_time(entry['speech_start_sample'],rate)} --> {_vtt_time(entry['speech_end_sample'],rate)}\n{html.escape(entry['text'],quote=False)}\n")
+
         timeline = {'schema_version':1, 'synthetic_audio':True, 'sample_rate':rate,
             'total_samples':total_samples, 'seconds_fields':['start','end','duration'],
             'sample_fields_are_authoritative':True, 'end_sample_is_exclusive':True,
@@ -65,7 +65,13 @@ def write_delivery(output, entries, rendered, rate, total_samples):
             writer = csv.DictWriter(stream,fieldnames=list(rows[0]),quoting=csv.QUOTE_ALL)
             writer.writeheader();writer.writerows(rows)
         shutil.copyfile(output/'subtitles.srt',staging/'subtitles.srt')
-        (staging/'subtitles.vtt').write_text('\n'.join(cues),encoding='utf-8')
+        # The same cues the SRT carries: two subtitle files in one package must
+        # not disagree about when a line is on screen or what it says.
+        lines = ['WEBVTT\n']
+        for index, (start, end, shown) in enumerate(cues or [], 1):
+            lines.append(f'{index}\n{_vtt_time(start,rate)} --> {_vtt_time(end,rate)}\n'
+                         f'{html.escape(shown,quote=False)}\n')
+        (staging/'subtitles.vtt').write_text('\n'.join(lines),encoding='utf-8')
         (staging/'README.txt').write_text('''VoxStage · Portable audio delivery / 可移植音频交付包
 
 All audio in audio/ is AI-generated speech. Speed changes and clip edits are

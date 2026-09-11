@@ -27,7 +27,7 @@ def test_cut_with_tempo_preview_export_restore_and_undo(client):
     assert c.get(preview['url']).content==c.get(links['full.wav']).content
     timeline=c.get(links['timeline.json']).json();entry=timeline['segments'][0]
     assert timeline['total_samples']==round(preview['duration']*24000)
-    assert timestamp(entry['speech_end_sample'],24000) in c.get(links['subtitles.srt']).text
+    assert timestamp(entry['speech_start_sample'],24000)+' --> ' in c.get(links['subtitles.srt']).text
     assert c.get(links['content-check.json']).json()['segments'][0]['edited_content_requires_review']
     p=c.post(base+'/undo',json={'revision':p['revision']}).json();assert p['segments'][0]['tempo_status']=='none'
     p=c.post(base+'/redo',json={'revision':p['revision']}).json();assert p['segments'][0]['tempo_edit']['cuts']==[cut]

@@ -67,7 +67,9 @@ def test_roundtrip_cache_timeline_and_export(client, language):
     srt = client.get(links['subtitles.srt']).text
     for s in timeline['segments']:
         assert s['file_start_sample']<s['speech_start_sample']<s['speech_end_sample']<s['file_end_sample']
-        assert timestamp(s['speech_start_sample'],24000)+' --> '+timestamp(s['speech_end_sample'],24000) in srt
+        # A segment may yield several cues and a very short one is held longer,
+        # but a cue always opens exactly where the segment's speech opens.
+        assert timestamp(s['speech_start_sample'],24000)+' --> ' in srt
 
 def test_undo_redo_and_stale_edit(client):
     p = create(client)

@@ -31,6 +31,9 @@ def process_audio(audio, rate):
                    'speech_boundary_method': 'estimated_rms_10ms',
                    'processing_version': PROCESSING_VERSION, 'synthetic_audio': True}
 
+from .subtitles import cues as subtitle_cues, hold_briefest
+
+
 def timestamp(sample, rate):
     ms = round(sample * 1000 / rate)
     return f'{ms//3600000:02}:{ms//60000%60:02}:{ms//1000%60:02},{ms%1000:03}'
@@ -67,7 +70,8 @@ def export_audio(project, directory: Path, output: Path, *, delivery=False):
                         'synthetic_audio':True,'speech_rate':speed,'tempo_mapping':mapping,
                         'processed_checks':{**{k:v for k,v in analyze(pcm,rate).items() if k!='waveform'},'notice':'成品低能量检查；时间为该句成品秒数，不代表自然度通过。'},
                         'processed_check_scope':'final_segment_audio; pace requires original ASR timings'})
-        cues.append(f'{index+1}\n{timestamp(start, rate)} --> {timestamp(end, rate)}\n{segment["text"]}\n')
+        cues += [c[:3] for c in subtitle_cues(segment, segment['text'], start, end,
+                                              project['language'], pcm, rate)]
         parts.append(pcm)
         if delivery:rendered.append(pcm)
         position += len(pcm)
@@ -80,10 +84,13 @@ def export_audio(project, directory: Path, output: Path, *, delivery=False):
             position += len(pause)
     output.mkdir(parents=True, exist_ok=True)
     sf.write(output / 'full.wav', np.concatenate(parts), rate, subtype='PCM_16')
-    (output / 'subtitles.srt').write_text('\n'.join(cues), encoding='utf-8')
+    cues = hold_briefest(cues, rate)
+    (output / 'subtitles.srt').write_text('\n'.join(
+        f'{i+1}\n{timestamp(a, rate)} --> {timestamp(b, rate)}\n{shown}\n'
+        for i, (a, b, shown) in enumerate(cues)), encoding='utf-8')
     if delivery:
         from .delivery import write_delivery
-        write_delivery(output,entries,rendered,rate,position)
+        write_delivery(output,entries,rendered,rate,position,cues)
     return {'synthetic_audio':True, 'speech_rate':project.get('speech_rate',1.0), 'sample_rate':rate, 'total_samples':position, 'segments':entries}
 
 # 最后更新：2026-09-09 · Astra
