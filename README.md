@@ -77,13 +77,19 @@ For the content check, install a compatible `whisper-cli`, then
 
 This is a developer setup, not a consumer installer.
 
-## A finished sample
+## Two finished samples
 
 [*Pride and Prejudice*, opening of Chapter 1](examples/pride-and-prejudice-ch1/) —
 unlabelled public-domain prose in, three-character audio and subtitles out, run
 end to end on one Mac. Attribution made **one mistake in 35 units**, and the
 sample says which one and why that particular kind of mistake matters. Timings,
 the transcribe-back results and the known limitations are all in that folder.
+
+[A Chinese scene written to be difficult](examples/zh-hard-cases/) — the
+opposite approach: four characters in 440 characters of text, built to stack the
+cases attribution is known to get wrong. It caught the trailing attribution that
+had failed twice before, and gave one character two names, which for synthesis
+means one person speaking in two voices.
 
 ## What works today
 

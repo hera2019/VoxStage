@@ -1,0 +1,1294 @@
+{
+  "synthetic_audio": true,
+  "speech_rate": 1.0,
+  "sample_rate": 24000,
+  "total_samples": 2814480,
+  "segments": [
+    {
+      "id": "3a0c0ebce65e45fca03301a28f1110d7",
+      "speaker": "旁白",
+      "text": "门上贴着一张纸，写着",
+      "file_start_sample": 0,
+      "file_end_sample": 67200,
+      "speech_start_sample": 5040,
+      "speech_end_sample": 59760,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 2.8,
+          "output_start": 0.0,
+          "output_end": 2.8,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 2.8,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 1.63,
+            "end": 1.98,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "7633ee276ed64716a6faec6198f8c7d7",
+      "speaker": "旁白",
+      "text": "“今日盘点，暂停营业”。\n",
+      "file_start_sample": 73200,
+      "file_end_sample": 126960,
+      "speech_start_sample": 78240,
+      "speech_end_sample": 119280,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 2.24,
+          "output_start": 0.0,
+          "output_end": 2.24,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 2.24,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "d7d227456d12404f8f215f6f6cf41085",
+      "speaker": "旁白",
+      "text": "林小雪把伞收起来，抖了抖水。她抬头看了看招牌，又低头核对手机上的地址。\n",
+      "file_start_sample": 132960,
+      "file_end_sample": 313440,
+      "speech_start_sample": 138480,
+      "speech_end_sample": 305760,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 7.52,
+          "output_start": 0.0,
+          "output_end": 7.52,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 7.52,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 2.91,
+            "end": 3.41,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "e9ed60e757e04982ae00db4ed82751ca",
+      "speaker": "林小雪",
+      "text": "“应该就是这儿。”\n",
+      "file_start_sample": 319440,
+      "file_end_sample": 361680,
+      "speech_start_sample": 330480,
+      "speech_end_sample": 352080,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 1.76,
+          "output_start": 0.0,
+          "output_end": 1.76,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 1.76,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "538892cdba004387aad8532b0538971d",
+      "speaker": "周远",
+      "text": "“可门关着。”",
+      "file_start_sample": 367680,
+      "file_end_sample": 434880,
+      "speech_start_sample": 385200,
+      "speech_end_sample": 403200,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 2.8,
+          "output_start": 0.0,
+          "output_end": 2.8,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 2.8,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "ac40f77bc4fc43948ce02afc9a4a2f6b",
+      "speaker": "旁白",
+      "text": "周远把手插进口袋，",
+      "file_start_sample": 440880,
+      "file_end_sample": 488880,
+      "speech_start_sample": 446640,
+      "speech_end_sample": 481920,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 2.0,
+          "output_start": 0.0,
+          "output_end": 2.0,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 2.0,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "985e919f373840d9ad60d6da652d055f",
+      "speaker": "周远",
+      "text": "“我早说了先打个电话。”\n",
+      "file_start_sample": 494880,
+      "file_end_sample": 554400,
+      "speech_start_sample": 503520,
+      "speech_end_sample": 543600,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 2.48,
+          "output_start": 0.0,
+          "output_end": 2.48,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 2.48,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "0942c9f9783b49e2bd557c2272d35e7e",
+      "speaker": "旁白",
+      "text": "那姑娘没理他，绕到侧门去敲了三下。\n里面传来拖沓的脚步声。门开了一条缝，露出半张脸。\n",
+      "file_start_sample": 560400,
+      "file_end_sample": 785040,
+      "speech_start_sample": 565440,
+      "speech_end_sample": 778320,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 9.36,
+          "output_start": 0.0,
+          "output_end": 9.36,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 9.36,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 1.38,
+            "end": 1.84,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 3.48,
+            "end": 3.99,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 7.79,
+            "end": 8.17,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "706c6dea503943a081d5b94b5ba89fc9",
+      "speaker": "张师傅",
+      "text": "“盘点呢。”\n",
+      "file_start_sample": 791040,
+      "file_end_sample": 850560,
+      "speech_start_sample": 810720,
+      "speech_end_sample": 832320,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 2.48,
+          "output_start": 0.0,
+          "output_end": 2.48,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 2.48,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "e29dabe6dc6c431c8ef04b7878ac129d",
+      "speaker": "林小雪",
+      "text": "“我们约好的。”",
+      "file_start_sample": 856560,
+      "file_end_sample": 900720,
+      "speech_start_sample": 864960,
+      "speech_end_sample": 885600,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 1.84,
+          "output_start": 0.0,
+          "output_end": 1.84,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 1.84,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "af24d12718c443109457fed67bd7bd44",
+      "speaker": "旁白",
+      "text": "林小雪说。\n",
+      "file_start_sample": 906720,
+      "file_end_sample": 943200,
+      "speech_start_sample": 912240,
+      "speech_end_sample": 936000,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 1.52,
+          "output_start": 0.0,
+          "output_end": 1.52,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 1.52,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "b042f55589c8457ead492210a504e3f9",
+      "speaker": "张师傅",
+      "text": "“约好的也得等。”\n",
+      "file_start_sample": 949200,
+      "file_end_sample": 1072080,
+      "speech_start_sample": 977760,
+      "speech_end_sample": 1046640,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 5.12,
+          "output_start": 0.0,
+          "output_end": 5.12,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 5.12,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 2.68,
+            "end": 3.19,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "5de67f709fbd4b4fabac12b4a0ba8b1c",
+      "speaker": "旁白",
+      "text": "周远刚要开口，被她拦住了。\n他想，这人怕是记错了日子。\n",
+      "file_start_sample": 1078080,
+      "file_end_sample": 1224000,
+      "speech_start_sample": 1083360,
+      "speech_end_sample": 1219200,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 6.08,
+          "output_start": 0.0,
+          "output_end": 6.08,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 6.08,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 2.7,
+            "end": 3.47,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "f39575a3f7534de6a8f5d4a66a83993b",
+      "speaker": "林小雪",
+      "text": "“三点十五，张师傅亲口说的。”",
+      "file_start_sample": 1230000,
+      "file_end_sample": 1310640,
+      "speech_start_sample": 1238640,
+      "speech_end_sample": 1295280,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 3.36,
+          "output_start": 0.0,
+          "output_end": 3.36,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 3.36,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "ac46257a03c34bd5bbbdb16dade09782",
+      "speaker": "旁白",
+      "text": "她把手机屏幕转过去，",
+      "file_start_sample": 1316640,
+      "file_end_sample": 1368480,
+      "speech_start_sample": 1321920,
+      "speech_end_sample": 1362240,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 2.16,
+          "output_start": 0.0,
+          "output_end": 2.16,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 2.16,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "2ef8f56308624f77b3bbfafb13c6d497",
+      "speaker": "林小雪",
+      "text": "“您看，短信还在。”\n",
+      "file_start_sample": 1374480,
+      "file_end_sample": 1439760,
+      "speech_start_sample": 1385280,
+      "speech_end_sample": 1424400,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 2.72,
+          "output_start": 0.0,
+          "output_end": 2.72,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 2.72,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 0.86,
+            "end": 1.23,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "4f14215d844f4ffd9f1d761afa41fa29",
+      "speaker": "旁白",
+      "text": "门后的人沉默了几秒，把门推开了。\n",
+      "file_start_sample": 1445760,
+      "file_end_sample": 1522560,
+      "speech_start_sample": 1450560,
+      "speech_end_sample": 1515840,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 3.2,
+          "output_start": 0.0,
+          "output_end": 3.2,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 3.2,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "c1e1766ff47d4d14a06b248b6870c018",
+      "speaker": "张师傅",
+      "text": "“进来吧。”\n",
+      "file_start_sample": 1528560,
+      "file_end_sample": 1593840,
+      "speech_start_sample": 1554480,
+      "speech_end_sample": 1570080,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 2.72,
+          "output_start": 0.0,
+          "output_end": 2.72,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 2.72,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "301bfcdc4efa40f89bf915ffd8a7d7a7",
+      "speaker": "旁白",
+      "text": "店里堆着半人高的纸箱。一个中年男人从柜台后面站起来，手里还捏着计算器。\n",
+      "file_start_sample": 1599840,
+      "file_end_sample": 1768800,
+      "speech_start_sample": 1605120,
+      "speech_end_sample": 1762320,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 7.04,
+          "output_start": 0.0,
+          "output_end": 7.04,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 7.04,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 2.02,
+            "end": 2.7,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "1aa7bc73c9cb432985d50a41e0b3f7eb",
+      "speaker": "张师傅",
+      "text": "“你们是来取那台 CD 机的？”\n",
+      "file_start_sample": 1774800,
+      "file_end_sample": 1855440,
+      "speech_start_sample": 1795440,
+      "speech_end_sample": 1836960,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 3.36,
+          "output_start": 0.0,
+          "output_end": 3.36,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 3.36,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "3e02aae166774ca287b8a87e17ed4b94",
+      "speaker": "周远",
+      "text": "“是。”\n",
+      "file_start_sample": 1861440,
+      "file_end_sample": 1894080,
+      "speech_start_sample": 1870800,
+      "speech_end_sample": 1885920,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 1.36,
+          "output_start": 0.0,
+          "output_end": 1.36,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 1.36,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "849525eea443437780252d721019daab",
+      "speaker": "张师傅",
+      "text": "“押金三百二，机器一千零八十。”",
+      "file_start_sample": 1900080,
+      "file_end_sample": 2026800,
+      "speech_start_sample": 1928880,
+      "speech_end_sample": 2007600,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 5.28,
+          "output_start": 0.0,
+          "output_end": 5.28,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 5.28,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 2.23,
+            "end": 2.73,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "cf6a96b6300442e09da6c201785217be",
+      "speaker": "旁白",
+      "text": "张师傅翻了翻本子，",
+      "file_start_sample": 2032800,
+      "file_end_sample": 2078880,
+      "speech_start_sample": 2037840,
+      "speech_end_sample": 2072400,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 1.92,
+          "output_start": 0.0,
+          "output_end": 1.92,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 1.92,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "d308f348d3034f3e9b6346cb135032c6",
+      "speaker": "张师傅",
+      "text": "“上回登记的是周先生吧？”\n",
+      "file_start_sample": 2084880,
+      "file_end_sample": 2202000,
+      "speech_start_sample": 2113680,
+      "speech_end_sample": 2178000,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 4.88,
+          "output_start": 0.0,
+          "output_end": 4.88,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 4.88,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "07ecc1517c0d4a5f8718a212bb67b864",
+      "speaker": "旁白",
+      "text": "周远点点头。\n林小雪凑过去看那本子。上面一行字被水洇开了，只剩下半个",
+      "file_start_sample": 2208000,
+      "file_end_sample": 2411520,
+      "speech_start_sample": 2213040,
+      "speech_end_sample": 2402640,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 8.48,
+          "output_start": 0.0,
+          "output_end": 8.48,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 8.48,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 1.29,
+            "end": 2.06,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 3.98,
+            "end": 4.65,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "2ab369a8c85841868a21424c8453e1b2",
+      "speaker": "旁白",
+      "text": "“雪”",
+      "file_start_sample": 2417520,
+      "file_end_sample": 2446320,
+      "speech_start_sample": 2424000,
+      "speech_end_sample": 2437680,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 1.2,
+          "output_start": 0.0,
+          "output_end": 1.2,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 1.2,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "761c79c3ebea4afeae0cbf53908b6bea",
+      "speaker": "旁白",
+      "text": "字。\n",
+      "file_start_sample": 2452320,
+      "file_end_sample": 2481120,
+      "speech_start_sample": 2457360,
+      "speech_end_sample": 2473920,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 1.2,
+          "output_start": 0.0,
+          "output_end": 1.2,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 1.2,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "c4b451b9e36a42f298026da4472cc999",
+      "speaker": "林小雪",
+      "text": "“这单子还能用吗？”",
+      "file_start_sample": 2487120,
+      "file_end_sample": 2552400,
+      "speech_start_sample": 2501760,
+      "speech_end_sample": 2535840,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 2.72,
+          "output_start": 0.0,
+          "output_end": 2.72,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 2.72,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "b9093600d01a4018a7080dfb897c1424",
+      "speaker": "旁白",
+      "text": "她问。\n",
+      "file_start_sample": 2558400,
+      "file_end_sample": 2579520,
+      "speech_start_sample": 2563680,
+      "speech_end_sample": 2573520,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 0.88,
+          "output_start": 0.0,
+          "output_end": 0.88,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 0.88,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "45009b7c62044cbd9722c2714aa518f0",
+      "speaker": "张师傅",
+      "text": "“能用。”",
+      "file_start_sample": 2585520,
+      "file_end_sample": 2627760,
+      "speech_start_sample": 2606400,
+      "speech_end_sample": 2621760,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 1.76,
+          "output_start": 0.0,
+          "output_end": 1.76,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 1.76,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "993cb69037bf4418b84d5890c072d8b5",
+      "speaker": "旁白",
+      "text": "张师傅说完又补了一句，",
+      "file_start_sample": 2633760,
+      "file_end_sample": 2679840,
+      "speech_start_sample": 2639520,
+      "speech_end_sample": 2673600,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 1.92,
+          "output_start": 0.0,
+          "output_end": 1.92,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 1.92,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "884449c3f7a14316b86e215634b26fb7",
+      "speaker": "张师傅",
+      "text": "“不过下次别淋着雨来。”\n",
+      "file_start_sample": 2685840,
+      "file_end_sample": 2814480,
+      "speech_start_sample": 2714160,
+      "speech_end_sample": 2787360,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 5.36,
+          "output_start": 0.0,
+          "output_end": 5.36,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 5.36,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 1.92,
+            "end": 2.64,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    }
+  ],
+  "project_revision": 72
+}

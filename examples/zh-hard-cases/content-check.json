@@ -1,0 +1,342 @@
+{
+ "project_revision": 72,
+ "synthetic_audio": true,
+ "speech_rate": 1.0,
+ "checked_audio": "original_generated_audio",
+ "notice": "自动文字检查针对原始合成声音；剪切可能移除发音，成品文字及字幕需要重新人工核对。",
+ "segments": [
+  {
+   "speaker": "旁白",
+   "check_status": "match",
+   "expected_text": "门上贴着一张纸，写着",
+   "recognized_text": "门\n上\n贴\n着\n一\n张\n纸\n写\n着",
+   "differences": [],
+   "homophone_equivalences": []
+  },
+  {
+   "speaker": "旁白",
+   "check_status": "match",
+   "expected_text": "“今日盘点，暂停营业”。\n",
+   "recognized_text": "今日\n盘\n点\n暂\n停\n营\n业",
+   "differences": [],
+   "homophone_equivalences": []
+  },
+  {
+   "speaker": "旁白",
+   "check_status": "match",
+   "expected_text": "林小雪把伞收起来，抖了抖水。她抬头看了看招牌，又低头核对手机上的地址。\n",
+   "recognized_text": "林\n小\n雪\n把\n伞\n收\n起\n来\n,\n抖\n了\n抖\n水\n,\n她\n抬\n头\n看\n了\n看\n招\n牌\n,\n又\n低\n头\n核\n对\n手\n机\n上\n的\n地\n址\n。",
+   "differences": [],
+   "homophone_equivalences": []
+  },
+  {
+   "speaker": "林小雪",
+   "check_status": "match",
+   "expected_text": "“应该就是这儿。”\n",
+   "recognized_text": "应\n该\n就是\n这\n儿",
+   "differences": [],
+   "homophone_equivalences": []
+  },
+  {
+   "speaker": "周远",
+   "check_status": "match",
+   "expected_text": "“可门关着。”",
+   "recognized_text": "可\n门\n关\n着",
+   "differences": [],
+   "homophone_equivalences": []
+  },
+  {
+   "speaker": "旁白",
+   "check_status": "review",
+   "expected_text": "周远把手插进口袋，",
+   "recognized_text": "周\n元\n把\n手\n插\n进\n口\n袋",
+   "differences": [
+    {
+     "kind": "replace",
+     "expected": "远",
+     "recognized": "元"
+    }
+   ],
+   "homophone_equivalences": []
+  },
+  {
+   "speaker": "周远",
+   "check_status": "match",
+   "expected_text": "“我早说了先打个电话。”\n",
+   "recognized_text": "我\n早\n说\n了\n先\n打\n个\n电\n话",
+   "differences": [],
+   "homophone_equivalences": []
+  },
+  {
+   "speaker": "旁白",
+   "check_status": "match",
+   "expected_text": "那姑娘没理他，绕到侧门去敲了三下。\n里面传来拖沓的脚步声。门开了一条缝，露出半张脸。\n",
+   "recognized_text": "那\n姑\n娘\n没\n理\n她\n绕\n到\n侧\n门\n去\n敲\n了\n三\n下\n里\n面\n传\n来\n拖\n沓\n的\n脚\n步\n声\n门\n开\n了\n一\n条\n缝\n露\n出\n半\n张\n脸",
+   "differences": [],
+   "homophone_equivalences": [
+    {
+     "expected": "他",
+     "recognized": "她",
+     "basis": "pinyin"
+    }
+   ]
+  },
+  {
+   "speaker": "张师傅",
+   "check_status": "match",
+   "expected_text": "“盘点呢。”\n",
+   "recognized_text": "盘\n点\n呢",
+   "differences": [],
+   "homophone_equivalences": []
+  },
+  {
+   "speaker": "林小雪",
+   "check_status": "match",
+   "expected_text": "“我们约好的。”",
+   "recognized_text": "我们\n约\n好的",
+   "differences": [],
+   "homophone_equivalences": []
+  },
+  {
+   "speaker": "旁白",
+   "check_status": "match",
+   "expected_text": "林小雪说。\n",
+   "recognized_text": "林\n小\n雪\n说",
+   "differences": [],
+   "homophone_equivalences": []
+  },
+  {
+   "speaker": "张师傅",
+   "check_status": "review",
+   "expected_text": "“约好的也得等。”\n",
+   "recognized_text": "越\n好的\n也\n得\n等",
+   "differences": [
+    {
+     "kind": "replace",
+     "expected": "约",
+     "recognized": "越"
+    }
+   ],
+   "homophone_equivalences": []
+  },
+  {
+   "speaker": "旁白",
+   "check_status": "match",
+   "expected_text": "周远刚要开口，被她拦住了。\n他想，这人怕是记错了日子。\n",
+   "recognized_text": "周\n远\n刚\n要\n开\n口\n被\n他\n拦\n住\n了\n他\n想\n这\n人\n怕\n是\n记\n错\n了\n日\n子",
+   "differences": [],
+   "homophone_equivalences": [
+    {
+     "expected": "她",
+     "recognized": "他",
+     "basis": "pinyin"
+    }
+   ]
+  },
+  {
+   "speaker": "林小雪",
+   "check_status": "match",
+   "expected_text": "“三点十五，张师傅亲口说的。”",
+   "recognized_text": "三\n点\n十\n五\n张\n师\n傅\n亲\n口\n说\n的",
+   "differences": [],
+   "homophone_equivalences": []
+  },
+  {
+   "speaker": "旁白",
+   "check_status": "match",
+   "expected_text": "她把手机屏幕转过去，",
+   "recognized_text": "他\n把\n手\n机\n屏\n幕\n转\n过\n去",
+   "differences": [],
+   "homophone_equivalences": [
+    {
+     "expected": "她",
+     "recognized": "他",
+     "basis": "pinyin"
+    }
+   ]
+  },
+  {
+   "speaker": "林小雪",
+   "check_status": "match",
+   "expected_text": "“您看，短信还在。”\n",
+   "recognized_text": "您\n看\n\n短\n信\n还\n在",
+   "differences": [],
+   "homophone_equivalences": []
+  },
+  {
+   "speaker": "旁白",
+   "check_status": "match",
+   "expected_text": "门后的人沉默了几秒，把门推开了。\n",
+   "recognized_text": "门\n后\n的人\n沉\n默\n了\n几\n秒\n把\n门\n推\n开\n了",
+   "differences": [],
+   "homophone_equivalences": []
+  },
+  {
+   "speaker": "张师傅",
+   "check_status": "match",
+   "expected_text": "“进来吧。”\n",
+   "recognized_text": "进\n来\n吧",
+   "differences": [],
+   "homophone_equivalences": []
+  },
+  {
+   "speaker": "旁白",
+   "check_status": "review",
+   "expected_text": "店里堆着半人高的纸箱。一个中年男人从柜台后面站起来，手里还捏着计算器。\n",
+   "recognized_text": "店\n里\n对\n着\n半\n人\n高\n的\n纸\n箱\n一个\n中\n年\n男\n人\n从\n柜\n台\n后\n面\n站\n起\n来\n手\n里\n还\n捏\n着\n计\n算\n器",
+   "differences": [
+    {
+     "kind": "replace",
+     "expected": "堆",
+     "recognized": "对"
+    }
+   ],
+   "homophone_equivalences": []
+  },
+  {
+   "speaker": "张师傅",
+   "check_status": "match",
+   "expected_text": "“你们是来取那台 CD 机的？”\n",
+   "recognized_text": "你们\n是\n来\n取\n那\n台\nCD\n机\n的",
+   "differences": [],
+   "homophone_equivalences": []
+  },
+  {
+   "speaker": "周远",
+   "check_status": "review",
+   "expected_text": "“是。”\n",
+   "recognized_text": "是啊",
+   "differences": [
+    {
+     "kind": "insert",
+     "expected": "",
+     "recognized": "啊"
+    }
+   ],
+   "homophone_equivalences": []
+  },
+  {
+   "speaker": "张师傅",
+   "check_status": "review",
+   "expected_text": "“押金三百二，机器一千零八十。”",
+   "recognized_text": "销\n金\n3\n20\n机\n器\n10\n80",
+   "differences": [
+    {
+     "kind": "replace",
+     "expected": "押",
+     "recognized": "销"
+    },
+    {
+     "kind": "replace",
+     "expected": "三百二",
+     "recognized": "320"
+    },
+    {
+     "kind": "replace",
+     "expected": "一千零八十",
+     "recognized": "1080"
+    }
+   ],
+   "homophone_equivalences": []
+  },
+  {
+   "speaker": "旁白",
+   "check_status": "match",
+   "expected_text": "张师傅翻了翻本子，",
+   "recognized_text": "张\n师\n傅\n翻\n了\n翻\n本\n子",
+   "differences": [],
+   "homophone_equivalences": []
+  },
+  {
+   "speaker": "张师傅",
+   "check_status": "match",
+   "expected_text": "“上回登记的是周先生吧？”\n",
+   "recognized_text": "上\n回\n登\n记\n的是\n周\n先生\n吧",
+   "differences": [],
+   "homophone_equivalences": []
+  },
+  {
+   "speaker": "旁白",
+   "check_status": "match",
+   "expected_text": "周远点点头。\n林小雪凑过去看那本子。上面一行字被水洇开了，只剩下半个",
+   "recognized_text": "周\n远\n点\n点\n头\n林\n小\n雪\n凑\n过\n去\n看\n那\n本\n子\n上面\n一\n行\n字\n被\n水\n阴\n开\n了\n只\n剩\n下\n半\n个",
+   "differences": [],
+   "homophone_equivalences": [
+    {
+     "expected": "洇",
+     "recognized": "阴",
+     "basis": "pinyin"
+    }
+   ]
+  },
+  {
+   "speaker": "旁白",
+   "check_status": "match",
+   "expected_text": "“雪”",
+   "recognized_text": "雪",
+   "differences": [],
+   "homophone_equivalences": []
+  },
+  {
+   "speaker": "旁白",
+   "check_status": "review",
+   "expected_text": "字。\n",
+   "recognized_text": "刺",
+   "differences": [
+    {
+     "kind": "replace",
+     "expected": "字",
+     "recognized": "刺"
+    }
+   ],
+   "homophone_equivalences": []
+  },
+  {
+   "speaker": "林小雪",
+   "check_status": "match",
+   "expected_text": "“这单子还能用吗？”",
+   "recognized_text": "这\n单\n子\n还\n能\n用\n吗",
+   "differences": [],
+   "homophone_equivalences": []
+  },
+  {
+   "speaker": "旁白",
+   "check_status": "match",
+   "expected_text": "她问。\n",
+   "recognized_text": "他\n问",
+   "differences": [],
+   "homophone_equivalences": [
+    {
+     "expected": "她",
+     "recognized": "他",
+     "basis": "pinyin"
+    }
+   ]
+  },
+  {
+   "speaker": "张师傅",
+   "check_status": "match",
+   "expected_text": "“能用。”",
+   "recognized_text": "能\n用",
+   "differences": [],
+   "homophone_equivalences": []
+  },
+  {
+   "speaker": "旁白",
+   "check_status": "match",
+   "expected_text": "张师傅说完又补了一句，",
+   "recognized_text": "张\n师\n傅\n说\n完\n又\n补\n了\n一\n句",
+   "differences": [],
+   "homophone_equivalences": []
+  },
+  {
+   "speaker": "张师傅",
+   "check_status": "match",
+   "expected_text": "“不过下次别淋着雨来。”\n",
+   "recognized_text": "不\n过\n,\n下次\n别\n淋\n着\n雨\n来\n。",
+   "differences": [],
+   "homophone_equivalences": []
+  }
+ ],
+ "note_slim": "样例只保留比对结论；完整识别输出留在本机工程内。"
+}

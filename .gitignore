@@ -96,6 +96,7 @@ build/
 # 例外：公开样例的合成音频。预设音色生成，无任何真人参考音，
 # 与上面排除真人录音的规则不冲突。
 !examples/pride-and-prejudice-ch1/full.mp3
+!examples/zh-hard-cases/full.mp3
 /docs/handover-2026-09-11.md
 /docs/pre-publication-checklist.md
 /docs/gap-review-2026-09-11.md

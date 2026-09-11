@@ -788,11 +788,20 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
     def review_check(project_id: str, body: CheckReviewRequest):
         def apply(p):
             current=next((s for s in store.public(p,engine,checker)['segments'] if s['id']==body.segment_id),None)
-            if not current or current['check_status'] not in ('review','confirmed'):
-                raise ValueError('请先检查当前音频，再试听确认差异。')
+            if not current or current['status']!='ready':
+                raise ValueError('请先检查当前音频，再试听确认文字与节奏。')
+            keys=[key for status,key in (('check_status','content_check'),('rhythm_status','rhythm_check'))
+                  if current[status] in ('review','confirmed')]
+            if not keys:
+                raise ValueError('请先检查当前音频，再试听确认文字与节奏。')
             segment=next(s for s in p['segments'] if s['id']==body.segment_id)
-            segment['content_check']['reviewed']=body.confirmed
-            segment['content_check']['reviewed_at']=time.time() if body.confirmed else None
+            digest=file_sha(store.directory(project_id)/'audio'/(current['audio']['fingerprint']+'.wav'))
+            if any(segment[key].get('audio_sha256')!=digest for key in keys):
+                raise ValueError('音频文件已变化，请重新检查后再试听确认。')
+            reviewed_at=time.time() if body.confirmed else None
+            for key in keys:
+                segment[key]['reviewed']=body.confirmed
+                segment[key]['reviewed_at']=reviewed_at
         return store.public(store.edit(project_id,body.revision,apply),engine,checker)
 
     @app.post('/api/projects/{project_id}/render/cancel')
@@ -947,3 +956,5 @@ if __name__ == '__main__':
 # 最后更新：2026-09-09 · Astra
 
 # 最后更新：2026-09-10 · Astra（接入原文绑定的角色草稿）
+
+# 最后更新：2026-09-11 · Astra（复用试听确认接口同时处理文字与节奏）

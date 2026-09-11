@@ -1,0 +1,124 @@
+# Sample · Chinese, written to be difficult
+
+The English sample is real prose taken as it comes. This one is the opposite: a
+short scene **written to stack the cases that attribution is known to get
+wrong**, so the failures are visible rather than waiting to be discovered.
+
+Self-written, so no copyright question. Four characters in 440 characters of
+text.
+
+| | |
+|---|---|
+| Text | 440 characters · 37 quoted/prose units · 32 lines |
+| Voices | 旁白 Serena — 林小雪 Vivian — 周远 Dylan — 张师傅 Uncle_Fu |
+| Audio | 117.3 s, 24 kHz mono |
+| Machine | Mac Studio, Apple M2 Max, 32 GB. Fully offline. |
+
+## Files
+
+| | |
+|---|---|
+| [`source.txt`](source.txt) | What was pasted in — **no speaker labels** |
+| [`script.txt`](script.txt) | After attribution and human review |
+| [`full.mp3`](full.mp3) | The finished audio |
+| [`subtitles.srt`](subtitles.srt) · [`timeline.json`](timeline.json) | Built from actual sample counts |
+| [`content-check.json`](content-check.json) | Every line transcribed back and compared |
+
+## The cases it was built to break
+
+Eight, all present in 440 characters:
+
+| Case | In the text |
+|---|---|
+| Trailing attribution | `“我们约好的。”林小雪说。` |
+| Unattributed alternation | `“盘点呢。” / “我们约好的。” / “约好的也得等。”` |
+| Three speakers present | 林小雪, 周远, 张师傅 |
+| Referred to, not named | 那姑娘 · 她 · 门后的人 |
+| Written text, nobody speaking | the notice `“今日盘点，暂停营业”` |
+| Inner thought | `他想，这人怕是记错了日子。` |
+| Split quotation | `“可门关着。”周远把手插进口袋，“我早说了先打个电话。”` |
+| Numbers and a Latin abbreviation | `三百二` · `一千零八十` · `CD 机` |
+
+## What it got right
+
+**The trailing attribution, which has failed twice before.** `林小雪说。`,
+`她问。`, `张师傅翻了翻本子，` and `张师傅说完又补了一句，` were all labelled
+narration. The same construction was mislabelled in the earlier Chinese
+evaluation and again in the English sample; here it held.
+
+Also correct: the split quotation with both halves going to 周远; the inner
+thought as narration; and `“雪”` — a single quoted character inside prose,
+describing ink on a page rather than anyone speaking — correctly **not**
+treated as dialogue.
+
+## What it got wrong, and which mattered
+
+**One character got two names.** The man behind the door is labelled 门后的人 in
+his first two lines and 张师傅 once his name appears. Both are right in ordinary
+reading. For synthesis they are a defect: two names mean two characters, two
+voice assignments and **the same person speaking in two different voices**.
+
+This is why the review screen lists every name it saw and asks for one name per
+person. It is also the correction most easily missed, because nothing about it
+looks wrong.
+
+The other two were flagged rather than guessed:
+
+- The notice on the door came back as dialogue by UNKNOWN. Wrong type, but
+  marked for review, so it was caught.
+- `“是。”`, a bare one-word answer, came back UNKNOWN. Either character could
+  have said it, so abstaining is a reasonable answer.
+
+**Four corrections in total: one type, one abstention resolved, two names
+unified.** No line needed its text changed.
+
+## The transcribe-back check reads differently in Chinese
+
+Six lines of 32 flagged, and the shape of the noise is not the English shape:
+
+| Flag | What it is |
+|---|---|
+| `远`→`元`, `约`→`越`, `堆`→`对`, `字`→`刺` | Near-homophones differing only by tone |
+| `三百二`→`320` | The recogniser wrote digits for what was read aloud correctly |
+| `''`→`啊` | An inserted particle |
+
+Tone-matched homophones are already tolerated — five such pairs passed silently
+in this run. These six differ in tone, so they are reported, which is defensible
+even though none is a synthesis error.
+
+**The number case is the one worth noting.** Nothing was misread: `三百二` was
+spoken correctly and transcribed as `320`. Comparing written forms will keep
+flagging that, and the fix belongs in the comparison rather than in the voice.
+
+Zero duration anomalies in this run.
+
+## Measurements
+
+| | |
+|---|---|
+| Attribution, 37 units | **15.1 s** |
+| Synthesis, 32 lines → 117.3 s of audio | **46 s** |
+| Transcribe-back check, 32 lines | **31 s** |
+| Human corrections | **4** labels, no text changes, no retakes |
+
+## Subtitles are shorter here than in English
+
+Longest cue: 42 characters, one cue over 40. The English sample's longest runs
+173. The per-line limit is 60 characters for Chinese against 240 for English,
+and Chinese sentences are shorter to begin with, so one line per cue produces
+something much closer to usable subtitles in Chinese than it does in English.
+
+## Known limits
+
+- **Nobody has listened to all of it.** Automated checks found no missing
+  content, which says nothing about how it sounds.
+- Four characters, four presets — Chinese has exactly four, so a fifth character
+  would have to share or use a kept voice.
+- Half-width punctuation mixed into Chinese text is **not** currently detected by
+  the script checker, though it affects both splitting and reading. This text
+  uses full-width throughout, so the sample does not exercise it.
+
+---
+
+Generated by [VoxStage](../../README.md). Synthetic speech throughout; no human
+recording was used or imitated.

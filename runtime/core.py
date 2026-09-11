@@ -9,7 +9,7 @@ import threading
 import uuid
 from pathlib import Path
 from .audio import PROCESSING_VERSION
-from .content_check import check_status
+from .content_check import check_status, file_sha
 from .listening import listening_status
 from .tempo import edit_status
 from .rhythm import VERSION as RHYTHM_VERSION
@@ -183,8 +183,16 @@ class Store:
                 if (s['status']!='ready' or rhythm.get('source_fingerprint')!=current or rhythm.get('audio_stat')!=audio_stat
                     or rhythm.get('version')!=RHYTHM_VERSION or rhythm.get('expected_text')!=(s.get('spoken_as') or s['text'])):s['rhythm_status']='stale'
                 elif rhythm.get('error'):s['rhythm_status']='error'
-                else:s['rhythm_status']='review' if rhythm.get('markers') else 'checked'
+                else:s['rhythm_status']=('confirmed' if rhythm.get('reviewed') else 'review') if rhythm.get('markers') else 'checked'
+            # A replaced file can retain its size and mtime; confirmed checks bind bytes too.
+            if s['status']=='ready' and any(s[key+'_status']=='confirmed' for key in ('check','rhythm')):
+                digest=file_sha(self.directory(p['id'])/'audio'/(current+'.wav'))
+                for status_key,check_key in (('check_status','content_check'),('rhythm_status','rhythm_check')):
+                    if s[status_key]=='confirmed' and s[check_key].get('audio_sha256')!=digest:
+                        s[status_key]='stale'
             s['listening_status']=listening_status(s,current,audio_stat,p.get('speech_rate',1.0))
         return result
 
 # 最后更新：2026-09-09 · Astra
+
+# 最后更新：2026-09-11 · Astra（试听确认的节奏状态与文件绑定）
