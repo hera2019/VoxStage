@@ -19,7 +19,7 @@ this run.
 | [`source.txt`](source.txt) | What was pasted in — **no speaker labels**, Gutenberg markup intact |
 | [`script.txt`](script.txt) | What came out of attribution and human review |
 | [`full.mp3`](full.mp3) | The finished audio (WAV was exported; MP3 here for size) |
-| [`subtitles.srt`](subtitles.srt) | Built from actual sample counts, not estimates |
+| [`subtitles.srt`](subtitles.srt) | Cut on the pauses in the audio, timed from actual sample counts |
 | [`timeline.json`](timeline.json) | File boundaries and estimated speech boundaries, separately |
 | [`content-check.json`](content-check.json) | Every line transcribed back and compared |
 
@@ -114,10 +114,13 @@ more work per line.
 
 ## Known limitations, visible in these files
 
-- **Subtitle cues are long.** One line per cue means 8 of 28 exceed 90
-  characters; the longest runs 173. Splitting them needs word-level timing,
-  which this version does not use. Useful as a transcript; not yet as broadcast
-  subtitles.
+- **Subtitles are cut on the pauses, so they are no longer the lines.** The 28
+  lines of audio become 50 cues, broken where the voice actually stops rather
+  than where the prose has a comma, and stripped of quotation marks and
+  sentence-final stops. Longest line: 42 characters, at most two lines a cue.
+  Before this the longest cue ran 173 characters and was a transcript, not a
+  subtitle. Austen's sentences are long enough that a cue can still end
+  mid-clause when the reading does not pause.
 - **English has two preset voices, both male.** Mrs. Bennet is read by a
   Chinese-preset female voice generating English. Its accent was judged
   acceptable by a non-native listener; a native speaker has not assessed it.

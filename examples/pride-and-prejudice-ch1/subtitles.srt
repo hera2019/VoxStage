@@ -1,130 +1,210 @@
 1
-00:00:00,210 --> 00:00:06,660
-It is a truth universally acknowledged, that a single man in possession of a good fortune must be in want of a wife.
-
+00:00:00,210 --> 00:00:02,524
+It is a truth universally acknowledged
 
 2
-00:00:07,360 --> 00:00:16,050
-However little known the feelings or views of such a man may be on his first entering a neighbourhood, this truth is so well fixed in the minds of the surrounding families, 
+00:00:02,524 --> 00:00:06,660
+that a single man in possession of a
+good fortune must be in want of a wife
 
 3
-00:00:16,690 --> 00:00:20,790
-that he is considered as the rightful property of some one or other of their daughters.
-
+00:00:07,360 --> 00:00:11,174
+However little known the feelings or
+views of such a man may be on his first
 
 4
-00:00:21,740 --> 00:00:22,840
-“My dear Mr. Bennet,” 
+00:00:11,174 --> 00:00:12,549
+entering a neighbourhood
 
 5
-00:00:23,840 --> 00:00:25,390
-said his lady to him one day, 
+00:00:12,549 --> 00:00:16,050
+this truth is so well fixed in the
+minds of the surrounding families
 
 6
-00:00:26,310 --> 00:00:29,230
-“have you heard that Netherfield Park is let at last?”
-
+00:00:16,690 --> 00:00:20,270
+that he is considered as the rightful
+property of some one or other of their
 
 7
-00:00:30,630 --> 00:00:32,730
-Mr. Bennet replied that he had not.
-
+00:00:20,270 --> 00:00:21,270
+daughters
 
 8
-00:00:33,430 --> 00:00:34,700
-“But it is,” 
+00:00:21,740 --> 00:00:22,840
+My dear Mr. Bennet
 
 9
-00:00:35,570 --> 00:00:36,350
-returned she; 
+00:00:23,840 --> 00:00:25,390
+said his lady to him one day
 
 10
-00:00:37,120 --> 00:00:40,750
-“for Mrs. Long has just been here, and she told me all about it.”
-
+00:00:26,310 --> 00:00:29,230
+have you heard that Netherfield
+Park is let at last?
 
 11
-00:00:41,730 --> 00:00:43,370
-Mr. Bennet made no answer.
-
+00:00:30,630 --> 00:00:32,730
+Mr. Bennet replied that he had not
 
 12
-00:00:44,420 --> 00:00:46,580
-“Do not you want to know who has taken it?” 
+00:00:33,430 --> 00:00:34,700
+But it is
 
 13
-00:00:47,590 --> 00:00:49,490
-cried his wife, impatiently.
-
+00:00:35,570 --> 00:00:36,570
+returned she
 
 14
-00:00:50,340 --> 00:00:53,380
-“You want to tell me, and I have no objection to hearing it.”
-
-
+00:00:37,120 --> 00:00:39,283
+for Mrs. Long has just been here and
 
 15
-00:00:54,120 --> 00:00:55,770
-This was invitation enough.
-
+00:00:39,283 --> 00:00:40,750
+she told me all about it
 
 16
-00:00:56,410 --> 00:01:04,490
-“Why, my dear, you must know, Mrs. Long says that Netherfield is taken by a young man of large fortune from the north of England; 
+00:00:41,730 --> 00:00:43,370
+Mr. Bennet made no answer
 
 17
-00:01:05,320 --> 00:01:12,640
-that he came down on Monday in a chaise and four to see the place, and was so much delighted with it that he agreed with Mr. Morris immediately; 
+00:00:44,420 --> 00:00:46,580
+Do not you want to know who has taken it?
 
 18
-00:01:13,400 --> 00:01:19,580
-that he is to take possession before Michaelmas, and some of his servants are to be in the house by the end of next week.”
-
+00:00:47,590 --> 00:00:49,490
+cried his wife impatiently
 
 19
-00:01:20,390 --> 00:01:21,730
-“What is his name?”
-
+00:00:50,340 --> 00:00:51,353
+You want to tell me
 
 20
-00:01:22,670 --> 00:01:23,320
-“Bingley.”
-
+00:00:51,353 --> 00:00:53,380
+and I have no objection to hearing it
 
 21
-00:01:24,200 --> 00:01:25,800
-“Is he married or single?”
-
+00:00:54,120 --> 00:00:55,770
+This was invitation enough
 
 22
-00:01:26,720 --> 00:01:37,190
-“Oh, single, my dear, to be sure! A single man of large fortune; four or five thousand a year. What a fine thing for our girls!”
-
+00:00:56,410 --> 00:00:57,389
+Why my dear you
 
 23
-00:01:38,130 --> 00:01:40,420
-“How so? how can it affect them?”
-
+00:00:57,389 --> 00:00:58,614
+must know Mrs. Long
 
 24
-00:01:41,300 --> 00:01:42,400
-“My dear Mr. Bennet,” 
+00:00:58,614 --> 00:01:03,919
+says that Netherfield is taken by a young
+man of large fortune from the north of
 
 25
-00:01:43,310 --> 00:01:44,240
-replied his wife, 
+00:01:03,919 --> 00:01:04,919
+England
 
 26
-00:01:45,010 --> 00:01:51,590
-“how can you be so tiresome? You must know that I am thinking of his marrying one of them.”
-
+00:01:05,320 --> 00:01:08,300
+that he came down on Monday in
+a chaise and four to see the
 
 27
-00:01:52,550 --> 00:01:54,710
-“Is that his design in settling here?”
-
+00:01:08,300 --> 00:01:10,373
+place and was so much delighted with it
 
 28
-00:01:55,690 --> 00:02:06,510
-“Design? Nonsense, how can you talk so! But it is very likely that he may fall in love with one of them, and therefore you must visit him as soon as he comes.”
+00:01:10,373 --> 00:01:12,640
+that he agreed with Mr. Morris immediately
 
+29
+00:01:13,400 --> 00:01:16,002
+that he is to take
+possession before Michaelmas
+
+30
+00:01:16,002 --> 00:01:17,498
+and some of his servants are
+
+31
+00:01:17,498 --> 00:01:19,580
+to be in the house by the end of next week
+
+32
+00:01:20,390 --> 00:01:21,730
+What is his name?
+
+33
+00:01:22,670 --> 00:01:23,670
+Bingley
+
+34
+00:01:24,200 --> 00:01:25,800
+Is he married or single?
+
+35
+00:01:26,720 --> 00:01:29,950
+Oh single my dear to be sure! A single
+
+36
+00:01:29,950 --> 00:01:32,289
+man of large fortune four
+
+37
+00:01:32,289 --> 00:01:34,405
+or five thousand a year
+
+38
+00:01:34,405 --> 00:01:37,190
+What a fine thing for our girls!
+
+39
+00:01:38,130 --> 00:01:38,927
+How so? how
+
+40
+00:01:38,927 --> 00:01:40,420
+can it affect them?
+
+41
+00:01:41,300 --> 00:01:42,400
+My dear Mr. Bennet
+
+42
+00:01:43,310 --> 00:01:44,310
+replied his wife
+
+43
+00:01:45,010 --> 00:01:47,680
+how can you be so tiresome? You must
+
+44
+00:01:47,680 --> 00:01:51,590
+know that I am thinking of
+his marrying one of them
+
+45
+00:01:52,550 --> 00:01:54,710
+Is that his design in settling here?
+
+46
+00:01:55,690 --> 00:01:56,231
+Design?
+
+47
+00:01:56,231 --> 00:01:57,764
+Nonsense how can you
+
+48
+00:01:57,764 --> 00:01:59,297
+talk so! But it is very
+
+49
+00:01:59,297 --> 00:02:02,994
+likely that he may fall in
+love with one of them and
+
+50
+00:02:02,994 --> 00:02:06,510
+therefore you must visit
+him as soon as he comes
