@@ -81,3 +81,18 @@ def test_invalid_model_labels_release_queue(tmp_path):
         assert c.post('/api/attribution/draft',json={'script':'原文。','language':'zh'}).status_code==200
 
 # 最后更新：2026-09-10 · Astra
+
+
+def test_a_drafted_name_loses_a_trailing_speech_verb_but_keeps_short_names():
+    """The draft model returned 众人都道 for a line introduced by 众人都道：."""
+    from runtime.attribution import tidy_speaker
+    assert tidy_speaker('众人都道') == '众人'
+    assert tidy_speaker('宝玉道') == '宝玉'
+    assert tidy_speaker('袭人笑道') == '袭人'
+    assert tidy_speaker('宝玉因说') == '宝玉'
+    # Two characters have to survive, so a real name ending in 道 is left alone.
+    assert tidy_speaker('张道') == '张道'
+    assert tidy_speaker('道') == '道'
+    assert tidy_speaker('晴雯') == '晴雯'
+    assert tidy_speaker('  宝玉  ') == '宝玉'
+    assert tidy_speaker('') == ''

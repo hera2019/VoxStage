@@ -1,5 +1,5 @@
 import {useState} from 'react';
-type Unit={id:string;text:string;kind:'narration'|'dialogue';speaker:string};
+type Unit={id:string;text:string;kind:'narration'|'dialogue';speaker:string;blank?:boolean};
 type Draft={draft_id:string;units:Unit[]};
 type Props={request:(path:string,method?:string,data?:unknown)=>Promise<any>;onCreated:(project:any)=>Promise<void>;onClose:()=>void};
 export function RoleImport({request,onCreated,onClose}:Props){
@@ -17,7 +17,7 @@ export function RoleImport({request,onCreated,onClose}:Props){
    <p className="muted">每次最多 3000 字符。本机模型只填写标签，原文由程序保留。草稿需要人工复核。</p>
    <button className="primary wide" disabled={waiting||!text.trim()} onClick={()=>void run(async()=>setDraft(await request('/attribution/draft','POST',{script:text,language})))}>{waiting?'正在本机分角色，请稍候…':'生成角色草稿'}</button>
   </>:<><p>逐段核对旁白 / 对白和角色姓名。未识别：{unknown} 处。</p><div className="hint">人物称呼：{names.join('、')||'暂无对白角色'}<br/>同一人物的不同称呼，请统一填写同一名字。切换为对白后，请填写说话人。</div>
-   <div className="role-units">{draft.units.map((u,i)=><article className={'role-unit '+(u.kind==='dialogue'&&(!u.speaker.trim()||u.speaker.trim().toUpperCase()==='UNKNOWN')?'role-unknown':'')} key={u.id}>
+   <div className="role-units">{draft.units.filter(u=>!u.blank).map((u,i)=><article className={'role-unit '+(u.kind==='dialogue'&&(!u.speaker.trim()||u.speaker.trim().toUpperCase()==='UNKNOWN')?'role-unknown':'')} key={u.id}>
     <p><small>片段 {i+1}</small><br/>{u.text}</p><div className="role-fields"><label>类型<select aria-label={`片段 ${i+1} 类型`} disabled={waiting} value={u.kind} onChange={e=>{const kind=e.target.value as Unit['kind'];change(u.id,{kind,speaker:kind==='narration'?'NARRATOR':u.speaker==='NARRATOR'?'UNKNOWN':u.speaker})}}><option value="narration">旁白</option><option value="dialogue">对白</option></select></label>
     {u.kind==='dialogue'?<label>说话人<input aria-label={`片段 ${i+1} 说话人`} disabled={waiting} value={u.speaker} maxLength={80} list="role-names" onChange={e=>change(u.id,{speaker:e.target.value})}/></label>:<span>旁白</span>}</div>
    </article>)}</div><datalist id="role-names">{names.filter(n=>n!=='UNKNOWN').map(n=><option key={n} value={n}/>)}</datalist>

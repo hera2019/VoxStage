@@ -21,20 +21,31 @@ def uid():
 
 def parse_script(script, language):
     if language not in ('zh','en'):
-        raise ValueError('Choose Chinese or English')
+        raise ValueError('请选择中文或英文。')
     segments = []
     for number, line in enumerate(script.splitlines(), 1):
         if not line.strip():
             continue
         pieces = re.split('[:：]', line.strip(), maxsplit=1)
         if len(pieces) != 2 or not all(x.strip() for x in pieces):
-            raise ValueError(f'Line {number}: use Speaker: sentence')
+            # Most people who land here pasted plain prose. Say so, and point
+            # at the path that actually does what they wanted.
+            raise ValueError(
+                f'第 {number} 行没有角色名："{line.strip()[:20]}"。\n\n'
+                '直接粘贴的原文需要每行写成「角色：台词」的形式。\n'
+                '如果你手上是一段没有标注的小说或剧本，'
+                '请改用「从原文生成角色草稿」，由程序先分好角色，再由你复核。')
         speaker, text = (x.strip() for x in pieces)
-        if len(speaker) > 80 or len(text) > (60 if language == 'zh' else 240):
-            raise ValueError(f'Line {number}: split long text into shorter labelled sentences')
+        limit = 60 if language == 'zh' else 240
+        if len(speaker) > 80:
+            raise ValueError(f'第 {number} 行的角色名太长（{len(speaker)} 字，上限 80 字）。'
+                             '冒号前面只写角色名，台词写在冒号后面。')
+        if len(text) > limit:
+            raise ValueError(f'第 {number} 行太长（{len(text)} 字，上限 {limit} 字）。'
+                             '请拆成几行，每行仍写成「角色：台词」。')
         segments.append({'id':uid(), 'speaker':speaker, 'text':text, 'spoken_as':'', 'audio':None, 'error':None})
     if not 1 <= len(segments) <= 500:
-        raise ValueError('A project needs 1–500 labelled lines')
+        raise ValueError(f'一个工程需要 1–500 行，当前 {len(segments)} 行。')
     return segments
 
 def fingerprint(project, segment, engine, library=None):

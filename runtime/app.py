@@ -376,7 +376,19 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             record = {**result,'draft_id':draft_id,'source_script':body.script,'language':body.language}
             (drafts/(draft_id+'.json')).write_text(json.dumps(record,ensure_ascii=False,indent=2))
             labels = {x['id']:x for x in result['labels']}
-            return {'draft_id':draft_id,'units':[{**unit,**{k:labels[unit['id']][k] for k in ('kind','speaker')}} for unit in source_units(body.script)]}
+            # Whitespace between two quoted lines is a unit like any other and
+            # still needs a label, but showing the reviewer an empty row to
+            # assign a character to is noise. Mark it; the UI leaves it out.
+            return {'draft_id':draft_id,
+                    'units':[{**unit, **{k:labels[unit['id']][k] for k in ('kind','speaker')},
+                              'blank': not unit['text'].strip()}
+                             for unit in source_units(body.script)]}
+        except ValueError as exc:
+            # bind_labels rejects a malformed model response. Its wording names
+            # internal structures, which tells the reader nothing they can act on.
+            raise ValueError('这段原文的角色划分没有成功，通常是角色太多或对话太密。\n\n'
+                             '可以先分成两三段分别导入，之后在原稿编辑里合起来；'
+                             '或者直接重试一次，每次的结果会略有不同。') from exc
         except (OSError, KeyError, TypeError) as exc:
             raise ValueError('角色草稿生成失败，请保留原稿后重试。') from exc
         finally:

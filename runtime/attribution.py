@@ -102,6 +102,24 @@ def _tidy(source, pieces):
              'source_start': x['start'], 'source_end': x['end']} for x in kept]
 
 
+# Speech verbs the draft model sometimes keeps attached to a name: it returned
+# 众人都道 for a line introduced by 众人都道：. Longest first, and only trimmed
+# when at least two characters remain, so a character actually called 张道 or
+# 老问 keeps their name. The reviewer sees and can override the result either way.
+SPEECH_VERBS = ('都笑道', '都笑说', '接口道', '连忙道', '忙笑道', '都道', '笑道', '说道',
+                '答道', '问道', '回道', '叹道', '喝道', '骂道', '因说', '因道', '笑说',
+                '道', '说', '问', '答')
+
+
+def tidy_speaker(name):
+    """Drop a trailing speech verb from a drafted character name."""
+    name = (name or '').strip()
+    for verb in SPEECH_VERBS:
+        if name.endswith(verb) and len(name) - len(verb) >= 2:
+            return name[:-len(verb)].strip()
+    return name
+
+
 class RoleDraftEngine:
     def __init__(self):
         self.model = Path(os.environ.get('VOXSTAGE_ROLE_MODEL', ROOT.parent/'AI-Models/generators/qwen3-4b-instruct-2507/qwen3-4b-instruct-2507-q8_0.gguf'))
@@ -153,7 +171,8 @@ class RoleDraftEngine:
                     'response_format':{'type':'json_schema','json_schema':{'name':'speaker_segments','schema':schema}}})
                 raw = response['choices'][0]['message']['content'] or ''
                 bind_labels(text, raw)
-                return {'labels':json.loads(raw)['labels'], 'raw_response':response, 'model_sha256':MODEL_SHA,
+                labels = [{**x, 'speaker': tidy_speaker(x['speaker'])} for x in json.loads(raw)['labels']]
+                return {'labels':labels, 'raw_response':response, 'model_sha256':MODEL_SHA,
                         'settings':settings,'prompt_sha256':hashlib.sha256(prompt.encode()).hexdigest(),
                         'seconds_measured':time.monotonic()-started}
             finally:
