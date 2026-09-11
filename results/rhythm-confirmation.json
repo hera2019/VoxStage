@@ -756,6 +756,39 @@
         "mtime_ns": 1789053821261433171
       }
     },
-    "all_audio_bytes_and_mtime_unchanged": true
-  }
+    "all_audio_bytes_and_mtime_unchanged": true,
+    "final_test_confirmation_removed": [
+      {
+        "id": "664b1dd0bfcf488bbecad619d2622a47",
+        "check_status": "match",
+        "rhythm_status": "review"
+      },
+      {
+        "id": "41a8ab3ad633414b947ce859c2003283",
+        "check_status": "review",
+        "rhythm_status": "review"
+      }
+    ],
+    "browser": {
+      "browser": "Codex in-app browser",
+      "confirmation_button_count": 1,
+      "observed_steps": [
+        "second sentence: text review and rhythm review -> one click -> confirmed for both",
+        "second sentence: undo -> both review labels restored",
+        "first sentence: text match and rhythm review -> same button -> rhythm confirmed, badge absent",
+        "first sentence: undo test confirmation"
+      ],
+      "scope": "UI behavior only; no listening-quality judgment"
+    }
+  },
+  "source_sha256": {
+    "runtime/app.py": "6ac4708559dfa54316aa3b3f66c8aae3703eafce8b2687da865dd462de2aece9",
+    "runtime/core.py": "0caf2a4ddac0e8671376e4e3d750ef519f702ab79bd06b43e8dcde8e276c2d05",
+    "frontend/src/main.tsx": "f372c9288e837a01b74e39fe65c3cd9b9107e47a779cd51a1f4071d5c22b1aeb",
+    "tests/test_rhythm_confirmation.py": "08583b45604db3f14d292ff571cc28ff2b7736bccb7e80a17fb23227671de488"
+  },
+  "unverified": [
+    "本人和 Claude Hera 的人工验收",
+    "Chrome、Safari 和移动端本轮未操作验证"
+  ]
 }
