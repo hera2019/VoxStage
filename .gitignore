@@ -103,3 +103,10 @@ build/
 /docs/task-2026-09-11-rhythm-confirm.md
 /docs/task-next-delivery-package.md
 /docs/task-number-and-merge.md
+
+# docs/ 改为白名单：默认全部忽略，只有 docs/public/ 进仓库。
+# 上面逐个列举的写法漏过了新建的内部任务书——每新增一份内部文档就是一次泄漏机会。
+# 这条规则在后，覆盖前面的枚举；新增内部文档默认不会被提交。
+/docs/**
+!/docs/public/
+!/docs/public/**
