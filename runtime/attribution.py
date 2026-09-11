@@ -43,7 +43,13 @@ def project_segments(source, labels, language):
                         break
             pieces.append({'speaker': speaker, 'kind': label['kind'], 'start': start, 'end': end})
             start = end
-    segments = merge_adjacent(_tidy(source, pieces), limit)
+    # Merging is capped below the slicing limit on purpose. A segment is two
+    # things at once: a synthesis unit, which wants to be long enough to read
+    # naturally, and a subtitle cue, which has to be short enough to read on
+    # screen. Merging up to the full slicing limit produced a 58-character cue
+    # held for 12 seconds. Two thirds of the limit still repairs a stranded
+    # quoted fragment without building a cue nobody can read.
+    segments = merge_adjacent(_tidy(source, pieces), limit * 2 // 3)
     if not 1 <= len(segments) <= 500:
         raise ValueError('原稿切片数量超出范围。')
     return segments

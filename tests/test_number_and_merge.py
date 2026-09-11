@@ -98,3 +98,25 @@ def test_existing_project_unchanged_until_explicit_reslice(client):
     assert len(undo['segments'])==3
 
 # 最后更新：2026-09-11 · Astra
+
+
+def test_merging_stops_short_of_the_slicing_limit():
+    """A merged run must stay readable as a subtitle, not just as speech.
+
+    Merging up to the full 60-character slicing limit produced a 58-character
+    cue held on screen for 12 seconds. The cap is two thirds of the limit.
+    """
+    from runtime.attribution import project_segments
+    from evals.speaker_attribution.source_units import source_units
+    source = ('门上贴着一张纸，写着“今日盘点，暂停营业”。'
+              '林小雪把伞收起来，抖了抖水。她抬头看了看招牌，又低头核对手机上的地址。')
+    labels = [{'id': u['id'], 'kind': 'narration', 'speaker': ''} for u in source_units(source)]
+    segments = project_segments(source, labels, 'zh')
+    assert all(len(s['text']) <= 40 for s in segments), [len(s['text']) for s in segments]
+    assert ''.join(s['text'] for s in segments) == source
+
+    # The stranded quoted fragment is still repaired.
+    xue = '周远点点头。林小雪凑过去看那本子。上面一行字被水洇开了，只剩下半个“雪”字。'
+    labels = [{'id': u['id'], 'kind': 'narration', 'speaker': ''} for u in source_units(xue)]
+    merged = project_segments(xue, labels, 'zh')
+    assert len(merged) == 1 and merged[0]['text'] == xue
