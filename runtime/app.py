@@ -913,7 +913,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             if any(s['status']!='ready' for s in store.public(p,engine,checker)['segments']):
                 raise ValueError('Generate all pending or failed sentences before export')
             out = store.directory(project_id)/'exports'/str(p['revision'])
-            timeline = export_audio(p, store.directory(project_id), out)
+            timeline = export_audio(p, store.directory(project_id), out, delivery=True)
             timeline['project_revision'] = p['revision']
             check_report={'project_revision':p['revision'],'synthetic_audio':True,
                 'speech_rate':p.get('speech_rate',1.0),'checked_audio':'original_generated_audio',
@@ -926,10 +926,10 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                              'listening_issue':s.get('listening_issue')} for s in store.public(p,engine,checker)['segments']]}
             (out/'content-check.json').write_text(json.dumps(check_report,ensure_ascii=False,indent=2))
             (out/'timeline.json').write_text(json.dumps(timeline, ensure_ascii=False, indent=2))
-            return {name:f'/api/projects/{project_id}/export/{p["revision"]}/{name}' for name in ('full.wav','subtitles.srt','timeline.json','content-check.json')}
+            return {name:f'/api/projects/{project_id}/export/{p["revision"]}/{name}' for name in ('full.wav','subtitles.srt','timeline.json','content-check.json','delivery.zip')}
 
     @app.get('/api/projects/{project_id}/export/{revision}/{name}')
-    def download(project_id: str, revision: int, name: Literal['full.wav','subtitles.srt','timeline.json','content-check.json']):
+    def download(project_id: str, revision: int, name: Literal['full.wav','subtitles.srt','timeline.json','content-check.json','delivery.zip']):
         if revision < 0:
             raise HTTPException(404)
         path = store.directory(project_id)/'exports'/str(revision)/name
@@ -958,3 +958,5 @@ if __name__ == '__main__':
 # 最后更新：2026-09-10 · Astra（接入原文绑定的角色草稿）
 
 # 最后更新：2026-09-11 · Astra（复用试听确认接口同时处理文字与节奏）
+
+# 最后更新：2026-09-11 · Astra（新增可移植交付包下载）

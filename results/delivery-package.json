@@ -1,0 +1,80 @@
+{
+  "task": "可移植剪辑交付包第一步",
+  "criteria_author": "Claude Hera",
+  "criteria_file": "docs/task-next-delivery-package.md",
+  "author": "Astra",
+  "date": "2026-09-11",
+  "regression": {
+    "command": ".venv/bin/python -m pytest tests -q",
+    "exit_code": 0,
+    "raw_output": "........................................................................ [ 34%]\n........................................................................ [ 69%]\n..............................................................           [100%]\n=============================== warnings summary ===============================\n.venv/lib/python3.12/site-packages/fastapi/testclient.py:1\n  /Users/Hera/Documents/VoxStage/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n    from starlette.testclient import TestClient as TestClient  # noqa\n\n.venv/lib/python3.12/site-packages/starlette/testclient.py:53\n  /Users/Hera/Documents/VoxStage/.venv/lib/python3.12/site-packages/starlette/testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.\n    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n206 passed, 2 warnings in 11.10s\n"
+  },
+  "human_acceptance": "not_performed",
+  "reconstruction_tolerance_samples": 0,
+  "service_after_restart": {
+    "app": "VoxStage",
+    "workspace_id": "484a948eb35d758beb916584e778dc1228c9a1102709649d758747246b2590ec",
+    "ready": true,
+    "pid": 9902
+  },
+  "live_exports": [
+    {
+      "language": "zh",
+      "project_id": "090855ec775045bc9c1976150b6468f4",
+      "project_revision": 10,
+      "package": "user-data/delivery-verification-2026-09-11/zh.zip",
+      "moved_directory": "user-data/delivery-verification-2026-09-11/zh/已改名的交付文件夹",
+      "audio_files": 1,
+      "sample_rate": 24000,
+      "full_samples": 270783,
+      "reconstructed_samples": 270783,
+      "sample_count_difference": 0,
+      "maximum_absolute_pcm_difference": 0,
+      "relative_csv_and_json_references_resolved": true,
+      "roles_match_project": true,
+      "srt_matches_existing_export": true,
+      "source_audio_bytes_and_mtime_unchanged": true,
+      "global_speed": 1.1,
+      "edited_segments": 1,
+      "zip_sha256": "f59e43e8e8864f276343b27d40f1446046279d8b8b3440a9ca2c084a0890f9da"
+    },
+    {
+      "language": "en",
+      "project_id": "a3f0b54d6dd04021a087205bf375dd8a",
+      "project_revision": 12,
+      "package": "user-data/delivery-verification-2026-09-11/en.zip",
+      "moved_directory": "user-data/delivery-verification-2026-09-11/en/已改名的交付文件夹",
+      "audio_files": 28,
+      "sample_rate": 24000,
+      "full_samples": 3047760,
+      "reconstructed_samples": 3047760,
+      "sample_count_difference": 0,
+      "maximum_absolute_pcm_difference": 0,
+      "relative_csv_and_json_references_resolved": true,
+      "roles_match_project": true,
+      "srt_matches_existing_export": true,
+      "source_audio_bytes_and_mtime_unchanged": true,
+      "global_speed": 1.0,
+      "edited_segments": 0,
+      "zip_sha256": "a96391f33cde748a63ecde19ace93ebc36fb45ab87c1af1a88b47b31568748d9"
+    }
+  ],
+  "frontend_build": {
+    "exit_code": 0,
+    "command": "cd frontend && npm run build",
+    "raw_output": "tsc --noEmit && vite build\n35 modules transformed\nbuilt in 469ms"
+  },
+  "unverified": [
+    "本人和 Claude Hera 的验收",
+    "另一台电脑上的实际打开（已验证本机换路径并改名）",
+    "第三方剪辑软件导入（不在本轮范围）",
+    "浏览器下载链接本轮未点击；下载接口已实际取回 ZIP"
+  ],
+  "source_sha256": {
+    "runtime/delivery.py": "a61e14c634bcb814a3d925499fb382c8ef0a03dd8fc5fc5c14680198ed4af5b9",
+    "runtime/audio.py": "16e6449df70407a9e3c8f5e1f88bbdebb73d894299785ef4aa4743f8f795b297",
+    "runtime/app.py": "21da55a39f9ce20f5a0025bd4e23d74c0c6b086c245cfdea3061d8fcc9f530ec",
+    "frontend/src/main.tsx": "046ad1aa5190eba70a598476de2840bef93fd190cabbc6705bfb65257ebd0664",
+    "tests/test_delivery.py": "0a75c8b9951a0262ede286a247e567c814e51261e1238664972f89089995fb45"
+  }
+}

@@ -51,8 +51,8 @@ def prepare_segment(project, segment, directory):
     return pcm,rate,meta,mapping
 
 
-def export_audio(project, directory: Path, output: Path):
-    parts, entries, cues = [], [], []
+def export_audio(project, directory: Path, output: Path, *, delivery=False):
+    parts, entries, cues, rendered = [], [], [], []
     position, rate = 0, None
     for index, segment in enumerate(project['segments']):
         pcm,current_rate,meta,mapping=prepare_segment(project,segment,directory)
@@ -69,6 +69,7 @@ def export_audio(project, directory: Path, output: Path):
                         'processed_check_scope':'final_segment_audio; pace requires original ASR timings'})
         cues.append(f'{index+1}\n{timestamp(start, rate)} --> {timestamp(end, rate)}\n{segment["text"]}\n')
         parts.append(pcm)
+        if delivery:rendered.append(pcm)
         position += len(pcm)
         if index < len(project['segments'])-1:
             pause = np.zeros(round(rate * project['pause_ms']/1000), dtype=np.float32)
@@ -77,6 +78,11 @@ def export_audio(project, directory: Path, output: Path):
     output.mkdir(parents=True, exist_ok=True)
     sf.write(output / 'full.wav', np.concatenate(parts), rate, subtype='PCM_16')
     (output / 'subtitles.srt').write_text('\n'.join(cues), encoding='utf-8')
+    if delivery:
+        from .delivery import write_delivery
+        write_delivery(output,entries,rendered,rate,position)
     return {'synthetic_audio':True, 'speech_rate':project.get('speech_rate',1.0), 'sample_rate':rate, 'total_samples':position, 'segments':entries}
 
 # 最后更新：2026-09-09 · Astra
+
+# 最后更新：2026-09-11 · Astra（交付包复用成品 PCM）
