@@ -1,5 +1,5 @@
 {
- "project_revision": 70,
+ "project_revision": 149,
  "synthetic_audio": true,
  "speech_rate": 1.0,
  "checked_audio": "original_generated_audio",
@@ -18,7 +18,7 @@
    "speaker": "Narrator",
    "check_status": "review",
    "expected_text": "However little known the feelings or views of such a man may be on his first entering a neighbourhood, this truth is so well fixed in the minds of the surrounding families, ",
-   "recognized_text": "However\nlittle\nknown\nthe\nfeelings\nor\nviews\nof\nsuch\na\nman\nmay\nbe\non\nhis\nfirst\nentering\na\nneighborhood\n,\nthis\ntruth\nis\nso\nwell\nfixed\nin\nthe\nminds\nof\nthe\nsurrounding\nfamilies\n.",
+   "recognized_text": "however\nlittle\nknown\nthe\nfeelings\nor\nviews\nof\nsuch\na\nman\nmay\nbe\non\nhis\nfirst\nentering\na\nneighborhood\nthis\ntruth\nis\nso\nwell\nfixed\nin\nthe\nminds\nof\nthe\nsurrounding\nfamilies",
    "differences": [
     {
      "kind": "replace",
@@ -33,7 +33,7 @@
    "speaker": "Narrator",
    "check_status": "match",
    "expected_text": "that he is considered as the rightful property of some one or other of their daughters.\n",
-   "recognized_text": "\"\nThat\nhe\nis\nconsidered\nas\nthe\nright\nful\nproperty\nof\nsome\none\nor\nother\nof\ntheir\ndaughters\n.\"",
+   "recognized_text": "that\nhe\nis\nconsidered\nas\nthe\nright\nful\nproperty\nof\nsome\none\nor\nother\nof\ntheir\ndaughters\n.",
    "differences": [],
    "word_boundary_equivalences": [
     {
@@ -46,7 +46,7 @@
   },
   {
    "speaker": "Mrs. Bennet",
-   "check_status": "review",
+   "check_status": "confirmed",
    "expected_text": "“My dear Mr. Bennet,” ",
    "recognized_text": "My\ndear\nMr\n.\nBennett\n,",
    "differences": [
@@ -63,14 +63,14 @@
    "speaker": "Narrator",
    "check_status": "match",
    "expected_text": "said his lady to him one day, ",
-   "recognized_text": "said\nhis\nlady\nto\nhim\none\nday",
+   "recognized_text": "said\nhis\nlady\nto\nhim\none\nday\n.",
    "differences": [],
    "word_boundary_equivalences": [],
    "duration_markers": []
   },
   {
    "speaker": "Mrs. Bennet",
-   "check_status": "review",
+   "check_status": "confirmed",
    "expected_text": "“have you heard that Netherfield Park is let at last?”\n",
    "recognized_text": "Have\nyou\nheard\nthat\nNether\nfield\nPark\nis\nled\nat\nlast\n?",
    "differences": [
@@ -93,7 +93,7 @@
    "speaker": "Narrator",
    "check_status": "review",
    "expected_text": "Mr. Bennet replied that he had not.\n",
-   "recognized_text": "Mr\n.\nBennett\nreplied\nthat\nhe\nhad\nnot\n.",
+   "recognized_text": "Mr\n.\nBennett\nreplied\nthat\nhe\nhad\nnot",
    "differences": [
     {
      "kind": "replace",
@@ -117,7 +117,7 @@
    "speaker": "Narrator",
    "check_status": "match",
    "expected_text": "returned she; ",
-   "recognized_text": "Return\ned\nshe\n.",
+   "recognized_text": "Return\ned\nshe",
    "differences": [],
    "word_boundary_equivalences": [
     {
@@ -139,17 +139,17 @@
   },
   {
    "speaker": "Narrator",
-   "check_status": "match",
+   "check_status": "review",
    "expected_text": "Mr. Bennet made no answer.\n",
-   "recognized_text": "Mr\n.\nBenn\net\nmade\nno\nanswer\n.",
-   "differences": [],
-   "word_boundary_equivalences": [
+   "recognized_text": "Mr\n.\nBennett\nmade\nno\nanswer\n.",
+   "differences": [
     {
+     "kind": "replace",
      "expected": "bennet",
-     "recognized": "benn et",
-     "basis": "word-boundary"
+     "recognized": "bennett"
     }
    ],
+   "word_boundary_equivalences": [],
    "duration_markers": []
   },
   {
@@ -226,7 +226,7 @@
   },
   {
    "speaker": "Mrs. Bennet",
-   "check_status": "review",
+   "check_status": "confirmed",
    "expected_text": "that he is to take possession before Michaelmas, and some of his servants are to be in the house by the end of next week.”\n",
    "recognized_text": "that\nhe\n's\nto\ntake\npossession\nbefore\nMichael\nmas\nand\nsome\nof\nhis\nservants\nare\nto\nbe\nin\nthe\nhouse\nby\nthe\nend\nof\nnext\nweek\n.",
    "differences": [
@@ -298,7 +298,7 @@
   },
   {
    "speaker": "Mrs. Bennet",
-   "check_status": "review",
+   "check_status": "confirmed",
    "expected_text": "“My dear Mr. Bennet,” ",
    "recognized_text": "My\ndear\nMr\n.\nBennett\n,",
    "differences": [
@@ -337,7 +337,7 @@
   },
   {
    "speaker": "Mr. Bennet",
-   "check_status": "review",
+   "check_status": "confirmed",
    "expected_text": "“Is that his design in settling here?”\n",
    "recognized_text": "Is\nthat\nhis\ndesign\nand\nsettling\nhere\n?",
    "differences": [
@@ -352,7 +352,7 @@
   },
   {
    "speaker": "Mrs. Bennet",
-   "check_status": "review",
+   "check_status": "confirmed",
    "expected_text": "“Design? Nonsense, how can you talk so! But it is very likely that he may fall in love with one of them, and therefore you must visit him as soon as he comes.”\n",
    "recognized_text": "D\niz\nai\n?\nN\nonsense\n!\nHow\ncan\nyou\ntalk\nso\n?\nBut\nit\nis\nvery\nlikely\nthat\nhe\nmay\nfall\nin\nlove\nwith\none\nof\nthem\n,\nand\ntherefore\nyou\nmust\nvisit\nhim\nas\nsoon\nas\nhe\ncomes\n.",
    "differences": [
@@ -366,5 +366,5 @@
    "duration_markers": []
   }
  ],
- "note_slim": "样例只保留比对结论；完整识别输出（含逐词时间、解码参数、音频哈希）留在本机工程内。"
+ "note_slim": "样例只保留比对结论；完整识别输出留在本机工程内。"
 }

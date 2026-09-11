@@ -1,130 +1,130 @@
 1
-00:00:00,510 --> 00:00:11,730
+00:00:00,210 --> 00:00:06,660
 It is a truth universally acknowledged, that a single man in possession of a good fortune must be in want of a wife.
 
 
 2
-00:00:13,080 --> 00:00:24,590
+00:00:07,360 --> 00:00:16,050
 However little known the feelings or views of such a man may be on his first entering a neighbourhood, this truth is so well fixed in the minds of the surrounding families, 
 
 3
-00:00:25,830 --> 00:00:33,070
+00:00:16,690 --> 00:00:20,790
 that he is considered as the rightful property of some one or other of their daughters.
 
 
 4
-00:00:34,140 --> 00:00:35,240
+00:00:21,740 --> 00:00:22,840
 “My dear Mr. Bennet,” 
 
 5
-00:00:36,430 --> 00:00:38,450
+00:00:23,840 --> 00:00:25,390
 said his lady to him one day, 
 
 6
-00:00:39,590 --> 00:00:42,510
+00:00:26,310 --> 00:00:29,230
 “have you heard that Netherfield Park is let at last?”
 
 
 7
-00:00:43,770 --> 00:00:46,230
+00:00:30,630 --> 00:00:32,730
 Mr. Bennet replied that he had not.
 
 
 8
-00:00:47,350 --> 00:00:48,620
+00:00:33,430 --> 00:00:34,700
 “But it is,” 
 
 9
-00:00:49,560 --> 00:00:50,570
+00:00:35,570 --> 00:00:36,350
 returned she; 
 
 10
-00:00:51,600 --> 00:00:55,230
+00:00:37,120 --> 00:00:40,750
 “for Mrs. Long has just been here, and she told me all about it.”
 
 
 11
-00:00:56,500 --> 00:00:58,790
+00:00:41,730 --> 00:00:43,370
 Mr. Bennet made no answer.
 
 
 12
-00:01:00,020 --> 00:01:02,180
+00:00:44,420 --> 00:00:46,580
 “Do not you want to know who has taken it?” 
 
 13
-00:01:03,450 --> 00:01:04,930
+00:00:47,590 --> 00:00:49,490
 cried his wife, impatiently.
 
 
 14
-00:01:05,860 --> 00:01:08,900
+00:00:50,340 --> 00:00:53,380
 “You want to tell me, and I have no objection to hearing it.”
 
 
 
 15
-00:01:09,760 --> 00:01:11,990
+00:00:54,120 --> 00:00:55,770
 This was invitation enough.
 
 
 16
-00:01:13,050 --> 00:01:21,130
+00:00:56,410 --> 00:01:04,490
 “Why, my dear, you must know, Mrs. Long says that Netherfield is taken by a young man of large fortune from the north of England; 
 
 17
-00:01:21,960 --> 00:01:29,280
+00:01:05,320 --> 00:01:12,640
 that he came down on Monday in a chaise and four to see the place, and was so much delighted with it that he agreed with Mr. Morris immediately; 
 
 18
-00:01:30,040 --> 00:01:36,220
+00:01:13,400 --> 00:01:19,580
 that he is to take possession before Michaelmas, and some of his servants are to be in the house by the end of next week.”
 
 
 19
-00:01:37,030 --> 00:01:38,370
+00:01:20,390 --> 00:01:21,730
 “What is his name?”
 
 
 20
-00:01:39,310 --> 00:01:39,960
+00:01:22,670 --> 00:01:23,320
 “Bingley.”
 
 
 21
-00:01:40,840 --> 00:01:42,440
+00:01:24,200 --> 00:01:25,800
 “Is he married or single?”
 
 
 22
-00:01:43,360 --> 00:01:53,830
+00:01:26,720 --> 00:01:37,190
 “Oh, single, my dear, to be sure! A single man of large fortune; four or five thousand a year. What a fine thing for our girls!”
 
 
 23
-00:01:54,770 --> 00:01:57,060
+00:01:38,130 --> 00:01:40,420
 “How so? how can it affect them?”
 
 
 24
-00:01:57,940 --> 00:01:59,040
+00:01:41,300 --> 00:01:42,400
 “My dear Mr. Bennet,” 
 
 25
-00:02:00,270 --> 00:02:01,580
+00:01:43,310 --> 00:01:44,240
 replied his wife, 
 
 26
-00:02:02,690 --> 00:02:09,270
+00:01:45,010 --> 00:01:51,590
 “how can you be so tiresome? You must know that I am thinking of his marrying one of them.”
 
 
 27
-00:02:10,230 --> 00:02:12,390
+00:01:52,550 --> 00:01:54,710
 “Is that his design in settling here?”
 
 
 28
-00:02:13,370 --> 00:02:24,190
+00:01:55,690 --> 00:02:06,510
 “Design? Nonsense, how can you talk so! But it is very likely that he may fall in love with one of them, and therefore you must visit him as soon as he comes.”
 

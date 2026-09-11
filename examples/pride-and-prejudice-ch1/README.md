@@ -8,8 +8,8 @@ this run.
 |---|---|
 | Source | Jane Austen, *Pride and Prejudice* (1813), public domain, via [Project Gutenberg](https://www.gutenberg.org/ebooks/1342) |
 | Text | 1,842 characters as pasted → 1,755 after removing typographic apparatus · 28 lines |
-| Voices | Narrator · Ryan — Mr. Bennet · Aiden — Mrs. Bennet · Vivian |
-| Audio | 144.7 s, 24 kHz mono |
+| Voices | Narrator · a kept reference — Mr. Bennet · Aiden — Mrs. Bennet · Vivian |
+| Audio | 127.0 s, 24 kHz mono |
 | Machine | Mac Studio, Apple M2 Max, 32 GB. Fully offline. |
 
 ## Files
@@ -61,29 +61,42 @@ as unattended batch generation.
 Synthesis can fail in both directions, and one check cannot see both.
 
 **Too little — words silently dropped.** Every line is transcribed locally and
-compared with the script. **8 of 28 flagged, none of them a synthesis error:**
+compared with the script. **Three of 28 flagged, none of them a synthesis
+error:** `neighbourhood` heard as `neighborhood`, and `Bennet` heard as
+`Bennett` twice. British spelling and proper nouns are where this recogniser is
+weakest, so the check has a floor of false alarms set by it rather than by the
+synthesiser. Word-boundary differences (`Netherfield` → `Nether field`) are
+treated as segmentation artefacts and not reported.
 
-| Flag | What it is |
-|---|---|
-| `neighbourhood` → `neighborhood` | The recogniser normalises to US spelling |
-| `bennet` → `bennett` (×3) | Proper noun the recogniser spells differently |
-| `let` → `led`, `had` → `did`, `in` → `and` | Recogniser mishearings |
-| `design nonsense` → `d iz ai n onsense` | The recogniser broke down on "Design?" |
-
-The check therefore has a floor of false alarms set by the recogniser, not by
-the synthesiser. British spelling and proper nouns are its weak points. Word
-boundary differences (`Netherfield` → `Nether field`) are treated as
-segmentation artefacts and not reported, which halved the flag count.
+Six further lines are marked confirmed: a person listened to them and said so.
+That is a different and stronger statement than "no difference found".
 
 **Too much — sound added that is not in the text.** "Mr. Bennet replied that he
 had not." first came out at **7.68 s of speech for seven words**, more than
-twice its natural length, and audibly wrong. Transcription did not catch it:
-the words were all there.
+twice its natural length and audibly wrong. Transcription could not see it —
+every word was there.
 
-A duration check flagged it — 1 of 28, no false positives — and one retake
-brought it to **3.44 s**. The cause is sampling, not the text: the same line at
-four different seeds gave 6.72 s, 5.24 s, 2.86 s and 2.48 s. So the remedy is
-a retake, and the flag says so.
+A duration check flagged it, and the fix is the next section. **This run
+produces no duration flags at all.**
+
+## What fixed the narrator
+
+The first version of this sample used the preset voice Ryan for the narrator,
+and it drifted: the same line at five seeds ran 6.72, 5.24, 2.86, 2.48 and
+5.46 seconds — 36% variation, twice over the threshold.
+
+The narrator here is not a preset. It is a **reference kept from one Ryan take
+that sounded right**, saved to the voice library under a name and assigned to
+the character. Measured the same way, that reference held the line at 1.76,
+2.08, 1.72, 2.05 and 2.14 seconds — **9% variation, never over**.
+
+A reference constrains delivery where a speaker embedding leaves it free. Three
+narrator lines were then retaken by hand, and the whole passage is 24 seconds
+shorter than before while saying exactly the same words.
+
+This is also why the voice library exists at all: nine presets, two of them
+English and both male, is a ceiling — but the reason to keep a voice turned out
+to be steadiness as much as timbre.
 
 ## Measurements
 
@@ -92,7 +105,7 @@ a retake, and the flag says so.
 | Attribution, 35 units | **14.8 s** |
 | Synthesis, 28 lines → 144.7 s of audio | **51 s · RTF 0.358 · 2.8× real time** |
 | Transcribe-back check, 28 lines | **28 s** |
-| Human corrections | **1** label, 2 speakers reassigned after cleanup, **1** retake |
+| Human corrections | **1** label, 2 speakers reassigned after cleanup, **3** retakes, 1 narrator voice kept and assigned |
 
 The 0.358 real-time factor is for the **preset-voice path**. It is not
 comparable to the 0.842 measured for the reference-cloning path in
@@ -108,13 +121,19 @@ more work per line.
 - **English has two preset voices, both male.** Mrs. Bennet is read by a
   Chinese-preset female voice generating English. Its accent was judged
   acceptable by a non-native listener; a native speaker has not assessed it.
+  The voice library lifts this ceiling, but the presets remain the starting
+  point for anything kept.
 - **Short narration fragments read slowly.** The attributions between split
   quotations (" said his lady to him one day,") are 15–30 characters and come
   out at roughly half the delivery rate of full sentences, which reads as an
   oddly heavy tone. It follows from giving narrator and character separate
   voices, and is not solved here.
-- **The audio has not been fully listened to.** Automated checks found no
-  missing content. That is not the same as confirming it sounds right.
+- **The audio has been listened to in part, not in full.** Six lines are
+  confirmed by ear; the rest rest on automated checks, which find missing
+  content but say nothing about whether a reading sounds right.
+- **Pitch and tone are not measured.** The duration check catches a line that
+  runs long. A line that stays the right length while sitting too low in the
+  voice passes it, and only a listener notices.
 
 ## What the editor removed before synthesis
 
