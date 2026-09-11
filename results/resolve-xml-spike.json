@@ -1,0 +1,1017 @@
+{
+  "task": "DaVinci Resolve FCP7 XML 导入验证",
+  "author": "Astra",
+  "source": {
+    "project_id": "339de611b9bd427d9e11bf0b20a5c0fb",
+    "revision": 101,
+    "clips": 32,
+    "package_sha256": "6fd49ce2ac22f7bb99de158603fff4e2b3f84fe038280bc5f10690140d7de729",
+    "new_synthesis": false
+  },
+  "fps": 25,
+  "sample_rate": 24000,
+  "targets": [
+    {
+      "index": 1,
+      "file": "audio/0001_旁白.wav",
+      "original_start_sample": 0,
+      "original_end_sample": 67200,
+      "xml_start_frame": 0,
+      "xml_end_frame": 70,
+      "rounding_start_ms": 0.0,
+      "rounding_end_ms": 0.0
+    },
+    {
+      "index": 2,
+      "file": "audio/0002_旁白.wav",
+      "original_start_sample": 73200,
+      "original_end_sample": 126960,
+      "xml_start_frame": 76,
+      "xml_end_frame": 132,
+      "rounding_start_ms": -9.999999999999787,
+      "rounding_end_ms": -9.999999999999787
+    },
+    {
+      "index": 3,
+      "file": "audio/0003_旁白.wav",
+      "original_start_sample": 132960,
+      "original_end_sample": 313440,
+      "xml_start_frame": 139,
+      "xml_end_frame": 327,
+      "rounding_start_ms": 19.999999999999574,
+      "rounding_end_ms": 19.999999999999574
+    },
+    {
+      "index": 4,
+      "file": "audio/0004_林小雪.wav",
+      "original_start_sample": 319440,
+      "original_end_sample": 361680,
+      "xml_start_frame": 333,
+      "xml_end_frame": 377,
+      "rounding_start_ms": 9.999999999999787,
+      "rounding_end_ms": 9.999999999999787
+    },
+    {
+      "index": 5,
+      "file": "audio/0005_周远.wav",
+      "original_start_sample": 367680,
+      "original_end_sample": 434880,
+      "xml_start_frame": 383,
+      "xml_end_frame": 453,
+      "rounding_start_ms": 0.0,
+      "rounding_end_ms": 0.0
+    },
+    {
+      "index": 6,
+      "file": "audio/0006_旁白.wav",
+      "original_start_sample": 440880,
+      "original_end_sample": 488880,
+      "xml_start_frame": 459,
+      "xml_end_frame": 509,
+      "rounding_start_ms": -10.000000000001563,
+      "rounding_end_ms": -10.000000000001563
+    },
+    {
+      "index": 7,
+      "file": "audio/0007_周远.wav",
+      "original_start_sample": 494880,
+      "original_end_sample": 554400,
+      "xml_start_frame": 516,
+      "xml_end_frame": 578,
+      "rounding_start_ms": 19.999999999999574,
+      "rounding_end_ms": 19.999999999999574
+    },
+    {
+      "index": 8,
+      "file": "audio/0008_旁白.wav",
+      "original_start_sample": 560400,
+      "original_end_sample": 785040,
+      "xml_start_frame": 584,
+      "xml_end_frame": 818,
+      "rounding_start_ms": 9.99999999999801,
+      "rounding_end_ms": 9.99999999999801
+    },
+    {
+      "index": 9,
+      "file": "audio/0009_张师傅.wav",
+      "original_start_sample": 791040,
+      "original_end_sample": 850560,
+      "xml_start_frame": 824,
+      "xml_end_frame": 886,
+      "rounding_start_ms": 0.0,
+      "rounding_end_ms": 0.0
+    },
+    {
+      "index": 10,
+      "file": "audio/0010_林小雪.wav",
+      "original_start_sample": 856560,
+      "original_end_sample": 900720,
+      "xml_start_frame": 892,
+      "xml_end_frame": 938,
+      "rounding_start_ms": -9.99999999999801,
+      "rounding_end_ms": -9.99999999999801
+    },
+    {
+      "index": 11,
+      "file": "audio/0011_旁白.wav",
+      "original_start_sample": 906720,
+      "original_end_sample": 943200,
+      "xml_start_frame": 945,
+      "xml_end_frame": 983,
+      "rounding_start_ms": 19.99999999999602,
+      "rounding_end_ms": 20.000000000003126
+    },
+    {
+      "index": 12,
+      "file": "audio/0012_张师傅.wav",
+      "original_start_sample": 949200,
+      "original_end_sample": 1072080,
+      "xml_start_frame": 989,
+      "xml_end_frame": 1117,
+      "rounding_start_ms": 10.000000000005116,
+      "rounding_end_ms": 9.99999999999801
+    },
+    {
+      "index": 13,
+      "file": "audio/0013_旁白.wav",
+      "original_start_sample": 1078080,
+      "original_end_sample": 1224000,
+      "xml_start_frame": 1123,
+      "xml_end_frame": 1275,
+      "rounding_start_ms": 0.0,
+      "rounding_end_ms": 0.0
+    },
+    {
+      "index": 14,
+      "file": "audio/0014_林小雪.wav",
+      "original_start_sample": 1230000,
+      "original_end_sample": 1310640,
+      "xml_start_frame": 1281,
+      "xml_end_frame": 1365,
+      "rounding_start_ms": -9.99999999999801,
+      "rounding_end_ms": -9.99999999999801
+    },
+    {
+      "index": 15,
+      "file": "audio/0015_旁白.wav",
+      "original_start_sample": 1316640,
+      "original_end_sample": 1368480,
+      "xml_start_frame": 1372,
+      "xml_end_frame": 1426,
+      "rounding_start_ms": 20.000000000003126,
+      "rounding_end_ms": 19.99999999999602
+    },
+    {
+      "index": 16,
+      "file": "audio/0016_林小雪.wav",
+      "original_start_sample": 1374480,
+      "original_end_sample": 1439760,
+      "xml_start_frame": 1432,
+      "xml_end_frame": 1500,
+      "rounding_start_ms": 9.99999999999801,
+      "rounding_end_ms": 9.99999999999801
+    },
+    {
+      "index": 17,
+      "file": "audio/0017_旁白.wav",
+      "original_start_sample": 1445760,
+      "original_end_sample": 1522560,
+      "xml_start_frame": 1506,
+      "xml_end_frame": 1586,
+      "rounding_start_ms": 0.0,
+      "rounding_end_ms": 0.0
+    },
+    {
+      "index": 18,
+      "file": "audio/0018_张师傅.wav",
+      "original_start_sample": 1528560,
+      "original_end_sample": 1593840,
+      "xml_start_frame": 1592,
+      "xml_end_frame": 1660,
+      "rounding_start_ms": -9.99999999999801,
+      "rounding_end_ms": -9.999999999990905
+    },
+    {
+      "index": 19,
+      "file": "audio/0019_旁白.wav",
+      "original_start_sample": 1599840,
+      "original_end_sample": 1757280,
+      "xml_start_frame": 1667,
+      "xml_end_frame": 1831,
+      "rounding_start_ms": 20.000000000010232,
+      "rounding_end_ms": 19.99999999999602
+    },
+    {
+      "index": 20,
+      "file": "audio/0020_张师傅.wav",
+      "original_start_sample": 1763280,
+      "original_end_sample": 1843920,
+      "xml_start_frame": 1837,
+      "xml_end_frame": 1921,
+      "rounding_start_ms": 10.000000000005116,
+      "rounding_end_ms": 10.000000000005116
+    },
+    {
+      "index": 21,
+      "file": "audio/0021_周远.wav",
+      "original_start_sample": 1849920,
+      "original_end_sample": 1874880,
+      "xml_start_frame": 1927,
+      "xml_end_frame": 1953,
+      "rounding_start_ms": 0.0,
+      "rounding_end_ms": 0.0
+    },
+    {
+      "index": 22,
+      "file": "audio/0022_张师傅.wav",
+      "original_start_sample": 1880880,
+      "original_end_sample": 2038320,
+      "xml_start_frame": 1959,
+      "xml_end_frame": 2123,
+      "rounding_start_ms": -10.000000000005116,
+      "rounding_end_ms": -10.000000000005116
+    },
+    {
+      "index": 23,
+      "file": "audio/0023_旁白.wav",
+      "original_start_sample": 2044320,
+      "original_end_sample": 2090400,
+      "xml_start_frame": 2130,
+      "xml_end_frame": 2178,
+      "rounding_start_ms": 19.99999999999602,
+      "rounding_end_ms": 20.000000000010232
+    },
+    {
+      "index": 24,
+      "file": "audio/0024_张师傅.wav",
+      "original_start_sample": 2096400,
+      "original_end_sample": 2213520,
+      "xml_start_frame": 2184,
+      "xml_end_frame": 2306,
+      "rounding_start_ms": 10.000000000005116,
+      "rounding_end_ms": 9.999999999990905
+    },
+    {
+      "index": 25,
+      "file": "audio/0025_旁白.wav",
+      "original_start_sample": 2219520,
+      "original_end_sample": 2423040,
+      "xml_start_frame": 2312,
+      "xml_end_frame": 2524,
+      "rounding_start_ms": 0.0,
+      "rounding_end_ms": 0.0
+    },
+    {
+      "index": 26,
+      "file": "audio/0026_旁白.wav",
+      "original_start_sample": 2429040,
+      "original_end_sample": 2457840,
+      "xml_start_frame": 2530,
+      "xml_end_frame": 2560,
+      "rounding_start_ms": -9.999999999990905,
+      "rounding_end_ms": -9.999999999990905
+    },
+    {
+      "index": 27,
+      "file": "audio/0027_旁白.wav",
+      "original_start_sample": 2463840,
+      "original_end_sample": 2492640,
+      "xml_start_frame": 2567,
+      "xml_end_frame": 2597,
+      "rounding_start_ms": 20.000000000010232,
+      "rounding_end_ms": 19.99999999999602
+    },
+    {
+      "index": 28,
+      "file": "audio/0028_林小雪.wav",
+      "original_start_sample": 2498640,
+      "original_end_sample": 2563920,
+      "xml_start_frame": 2603,
+      "xml_end_frame": 2671,
+      "rounding_start_ms": 10.000000000005116,
+      "rounding_end_ms": 10.000000000005116
+    },
+    {
+      "index": 29,
+      "file": "audio/0029_旁白.wav",
+      "original_start_sample": 2569920,
+      "original_end_sample": 2591040,
+      "xml_start_frame": 2677,
+      "xml_end_frame": 2699,
+      "rounding_start_ms": 0.0,
+      "rounding_end_ms": 0.0
+    },
+    {
+      "index": 30,
+      "file": "audio/0030_张师傅.wav",
+      "original_start_sample": 2597040,
+      "original_end_sample": 2639280,
+      "xml_start_frame": 2705,
+      "xml_end_frame": 2749,
+      "rounding_start_ms": -9.999999999990905,
+      "rounding_end_ms": -10.000000000005116
+    },
+    {
+      "index": 31,
+      "file": "audio/0031_旁白.wav",
+      "original_start_sample": 2645280,
+      "original_end_sample": 2691360,
+      "xml_start_frame": 2756,
+      "xml_end_frame": 2804,
+      "rounding_start_ms": 19.99999999999602,
+      "rounding_end_ms": 19.99999999999602
+    },
+    {
+      "index": 32,
+      "file": "audio/0032_张师傅.wav",
+      "original_start_sample": 2697360,
+      "original_end_sample": 2826000,
+      "xml_start_frame": 2810,
+      "xml_end_frame": 2944,
+      "rounding_start_ms": 10.000000000005116,
+      "rounding_end_ms": 10.000000000005116
+    }
+  ],
+  "measurement_definitions": {
+    "source_to_xml": "nearest frame, absolute positions independently rounded; no sequential accumulated rounding",
+    "xml_to_resolve": "XML target minus actual imported position",
+    "source_to_resolve": "actual imported position minus original sample position"
+  },
+  "observations": [
+    {
+      "kind": "script_api_unavailable",
+      "external_python_scriptapp": "None",
+      "console_Resolve": "nil",
+      "console_bmd_scriptapp": "nil",
+      "fallback": "UI import and actual timeline re-export; no permission changes"
+    },
+    {
+      "kind": "render_attempt_incomplete",
+      "description": "尝试在 Deliver 以 Linear PCM 渲染已有时间轴作为独立音频落点证据，UI 显示 duration 00:00:00:00、没有进入渲染队列，未得到输出；不能将这次尝试视为音频实测。已停止播放并清除验证工程的 In/Out 标记。",
+      "additional_console_probe": "app:GetResolve() 未成功提交到控制台，无返回结果，未计作 API 成功或失败证据。"
+    }
+  ],
+  "sources": [
+    {
+      "purpose": "XML syntax only; not evidence of Resolve behavior",
+      "url": "https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/FinalCutPro_XML/Elements/Elements.html"
+    }
+  ],
+  "runs": [
+    {
+      "command": ".venv/bin/python -m pytest -q",
+      "exit_code": 0,
+      "stdout": "........................................................................ [ 27%]\n........................................................................ [ 54%]\n........................................................................ [ 81%]\n................................................                         [100%]\n=============================== warnings summary ===============================\n.venv/lib/python3.12/site-packages/fastapi/testclient.py:1\n  <repo>/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n    from starlette.testclient import TestClient as TestClient  # noqa\n\n.venv/lib/python3.12/site-packages/starlette/testclient.py:53\n  <repo>/.venv/lib/python3.12/site-packages/starlette/testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.\n    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n264 passed, 2 warnings in 12.52s\n",
+      "stderr": ""
+    }
+  ],
+  "absolute_import": {
+    "version": "21.0.4",
+    "import_menu": "File > Import > Timeline",
+    "actual_readback": "File > Export > Timeline > FCPXML 1.9",
+    "readback_path": "user-data/resolve-xml-spike/resolve-absolute.fcpxml",
+    "clips": 32,
+    "fps": 25,
+    "timecode_start": "00:00:00:00",
+    "positions": [
+      {
+        "index": 1,
+        "actual_start_fraction_seconds": "0",
+        "actual_duration_fraction_seconds": "14/5",
+        "xml_target_minus_actual_ms": 0.0,
+        "actual_minus_original_start_ms": 0.0,
+        "actual_minus_original_end_ms": 0.0,
+        "on_frame": true
+      },
+      {
+        "index": 2,
+        "actual_start_fraction_seconds": "76/25",
+        "actual_duration_fraction_seconds": "56/25",
+        "xml_target_minus_actual_ms": 0.0,
+        "actual_minus_original_start_ms": -10.0,
+        "actual_minus_original_end_ms": -10.0,
+        "on_frame": true
+      },
+      {
+        "index": 3,
+        "actual_start_fraction_seconds": "139/25",
+        "actual_duration_fraction_seconds": "188/25",
+        "xml_target_minus_actual_ms": 0.0,
+        "actual_minus_original_start_ms": 20.0,
+        "actual_minus_original_end_ms": 20.0,
+        "on_frame": true
+      },
+      {
+        "index": 4,
+        "actual_start_fraction_seconds": "333/25",
+        "actual_duration_fraction_seconds": "44/25",
+        "xml_target_minus_actual_ms": 0.0,
+        "actual_minus_original_start_ms": 10.0,
+        "actual_minus_original_end_ms": 10.0,
+        "on_frame": true
+      },
+      {
+        "index": 5,
+        "actual_start_fraction_seconds": "383/25",
+        "actual_duration_fraction_seconds": "14/5",
+        "xml_target_minus_actual_ms": 0.0,
+        "actual_minus_original_start_ms": 0.0,
+        "actual_minus_original_end_ms": 0.0,
+        "on_frame": true
+      },
+      {
+        "index": 6,
+        "actual_start_fraction_seconds": "459/25",
+        "actual_duration_fraction_seconds": "2",
+        "xml_target_minus_actual_ms": 0.0,
+        "actual_minus_original_start_ms": -10.0,
+        "actual_minus_original_end_ms": -10.0,
+        "on_frame": true
+      },
+      {
+        "index": 7,
+        "actual_start_fraction_seconds": "516/25",
+        "actual_duration_fraction_seconds": "62/25",
+        "xml_target_minus_actual_ms": 0.0,
+        "actual_minus_original_start_ms": 20.0,
+        "actual_minus_original_end_ms": 20.0,
+        "on_frame": true
+      },
+      {
+        "index": 8,
+        "actual_start_fraction_seconds": "584/25",
+        "actual_duration_fraction_seconds": "234/25",
+        "xml_target_minus_actual_ms": 0.0,
+        "actual_minus_original_start_ms": 10.0,
+        "actual_minus_original_end_ms": 10.0,
+        "on_frame": true
+      },
+      {
+        "index": 9,
+        "actual_start_fraction_seconds": "824/25",
+        "actual_duration_fraction_seconds": "62/25",
+        "xml_target_minus_actual_ms": 0.0,
+        "actual_minus_original_start_ms": 0.0,
+        "actual_minus_original_end_ms": 0.0,
+        "on_frame": true
+      },
+      {
+        "index": 10,
+        "actual_start_fraction_seconds": "892/25",
+        "actual_duration_fraction_seconds": "46/25",
+        "xml_target_minus_actual_ms": 0.0,
+        "actual_minus_original_start_ms": -10.0,
+        "actual_minus_original_end_ms": -10.0,
+        "on_frame": true
+      },
+      {
+        "index": 11,
+        "actual_start_fraction_seconds": "189/5",
+        "actual_duration_fraction_seconds": "38/25",
+        "xml_target_minus_actual_ms": 0.0,
+        "actual_minus_original_start_ms": 20.0,
+        "actual_minus_original_end_ms": 20.0,
+        "on_frame": true
+      },
+      {
+        "index": 12,
+        "actual_start_fraction_seconds": "989/25",
+        "actual_duration_fraction_seconds": "128/25",
+        "xml_target_minus_actual_ms": 0.0,
+        "actual_minus_original_start_ms": 10.0,
+        "actual_minus_original_end_ms": 10.0,
+        "on_frame": true
+      },
+      {
+        "index": 13,
+        "actual_start_fraction_seconds": "1123/25",
+        "actual_duration_fraction_seconds": "152/25",
+        "xml_target_minus_actual_ms": 0.0,
+        "actual_minus_original_start_ms": 0.0,
+        "actual_minus_original_end_ms": 0.0,
+        "on_frame": true
+      },
+      {
+        "index": 14,
+        "actual_start_fraction_seconds": "1281/25",
+        "actual_duration_fraction_seconds": "84/25",
+        "xml_target_minus_actual_ms": 0.0,
+        "actual_minus_original_start_ms": -10.0,
+        "actual_minus_original_end_ms": -10.0,
+        "on_frame": true
+      },
+      {
+        "index": 15,
+        "actual_start_fraction_seconds": "1372/25",
+        "actual_duration_fraction_seconds": "54/25",
+        "xml_target_minus_actual_ms": 0.0,
+        "actual_minus_original_start_ms": 20.0,
+        "actual_minus_original_end_ms": 20.0,
+        "on_frame": true
+      },
+      {
+        "index": 16,
+        "actual_start_fraction_seconds": "1432/25",
+        "actual_duration_fraction_seconds": "68/25",
+        "xml_target_minus_actual_ms": 0.0,
+        "actual_minus_original_start_ms": 10.0,
+        "actual_minus_original_end_ms": 10.0,
+        "on_frame": true
+      },
+      {
+        "index": 17,
+        "actual_start_fraction_seconds": "1506/25",
+        "actual_duration_fraction_seconds": "16/5",
+        "xml_target_minus_actual_ms": 0.0,
+        "actual_minus_original_start_ms": 0.0,
+        "actual_minus_original_end_ms": 0.0,
+        "on_frame": true
+      },
+      {
+        "index": 18,
+        "actual_start_fraction_seconds": "1592/25",
+        "actual_duration_fraction_seconds": "68/25",
+        "xml_target_minus_actual_ms": 0.0,
+        "actual_minus_original_start_ms": -10.0,
+        "actual_minus_original_end_ms": -10.0,
+        "on_frame": true
+      },
+      {
+        "index": 19,
+        "actual_start_fraction_seconds": "1667/25",
+        "actual_duration_fraction_seconds": "164/25",
+        "xml_target_minus_actual_ms": 0.0,
+        "actual_minus_original_start_ms": 20.0,
+        "actual_minus_original_end_ms": 20.0,
+        "on_frame": true
+      },
+      {
+        "index": 20,
+        "actual_start_fraction_seconds": "1837/25",
+        "actual_duration_fraction_seconds": "84/25",
+        "xml_target_minus_actual_ms": 0.0,
+        "actual_minus_original_start_ms": 10.0,
+        "actual_minus_original_end_ms": 10.0,
+        "on_frame": true
+      },
+      {
+        "index": 21,
+        "actual_start_fraction_seconds": "1927/25",
+        "actual_duration_fraction_seconds": "26/25",
+        "xml_target_minus_actual_ms": 0.0,
+        "actual_minus_original_start_ms": 0.0,
+        "actual_minus_original_end_ms": 0.0,
+        "on_frame": true
+      },
+      {
+        "index": 22,
+        "actual_start_fraction_seconds": "1959/25",
+        "actual_duration_fraction_seconds": "164/25",
+        "xml_target_minus_actual_ms": 0.0,
+        "actual_minus_original_start_ms": -10.0,
+        "actual_minus_original_end_ms": -10.0,
+        "on_frame": true
+      },
+      {
+        "index": 23,
+        "actual_start_fraction_seconds": "426/5",
+        "actual_duration_fraction_seconds": "48/25",
+        "xml_target_minus_actual_ms": 0.0,
+        "actual_minus_original_start_ms": 20.0,
+        "actual_minus_original_end_ms": 20.0,
+        "on_frame": true
+      },
+      {
+        "index": 24,
+        "actual_start_fraction_seconds": "2184/25",
+        "actual_duration_fraction_seconds": "122/25",
+        "xml_target_minus_actual_ms": 0.0,
+        "actual_minus_original_start_ms": 10.0,
+        "actual_minus_original_end_ms": 10.0,
+        "on_frame": true
+      },
+      {
+        "index": 25,
+        "actual_start_fraction_seconds": "2312/25",
+        "actual_duration_fraction_seconds": "212/25",
+        "xml_target_minus_actual_ms": 0.0,
+        "actual_minus_original_start_ms": 0.0,
+        "actual_minus_original_end_ms": 0.0,
+        "on_frame": true
+      },
+      {
+        "index": 26,
+        "actual_start_fraction_seconds": "506/5",
+        "actual_duration_fraction_seconds": "6/5",
+        "xml_target_minus_actual_ms": 0.0,
+        "actual_minus_original_start_ms": -10.0,
+        "actual_minus_original_end_ms": -10.0,
+        "on_frame": true
+      },
+      {
+        "index": 27,
+        "actual_start_fraction_seconds": "2567/25",
+        "actual_duration_fraction_seconds": "6/5",
+        "xml_target_minus_actual_ms": 0.0,
+        "actual_minus_original_start_ms": 20.0,
+        "actual_minus_original_end_ms": 20.0,
+        "on_frame": true
+      },
+      {
+        "index": 28,
+        "actual_start_fraction_seconds": "2603/25",
+        "actual_duration_fraction_seconds": "68/25",
+        "xml_target_minus_actual_ms": 0.0,
+        "actual_minus_original_start_ms": 10.0,
+        "actual_minus_original_end_ms": 10.0,
+        "on_frame": true
+      },
+      {
+        "index": 29,
+        "actual_start_fraction_seconds": "2677/25",
+        "actual_duration_fraction_seconds": "22/25",
+        "xml_target_minus_actual_ms": 0.0,
+        "actual_minus_original_start_ms": 0.0,
+        "actual_minus_original_end_ms": 0.0,
+        "on_frame": true
+      },
+      {
+        "index": 30,
+        "actual_start_fraction_seconds": "541/5",
+        "actual_duration_fraction_seconds": "44/25",
+        "xml_target_minus_actual_ms": 0.0,
+        "actual_minus_original_start_ms": -10.0,
+        "actual_minus_original_end_ms": -10.0,
+        "on_frame": true
+      },
+      {
+        "index": 31,
+        "actual_start_fraction_seconds": "2756/25",
+        "actual_duration_fraction_seconds": "48/25",
+        "xml_target_minus_actual_ms": 0.0,
+        "actual_minus_original_start_ms": 20.0,
+        "actual_minus_original_end_ms": 20.0,
+        "on_frame": true
+      },
+      {
+        "index": 32,
+        "actual_start_fraction_seconds": "562/5",
+        "actual_duration_fraction_seconds": "134/25",
+        "xml_target_minus_actual_ms": 0.0,
+        "actual_minus_original_start_ms": 10.0,
+        "actual_minus_original_end_ms": 10.0,
+        "on_frame": true
+      }
+    ],
+    "max_xml_minus_actual_ms": 0.0,
+    "max_actual_minus_original_ms": 20.0,
+    "last_start_drift_ms": 10.0,
+    "first_to_last_start_drift_ms": 10.0,
+    "all_exported_positions_on_frames": true,
+    "scope": "实际导入后从 Resolve 回导的分数时间；不代表 Resolve 原生音频定位能力的上限。",
+    "gaps": [
+      {
+        "after_index": 1,
+        "original_ms": 250.0,
+        "actual_readback_ms": 240.0,
+        "difference_ms": -10.0
+      },
+      {
+        "after_index": 2,
+        "original_ms": 250.0,
+        "actual_readback_ms": 280.0,
+        "difference_ms": 30.0
+      },
+      {
+        "after_index": 3,
+        "original_ms": 250.0,
+        "actual_readback_ms": 240.0,
+        "difference_ms": -10.0
+      },
+      {
+        "after_index": 4,
+        "original_ms": 250.0,
+        "actual_readback_ms": 240.0,
+        "difference_ms": -10.0
+      },
+      {
+        "after_index": 5,
+        "original_ms": 250.0,
+        "actual_readback_ms": 240.0,
+        "difference_ms": -10.0
+      },
+      {
+        "after_index": 6,
+        "original_ms": 250.0,
+        "actual_readback_ms": 280.0,
+        "difference_ms": 30.0
+      },
+      {
+        "after_index": 7,
+        "original_ms": 250.0,
+        "actual_readback_ms": 240.0,
+        "difference_ms": -10.0
+      },
+      {
+        "after_index": 8,
+        "original_ms": 250.0,
+        "actual_readback_ms": 240.0,
+        "difference_ms": -10.0
+      },
+      {
+        "after_index": 9,
+        "original_ms": 250.0,
+        "actual_readback_ms": 240.0,
+        "difference_ms": -10.0
+      },
+      {
+        "after_index": 10,
+        "original_ms": 250.0,
+        "actual_readback_ms": 280.0,
+        "difference_ms": 30.0
+      },
+      {
+        "after_index": 11,
+        "original_ms": 250.0,
+        "actual_readback_ms": 240.0,
+        "difference_ms": -10.0
+      },
+      {
+        "after_index": 12,
+        "original_ms": 250.0,
+        "actual_readback_ms": 240.0,
+        "difference_ms": -10.0
+      },
+      {
+        "after_index": 13,
+        "original_ms": 250.0,
+        "actual_readback_ms": 240.0,
+        "difference_ms": -10.0
+      },
+      {
+        "after_index": 14,
+        "original_ms": 250.0,
+        "actual_readback_ms": 280.0,
+        "difference_ms": 30.0
+      },
+      {
+        "after_index": 15,
+        "original_ms": 250.0,
+        "actual_readback_ms": 240.0,
+        "difference_ms": -10.0
+      },
+      {
+        "after_index": 16,
+        "original_ms": 250.0,
+        "actual_readback_ms": 240.0,
+        "difference_ms": -10.0
+      },
+      {
+        "after_index": 17,
+        "original_ms": 250.0,
+        "actual_readback_ms": 240.0,
+        "difference_ms": -10.0
+      },
+      {
+        "after_index": 18,
+        "original_ms": 250.0,
+        "actual_readback_ms": 280.0,
+        "difference_ms": 30.0
+      },
+      {
+        "after_index": 19,
+        "original_ms": 250.0,
+        "actual_readback_ms": 240.0,
+        "difference_ms": -10.0
+      },
+      {
+        "after_index": 20,
+        "original_ms": 250.0,
+        "actual_readback_ms": 240.0,
+        "difference_ms": -10.0
+      },
+      {
+        "after_index": 21,
+        "original_ms": 250.0,
+        "actual_readback_ms": 240.0,
+        "difference_ms": -10.0
+      },
+      {
+        "after_index": 22,
+        "original_ms": 250.0,
+        "actual_readback_ms": 280.0,
+        "difference_ms": 30.0
+      },
+      {
+        "after_index": 23,
+        "original_ms": 250.0,
+        "actual_readback_ms": 240.0,
+        "difference_ms": -10.0
+      },
+      {
+        "after_index": 24,
+        "original_ms": 250.0,
+        "actual_readback_ms": 240.0,
+        "difference_ms": -10.0
+      },
+      {
+        "after_index": 25,
+        "original_ms": 250.0,
+        "actual_readback_ms": 240.0,
+        "difference_ms": -10.0
+      },
+      {
+        "after_index": 26,
+        "original_ms": 250.0,
+        "actual_readback_ms": 280.0,
+        "difference_ms": 30.0
+      },
+      {
+        "after_index": 27,
+        "original_ms": 250.0,
+        "actual_readback_ms": 240.0,
+        "difference_ms": -10.0
+      },
+      {
+        "after_index": 28,
+        "original_ms": 250.0,
+        "actual_readback_ms": 240.0,
+        "difference_ms": -10.0
+      },
+      {
+        "after_index": 29,
+        "original_ms": 250.0,
+        "actual_readback_ms": 240.0,
+        "difference_ms": -10.0
+      },
+      {
+        "after_index": 30,
+        "original_ms": 250.0,
+        "actual_readback_ms": 280.0,
+        "difference_ms": 30.0
+      },
+      {
+        "after_index": 31,
+        "original_ms": 250.0,
+        "actual_readback_ms": 240.0,
+        "difference_ms": -10.0
+      }
+    ],
+    "max_gap_change_ms": 30.0,
+    "all_source_durations_exact_25fps": true,
+    "audio_duration_changes_ms": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "end_of_timeline_drift_ms": 10.0
+  },
+  "relative_path": {
+    "tested_form": "audio/<percent-encoded filename>.wav",
+    "automatic_resolution": false,
+    "missing_dialog": "32 of 32 clips were not yet found. Do you want to select another folder to search?",
+    "missing_count": 32,
+    "fresh_project": "VoxStage Relative Moved 2026-09-11",
+    "old_package_path_exists": false,
+    "moved_directory": "user-data/resolve-xml-spike/relocated/试听包 改名",
+    "package_audio_hashes_unchanged": true,
+    "relink_result_clips": 32,
+    "all_resolved_files_exist_in_moved_package": true,
+    "resolved_files": [
+      "user-data/resolve-xml-spike/relocated/试听包 改名/audio/0001_旁白.wav",
+      "user-data/resolve-xml-spike/relocated/试听包 改名/audio/0002_旁白.wav",
+      "user-data/resolve-xml-spike/relocated/试听包 改名/audio/0003_旁白.wav",
+      "user-data/resolve-xml-spike/relocated/试听包 改名/audio/0004_林小雪.wav",
+      "user-data/resolve-xml-spike/relocated/试听包 改名/audio/0005_周远.wav",
+      "user-data/resolve-xml-spike/relocated/试听包 改名/audio/0006_旁白.wav",
+      "user-data/resolve-xml-spike/relocated/试听包 改名/audio/0007_周远.wav",
+      "user-data/resolve-xml-spike/relocated/试听包 改名/audio/0008_旁白.wav",
+      "user-data/resolve-xml-spike/relocated/试听包 改名/audio/0009_张师傅.wav",
+      "user-data/resolve-xml-spike/relocated/试听包 改名/audio/0010_林小雪.wav",
+      "user-data/resolve-xml-spike/relocated/试听包 改名/audio/0011_旁白.wav",
+      "user-data/resolve-xml-spike/relocated/试听包 改名/audio/0012_张师傅.wav",
+      "user-data/resolve-xml-spike/relocated/试听包 改名/audio/0013_旁白.wav",
+      "user-data/resolve-xml-spike/relocated/试听包 改名/audio/0014_林小雪.wav",
+      "user-data/resolve-xml-spike/relocated/试听包 改名/audio/0015_旁白.wav",
+      "user-data/resolve-xml-spike/relocated/试听包 改名/audio/0016_林小雪.wav",
+      "user-data/resolve-xml-spike/relocated/试听包 改名/audio/0017_旁白.wav",
+      "user-data/resolve-xml-spike/relocated/试听包 改名/audio/0018_张师傅.wav",
+      "user-data/resolve-xml-spike/relocated/试听包 改名/audio/0019_旁白.wav",
+      "user-data/resolve-xml-spike/relocated/试听包 改名/audio/0020_张师傅.wav",
+      "user-data/resolve-xml-spike/relocated/试听包 改名/audio/0021_周远.wav",
+      "user-data/resolve-xml-spike/relocated/试听包 改名/audio/0022_张师傅.wav",
+      "user-data/resolve-xml-spike/relocated/试听包 改名/audio/0023_旁白.wav",
+      "user-data/resolve-xml-spike/relocated/试听包 改名/audio/0024_张师傅.wav",
+      "user-data/resolve-xml-spike/relocated/试听包 改名/audio/0025_旁白.wav",
+      "user-data/resolve-xml-spike/relocated/试听包 改名/audio/0026_旁白.wav",
+      "user-data/resolve-xml-spike/relocated/试听包 改名/audio/0027_旁白.wav",
+      "user-data/resolve-xml-spike/relocated/试听包 改名/audio/0028_林小雪.wav",
+      "user-data/resolve-xml-spike/relocated/试听包 改名/audio/0029_旁白.wav",
+      "user-data/resolve-xml-spike/relocated/试听包 改名/audio/0030_张师傅.wav",
+      "user-data/resolve-xml-spike/relocated/试听包 改名/audio/0031_旁白.wav",
+      "user-data/resolve-xml-spike/relocated/试听包 改名/audio/0032_张师傅.wav"
+    ],
+    "relinked_timeline_positions_identical": true,
+    "workflow_steps": [
+      "在缺失素材提示中点 Yes",
+      "在 Resolve 目录树展开并选择搬移后包中的 audio 文件夹",
+      "点 OK，全部 32 个片段被找到"
+    ],
+    "workflow_stage_count": 3,
+    "actual_folder_tree_levels_selected": [
+      "Macintosh HD",
+      "Users",
+      "<user>",
+      "Documents",
+      "VoxStage",
+      "user-data",
+      "resolve-xml-spike",
+      "relocated",
+      "试听包 改名",
+      "audio"
+    ],
+    "folder_tree_levels": 10,
+    "click_count_note": "三阶段不等于三次点击；本机选文件夹需逐层展开目录树。Path Name 仅显示当前选择，直接填入不能代替选中目录。",
+    "scope": "只否定本次 bare relative pathurl 写法的自动解析；未穷尽其它非标准 URI 变体。"
+  },
+  "raw_resolve_exports": {
+    "resolve-absolute.fcpxml": {
+      "sha256_before_path_redaction": "805efb8c758f69bd1bcec04683e25ec1f3e5e38841d86502aada86d1a535e2e6",
+      "xml_with_redacted_paths": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE fcpxml>\n<fcpxml version=\"1.9\">\n    <resources>\n        <format width=\"1920\" id=\"r0\" height=\"1080\" name=\"FFVideoFormat1080p25\" frameDuration=\"1/25s\"/>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r1\" duration=\"14/5s\" name=\"0001_旁白.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/original/delivery/audio/0001_%E6%97%81%E7%99%BD.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r2\" duration=\"56/25s\" name=\"0002_旁白.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/original/delivery/audio/0002_%E6%97%81%E7%99%BD.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r3\" duration=\"188/25s\" name=\"0003_旁白.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/original/delivery/audio/0003_%E6%97%81%E7%99%BD.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r4\" duration=\"44/25s\" name=\"0004_林小雪.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/original/delivery/audio/0004_%E6%9E%97%E5%B0%8F%E9%9B%AA.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r5\" duration=\"14/5s\" name=\"0005_周远.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/original/delivery/audio/0005_%E5%91%A8%E8%BF%9C.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r6\" duration=\"2/1s\" name=\"0006_旁白.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/original/delivery/audio/0006_%E6%97%81%E7%99%BD.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r7\" duration=\"62/25s\" name=\"0007_周远.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/original/delivery/audio/0007_%E5%91%A8%E8%BF%9C.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r8\" duration=\"234/25s\" name=\"0008_旁白.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/original/delivery/audio/0008_%E6%97%81%E7%99%BD.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r9\" duration=\"62/25s\" name=\"0009_张师傅.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/original/delivery/audio/0009_%E5%BC%A0%E5%B8%88%E5%82%85.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r10\" duration=\"46/25s\" name=\"0010_林小雪.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/original/delivery/audio/0010_%E6%9E%97%E5%B0%8F%E9%9B%AA.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r11\" duration=\"38/25s\" name=\"0011_旁白.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/original/delivery/audio/0011_%E6%97%81%E7%99%BD.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r12\" duration=\"128/25s\" name=\"0012_张师傅.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/original/delivery/audio/0012_%E5%BC%A0%E5%B8%88%E5%82%85.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r13\" duration=\"152/25s\" name=\"0013_旁白.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/original/delivery/audio/0013_%E6%97%81%E7%99%BD.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r14\" duration=\"84/25s\" name=\"0014_林小雪.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/original/delivery/audio/0014_%E6%9E%97%E5%B0%8F%E9%9B%AA.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r15\" duration=\"54/25s\" name=\"0015_旁白.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/original/delivery/audio/0015_%E6%97%81%E7%99%BD.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r16\" duration=\"68/25s\" name=\"0016_林小雪.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/original/delivery/audio/0016_%E6%9E%97%E5%B0%8F%E9%9B%AA.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r17\" duration=\"16/5s\" name=\"0017_旁白.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/original/delivery/audio/0017_%E6%97%81%E7%99%BD.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r18\" duration=\"68/25s\" name=\"0018_张师傅.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/original/delivery/audio/0018_%E5%BC%A0%E5%B8%88%E5%82%85.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r19\" duration=\"164/25s\" name=\"0019_旁白.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/original/delivery/audio/0019_%E6%97%81%E7%99%BD.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r20\" duration=\"84/25s\" name=\"0020_张师傅.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/original/delivery/audio/0020_%E5%BC%A0%E5%B8%88%E5%82%85.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r21\" duration=\"26/25s\" name=\"0021_周远.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/original/delivery/audio/0021_%E5%91%A8%E8%BF%9C.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r22\" duration=\"164/25s\" name=\"0022_张师傅.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/original/delivery/audio/0022_%E5%BC%A0%E5%B8%88%E5%82%85.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r23\" duration=\"48/25s\" name=\"0023_旁白.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/original/delivery/audio/0023_%E6%97%81%E7%99%BD.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r24\" duration=\"122/25s\" name=\"0024_张师傅.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/original/delivery/audio/0024_%E5%BC%A0%E5%B8%88%E5%82%85.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r25\" duration=\"212/25s\" name=\"0025_旁白.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/original/delivery/audio/0025_%E6%97%81%E7%99%BD.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r26\" duration=\"6/5s\" name=\"0026_旁白.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/original/delivery/audio/0026_%E6%97%81%E7%99%BD.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r27\" duration=\"6/5s\" name=\"0027_旁白.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/original/delivery/audio/0027_%E6%97%81%E7%99%BD.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r28\" duration=\"68/25s\" name=\"0028_林小雪.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/original/delivery/audio/0028_%E6%9E%97%E5%B0%8F%E9%9B%AA.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r29\" duration=\"22/25s\" name=\"0029_旁白.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/original/delivery/audio/0029_%E6%97%81%E7%99%BD.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r30\" duration=\"44/25s\" name=\"0030_张师傅.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/original/delivery/audio/0030_%E5%BC%A0%E5%B8%88%E5%82%85.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r31\" duration=\"48/25s\" name=\"0031_旁白.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/original/delivery/audio/0031_%E6%97%81%E7%99%BD.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r32\" duration=\"134/25s\" name=\"0032_张师傅.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/original/delivery/audio/0032_%E5%BC%A0%E5%B8%88%E5%82%85.wav\" kind=\"original-media\"/>\n        </asset>\n    </resources>\n    <library>\n        <event name=\"VoxStage absolute 25fps (Resolve)\">\n            <project name=\"VoxStage absolute 25fps (Resolve)\">\n                <sequence format=\"r0\" tcFormat=\"NDF\" duration=\"2944/25s\" tcStart=\"0/1s\">\n                    <spine>\n                        <asset-clip offset=\"0/1s\" ref=\"r1\" duration=\"14/5s\" name=\"0001_旁白.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"14/5s\" duration=\"6/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"76/25s\" ref=\"r2\" duration=\"56/25s\" name=\"0002_旁白.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"132/25s\" duration=\"7/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"139/25s\" ref=\"r3\" duration=\"188/25s\" name=\"0003_旁白.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"327/25s\" duration=\"6/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"333/25s\" ref=\"r4\" duration=\"44/25s\" name=\"0004_林小雪.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"377/25s\" duration=\"6/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"383/25s\" ref=\"r5\" duration=\"14/5s\" name=\"0005_周远.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"453/25s\" duration=\"6/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"459/25s\" ref=\"r6\" duration=\"2/1s\" name=\"0006_旁白.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"509/25s\" duration=\"7/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"516/25s\" ref=\"r7\" duration=\"62/25s\" name=\"0007_周远.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"578/25s\" duration=\"6/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"584/25s\" ref=\"r8\" duration=\"234/25s\" name=\"0008_旁白.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"818/25s\" duration=\"6/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"824/25s\" ref=\"r9\" duration=\"62/25s\" name=\"0009_张师傅.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"886/25s\" duration=\"6/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"892/25s\" ref=\"r10\" duration=\"46/25s\" name=\"0010_林小雪.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"938/25s\" duration=\"7/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"189/5s\" ref=\"r11\" duration=\"38/25s\" name=\"0011_旁白.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"983/25s\" duration=\"6/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"989/25s\" ref=\"r12\" duration=\"128/25s\" name=\"0012_张师傅.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"1117/25s\" duration=\"6/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"1123/25s\" ref=\"r13\" duration=\"152/25s\" name=\"0013_旁白.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"51/1s\" duration=\"6/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"1281/25s\" ref=\"r14\" duration=\"84/25s\" name=\"0014_林小雪.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"273/5s\" duration=\"7/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"1372/25s\" ref=\"r15\" duration=\"54/25s\" name=\"0015_旁白.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"1426/25s\" duration=\"6/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"1432/25s\" ref=\"r16\" duration=\"68/25s\" name=\"0016_林小雪.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"60/1s\" duration=\"6/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"1506/25s\" ref=\"r17\" duration=\"16/5s\" name=\"0017_旁白.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"1586/25s\" duration=\"6/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"1592/25s\" ref=\"r18\" duration=\"68/25s\" name=\"0018_张师傅.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"332/5s\" duration=\"7/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"1667/25s\" ref=\"r19\" duration=\"164/25s\" name=\"0019_旁白.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"1831/25s\" duration=\"6/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"1837/25s\" ref=\"r20\" duration=\"84/25s\" name=\"0020_张师傅.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"1921/25s\" duration=\"6/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"1927/25s\" ref=\"r21\" duration=\"26/25s\" name=\"0021_周远.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"1953/25s\" duration=\"6/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"1959/25s\" ref=\"r22\" duration=\"164/25s\" name=\"0022_张师傅.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"2123/25s\" duration=\"7/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"426/5s\" ref=\"r23\" duration=\"48/25s\" name=\"0023_旁白.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"2178/25s\" duration=\"6/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"2184/25s\" ref=\"r24\" duration=\"122/25s\" name=\"0024_张师傅.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"2306/25s\" duration=\"6/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"2312/25s\" ref=\"r25\" duration=\"212/25s\" name=\"0025_旁白.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"2524/25s\" duration=\"6/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"506/5s\" ref=\"r26\" duration=\"6/5s\" name=\"0026_旁白.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"512/5s\" duration=\"7/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"2567/25s\" ref=\"r27\" duration=\"6/5s\" name=\"0027_旁白.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"2597/25s\" duration=\"6/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"2603/25s\" ref=\"r28\" duration=\"68/25s\" name=\"0028_林小雪.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"2671/25s\" duration=\"6/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"2677/25s\" ref=\"r29\" duration=\"22/25s\" name=\"0029_旁白.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"2699/25s\" duration=\"6/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"541/5s\" ref=\"r30\" duration=\"44/25s\" name=\"0030_张师傅.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"2749/25s\" duration=\"7/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"2756/25s\" ref=\"r31\" duration=\"48/25s\" name=\"0031_旁白.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"2804/25s\" duration=\"6/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"562/5s\" ref=\"r32\" duration=\"134/25s\" name=\"0032_张师傅.wav\" start=\"0/1s\" enabled=\"1\"/>\n                    </spine>\n                </sequence>\n            </project>\n        </event>\n    </library>\n</fcpxml>\n"
+    },
+    "resolve-relative-relinked.fcpxml": {
+      "sha256_before_path_redaction": "8e764304a9d9bb1ccb5b6ed73574037fa9f20e138109ecf6574c0fc6d720c7f8",
+      "xml_with_redacted_paths": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE fcpxml>\n<fcpxml version=\"1.9\">\n    <resources>\n        <format width=\"1920\" id=\"r0\" height=\"1080\" name=\"FFVideoFormat1080p25\" frameDuration=\"1/25s\"/>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r1\" duration=\"14/5s\" name=\"0001_旁白.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/relocated/%E8%AF%95%E5%90%AC%E5%8C%85%20%E6%94%B9%E5%90%8D/audio/0001_%E6%97%81%E7%99%BD.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r2\" duration=\"56/25s\" name=\"0002_旁白.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/relocated/%E8%AF%95%E5%90%AC%E5%8C%85%20%E6%94%B9%E5%90%8D/audio/0002_%E6%97%81%E7%99%BD.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r3\" duration=\"188/25s\" name=\"0003_旁白.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/relocated/%E8%AF%95%E5%90%AC%E5%8C%85%20%E6%94%B9%E5%90%8D/audio/0003_%E6%97%81%E7%99%BD.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r4\" duration=\"44/25s\" name=\"0004_林小雪.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/relocated/%E8%AF%95%E5%90%AC%E5%8C%85%20%E6%94%B9%E5%90%8D/audio/0004_%E6%9E%97%E5%B0%8F%E9%9B%AA.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r5\" duration=\"14/5s\" name=\"0005_周远.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/relocated/%E8%AF%95%E5%90%AC%E5%8C%85%20%E6%94%B9%E5%90%8D/audio/0005_%E5%91%A8%E8%BF%9C.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r6\" duration=\"2/1s\" name=\"0006_旁白.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/relocated/%E8%AF%95%E5%90%AC%E5%8C%85%20%E6%94%B9%E5%90%8D/audio/0006_%E6%97%81%E7%99%BD.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r7\" duration=\"62/25s\" name=\"0007_周远.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/relocated/%E8%AF%95%E5%90%AC%E5%8C%85%20%E6%94%B9%E5%90%8D/audio/0007_%E5%91%A8%E8%BF%9C.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r8\" duration=\"234/25s\" name=\"0008_旁白.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/relocated/%E8%AF%95%E5%90%AC%E5%8C%85%20%E6%94%B9%E5%90%8D/audio/0008_%E6%97%81%E7%99%BD.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r9\" duration=\"62/25s\" name=\"0009_张师傅.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/relocated/%E8%AF%95%E5%90%AC%E5%8C%85%20%E6%94%B9%E5%90%8D/audio/0009_%E5%BC%A0%E5%B8%88%E5%82%85.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r10\" duration=\"46/25s\" name=\"0010_林小雪.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/relocated/%E8%AF%95%E5%90%AC%E5%8C%85%20%E6%94%B9%E5%90%8D/audio/0010_%E6%9E%97%E5%B0%8F%E9%9B%AA.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r11\" duration=\"38/25s\" name=\"0011_旁白.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/relocated/%E8%AF%95%E5%90%AC%E5%8C%85%20%E6%94%B9%E5%90%8D/audio/0011_%E6%97%81%E7%99%BD.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r12\" duration=\"128/25s\" name=\"0012_张师傅.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/relocated/%E8%AF%95%E5%90%AC%E5%8C%85%20%E6%94%B9%E5%90%8D/audio/0012_%E5%BC%A0%E5%B8%88%E5%82%85.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r13\" duration=\"152/25s\" name=\"0013_旁白.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/relocated/%E8%AF%95%E5%90%AC%E5%8C%85%20%E6%94%B9%E5%90%8D/audio/0013_%E6%97%81%E7%99%BD.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r14\" duration=\"84/25s\" name=\"0014_林小雪.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/relocated/%E8%AF%95%E5%90%AC%E5%8C%85%20%E6%94%B9%E5%90%8D/audio/0014_%E6%9E%97%E5%B0%8F%E9%9B%AA.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r15\" duration=\"54/25s\" name=\"0015_旁白.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/relocated/%E8%AF%95%E5%90%AC%E5%8C%85%20%E6%94%B9%E5%90%8D/audio/0015_%E6%97%81%E7%99%BD.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r16\" duration=\"68/25s\" name=\"0016_林小雪.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/relocated/%E8%AF%95%E5%90%AC%E5%8C%85%20%E6%94%B9%E5%90%8D/audio/0016_%E6%9E%97%E5%B0%8F%E9%9B%AA.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r17\" duration=\"16/5s\" name=\"0017_旁白.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/relocated/%E8%AF%95%E5%90%AC%E5%8C%85%20%E6%94%B9%E5%90%8D/audio/0017_%E6%97%81%E7%99%BD.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r18\" duration=\"68/25s\" name=\"0018_张师傅.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/relocated/%E8%AF%95%E5%90%AC%E5%8C%85%20%E6%94%B9%E5%90%8D/audio/0018_%E5%BC%A0%E5%B8%88%E5%82%85.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r19\" duration=\"164/25s\" name=\"0019_旁白.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/relocated/%E8%AF%95%E5%90%AC%E5%8C%85%20%E6%94%B9%E5%90%8D/audio/0019_%E6%97%81%E7%99%BD.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r20\" duration=\"84/25s\" name=\"0020_张师傅.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/relocated/%E8%AF%95%E5%90%AC%E5%8C%85%20%E6%94%B9%E5%90%8D/audio/0020_%E5%BC%A0%E5%B8%88%E5%82%85.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r21\" duration=\"26/25s\" name=\"0021_周远.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/relocated/%E8%AF%95%E5%90%AC%E5%8C%85%20%E6%94%B9%E5%90%8D/audio/0021_%E5%91%A8%E8%BF%9C.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r22\" duration=\"164/25s\" name=\"0022_张师傅.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/relocated/%E8%AF%95%E5%90%AC%E5%8C%85%20%E6%94%B9%E5%90%8D/audio/0022_%E5%BC%A0%E5%B8%88%E5%82%85.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r23\" duration=\"48/25s\" name=\"0023_旁白.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/relocated/%E8%AF%95%E5%90%AC%E5%8C%85%20%E6%94%B9%E5%90%8D/audio/0023_%E6%97%81%E7%99%BD.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r24\" duration=\"122/25s\" name=\"0024_张师傅.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/relocated/%E8%AF%95%E5%90%AC%E5%8C%85%20%E6%94%B9%E5%90%8D/audio/0024_%E5%BC%A0%E5%B8%88%E5%82%85.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r25\" duration=\"212/25s\" name=\"0025_旁白.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/relocated/%E8%AF%95%E5%90%AC%E5%8C%85%20%E6%94%B9%E5%90%8D/audio/0025_%E6%97%81%E7%99%BD.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r26\" duration=\"6/5s\" name=\"0026_旁白.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/relocated/%E8%AF%95%E5%90%AC%E5%8C%85%20%E6%94%B9%E5%90%8D/audio/0026_%E6%97%81%E7%99%BD.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r27\" duration=\"6/5s\" name=\"0027_旁白.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/relocated/%E8%AF%95%E5%90%AC%E5%8C%85%20%E6%94%B9%E5%90%8D/audio/0027_%E6%97%81%E7%99%BD.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r28\" duration=\"68/25s\" name=\"0028_林小雪.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/relocated/%E8%AF%95%E5%90%AC%E5%8C%85%20%E6%94%B9%E5%90%8D/audio/0028_%E6%9E%97%E5%B0%8F%E9%9B%AA.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r29\" duration=\"22/25s\" name=\"0029_旁白.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/relocated/%E8%AF%95%E5%90%AC%E5%8C%85%20%E6%94%B9%E5%90%8D/audio/0029_%E6%97%81%E7%99%BD.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r30\" duration=\"44/25s\" name=\"0030_张师傅.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/relocated/%E8%AF%95%E5%90%AC%E5%8C%85%20%E6%94%B9%E5%90%8D/audio/0030_%E5%BC%A0%E5%B8%88%E5%82%85.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r31\" duration=\"48/25s\" name=\"0031_旁白.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/relocated/%E8%AF%95%E5%90%AC%E5%8C%85%20%E6%94%B9%E5%90%8D/audio/0031_%E6%97%81%E7%99%BD.wav\" kind=\"original-media\"/>\n        </asset>\n        <asset audioChannels=\"1\" hasAudio=\"1\" id=\"r32\" duration=\"134/25s\" name=\"0032_张师傅.wav\" audioSources=\"1\" start=\"0/1s\">\n            <media-rep src=\"file://<repo>/user-data/resolve-xml-spike/relocated/%E8%AF%95%E5%90%AC%E5%8C%85%20%E6%94%B9%E5%90%8D/audio/0032_%E5%BC%A0%E5%B8%88%E5%82%85.wav\" kind=\"original-media\"/>\n        </asset>\n    </resources>\n    <library>\n        <event name=\"VoxStage relative 25fps (Resolve)\">\n            <project name=\"VoxStage relative 25fps (Resolve)\">\n                <sequence format=\"r0\" tcFormat=\"NDF\" duration=\"2944/25s\" tcStart=\"0/1s\">\n                    <spine>\n                        <asset-clip offset=\"0/1s\" ref=\"r1\" duration=\"14/5s\" name=\"0001_旁白.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"14/5s\" duration=\"6/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"76/25s\" ref=\"r2\" duration=\"56/25s\" name=\"0002_旁白.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"132/25s\" duration=\"7/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"139/25s\" ref=\"r3\" duration=\"188/25s\" name=\"0003_旁白.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"327/25s\" duration=\"6/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"333/25s\" ref=\"r4\" duration=\"44/25s\" name=\"0004_林小雪.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"377/25s\" duration=\"6/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"383/25s\" ref=\"r5\" duration=\"14/5s\" name=\"0005_周远.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"453/25s\" duration=\"6/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"459/25s\" ref=\"r6\" duration=\"2/1s\" name=\"0006_旁白.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"509/25s\" duration=\"7/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"516/25s\" ref=\"r7\" duration=\"62/25s\" name=\"0007_周远.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"578/25s\" duration=\"6/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"584/25s\" ref=\"r8\" duration=\"234/25s\" name=\"0008_旁白.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"818/25s\" duration=\"6/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"824/25s\" ref=\"r9\" duration=\"62/25s\" name=\"0009_张师傅.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"886/25s\" duration=\"6/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"892/25s\" ref=\"r10\" duration=\"46/25s\" name=\"0010_林小雪.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"938/25s\" duration=\"7/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"189/5s\" ref=\"r11\" duration=\"38/25s\" name=\"0011_旁白.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"983/25s\" duration=\"6/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"989/25s\" ref=\"r12\" duration=\"128/25s\" name=\"0012_张师傅.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"1117/25s\" duration=\"6/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"1123/25s\" ref=\"r13\" duration=\"152/25s\" name=\"0013_旁白.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"51/1s\" duration=\"6/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"1281/25s\" ref=\"r14\" duration=\"84/25s\" name=\"0014_林小雪.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"273/5s\" duration=\"7/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"1372/25s\" ref=\"r15\" duration=\"54/25s\" name=\"0015_旁白.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"1426/25s\" duration=\"6/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"1432/25s\" ref=\"r16\" duration=\"68/25s\" name=\"0016_林小雪.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"60/1s\" duration=\"6/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"1506/25s\" ref=\"r17\" duration=\"16/5s\" name=\"0017_旁白.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"1586/25s\" duration=\"6/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"1592/25s\" ref=\"r18\" duration=\"68/25s\" name=\"0018_张师傅.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"332/5s\" duration=\"7/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"1667/25s\" ref=\"r19\" duration=\"164/25s\" name=\"0019_旁白.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"1831/25s\" duration=\"6/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"1837/25s\" ref=\"r20\" duration=\"84/25s\" name=\"0020_张师傅.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"1921/25s\" duration=\"6/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"1927/25s\" ref=\"r21\" duration=\"26/25s\" name=\"0021_周远.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"1953/25s\" duration=\"6/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"1959/25s\" ref=\"r22\" duration=\"164/25s\" name=\"0022_张师傅.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"2123/25s\" duration=\"7/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"426/5s\" ref=\"r23\" duration=\"48/25s\" name=\"0023_旁白.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"2178/25s\" duration=\"6/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"2184/25s\" ref=\"r24\" duration=\"122/25s\" name=\"0024_张师傅.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"2306/25s\" duration=\"6/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"2312/25s\" ref=\"r25\" duration=\"212/25s\" name=\"0025_旁白.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"2524/25s\" duration=\"6/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"506/5s\" ref=\"r26\" duration=\"6/5s\" name=\"0026_旁白.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"512/5s\" duration=\"7/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"2567/25s\" ref=\"r27\" duration=\"6/5s\" name=\"0027_旁白.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"2597/25s\" duration=\"6/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"2603/25s\" ref=\"r28\" duration=\"68/25s\" name=\"0028_林小雪.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"2671/25s\" duration=\"6/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"2677/25s\" ref=\"r29\" duration=\"22/25s\" name=\"0029_旁白.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"2699/25s\" duration=\"6/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"541/5s\" ref=\"r30\" duration=\"44/25s\" name=\"0030_张师傅.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"2749/25s\" duration=\"7/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"2756/25s\" ref=\"r31\" duration=\"48/25s\" name=\"0031_旁白.wav\" start=\"0/1s\" enabled=\"1\"/>\n                        <gap offset=\"2804/25s\" duration=\"6/25s\" name=\"Gap\" start=\"3600/1s\"/>\n                        <asset-clip offset=\"562/5s\" ref=\"r32\" duration=\"134/25s\" name=\"0032_张师傅.wav\" start=\"0/1s\" enabled=\"1\"/>\n                    </spine>\n                </sequence>\n            </project>\n        </event>\n    </library>\n</fcpxml>\n"
+    }
+  },
+  "disagreements_and_method_limits": [
+    "24000 Hz 与 25 fps 并不天然不对齐：本次 32 个源 WAV 的长度全部是 960 采样的整数倍。起点误差来自 250 ms 句间停顿。",
+    "必须分别比较采样→XML 和 XML→Resolve。单独报告后者的零误差会掩盖前者最大 20 ms 的量化误差。",
+    "每个绝对起点独立取整，不能把 32 个起点偏差求和当作累计漂移。本样例末句与首句偏差之差为 10 ms。",
+    "现有 ZIP 的零采样承诺适用于 CSV/JSON 加 WAV 的重建；另加帧精度 XML 不必推翻该承诺，但必须明确各格式的精度范围。",
+    "整数帧输入不携带原始采样级起点，导入后不能自行恢复丢失信息。本次回导位置均在帧上，不能据此断言 Resolve 本身不支持亚帧音频。",
+    "只凭 20/30 ms 的数值不能断言听不出。未作用户试听或主观可接受性评分。"
+  ],
+  "conclusion": {
+    "inclination": "有条件值得做导出器",
+    "conditions": [
+      "保留现有 WAV + CSV/JSON 交付包作为采样级精确基准",
+      "明确本次 FCP7 XML 为帧精度入口，不标为零采样还原",
+      "搬移后允许用户在导入提示中重新选择 audio 目录；不承诺本次相对 URI 自动解析",
+      "本人试听并接受这个样例最多 20 ms 起点偏差、30 ms 句间间隙变化后，再决定是否实施"
+    ],
+    "scope": "支持低成本可编辑交接的条件性判断，不等于产品实现授权或完整兼容性认证"
+  },
+  "known_unverified": [
+    "Resolve 渲染音频中的独立采样落点测量尚未完成；现有数值来自实际导入后回导的时间轴",
+    "用户是否能听出或接受偏差",
+    "30 fps、其它帧率、其它样例及 Premiere 等其它剪辑软件",
+    "其它非标准相对 pathurl 变体或 subframeoffset 扩展的兼容性"
+  ],
+  "next": "提交本轮证据，由本人决定精度和重新定位流程是否可接受，再确定导出器任务书；本轮不实现。",
+  "file_scope": {
+    "runtime_changed": false,
+    "frontend_changed": false,
+    "tests_changed": false,
+    "new_synthesized_audio": false,
+    "regression": "264 passed, 2 warnings"
+  },
+  "reproduce_analysis": {
+    "command": ".venv/bin/python results/resolve_xml_spike.py analyze",
+    "actual_clips": 32,
+    "max_xml_target_minus_actual_ms": 0.0,
+    "max_actual_minus_original_start_ms": 20.0,
+    "last_minus_first_start_drift_ms": 10.0,
+    "max_gap_change_ms": 30.0,
+    "relinked_positions_identical": true
+  }
+}
