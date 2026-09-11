@@ -97,3 +97,4 @@ build/
 # 与上面排除真人录音的规则不冲突。
 !examples/pride-and-prejudice-ch1/full.mp3
 /docs/handover-2026-09-11.md
+/docs/pre-publication-checklist.md
