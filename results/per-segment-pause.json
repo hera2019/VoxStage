@@ -1,0 +1,894 @@
+{
+  "task": "逐句停顿",
+  "criteria": "docs/task-per-segment-pause.md",
+  "author": "Astra",
+  "baseline": {
+    "zh": {
+      "project_id": "339de611b9bd427d9e11bf0b20a5c0fb",
+      "revision": 101,
+      "segments": 32,
+      "pause_ms": 250,
+      "sample_rate": 24000,
+      "total_samples": 2826000,
+      "full_sha256": "df20b67cd266828bd3b847d0d91c303ff44081c9c5c689ecd39741277de937f2",
+      "project_sha256": "f2ff0d68fb65023c13ff9042d08f714c3366cb5b616938428dcf603dda91a5a3",
+      "audio_files": {
+        "8bee89e10180d432de3d4b2a2c6b5af4147fea6dbd57603e463b257c27670a6d.wav": [
+          "7f10f14456667b3b677503d8f4cad4a8cfc1eaf63b1f012e12436974af220394",
+          1789109042298977686
+        ],
+        "89f6979888b6d4f3ccc3e752fefbccfd4cc6fd16def2197ca68aa0ce308993d9.wav": [
+          "9c685dc4556d0fd32d18154b16f7c1faae9c80d82adecab8d5cf8d98fcce5a5f",
+          1789109029439636636
+        ],
+        "9fe6574bb09b8400b210e547dd515f4883c20ce33575bff879196f0f46b0b430.wav": [
+          "c43fa8ad0bbe5b72e73ad60b9f6d9040ffb53bd04f1f14945aa4fef4724670aa",
+          1789109033106041558
+        ],
+        "062a5d2fc0e21f8260ca44efea84a3c9bc48bceeecb40f5fbc8028ccc9f9afab.wav": [
+          "8b72d41b9f6f3761a70137b3c64515bbe2bf20e953238e923941a65cad21202b",
+          1789109042744004060
+        ],
+        "e0a0aee0768318cecc957905248d32e6dfbbf50dd85a45364b8e7a1edfcf7c5c.wav": [
+          "9b21b170663c922d7fe37b05daeda9e44c996a53461cdb2d1778f963286fa490",
+          1789109027373292776
+        ],
+        "57d3ef6d1abcdac9a3efdefbe066a4edd67e24b576bd6375f16ca4a13a837534.wav": [
+          "8a185bcdfcc8b2649e4ea6213d89b609e88550eca6c88862a9c5b9e5acf149a3",
+          1789109013593997021
+        ],
+        "220499f3e52562af796d211618567f056d7fc15b80cbfb2003d69f6b33757f88.wav": [
+          "298037b476b0731b6d587103bcc1b35be3967e02c270a4cd79e28acd823ca969",
+          1789109014466249959
+        ],
+        "7eabeded70f71623b4042fffe0baa1715c5bd481c3dfe979cc6f429ae9039664.wav": [
+          "d8fe10f9ee81a33dbb110fd9ae6acbc4d5ac478dc192b5946e7405c5635e319e",
+          1789109035459862536
+        ],
+        "7ee9c80af5147454f41aabc6449864ce506f20ca8e74c840fb7d429970a56be6.wav": [
+          "c2ba870a2c921ff561b18e17887d27aea06f03584283a5d78cb45e38f8e53176",
+          1789109007128376868
+        ],
+        "7abcf96b9e99642da5ff9740a886689eaf1e8f064f2cd0baed77f45fec07dbe8.wav": [
+          "438a0cd3bded2bb486d2ffa29fd0ad94c8ed2b5f8c6278c163f89c24a839f540",
+          1789109006096041528
+        ],
+        "1278e75a271d9e73c48bda15e78973d49be9bab8e93801e8147a149c72b6583e.wav": [
+          "8b681a878684d9c9be4c6712afb433aec178ef95197f913c105d6dbb38cabd9a",
+          1789109043778501709
+        ],
+        "548d81b2a517039c29aab818786978d13452538088b65a58637d10c1dc163e81.wav": [
+          "16cc7ed883a0d9bcce03fa9dd0f1d4d3114603708376b4fa38449ec58747101e",
+          1789109019994434888
+        ],
+        "3fec1a880618d9c2904ae11a1cc952616798057ed95fd8198ff391d634b9f712.wav": [
+          "c8031f93ec40f76838590258d0eb5d1c56643c6898602be981837302e62a366d",
+          1789109031837059143
+        ],
+        "8ef690ca0b25e9cd068cdf7af360b5078e0c2f0eb159f07d8ceb7000582131b5.wav": [
+          "58946952cf2784392217f4d166a261543acce25e5f704e810fdc51ac35da7a81",
+          1789109044769733753
+        ],
+        "c4aca1b78b00db4a58d4b3ce3592bac742b9b7616dc47df459f02524649e9daf.wav": [
+          "de07ac627d6c7133508952a37bf653d42858005d37f49fca5a96316541264aa0",
+          1789109044127644795
+        ],
+        "fea21947a0d3bf33a511d1700dabac0a04177540dff51cea3cb1bd5d1f8b5270.wav": [
+          "a6452879730d766b1e4f70b862bd6bc37df04c2b9e0391b8cbcca923ce14c7a4",
+          1789110309063498312
+        ],
+        "2b7775c9577fc03df98657998e5bb83ee17a94ec9b31b327160ccc5e808f899c.wav": [
+          "ecdee0e775e1843bce4c5fee76719877c549fcfdcd9d48983f0b6d9c3df8d880",
+          1789109024471614490
+        ],
+        "d8d561806d22aa900ee1095662ce1d1c7229757c67ed6c7e3353c8afa022a2b5.wav": [
+          "6e1404273649e90e1dd9a32845a28d4d88160bf42d8fc87f40205d642d686a87",
+          1789109018236130774
+        ],
+        "11402ce31fc6feba99de1d4056cb4fb171848b8356317923ea91dd8639d89240.wav": [
+          "ec13246a495b739434f4d3e4ff57490de4924282872ab5bc34209bcfe6e4665d",
+          1789109010966910540
+        ],
+        "d2ed8a3bae30e210726ba4c4d16d5075cb702a6928c867687b0f63a03b27cebb.wav": [
+          "e152841326aadeea78dc6b9bfa7fe4658340095453a2b8a5e85a7816aebc4242",
+          1789109036170947480
+        ],
+        "c881203bab11a9c1a08e7f531f742b52b5c1bb59fed504650223f6948ff7f848.wav": [
+          "535467af7a24713dddf225f5c6ab4c1e249dcc1d49d1b9e49cf4ea2016e7ba08",
+          1789109022319013127
+        ],
+        "615f6fb085bec81c524da6bc25dcd254059439bdad58bebe75e0e5e4dfbde040.wav": [
+          "81b84f5491142f2e2915230b8819e8092bf799ecc8e152b41c1248fd8eb1384e",
+          1789109041626697645
+        ],
+        "e4ba22e2aec52a31d6d7979950b39dc5f71e7b4fa13803725ecd0fff41981553.wav": [
+          "b7337b793a28f4c0cbd89ec596d6561ad42fbbfb1a8804d1bf29c7e73144690e",
+          1789109047304528141
+        ],
+        "1b35d15b0d61af9ae22d4df9e97e3df02c00a3a1e766f247b43b63962c320f25.wav": [
+          "0069b912644b524b9936b9d61654ce10c199a71541b09c178427a886c15833a5",
+          1789110186969910658
+        ],
+        "104b0818f77aea0e1fe9135f0c4ef5a04cf5a1e8e54a08484eecd503b314a8b1.wav": [
+          "75c204c97491b9cd95bba70b0912a11d7fbb2241d4934fb677981b907fd4b55d",
+          1789109025649288985
+        ],
+        "1a2bb1e36f89290a2cf7baf1d024fb9517655c89a8c5d060ff65b018daf97017.wav": [
+          "fc86adfd3649652da7128170404967494460bddd524a2140943b5e32e90d7aec",
+          1789109020545889807
+        ],
+        "6be6cebce73746ea0884b06c736944ddcfc6e2abe69b5c2b87a4339c0684ab25.wav": [
+          "f0036a2ab9273e5cd49c6b774ef3e9b485e7f82a7b278d915999f32779ef7d3f",
+          1789109012875656102
+        ],
+        "6626dccb143163e720ca6771075e438d4f3047a81e47a36adb0cfee77ee68e76.wav": [
+          "a166f010ea63ea79b1dd272b793152b088bf0827d9fc87f5993f8ca9b79454b3",
+          1789109038146361217
+        ],
+        "9e5cbb70a654cfa8de4a4c14f48eea94b683f51b69870639879a91a5897f84f9.wav": [
+          "11effb1e2a3964573a89387c269fdb37e6f99fca5c40967c0c2f626c3518da72",
+          1789109026427899777
+        ],
+        "f3e0738ea20cf4f595363ed18ca213b363496db139fef26f61162b8a76667fdb.wav": [
+          "f454d7e4738d5588afc05f53c1ac0aab19af8e77507430d1e712bcf395d2fab8",
+          1789110240715295510
+        ],
+        "22ae2fa07515ce3371eecf324b4cc5890c7b36af61df0fce6014668095d1ed46.wav": [
+          "9c85978f64a38c95937ca11dcc95e09298a92be928e7f429ad4d4e4f886d1bf2",
+          1789109045456836248
+        ],
+        "981a535282d0670f4ff4cb328db43deadbadc479e5bbd7e1aeab34a41c01360a.wav": [
+          "5d2e85d7fc0bf4baf39dc721d70a0736b5cdaa322fd7fa64b54d48cca2e49c72",
+          1789109019322751644
+        ],
+        "71a2a1d70a6c0cd1ff05dd66f0149eefe6b6d61a3738699797817bb815989e50.wav": [
+          "d839a693d34f2971b3164ab34879c26a301bf3f6d616b197f746d867e62fed3a",
+          1789109011829631023
+        ],
+        "dd7c663fd53112f5ee43f4f187c229e94c8b79d879f113744621ac2cae843d14.wav": [
+          "b9b13555578200e2066fa0a9179b8bece81c86b23030cd7fb18e6bd417db8bb1",
+          1789109033624537080
+        ],
+        "036f7b5a8bd6e6a15bf4c78acfb6c27ba6c0042627747abfff6bfe812935b7f4.wav": [
+          "ebd014ebae7daf93477f3e92dc36532985107851071e9a11c2157a2d24f96b05",
+          1789109028483661843
+        ]
+      }
+    },
+    "en": {
+      "project_id": "24ce2be2cd4c49e280ca64920ad6007a",
+      "revision": 149,
+      "segments": 28,
+      "pause_ms": 250,
+      "sample_rate": 24000,
+      "total_samples": 3047760,
+      "full_sha256": "3c6593f9f4dc10b75eac04e076dc68799b51cabb9d52daab2d881f9baea1d2a9",
+      "project_sha256": "0160f8f095935e84f8345be4d9df9b18e8e8c2d064f3bd3702e60daac95e0319",
+      "audio_files": {
+        "191a3e7eb03c12efbad2b4950f5ff170fac63e7c614d0ef19d97d51cec665298.wav": [
+          "ae43b7893bdf55bea87c297c4bf6cc825a4a6085dd897b73281abc0c1330fe0d",
+          1789053795593068059
+        ],
+        "05758a2753a6744e889c3a8550ca5a6a8ebbcc3c722b06d7f6634fe8a17a5a37.wav": [
+          "2f58222ee796011666aba21239f06975c66e92049e179947415cd952bf63fa59",
+          1789050463450142717
+        ],
+        "d9ab69b9683b10c23fcf1fae36d52ae859132ec55158aa78765bedbca83ededa.wav": [
+          "10703307645b7844a332b9d9b9243743f9dd453ba19fd1905978f412a9b41054",
+          1789053809874249125
+        ],
+        "8cdcf4058ee77663f8297d8185fe1212cd3964ea01df5ce278a49d84b6dd3f64.wav": [
+          "736fc18df5b7694070a2d0bebc9326c13b6c5d1de00688a8f4b0c40fb0dfd797",
+          1789050491806393472
+        ],
+        "e6f7ab798aaba79abccd2566bcd57f46f78dffa382be588430de52b220f7ebe7.wav": [
+          "a058b377ad203a2ad41d1097b8103c935467cde767224e849bc8e10fa436848a",
+          1789053816617042491
+        ],
+        "e023570f6aaaa8125ac6c97e72da3fc18eb109ff4b3cc3beb9493661d4e1b784.wav": [
+          "772e50e55209a3ae68df0a372f1ece74bf1c38552e9f7e4493289045d74d164c",
+          1789050480081623617
+        ],
+        "fa78dca665cd06672e91f52956dce1899f79ff4e80c9636ac2ac18b353e435b3.wav": [
+          "ab6063b41ef4844220c636578c514d308ba129e7bc60e42b0e33c9608e529b90",
+          1789051246363960717
+        ],
+        "1278b542c9067f422ca8b5c04d5403061aeac2c8de8374c11a946ba1b04d38f3.wav": [
+          "9d7e0f27ab974d7b4c0d3d591a1c340e42f2484822350bc89742f928385f97bd",
+          1789050474080741728
+        ],
+        "004eda9d9eaafb9b785b7536bed3000ec3dac05c2d4ce12d8f2a7d46b9d4a428.wav": [
+          "70366f5bf7284a92579e22521ebe019e47e3c5eb7005e24cb081a8b8876143b8",
+          1789050469758985536
+        ],
+        "88d80b319658bc1301683874b36474bf75c843385c09a6ea4fcffec5ed777d98.wav": [
+          "a33842326b9f36a74302a9e27e9d9754a6288ba6e1eb2c772192ee69ac384f4f",
+          1789050486783233329
+        ],
+        "38187e2767aac97a44f1b1524b3c36724fc5d954cb527f4cb132b544cf39015c.wav": [
+          "2c7b6ec8202badf7ff152f7377a8d3c318f1232f069229ed509622ecf141fbad",
+          1789053814249827318
+        ],
+        "813fe061080e81bd11ff0ca175552f755cc2948347aee562005d15b86f022631.wav": [
+          "0889542565b15c4aa5deba95a84e5455bbe7a7bec7e943db85ebb2dfaf852107",
+          1789050474902301081
+        ],
+        "540dc8a42a6c8083e0a1b57a15bba908d83492eca1c93a283532e4627de3606c.wav": [
+          "ddf3a120bedb6afd5ce5ef1e95adbe2d1faf5f929c1ae9fa3e30960a11be6340",
+          1789105760534586723
+        ],
+        "edf768d59526b009157c3a414aa142c02cb94a6dd8d895e820d3c3e6eeea413e.wav": [
+          "c2f22d743a8037d220fa28986d6464df4480ff0d65db7bda19f0bc98ea543a0c",
+          1789050460760217708
+        ],
+        "05645413a4bd2b25a5c9836b443ad6d33767da60b2daae9fe9bc4c0511e734b0.wav": [
+          "5e263d0780e8b95c85bff19240affdbc2ba9928b05033975d3cc39a4affc1519",
+          1789051209686826212
+        ],
+        "cc8a53eef52c507cefd0b8aee086a31e949478ecbcd0eb997c6a14d2855969af.wav": [
+          "68337f082180a18377e36eb5d521eed2ddfde1f2e21e665a38e077f7c6074037",
+          1789105747833741070
+        ],
+        "ef1362067052cb2a4f212c31706cdbf28c57ce870a89a648a052e4c2ce7f9fa2.wav": [
+          "7bbc65996faf513d5e96687976db51d10a01a40052239683b94efc5f1d630fc8",
+          1789105756689907848
+        ],
+        "8ff6b9600e85b6a3460784e3d49b5fb24831efecfba873a9e94c98cd082d9d74.wav": [
+          "baac7c6d4e3f307c0302c1d1d0e998a95d6840e8a24d7a3def189023bdd18905",
+          1789105750247828145
+        ],
+        "4edab3dca721f5a449dc026a23f4bca830de97e93e1fc90c4c742749a02b4dfc.wav": [
+          "143080f9d1077a8afabc3a0014469f81f0ab6dd5ff4df273a45c1f2314258a94",
+          1789053803062148390
+        ],
+        "0962b24e96df44c4b7e1a5e32c95b952bc4ad54dc5e17b9c6256c6731292a99c.wav": [
+          "16bc72ab1ea14b0e5480265598333ae80496927efbe4718feaf7fb54fc0ba2ab",
+          1789105745635840209
+        ],
+        "8fa5ff9a74d5428d70853b2e0fee4209c498b273bebfa706ea4db75f6e27b7df.wav": [
+          "bc127cfd7109015064eb171d0fb2c2225c4914c5384cb3f398334868374a610f",
+          1789050490819491089
+        ],
+        "523c1a98cb29210e9b19c0e6fcbc7a8451e379b2ed38270466b404bb17965967.wav": [
+          "a4088b8852af5d03eef22a7f6b74f4fd170dea975c54a3431f5c6456e79de594",
+          1789050473012425235
+        ],
+        "30adc3d7adbe105b4d20dd9ad10f8ed7f095f84ae7c8b950c08ae233e03e679b.wav": [
+          "9cd5291df0b8edae9b233ac43527fa58089a968f6700ba260cf5375d49b33cb8",
+          1789050486069537915
+        ],
+        "c1d2d2442f96b5dc27946b11c675f61c024f11418107aa4362a623a4f534db6a.wav": [
+          "56280f4eecc213c9e54663bfdec59e50179697818e015ebb08a6930da10fb53f",
+          1789053812161260799
+        ],
+        "444a90832623779d4a2c1047562fe26ff559875b1f46e792e60ecfae490e897c.wav": [
+          "7ebae6c25770a1f26a313b420192eddf61ec1917c0c535651387cb68cb009faf",
+          1789050495004185750
+        ],
+        "f1817c6046e202fb8df55d26ba1e46b92b3d3e659a78716811c0aaa66c23628c.wav": [
+          "5f7823fc6b67fc5d0baf40a25c7dcf751bfcc1a4dd13a0a234d6f0d37688ab80",
+          1789105758763703038
+        ],
+        "a98cfb28057912b796759b9ebeb477505bdbf54a32471c8f567e2d00d2181ee4.wav": [
+          "e13cf42801099cd77b16ec439332b12ab1441d39b75cba4d8f6ff726879db6f0",
+          1789050456411021653
+        ],
+        "51ecd466027794750258b733fd0e4d2b7f1371b9169646b66af9c93c45f11493.wav": [
+          "30cd3b0f9ce96a1bff0fd5436b354d689ee9d07ac778b18ff2ad3159a5475326",
+          1789050546914314235
+        ],
+        "837e07efccd5506a48032f1db7e1e56215b9e6536ac21dc6ca47a31306f6574d.wav": [
+          "45b5e14cbcdc8479397c721ae560eff1f49342588c93028832261d9529f98d90",
+          1789050464176039248
+        ],
+        "b5aefe82dcdc24a8b26b6451b5fbdea2147d26b744ad1d6c4b41e5f338683d5b.wav": [
+          "050efb5b1814ed04abf485d5eb8ae048d68a956a46822e56533e86a07bcd5a62",
+          1789050466468874205
+        ],
+        "375ef8a9987523fb1186a820d7a7f2c958940cba3535cebfec45df4b9068138e.wav": [
+          "054f23b2e31523873bd2c8780b0249eb6abd10ac7ab202dc1f708773021670a3",
+          1789050495910674531
+        ],
+        "683850925154f6059609605df1ea49ed73eec93a0e870d461d9e0cf2768e9b30.wav": [
+          "57a18fee5ea6029a28e76e47bd42a5a5937ed2b316c4cca7fd333653bc141537",
+          1789105735836577648
+        ],
+        "c5e38f9112e7aec6dddc2db64812acba9c2593720305f56beadf28b8b92b2fdc.wav": [
+          "5f83b66f16fe524b28c03516f4ffccc957f30fb0c4ed911fd7314f78aab2edf5",
+          1789050492550185280
+        ],
+        "5b82c4c90b0efb4871449e25930803fc3b07dbc4befcdb491d1f8f61cfe2c60f.wav": [
+          "7b2bcaa6cc05d97af8080060eb246d05c571464dc8f4e6a61087c71c4d2abcc2",
+          1789053818872675118
+        ],
+        "3325b15000b9bd0c5cddb0040d7fdae89c4542501012ef719fa377261001d780.wav": [
+          "6bdf1915e4f86ac88c789122928e7df0dd665f0c267690163eb82abcc2a812c3",
+          1789050476074916979
+        ],
+        "c5ac557d63af1c9b32af1665efd2c6ef09039a4e09393485262b6066b647e1f5.wav": [
+          "ee64604677093ec40397aa5877867532ec1a8a5b6a5cdb8ec8981c71038428bf",
+          1789050484905847005
+        ],
+        "32383d398c382aebf4532f2bb07704753903f0f46f285b3f5ad839cf2a926c1b.wav": [
+          "4e2d5c8e4efc7ace02e9eee83c04bdd3ec0d85d0bd67d94e3431f945b349662d",
+          1789050465147750797
+        ],
+        "ba97820035d3be6a73406558567b38ccdd18a58e652c195d6c9dd75845ef7d61.wav": [
+          "3e1e09ab5230fd992b37e78bbc9d9325d12b6238f5d040dcf755b83ea57d32a8",
+          1789050477100722684
+        ],
+        "44abe187017f0c0325bbeaf74d9a554992ea8f9599fca782d3e0dd099efeae0d.wav": [
+          "555ca6ce5e5c7a271423d94c5689c86d955c233c26612790ed86a71fc7e6b10a",
+          1789105741925151177
+        ],
+        "26cf4e06cc4fb833d2633b0c037ed0ecd8a61abb8030b4d758ffc3c59df8ebee.wav": [
+          "1e73f420b547b821f9022f2d908acd9b188fe95c162874b019aec92acc05e869",
+          1789051272837144161
+        ],
+        "59b3cc9e9a337c34a80c8f3509054b764ce7d67a46c98d005e5db4bfcabb6e7b.wav": [
+          "37df0f4f81e428fb6e0dfa3d9bc9fdac985aa227753bc1b7cda0f9bb75bde064",
+          1789050485558493215
+        ],
+        "1acb460f1c7e78e733b2e024518854740b6f0bdf273d38a4249c8758a9b3b9d8.wav": [
+          "6c15fadb89c840f228c8e73c1d38eb7e2b75c7e2adb8a30b8feff95b285a5817",
+          1789050471872701524
+        ],
+        "fbf5596f6671c5bc8b90c4cc6358c749b5544712d1b576388c637311ed524e62.wav": [
+          "58f070f2430ee07724ff9bb1e5f5ba3e122f5883cb0f092effc71fc776f8d68b",
+          1789050469076618432
+        ],
+        "1fb24796a8c288d3719f62523815450b020de40fad71b5dcaad2bda3cd6304d0.wav": [
+          "1255f6859b0772a1fc994e749148355a42d99fc00d0fd7d7ad327e9f8b2fc7c2",
+          1789053823446669758
+        ],
+        "354fa7eca85159c3ccf6eff6c598e1b686c92419ab1dc4ad2069d70c78e39c95.wav": [
+          "50d5daec7725e8532a988cd098df002ad782e33fdc7ad049867695bc1fa219c2",
+          1789050470344446876
+        ],
+        "8f4639a64300c86c287ded6762f6b9a1ff25800d7e33d44e3565d2cecb95f7f5.wav": [
+          "1de27a58b4f4a1a2fcccf80cbc481f1357d23f4e9c6f77224c2ab9b46d252c7d",
+          1789050499828574445
+        ],
+        "3fd68739e693ccf6bb519c009e8b4a8ed808e8684611ffd5ac876f4830aca25d.wav": [
+          "728bc36ec7ec7a61d44e4a6dd1e42baf8b5d7c66636397aca23930e0ca9e635c",
+          1789105754366006050
+        ],
+        "0a4face238df1b0e2d76ef41b4bfaa5a0731f5ce71c7b653863466d8f9bbfd01.wav": [
+          "ec39cfe34df0779606dd68946cbbd916b2595dba65216aa3b026abd6009a46fc",
+          1789050482680039982
+        ],
+        "7fe1a4161d0e6a54afeb7a11c865767c367fedceca977b08f682877b8ac470d9.wav": [
+          "a1fba7e0bdee26b03cc90717ab25b5010e84ff90589876b6ec09b1ff04765d12",
+          1789105751984169309
+        ],
+        "1c4276bb9c5d5871ef6cbdf75f7161a373f25c1f0cb13ad90a4365373a68a5a4.wav": [
+          "63a54e06e18ba949dd470460e744a5d19ccf77b5feaa4e2166bae4d1cccb9977",
+          1789051197785922748
+        ],
+        "7e9876525b5893137278a1e09c2b3098b9693d63da57fe61df5fdcca1afffe3b.wav": [
+          "de554279e686d640b8d5e6602800ebbac4a4ef94eb72663e80c9d1395f94cf51",
+          1789053807503367229
+        ],
+        "abd55e5a1b76e7bb058011fa758a521b665254621f9c3190fe2ff6232642b9e2.wav": [
+          "8b87a0039efcb3e94c05f58efff8dfa0589142af89377b79f77c2a11fff1430a",
+          1789053821261433171
+        ]
+      }
+    }
+  },
+  "runs": [
+    {
+      "name": "regression",
+      "at": "2026-09-11T17:24:53.206207",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q"
+      ],
+      "exit_code": 0,
+      "stdout": "........................................................................ [ 27%]\n........................................................................ [ 54%]\n........................................................................ [ 81%]\n................................................                         [100%]\n=============================== warnings summary ===============================\n.venv/lib/python3.12/site-packages/fastapi/testclient.py:1\n  <repo>/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n    from starlette.testclient import TestClient as TestClient  # noqa\n\n.venv/lib/python3.12/site-packages/starlette/testclient.py:53\n  <repo>/.venv/lib/python3.12/site-packages/starlette/testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.\n    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n264 passed, 2 warnings in 12.54s\n",
+      "stderr": ""
+    },
+    {
+      "name": "frontend_build",
+      "at": "2026-09-11T17:24:54.741873",
+      "command": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "exit_code": 0,
+      "stdout": "\n> voxstage-ui@0.1.0 build\n> tsc --noEmit && vite build\n\nvite v7.3.6 building client environment for production...\ntransforming...\n✓ 35 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/index.html                   0.42 kB │ gzip:  0.32 kB\ndist/assets/index-BdPAiwI6.css   26.89 kB │ gzip:  6.66 kB\ndist/assets/index-DlMEODmI.js   258.38 kB │ gzip: 81.82 kB\n✓ built in 448ms\n",
+      "stderr": ""
+    },
+    {
+      "name": "frontend_build_final",
+      "reason": "末句说明去掉容易误解为立即生效的通用提示",
+      "exit_code": 0,
+      "stdout": "\n> voxstage-ui@0.1.0 build\n> tsc --noEmit && vite build\n\nvite v7.3.6 building client environment for production...\ntransforming...\n✓ 35 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/index.html                   0.42 kB │ gzip:  0.32 kB\ndist/assets/index-BdPAiwI6.css   26.89 kB │ gzip:  6.66 kB\ndist/assets/index-DOK7dM3i.js   258.40 kB │ gzip: 81.83 kB\n✓ built in 466ms\n",
+      "stderr": ""
+    }
+  ],
+  "service_restart": {
+    "old_pid": 12891,
+    "workspace_verified": true,
+    "active_project_jobs": 0,
+    "new_pid": 21009
+  },
+  "live_http": {
+    "zh": {
+      "project_id": "42c1b2a02235492f9373d8ea9167e450",
+      "name": "逐句停顿 · 中文验证副本",
+      "revision": 8,
+      "baseline_pcm_array_equal": true,
+      "baseline_srt_byte_equal": true,
+      "old_total_samples": 2826000,
+      "new_total_samples": 2844000,
+      "sample_rate": 24000,
+      "250_to_1000_delta_samples": 18000,
+      "0_to_1000_delta_samples": 24000,
+      "later_boundary_shifts": [
+        {
+          "file_start_sample": 0,
+          "file_end_sample": 0,
+          "speech_start_sample": 0,
+          "speech_end_sample": 0
+        },
+        {
+          "file_start_sample": 0,
+          "file_end_sample": 0,
+          "speech_start_sample": 0,
+          "speech_end_sample": 0
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        }
+      ],
+      "all_shifted_srt_timecodes_found": true,
+      "pending_sentences": 0,
+      "audio_fingerprints_and_check_statuses_unchanged": true,
+      "original_audio_hashes_and_mtimes_unchanged": true,
+      "original_project_json_unchanged": true,
+      "package_reconstruction_array_equal": true,
+      "last_sentence_total_samples_unchanged": true,
+      "undo_pcm_array_equal": true,
+      "redo_pause_ms": 1000,
+      "final_audio": "user-data/pause-verification-2026-09-11/zh/final/full.wav",
+      "final_package": "user-data/pause-verification-2026-09-11/zh/final/delivery.zip",
+      "final_service_revision": 10,
+      "final_service_export_byte_equal": true,
+      "download_urls": {
+        "full.wav": "/api/projects/42c1b2a02235492f9373d8ea9167e450/export/10/full.wav",
+        "subtitles.srt": "/api/projects/42c1b2a02235492f9373d8ea9167e450/export/10/subtitles.srt",
+        "timeline.json": "/api/projects/42c1b2a02235492f9373d8ea9167e450/export/10/timeline.json",
+        "content-check.json": "/api/projects/42c1b2a02235492f9373d8ea9167e450/export/10/content-check.json",
+        "delivery.zip": "/api/projects/42c1b2a02235492f9373d8ea9167e450/export/10/delivery.zip"
+      }
+    },
+    "en": {
+      "project_id": "500c1ef8025648fc835e0cedfe52ba83",
+      "name": "逐句停顿 · 英文验证副本",
+      "revision": 8,
+      "baseline_pcm_array_equal": true,
+      "baseline_srt_byte_equal": true,
+      "old_total_samples": 3047760,
+      "new_total_samples": 3065760,
+      "sample_rate": 24000,
+      "250_to_1000_delta_samples": 18000,
+      "0_to_1000_delta_samples": 24000,
+      "later_boundary_shifts": [
+        {
+          "file_start_sample": 0,
+          "file_end_sample": 0,
+          "speech_start_sample": 0,
+          "speech_end_sample": 0
+        },
+        {
+          "file_start_sample": 0,
+          "file_end_sample": 0,
+          "speech_start_sample": 0,
+          "speech_end_sample": 0
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        },
+        {
+          "file_start_sample": 18000,
+          "file_end_sample": 18000,
+          "speech_start_sample": 18000,
+          "speech_end_sample": 18000
+        }
+      ],
+      "all_shifted_srt_timecodes_found": true,
+      "pending_sentences": 0,
+      "audio_fingerprints_and_check_statuses_unchanged": true,
+      "original_audio_hashes_and_mtimes_unchanged": true,
+      "original_project_json_unchanged": true,
+      "package_reconstruction_array_equal": true,
+      "last_sentence_total_samples_unchanged": true,
+      "undo_pcm_array_equal": true,
+      "redo_pause_ms": 1000,
+      "final_audio": "user-data/pause-verification-2026-09-11/en/final/full.wav",
+      "final_package": "user-data/pause-verification-2026-09-11/en/final/delivery.zip",
+      "final_service_revision": 8,
+      "final_service_export_byte_equal": true,
+      "download_urls": {
+        "full.wav": "/api/projects/500c1ef8025648fc835e0cedfe52ba83/export/8/full.wav",
+        "subtitles.srt": "/api/projects/500c1ef8025648fc835e0cedfe52ba83/export/8/subtitles.srt",
+        "timeline.json": "/api/projects/500c1ef8025648fc835e0cedfe52ba83/export/8/timeline.json",
+        "content-check.json": "/api/projects/500c1ef8025648fc835e0cedfe52ba83/export/8/content-check.json",
+        "delivery.zip": "/api/projects/500c1ef8025648fc835e0cedfe52ba83/export/8/delivery.zip"
+      }
+    }
+  },
+  "final_ui_restart": {
+    "old_pid": 21009,
+    "workspace_verified": true,
+    "new_pid": 21797
+  },
+  "browser": {
+    "browser": "Chrome",
+    "project_id": "42c1b2a02235492f9373d8ea9167e450",
+    "observations": {
+      "inherited_option": "跟随作品设置（0.25 秒）",
+      "second_sentence_initial_ms": 1000,
+      "selected_ms": 500,
+      "save_notice_visible": true,
+      "saved_option_ms": 500,
+      "undo_restored_ms": 1000,
+      "last_sentence_notice": "这是最后一句，导出末尾不加静音；设置会保存，后面有新句子时才生效。",
+      "error_logs": []
+    },
+    "final_served_asset": "/assets/index-DOK7dM3i.js",
+    "final_bundle_notice_found": true
+  },
+  "measured_summary": {
+    "regression_passed": 264,
+    "existing_regression_cases": 250,
+    "new_pause_cases": 14,
+    "regression_warnings": 2,
+    "languages_checked": [
+      "zh",
+      "en"
+    ],
+    "pending_sentences_each": 0,
+    "default_exports_pcm_identical_each": true,
+    "nondefault_package_reconstruction_pcm_identical_each": true
+  },
+  "known_unverified": [
+    "未做本轮停顿设置的人工完整试听",
+    "未实测 Safari、手机和平板",
+    "未实测 Premiere / DaVinci Resolve 导入；不属于本轮任务"
+  ],
+  "handoff": {
+    "status": "实现与自测记录已交付，待本人及 Claude Hera 验收",
+    "documentation_for_claude": "可在当前状态中将逐句停顿记为待验收；自动测试从 250 项增至 264 项。README 与 examples 未修改。",
+    "next_planned_task": "行业时间轴格式：先进行本机 DaVinci Resolve 的 FCP7 XML 导入验证，按下一份任务书实施。",
+    "scope_stopped": true
+  }
+}

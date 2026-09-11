@@ -91,6 +91,7 @@ class EditRequest(BaseModel):
     speaker: str | None = Field(default=None, min_length=1, max_length=80)
     voice: str | None = None
     pause_ms: int | None = Field(default=None, ge=0, le=2000)
+    pause_after: int | None = Field(default=None, ge=0, le=2000, strict=True)
 
 class TempoRegion(BaseModel):
     start: float = Field(ge=0, allow_inf_nan=False)
@@ -411,6 +412,9 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
 
     @app.patch('/api/projects/{project_id}')
     def edit_project(project_id: str, body: EditRequest):
+        has_pause = 'pause_after' in body.model_fields_set
+        if has_pause and not body.segment_id:
+            raise ValueError('请先选择要设置停顿的句子。')
         def apply(p):
             if body.name is not None:
                 if not body.name.strip():raise ValueError('工程名称不能为空。')
@@ -425,6 +429,9 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 s = next((s for s in p['segments'] if s['id']==body.segment_id), None)
                 if s is None:
                     raise ValueError('Unknown segment')
+                if has_pause:
+                    # D48: null means inheritance; a gap never changes synthesis identity.
+                    s['pause_after'] = body.pause_after
                 limit = 60 if p['language'] == 'zh' else 240
                 for field in ('text','spoken_as'):
                     value = getattr(body, field)
@@ -446,7 +453,8 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                     if body.speaker not in p['voices']:
                         raise ValueError('Select an existing speaker')
                     s['speaker'] = body.speaker
-                s['error'] = None
+                if any(getattr(body, field) is not None for field in ('text', 'spoken_as', 'speaker')):
+                    s['error'] = None
             if body.voice is not None:
                 if (body.voice not in VOICES and not (is_custom(body.voice) and library.label(body.voice))) or body.speaker not in p['voices']:
                     raise ValueError('Unknown voice or speaker')
@@ -960,3 +968,5 @@ if __name__ == '__main__':
 # 最后更新：2026-09-11 · Astra（复用试听确认接口同时处理文字与节奏）
 
 # 最后更新：2026-09-11 · Astra（新增可移植交付包下载）
+
+# 最后更新：2026-09-11 · Astra（可撤销的逐句停顿，空值继承作品设置）

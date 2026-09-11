@@ -72,7 +72,10 @@ def export_audio(project, directory: Path, output: Path, *, delivery=False):
         if delivery:rendered.append(pcm)
         position += len(pcm)
         if index < len(project['segments'])-1:
-            pause = np.zeros(round(rate * project['pause_ms']/1000), dtype=np.float32)
+            pause_ms = segment.get('pause_after')
+            if pause_ms is None:
+                pause_ms = project['pause_ms']
+            pause = np.zeros(round(rate * pause_ms/1000), dtype=np.float32)
             parts.append(pause)
             position += len(pause)
     output.mkdir(parents=True, exist_ok=True)
@@ -86,3 +89,5 @@ def export_audio(project, directory: Path, output: Path, *, delivery=False):
 # 最后更新：2026-09-09 · Astra
 
 # 最后更新：2026-09-11 · Astra（交付包复用成品 PCM）
+
+# 最后更新：2026-09-11 · Astra（逐句停顿只用于句间拼接，末句不插静音）
