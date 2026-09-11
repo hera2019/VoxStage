@@ -8,7 +8,7 @@ source text guaranteed intact.
 > product, and one quality criterion has explicitly **not** passed — see
 > [Open quality issue](#open-quality-issue).
 
-*[中文说明](README.zh-CN.md)*
+*Also available in Chinese: [中文说明](README.zh-CN.md)*
 
 ---
 
@@ -17,9 +17,9 @@ source text guaranteed intact.
 Give it a script where each line is `Speaker: sentence`:
 
 ```
-旁白：雨点轻轻敲着窗。
-小林：你听见了吗？
-阿宁：别担心，那只是风。
+Narrator: Mr. Bennet made no answer.
+Mrs. Bennet: Do not you want to know who has taken it?
+Mr. Bennet: You want to tell me, and I have no objection to hearing it.
 ```
 
 Assign a voice per speaker, generate, then work sentence by sentence — listen,
@@ -58,8 +58,9 @@ in your own files and never enter version control.
 On a configured Mac, double-click **Start VoxStage.command**. Use
 **Check VoxStage.command** for an environment report that downloads nothing.
 
-Chinese walkthroughs: [第一次试用](docs/public/quickstart-zh.md) ·
-[环境与模型准备](docs/public/setup-zh.md)
+Step-by-step walkthroughs, written in Chinese:
+[first run](docs/public/quickstart-zh.md) ·
+[environment and models](docs/public/setup-zh.md)
 
 From a fresh checkout (Python 3.12, uv and Node.js required):
 
@@ -102,6 +103,11 @@ the transcribe-back results and the known limitations are all in that folder.
 Every row links to a run under [`results/`](results/), recorded as both
 Markdown and JSON. Acceptance criteria were written **before** implementation:
 [`docs/public/acceptance.md`](docs/public/acceptance.md).
+
+> Most verification records under `results/` are written in Chinese, since that
+> is the language this was built in. The documents linked from this page —
+> acceptance criteria and the attribution evaluation — are in English, and every
+> record has a machine-readable JSON companion beside it.
 
 ## Open quality issue
 

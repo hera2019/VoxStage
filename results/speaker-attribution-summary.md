@@ -1,53 +1,93 @@
-# 中英文说话人归属评测：首轮结果
+# Speaker attribution, bilingual: first round
 
-结论：优先使用本机 Qwen3 4B 做“AI 分角色草稿 + 人工修改”。原文必须由程序保留，模型只返回片段标签；暂不支持无人检查后直接生成。
+Recommendation: use the local Qwen3 4B for an **AI draft that a person then
+corrects**. The program, not the model, must preserve the prose; the model
+returns labels for spans only. Unattended generation without review is not
+supported.
 
-## 样本与口径
+## Sample and scope
 
-20 个短场景，中英文各 10。前 16 个在自由输出基线中已经处理过；原文绑定流程另加 4 个事先冻结的新探针。参考答案由 Astra 在对应模型运行前拟定，**尚未经本人或独立人工审核**。因此这些是工程筛选证据，不是独立标准数据集上的泛化成绩。
+20 short scenes, ten Chinese and ten English. Sixteen had already been processed
+in the free-output baseline; the source-bound run added four probes frozen in
+advance. **Reference answers were drafted by the assistant before each model ran
+and have not been reviewed by the owner or by an independent annotator.** These
+are therefore engineering figures for a selection decision, not a score on an
+independent benchmark.
 
-| 项目 | Qwen3 4B Q8 | Qwen2.5 1.5B Q4 |
+| | Qwen3 4B Q8 | Qwen2.5 1.5B Q4 |
 |---|---:|---:|
-| 原文完整保留（由程序保证） | 20/20 | 20/20 |
-| 整段类型正确 | 94/104 | 65/104 |
-| 明确对白角色正确：原始严格口径 | 34/40 | 15/40 |
-| 明确对白角色正确：统一名字大小写后 | 37/40 | 15/40 |
-| 歧义对白正确标为 UNKNOWN | 4/4 | 1/4 |
-| 重复角色所有台词均正确 | 6/8 | 1/8 |
-| 整个场景全部标签正确 | 8/20 | 1/20 |
+| Source text preserved (guaranteed by the program) | 20/20 | 20/20 |
+| Span type correct | 94/104 | 65/104 |
+| Explicit dialogue attributed correctly, strict | 34/40 | 15/40 |
+| Explicit dialogue attributed correctly, ignoring name case | 37/40 | 15/40 |
+| Ambiguous lines correctly marked UNKNOWN | 4/4 | 1/4 |
+| A repeated character correct on every line | 6/8 | 1/8 |
+| **Entire scene fully correct** | **8/20** | 1/20 |
 
-统一名字大小写后的对白角色正确数：4B 中文 17/20，英文 20/20；1.5B 中文 9/20，英文 6/20。这是看见 LEO/Leo 等差异后增加的辅助诊断；原始严格成绩保留，不替换。
+Ignoring name case, the 4B scored 17/20 in Chinese and 20/20 in English; the
+1.5B, 9/20 and 6/20. That relaxed reading was added after seeing LEO against Leo
+in the output; **the strict figure stands and is not replaced by it.**
 
-本机实测 20 次请求总耗时分别为 34.41 秒和 25.75 秒；请求中位数分别 1.54 秒和 1.18 秒。不含模型准备和人工审核，不代表长章节性能。
+Twenty requests took 34.41 s and 25.75 s in total, median 1.54 s and 1.18 s.
+Neither figure includes model preparation or human review, and neither
+represents performance on a long chapter.
 
-## 最需要处理的错误
+## The errors worth fixing first
 
-- 4B 会把尾随的“他说”“赵远说”或 “he replied” 标给角色并当成对白，旁白与对白边界仍需审核。
-- 嵌套引语后，“那我们明天再试。”应为小林，4B 错给阿宁。
-- 门上写着“今天休息”、纸条“不要开门”等书面内容可能被当成有人说话。
-- 部分明确台词返回 UNKNOWN，说明弃答并不总是合理。
-- 轻量模型对白及歧义识别明显较差，不作为首选。
+- The 4B attaches a trailing "他说", "赵远说" or "he replied" to the character and
+  treats it as speech. The boundary between narration and dialogue still needs
+  review.
+- After a nested quotation, "那我们明天再试。" belongs to 小林; the 4B gave it to 阿宁.
+- Written text — a sign reading 今天休息, a note reading 不要开门 — can be taken for
+  someone speaking.
+- Some plainly attributed lines come back UNKNOWN, so abstaining is not always
+  well judged.
+- The lighter model is markedly worse at both dialogue and ambiguity, and is not
+  the candidate.
 
-## 自由输出原文为什么不用
+## Why free-form output is not used
 
-即使纠正结构约束参数，4B 原文完全保留 0/16，轻量模型 2/16；存在引号替换、空白丢失、归属和格式错误，4B 两例达到输出上限。不能由这个严格流水线失败率推断“模型完全不会认角色”。
+Even after correcting the structured-output parameters, the 4B preserved the
+source exactly 0/16 times and the lighter model 2/16: quotation marks were
+substituted, whitespace was lost, attribution and formatting went wrong, and two
+4B cases hit the output limit. **That failure rate belongs to this strict
+pipeline and does not mean the model cannot recognise characters.**
 
-原文绑定实验通过通用引号规则生成片段，没有读取参考答案。模型只输出 id/kind/speaker；缺号、重号、未知号会被拒绝，正文从原文切片恢复。20/20 保全是这条程序规则的作用，不是对模型忠实抄写能力的表扬。
+The source-bound run splits spans by a general quotation rule that never reads a
+reference answer. The model returns only id, kind and speaker; a missing,
+duplicated or unknown id is rejected outright, and the prose is sliced back out
+of the original. **The 20/20 preservation is that program rule working, not the
+model copying faithfully.**
 
-## 下一步
+## Next
 
-采用 4B 候选接入“原文 → 分角色草稿 → 人工确认”。保留原文并清楚显示每段角色，优先暴露 UNKNOWN、旁白/对白切换和角色别名纠正。先完成可审核流程，再用独立人工标注、更长章节、更多角色和另一模型家族扩展评测。
+Adopt the 4B for source → attributed draft → human confirmation. Keep the prose
+intact, show each span's speaker plainly, and surface UNKNOWN, narration/dialogue
+switches and inconsistent character names first. Build the reviewable workflow
+before extending the evaluation with independent annotation, longer chapters,
+more characters and a different model family.
 
-不继续微调提示以追高这 20 例分数。尚未验证自动章节拆分、跨章节角色名单、日文、人工审核耗时或重复运行稳定性。
+No further prompt tuning against these twenty. Automatic chapter splitting,
+cross-chapter character lists, Japanese, human review time and run-to-run
+stability remain unverified.
 
-## 复现与来源
+## Reproducing, and provenance
 
-语料、提示、评分及绑定程序位于 evals/speaker_attribution；逐案例输入、原始输出和评分位于 results/speaker-attribution。汇总 JSON 保留文件 SHA、量化版本、构建 commit、提示哈希、分语言/分集合分数和所有错误。最初错误 schema 参数的技术结果也保留，不能与修正后结果混用。
+Corpus, prompts, scoring and the binding program are in
+`evals/speaker_attribution`; per-case inputs, raw outputs and scores in
+`results/speaker-attribution`. The summary JSON keeps file hashes, quantisation,
+build commit, prompt hash, per-language and per-split scores, and every error.
+Results from the initial run with the wrong schema parameter are kept as a
+technical record and must not be mixed with the corrected ones.
 
-模型资料：[Qwen3 4B](https://huggingface.co/Qwen/Qwen3-4B-Instruct-2507)、[官方 Qwen2.5 1.5B GGUF](https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF)。推理使用已安装的 llama.cpp Metal；没有更新共享模型或推理程序，没有使用云推理，也没有改用户工程。
+Models: [Qwen3 4B](https://huggingface.co/Qwen/Qwen3-4B-Instruct-2507),
+[Qwen2.5 1.5B GGUF](https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF).
+Inference used the already-installed llama.cpp with Metal. No shared model or
+inference binary was updated, no cloud inference was used, and no user project
+was modified.
 
-最后更新：2026-09-09 · Astra
+Full regression at the time: 121 passed, with two pre-existing dependency
+deprecation warnings. One string-escape error in a new span-protection test was
+found and fixed.
 
-完整回归：121 项通过，2 条既有依赖弃用警告。新增片段保护测试的一次字符串转义错误已修正。
-
-最后更新：2026-09-09 · Astra
+Last updated: 2026-09-09 · Astra (Chinese original) / 2026-09-11 · Claude Hera (English)
