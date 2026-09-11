@@ -9,9 +9,9 @@ text.
 
 | | |
 |---|---|
-| Text | 440 characters · 37 quoted/prose units · 32 lines |
+| Text | 440 characters · 37 quoted/prose units · 29 lines |
 | Voices | 旁白 Serena — 林小雪 Vivian — 周远 Dylan — 张师傅 Uncle_Fu |
-| Audio | 117.3 s, 24 kHz mono |
+| Audio | 114.9 s, 24 kHz mono |
 | Machine | Mac Studio, Apple M2 Max, 32 GB. Fully offline. |
 
 ## Files
@@ -74,21 +74,23 @@ unified.** No line needed its text changed.
 
 ## The transcribe-back check reads differently in Chinese
 
-Six lines of 32 flagged, and the shape of the noise is not the English shape:
+Two lines of 29 flagged: `远`→`元` and `约`→`越`. Both are near-homophones
+differing only by tone, and neither is a synthesis error — the recogniser wrote
+a different character for something read correctly.
 
-| Flag | What it is |
-|---|---|
-| `远`→`元`, `约`→`越`, `堆`→`对`, `字`→`刺` | Near-homophones differing only by tone |
-| `三百二`→`320` | The recogniser wrote digits for what was read aloud correctly |
-| `''`→`啊` | An inserted particle |
+Seven differences passed silently, and what tolerates them is worth separating:
 
-Tone-matched homophones are already tolerated — five such pairs passed silently
-in this run. These six differ in tone, so they are reported, which is defensible
-even though none is a synthesis error.
+| Basis | Count | Example |
+|---|---|---|
+| Same pinyin and tone | 5 | `他`/`她` |
+| Same number, different writing | 2 | `三百二`/`320`, `一千零八十`/`1080` |
 
-**The number case is the one worth noting.** Nothing was misread: `三百二` was
-spoken correctly and transcribed as `320`. Comparing written forms will keep
-flagging that, and the fix belongs in the comparison rather than in the voice.
+**The number row was a reported failure in the first run of this sample.**
+Nothing had been misread: `三百二` was spoken correctly and transcribed as
+`320`, and comparing written forms flagged it every time. The fix went into the
+comparison rather than the voice. It is shown as a visible tolerance rather than
+a silent pass, because normalising `一千八十` and `一千零八十` to the same value
+also hides a genuinely dropped `零`.
 
 Zero duration anomalies in this run.
 
@@ -97,16 +99,21 @@ Zero duration anomalies in this run.
 | | |
 |---|---|
 | Attribution, 37 units | **15.1 s** |
-| Synthesis, 32 lines → 117.3 s of audio | **46 s** |
-| Transcribe-back check, 32 lines | **31 s** |
+| Synthesis, 29 lines → 114.9 s of audio | **47 s** |
+| Transcribe-back check, 29 lines | **28 s** |
 | Human corrections | **4** labels, no text changes, no retakes |
 
 ## Subtitles are shorter here than in English
 
-Longest cue: 42 characters, one cue over 40. The English sample's longest runs
+Longest cue: 41 characters, one cue over 40. The English sample's longest runs
 173. The per-line limit is 60 characters for Chinese against 240 for English,
 and Chinese sentences are shorter to begin with, so one line per cue produces
 something much closer to usable subtitles in Chinese than it does in English.
+
+One cue still runs 41 characters over 8.9 seconds, which is too long to read
+comfortably. A segment is a synthesis unit and a subtitle cue at once, and those
+two want opposite things; splitting cues independently of audio is the open
+problem here, not a solved one.
 
 ## Known limits
 
