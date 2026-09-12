@@ -35,10 +35,18 @@ class FixtureEngine:
 class MlxEngine:
     label = 'Qwen3 · 本地预设音色'
     reference_identity = BASE_ID
-    def __init__(self, path, base_path=None):
+    def __init__(self, path, base_path=None, large_path=None):
         self.path = Path(path)
         self.model = None
         self.reference_model = None
+        # An optional larger preset model beside the default, chosen per project.
+        # Same nine voices, same code path; a different identity in the fingerprint.
+        self.large_path = Path(large_path) if large_path else self.path.parent/'qwen-customvoice-1.7b'
+        self.large_model = None
+        self.large_identity = None
+        if (self.large_path/'model.safetensors').is_file() and (self.large_path/'voxstage-model.json').is_file():
+            provenance = json.loads((self.large_path/'voxstage-model.json').read_text())
+            self.large_identity = provenance['repo'] + '@' + provenance['revision']
         self.base_path = Path(base_path or self.path.parent/'qwen-base')
         self.reference_ready = all((self.base_path/name).is_file() for name in BASE_SHA)
         self.base_verified = False
@@ -48,23 +56,36 @@ class MlxEngine:
             provenance = json.loads((self.path/'voxstage-model.json').read_text())
             self.identity = provenance['repo'] + '@' + provenance['revision']
 
-    def synthesize(self, text, voice, language, seed=260909):
+    def identity_for(self, size='0.6B'):
+        return self.large_identity if size == '1.7B' and self.large_identity else self.identity
+
+    def synthesize(self, text, voice, language, seed=260909, size='0.6B'):
         if not self.ready:
             raise ValueError('Preset-voice model is not installed. Run the model setup command first.')
+        if size == '1.7B' and not self.large_identity:
+            raise ValueError('1.7B 预设模型未安装。')
         import mlx.core as mx
         from mlx_audio.tts.utils import load_model
         start = time.perf_counter()
-        if self.model is None:
-            # Both variants stay resident. Evicting one to load the other cost
-            # 25 reloads across the 92 lines of Kong Yiji, because preset and
-            # cloned voices alternate line by line; weights are ~1.5 GB each.
-            gc.collect(); mx.clear_cache()
-            self.model = load_model(str(self.path))
+        # Every variant stays resident once loaded. Evicting one to load
+        # another cost 25 reloads across the 92 lines of Kong Yiji, because
+        # preset and cloned voices alternate line by line; weights are 1.5 GB
+        # (0.6B) and 3.4 GB (1.7B).
+        if size == '1.7B':
+            if self.large_model is None:
+                gc.collect(); mx.clear_cache()
+                self.large_model = load_model(str(self.large_path))
+            model = self.large_model
+        else:
+            if self.model is None:
+                gc.collect(); mx.clear_cache()
+                self.model = load_model(str(self.path))
+            model = self.model
         loaded = time.perf_counter()
         mx.random.seed(seed)
         mx.reset_peak_memory()
         parameters = generation_parameters(language)
-        results = list(self.model.generate_custom_voice(text=text, speaker=voice,
+        results = list(model.generate_custom_voice(text=text, speaker=voice,
                        language={'zh':'Chinese','en':'English'}[language], **parameters))
         if not results:
             raise ValueError('Model returned no audio')
@@ -118,8 +139,8 @@ class MlxEngine:
 
     def unload(self):
         """Release synthesis models before the serial transcription job. Astra, 2026-09-09."""
-        if self.model is not None or self.reference_model is not None:
-            self.model=None;self.reference_model=None
+        if self.model is not None or self.reference_model is not None or self.large_model is not None:
+            self.model=None;self.reference_model=None;self.large_model=None
             gc.collect()
             import mlx.core as mx
             mx.clear_cache()

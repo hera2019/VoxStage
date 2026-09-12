@@ -36,3 +36,35 @@ def test_the_lexicon_is_bounded_and_cleaned(client):
     assert p['lexicon'] == {'偸': '偷'}
     r = client.patch(base, json={'revision': p['revision'], 'lexicon': {str(i): '甲' for i in range(201)}})
     assert r.status_code == 400 and '200' in r.json()['detail']
+
+
+def test_a_project_can_choose_the_larger_preset_model(tmp_path):
+    """The choice feeds the fingerprint: preset-voice lines need regenerating,
+    cloned-voice lines do not, and undo puts the audio back untouched."""
+    from fastapi.testclient import TestClient
+    from runtime.app import create_app
+    from runtime.core import fingerprint
+    from tests.test_workflow import HEADERS
+    class TwoSizes:
+        ready = True; identity = 'small@1'; large_identity = 'large@1'; reference_ready = False; label = 'two sizes'
+        def identity_for(self, size='0.6B'): return self.large_identity if size == '1.7B' else self.identity
+        def synthesize(self, text, voice, language, seed=260909, size='0.6B'):
+            import numpy as np
+            return np.zeros(2400, dtype='float32') + .1, 24000, {'size': size, 'load_seconds': 0, 'generation_seconds': 0, 'mlx_peak_memory_bytes': 0, 'seed': seed, 'generation_parameters': {}}
+    eng = TwoSizes()
+    with TestClient(create_app(tmp_path / 'p', eng), base_url='http://127.0.0.1', headers=HEADERS) as c:
+        p = c.post('/api/projects', json={'name': 'x', 'language': 'zh', 'script': '旁白：你好世界。\n旁白：再见。'}).json()
+        assert c.get('/api/config').json()['preset_models'] == ['0.6B', '1.7B']
+        small = {s['id']: fingerprint(p, s, eng) for s in p['segments']}
+        p = c.patch('/api/projects/' + p['id'], json={'revision': p['revision'], 'preset_model': '1.7B'}).json()
+        assert p['preset_model'] == '1.7B'
+        large = {s['id']: fingerprint(p, s, eng) for s in p['segments']}
+        assert all(small[k] != large[k] for k in small)
+        p = c.post('/api/projects/' + p['id'] + '/undo', json={'revision': p['revision']}).json()
+        assert p.get('preset_model', '0.6B') == '0.6B'
+    class OneSize(TwoSizes):
+        large_identity = None
+    with TestClient(create_app(tmp_path / 'q', OneSize()), base_url='http://127.0.0.1', headers=HEADERS) as c:
+        p = c.post('/api/projects', json={'name': 'x', 'language': 'zh', 'script': '旁白：你好。'}).json()
+        r = c.patch('/api/projects/' + p['id'], json={'revision': p['revision'], 'preset_model': '1.7B'})
+        assert r.status_code == 400 and '未安装' in r.json()['detail']

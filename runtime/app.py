@@ -95,6 +95,7 @@ class EditRequest(BaseModel):
     pause_after: int | None = Field(default=None, ge=0, le=2000, strict=True)
     read_aloud: bool | None = None
     lexicon: dict[str, str] | None = None
+    preset_model: Literal['0.6B', '1.7B'] | None = None
 
 class TempoRegion(BaseModel):
     start: float = Field(ge=0, allow_inf_nan=False)
@@ -232,7 +233,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
     @app.get('/api/config')
     def config():
         return {'engine':engine.label, 'engine_id':engine.identity, 'ready':engine.ready,
-                'attribution_ready':role_engine.ready, 'speed_ready':bool(ffmpeg_path()),'checker_ready':checker.ready, 'checker_id':checker.identity, 'voices':VOICES, 'fixed_voice_ready':getattr(engine,'reference_ready',False), 'local_only':True, 'synthetic_audio':True}
+                'attribution_ready':role_engine.ready, 'speed_ready':bool(ffmpeg_path()),'checker_ready':checker.ready, 'checker_id':checker.identity, 'voices':VOICES, 'fixed_voice_ready':getattr(engine,'reference_ready',False), 'preset_models':['0.6B']+(['1.7B'] if getattr(engine,'large_identity',None) else []), 'local_only':True, 'synthetic_audio':True}
 
     @app.get('/api/settings')
     def read_settings():
@@ -470,6 +471,12 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 p['speech_rate']=body.speech_rate
             if body.pause_ms is not None:
                 p['pause_ms'] = body.pause_ms
+            if body.preset_model is not None:
+                if body.preset_model == '1.7B' and not getattr(engine, 'large_identity', None):
+                    raise ValueError('1.7B 预设模型未安装。')
+                # Feeds the fingerprint: every preset-voice line changes identity
+                # and needs regenerating; cloned-voice lines do not.
+                p['preset_model'] = body.preset_model
             if body.lexicon is not None:
                 # Written form -> read-as form, project-wide. Empty entries and
                 # self-maps are dropped; feeding the fingerprint means only the
@@ -715,7 +722,8 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                                 260909+s.get('take',0),consent_confirmed=True,expected_sha256=entry['sha256'])
                         else:
                             pcm, rate, metrics = engine.synthesize(spoken_text(p,s),
-                                p['voices'][s['speaker']], p['language'], 260909+s.get('take',0))
+                                p['voices'][s['speaker']], p['language'], 260909+s.get('take',0),
+                                **({'size': p.get('preset_model','0.6B')} if hasattr(engine,'identity_for') else {}))
                         pcm, meta = process_audio(pcm, rate)
                         meta.update({'fingerprint':digest, 'engine':getattr(engine,'reference_identity',engine.identity) if p.get('voice_profiles',{}).get(s['speaker']) else engine.identity, **metrics})
                         temp = folder/(digest+'.tmp.wav')

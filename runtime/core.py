@@ -150,7 +150,7 @@ def spoken_text(project, segment):
 
 def fingerprint(project, segment, engine, library=None):
     data = {'text':spoken_text(project, segment), 'voice':project['voices'][segment['speaker']],
-            'language':project['language'], 'engine':engine.identity, 'seed':260909+segment.get('take',0),
+            'language':project['language'], 'engine':(engine.identity_for(project.get('preset_model','0.6B')) if hasattr(engine,'identity_for') else engine.identity), 'seed':260909+segment.get('take',0),
             **generation_parameters(project['language']),
             'runtime':'mlx-audio-0.5.1', 'processing':PROCESSING_VERSION}
     # A library voice is a reference like a fixed profile is, so its identity has
@@ -172,7 +172,7 @@ def fingerprint(project, segment, engine, library=None):
     return hashlib.sha256(json.dumps(data, ensure_ascii=False, sort_keys=True).encode()).hexdigest()
 
 def edit_state(project):
-    return copy.deepcopy({**{k:project[k] for k in ('name','language','voices','segments','pause_ms')},'lexicon':project.get('lexicon',{}),'voice_profiles':project.get('voice_profiles',{}), 'archived':project.get('archived',False), 'speech_rate':project.get('speech_rate',1.0)})
+    return copy.deepcopy({**{k:project[k] for k in ('name','language','voices','segments','pause_ms')},'lexicon':project.get('lexicon',{}),'preset_model':project.get('preset_model','0.6B'),'voice_profiles':project.get('voice_profiles',{}), 'archived':project.get('archived',False), 'speech_rate':project.get('speech_rate',1.0)})
 
 class Store:
     def __init__(self, root):
