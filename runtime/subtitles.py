@@ -39,9 +39,44 @@ SPACED = '，、；：,;:'
 PUNCTUATION = set(QUOTES + '。，、；：？！…—．,.!?;:\'\n\r\t 　')
 
 
-def _spoken(text):
-    """Indices of the characters a voice actually utters."""
+_WORD = re.compile(r"[^\W_]+(?:[’'][^\W_]+)*")
+
+
+def _spoken(text, language='zh'):
+    """Start index of each unit a voice utters: a character in Chinese, a word
+    in English. This is the unit the recogniser reports timings for, so the two
+    sides can be counted against each other."""
+    if language == 'en':
+        return [m.start() for m in _WORD.finditer(text)]
     return [i for i, c in enumerate(text) if c not in PUNCTUATION]
+
+
+def _heard(timed, language):
+    """The recogniser's timings, one per spoken unit.
+
+    Chinese recognition sometimes returns two characters as one entry (今日,
+    就是); its span is shared evenly between them so the count matches the
+    line's. English entries are already words.
+    """
+    out = []
+    for entry in timed:
+        raw = entry.get('text') or ''
+        chars = [c for c in raw if c not in PUNCTUATION]
+        if not chars:
+            continue
+        a, b = entry.get('start') or 0.0, entry.get('end') or 0.0
+        if language == 'en':
+            # The recogniser marks a word start with a leading space; an entry
+            # without one continues the previous word (Nether + field,
+            # impatient + ly), so its time is folded into that word.
+            if out and not raw[:1].isspace():
+                out[-1] = (out[-1][0], max(out[-1][1], b))
+            else:
+                out.append((a, b))
+            continue
+        step = (b - a) / len(chars)
+        out += [(a + k * step, a + (k + 1) * step) for k in range(len(chars))]
+    return out
 
 
 def _split(text, limit):
@@ -72,11 +107,22 @@ def _split(text, limit):
     return [r for r in runs if text[r[0]:r[1]].strip()]
 
 
+# A mark inside a word or a number is part of it, not decoration: the curly
+# apostrophe in don’t, the colon in 12:30, the comma in 1,000. Guard them before
+# the stripping below, and put them back after.
+_INSIDE = re.compile(r'(?<=[^\W\d_])[’\'](?=[^\W\d_])|(?<=\d)[:,.](?=\d)')
+_HOLD = '\x00'
+
+
 def screen_text(raw, line_limit):
     """Strip what a screen does not need, then wrap to at most two lines."""
-    text = ''.join(c for c in raw if c not in QUOTES).strip()
+    kept = _INSIDE.findall(raw)
+    text = _INSIDE.sub(_HOLD, raw)
+    text = ''.join(c for c in text if c not in QUOTES).strip()
     text = re.sub(f'[{re.escape(SPACED)}]+', ' ', text)
     text = re.sub(r'\s+', ' ', text).strip(' ').strip(TRAILING).strip()
+    for mark in kept:
+        text = text.replace(_HOLD, mark, 1)
     if len(text) <= line_limit:
         return text
     # Break near the middle so the lines are balanced, at a space when one is
@@ -92,28 +138,50 @@ def screen_text(raw, line_limit):
     return '\n'.join(wrap(text))
 
 
-def _fractions(segment, text):
-    """Where each spoken character falls inside the segment, as 0..1.
+def _through(mapping, seconds):
+    """Original-audio seconds -> finished-audio seconds, or None inside a cut."""
+    if not mapping:
+        return seconds
+    for m in mapping:
+        if m['source_start'] <= seconds <= m['source_end']:
+            width = m['source_end'] - m['source_start']
+            share = (seconds - m['source_start']) / width if width else 0.0
+            return m['output_start'] + share * (m['output_end'] - m['output_start'])
+    return None
 
-    Uses the per-character timings the transcribe-back check already stored.
-    They come from the recogniser, so they only line up when it heard the same
-    number of characters that the line contains; when it did not, position by
-    character count instead and say so.
+
+def _positions(segment, text, start_sample, end_sample, rate, file_start, mapping, language='zh'):
+    """Where each spoken character sits in the finished file, in samples.
+
+    The per-character timings the transcribe-back check stored are used only
+    when they demonstrably describe this audio: the check ran on the same
+    fingerprint, and it heard as many characters as the line holds. They are
+    then carried through whatever speed and cut edits produced the exported
+    audio. Anything that fails those tests is positioned by character count
+    instead, and the cue is marked as an estimate.
     """
-    spoken = _spoken(text)
-    timed = ((segment.get('content_check') or {}).get('timed_text')) or []
-    heard = [e for e in timed
-             if any(c not in PUNCTUATION for c in (e.get('text') or ''))]
-    if len(heard) != len(spoken) or not heard:
-        n = max(1, len(spoken))
-        return {index: (rank / n, (rank + 1) / n) for rank, index in enumerate(spoken)}, False
-    span = max((e.get('end') or 0) for e in heard) or 1.0
-    return {index: (heard[rank].get('start', 0) / span, (heard[rank].get('end', 0) or 0) / span)
-            for rank, index in enumerate(spoken)}, True
+    spoken = _spoken(text, language)
+    n = max(1, len(spoken))
+    by_count = {i: (start_sample + round((end_sample - start_sample) * r / n),
+                    start_sample + round((end_sample - start_sample) * (r + 1) / n))
+                for r, i in enumerate(spoken)}
+    check = segment.get('content_check') or {}
+    fingerprint = (segment.get('audio') or {}).get('fingerprint')
+    heard = _heard(check.get('timed_text') or [], language)
+    if (not fingerprint or check.get('source_fingerprint') != fingerprint
+            or len(heard) != len(spoken) or not heard or rate is None or file_start is None):
+        return by_count, False
+    out = {}
+    for r, i in enumerate(spoken):
+        a, b = _through(mapping, heard[r][0]), _through(mapping, heard[r][1])
+        if a is None or b is None or b < a:
+            return by_count, False              # a cut removed it: do not guess
+        out[i] = (file_start + round(a * rate), file_start + round(b * rate))
+    return out, True
 
 
 def pauses(pcm, rate, minimum=PAUSE_SECONDS):
-    """Where the voice stops inside a line, as fractions of its speech span.
+    """Where the voice stops inside a line, in seconds from the audio's start.
 
     Same low-energy test the listening cues use, at a lower threshold: this
     decides where a subtitle breaks, not whether a human should re-listen.
@@ -130,13 +198,10 @@ def pauses(pcm, rate, minimum=PAUSE_SECONDS):
         return []
     quiet = rms < threshold
     edges = np.diff(np.r_[False, quiet, False].astype(int))
-    span = (active[-1] - active[0]) or 1
     found = []
     for a, b in zip(np.flatnonzero(edges == 1), np.flatnonzero(edges == -1)):
         if a > active[0] and b <= active[-1] and (b - a) * frame / rate >= minimum:
-            # Break at the middle of the silence, expressed against the spoken
-            # span so it can be compared with character positions.
-            found.append(float(((a + b) / 2 - active[0]) / span))
+            found.append((a + b) / 2 * frame / rate)   # middle of the silence, seconds
     return found
 
 
@@ -151,50 +216,58 @@ def _snap(text, index, window):
     """
     if not 0 < index < len(text):
         return None
-    def boundary(i):
-        if not 0 < i < len(text):
-            return False
-        if text[i - 1] in BREAKS[0] + BREAKS[1] + QUOTES:
-            return True                         # just after punctuation
-        return text[i - 1].isspace() and not text[i].isspace()
-    return next((i for offset in range(window + 1)
-                 for i in (index - offset, index + offset) if boundary(i)), None)
+    def after_punctuation(i):
+        return 0 < i < len(text) and text[i - 1] in BREAKS[0] + BREAKS[1] + QUOTES
+    def after_space(i):
+        return 0 < i < len(text) and text[i - 1].isspace() and not text[i].isspace()
+    # A comma or full stop near the silence is a better witness to where the
+    # phrase ends than the nearest space: a pause that lands one word late
+    # would otherwise drag that word onto the wrong cue.
+    for test in (after_punctuation, after_space):
+        found = next((i for offset in range(window + 1)
+                      for i in (index - offset, index + offset) if test(i)), None)
+        if found is not None:
+            return found
+    return None
 
 
-def cues(segment, text, start_sample, end_sample, language, pcm=None, rate=None):
-    """Subtitle cues for one segment, as (start_sample, end_sample, text, timed).
+def cues(segment, text, start_sample, end_sample, language,
+         pcm=None, rate=None, mapping=None, file_start=None):
+    """Subtitle cues for one segment: (start_sample, end_sample, text, estimated).
 
     start_sample/end_sample are the segment's speech boundaries in the finished
-    file; cue boundaries are placed inside that span, so the first cue always
-    begins and the last always ends exactly where the segment does.
+    file and file_start is where its audio begins there. The first cue always
+    opens and the last always closes exactly on the speech boundaries; `estimated`
+    is True when the inner boundaries were placed by character count rather than
+    by timings known to describe this audio.
     """
     limits = LIMITS.get(language, LIMITS['en'])
-    position, timed = _fractions(segment, text)
+    position, trusted = _positions(segment, text, start_sample, end_sample, rate, file_start, mapping, language)
     spoken = sorted(position)
     breaks, window = set(), 3 if language == 'zh' else 12
-    for fraction in (pauses(pcm, rate) if pcm is not None and rate else []):
-        # The first character that starts after the silence opens a new cue.
-        after = [i for i in spoken if position[i][0] >= fraction]
-        if after and after[0] != spoken[0]:
-            at = _snap(text, after[0], window)
-            if at is not None:
-                breaks.add(at)
+    if pcm is not None and rate and file_start is not None:
+        for seconds in pauses(pcm, rate):
+            at_sample = file_start + round(seconds * rate)
+            # The first character that starts after the silence opens a new cue.
+            after = [i for i in spoken if position[i][0] >= at_sample]
+            if after and after[0] != spoken[0]:
+                at = _snap(text, after[0], window)
+                if at is not None:
+                    breaks.add(at)
     runs = []
     for first, last in _runs(text, sorted(breaks)):
         runs += [(first + a, first + b) for a, b in _split(text[first:last], limits['cue'])]
-    total = end_sample - start_sample
     out = []
     for first, last in runs:
         shown = screen_text(text[first:last], limits['line'])
         if not shown:
             continue
         inside = [i for i in range(first, last) if i in position]
-        head = position[inside[0]][0] if inside else 0.0
-        tail = position[inside[-1]][1] if inside else 1.0
-        out.append((start_sample + round(total * head),
-                    start_sample + round(total * min(1.0, tail)), shown, timed))
+        head = position[inside[0]][0] if inside else start_sample
+        tail = position[inside[-1]][1] if inside else end_sample
+        out.append((max(start_sample, head), min(end_sample, tail), shown, not trusted))
     if not out:
-        return [(start_sample, end_sample, text.strip(), timed)]
+        return [(start_sample, end_sample, text.strip(), not trusted)]
     # Keep the segment's own boundaries exact and never let cues overlap.
     out[0] = (start_sample,) + out[0][1:]
     out[-1] = out[-1][:1] + (end_sample,) + out[-1][2:]
@@ -226,11 +299,11 @@ def hold_briefest(cues, rate, minimum=MINIMUM_SECONDS):
     """
     out = list(cues)
     want = round(rate * minimum)
-    for i, (start, end, shown) in enumerate(out):
+    for i, (start, end, *rest) in enumerate(out):
         if end - start >= want:
             continue
         ceiling = out[i + 1][0] if i + 1 < len(out) else start + want
-        out[i] = (start, max(end, min(start + want, ceiling)), shown)
+        out[i] = (start, max(end, min(start + want, ceiling)), *rest)
     return out
 
 

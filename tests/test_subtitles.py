@@ -21,8 +21,11 @@ def test_screen_text_drops_what_a_screen_does_not_need():
     # Tone survives: losing these changes how the line reads.
     assert screen_text('“是你吗？”', 20) == '是你吗？'
     assert screen_text('别动！', 20) == '别动！'
-    # An English apostrophe is part of the word, not decoration.
+    # An apostrophe is part of the word, not decoration — the curly one too,
+    # which is what real text uses. And a mark inside a number stays.
     assert screen_text('"Don\'t," she said.', 42) == "Don't she said"
+    assert screen_text('“Don’t,” she said.', 42) == 'Don’t she said'
+    assert screen_text('It’s 12:30, pay 1,000.', 42) == 'It’s 12:30 pay 1,000'
 
 
 def test_a_long_line_is_wrapped_not_left_to_run_off_the_frame():
@@ -37,7 +40,7 @@ def test_a_long_line_is_wrapped_not_left_to_run_off_the_frame():
 
 def test_pauses_are_found_where_the_voice_stops():
     found = pauses(speech([(.5, True), (.4, False), (.5, True)]), 24000)
-    assert len(found) == 1 and .4 < found[0] < .6      # roughly halfway through
+    assert len(found) == 1 and .6 < found[0] < .8      # middle of the 0.5–0.9 s silence
     assert pauses(speech([(1.0, True)]), 24000) == []  # nothing to break on
     assert pauses(np.zeros(10, dtype=np.float32), 24000) == []
 
@@ -46,7 +49,7 @@ def test_cues_break_on_the_pause_and_land_on_a_text_boundary():
     text = '门上贴着一张纸，写着今日盘点。'
     segment = {}
     pcm = speech([(1.65, True), (.38, False), (1.5, True)])
-    out = cues(segment, text, 0, 24000 * 4, 'zh', pcm, 24000)
+    out = cues(segment, text, 0, 24000 * 4, 'zh', pcm, 24000, None, 0)
     assert [c[2] for c in out] == ['门上贴着一张纸', '写着今日盘点']
     # The segment's own boundaries stay exact.
     assert out[0][0] == 0 and out[-1][1] == 24000 * 4
@@ -57,7 +60,7 @@ def test_a_pause_with_no_boundary_near_it_is_ignored_rather_than_honoured():
     """Character positions are interpolated, so a break can land mid-word."""
     text = '门上贴着一张纸写着今日盘点暂停营业林小雪把伞收起来'
     pcm = speech([(1.0, True), (.4, False), (1.0, True)])
-    out = cues({}, text, 0, 24000 * 3, 'zh', pcm, 24000)
+    out = cues({}, text, 0, 24000 * 3, 'zh', pcm, 24000, None, 0)
     assert all(c[2] for c in out)
     assert ''.join(c[2] for c in out).replace(' ', '') == text
 
@@ -83,5 +86,57 @@ def test_a_flash_of_a_cue_is_held_into_the_silence_but_never_over_the_next():
 def test_the_segment_text_is_never_written_back_to(language):
     segment = {'text': '“应该就是这儿。”'}
     before = dict(segment)
-    cues(segment, segment['text'], 0, 24000, language, speech([(1., True)]), 24000)
+    cues(segment, segment['text'], 0, 24000, language, speech([(1., True)]), 24000, None, 0)
     assert segment == before
+
+
+def timed(chars, each=0.2):
+    return [{'text': c, 'start': i * each, 'end': (i + 1) * each} for i, c in enumerate(chars)]
+
+
+def test_timings_are_used_only_when_they_describe_this_very_audio():
+    rate = 24000
+    text = '门上贴着一张纸，写着今日盘点。'
+    heard = timed('门上贴着一张纸写着今日盘点')
+    fresh = {'audio': {'fingerprint': 'abc'},
+             'content_check': {'source_fingerprint': 'abc', 'timed_text': heard}}
+    stale = {'audio': {'fingerprint': 'abc'},
+             'content_check': {'source_fingerprint': 'OLD', 'timed_text': heard}}
+    out = cues(fresh, text, 0, rate * 3, 'zh', None, rate, None, 0)
+    assert all(not c[3] for c in out)                      # trusted: not an estimate
+    out = cues(stale, text, 0, rate * 3, 'zh', None, rate, None, 0)
+    assert all(c[3] for c in out)                          # stale: marked estimated
+
+
+def test_timings_follow_a_speed_change_and_give_up_inside_a_cut():
+    rate = 24000
+    text = '门上贴着一张纸，写着今日盘点。'
+    heard = timed('门上贴着一张纸写着今日盘点')                 # 13 chars, 0–2.6 s
+    segment = {'audio': {'fingerprint': 'abc'},
+               'content_check': {'source_fingerprint': 'abc', 'timed_text': heard}}
+    # The whole line played at half speed: every output time is doubled.
+    slow = [{'source_start': 0.0, 'source_end': 2.6, 'output_start': 0.0, 'output_end': 5.2, 'speed': .5}]
+    out = cues(segment, text, 0, rate * 5, 'zh', speech([(2.0, True), (.4, False), (2.8, True)]), rate, slow, 0)
+    assert all(not c[3] for c in out)
+    assert out[0][1] >= rate * 2                            # first cue reaches past 2 s, not 1 s
+    # A cut removed 写着 from the middle: those timings no longer exist.
+    cut = [{'source_start': 0.0, 'source_end': 1.4, 'output_start': 0.0, 'output_end': 1.4, 'speed': 1},
+           {'source_start': 1.8, 'source_end': 2.6, 'output_start': 1.4, 'output_end': 2.2, 'speed': 1}]
+    out = cues(segment, text, 0, rate * 2, 'zh', None, rate, cut, 0)
+    assert all(c[3] for c in out)                          # fell back, and says so
+
+
+def test_english_timings_fold_sub_word_tokens_back_into_their_word():
+    from runtime.subtitles import _heard
+    timed = [{'text': ' Nether', 'start': 0.0, 'end': 0.3}, {'text': 'field', 'start': 0.3, 'end': 0.5},
+             {'text': ' Park', 'start': 0.5, 'end': 0.8}, {'text': '?', 'start': 0.8, 'end': 0.8}]
+    assert _heard(timed, 'en') == [(0.0, 0.5), (0.5, 0.8)]
+
+
+def test_a_break_prefers_the_comma_over_the_nearest_space():
+    from runtime.subtitles import _snap
+    text = 'on his first entering a neighbourhood, this truth is so well fixed'
+    # The silence lands at the start of "truth": the comma four words back is
+    # the real phrase boundary, and beats the space right there.
+    at = text.index('truth')
+    assert text[_snap(text, at, 12):].lstrip().startswith('this truth')

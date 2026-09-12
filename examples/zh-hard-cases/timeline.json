@@ -1172,5 +1172,295 @@
       "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
     }
   ],
+  "subtitle_cues": [
+    {
+      "start_sample": 5040,
+      "end_sample": 37920,
+      "text": "门上贴着一张纸",
+      "estimated": false
+    },
+    {
+      "start_sample": 37920,
+      "end_sample": 95040,
+      "text": "写着今日盘点",
+      "estimated": false
+    },
+    {
+      "start_sample": 95040,
+      "end_sample": 124080,
+      "text": "暂停营业",
+      "estimated": false
+    },
+    {
+      "start_sample": 142080,
+      "end_sample": 203280,
+      "text": "林小雪把伞收起来 抖了抖水",
+      "estimated": false
+    },
+    {
+      "start_sample": 211440,
+      "end_sample": 249360,
+      "text": "她抬头看了看招牌",
+      "estimated": false
+    },
+    {
+      "start_sample": 252000,
+      "end_sample": 309360,
+      "text": "又低头核对手机上的地址",
+      "estimated": false
+    },
+    {
+      "start_sample": 334080,
+      "end_sample": 358080,
+      "text": "应该就是这儿",
+      "estimated": false
+    },
+    {
+      "start_sample": 388800,
+      "end_sample": 412800,
+      "text": "可门关着",
+      "estimated": false
+    },
+    {
+      "start_sample": 450240,
+      "end_sample": 485520,
+      "text": "周远把手插进口袋",
+      "estimated": false
+    },
+    {
+      "start_sample": 507120,
+      "end_sample": 547200,
+      "text": "我早说了先打个电话",
+      "estimated": false
+    },
+    {
+      "start_sample": 569040,
+      "end_sample": 596160,
+      "text": "那姑娘没理他",
+      "estimated": false
+    },
+    {
+      "start_sample": 596160,
+      "end_sample": 647520,
+      "text": "绕到侧门去敲了三下",
+      "estimated": false
+    },
+    {
+      "start_sample": 647520,
+      "end_sample": 710880,
+      "text": "里面传来拖沓的脚步声",
+      "estimated": false
+    },
+    {
+      "start_sample": 710880,
+      "end_sample": 750720,
+      "text": "门开了一条缝",
+      "estimated": false
+    },
+    {
+      "start_sample": 750720,
+      "end_sample": 781920,
+      "text": "露出半张脸",
+      "estimated": false
+    },
+    {
+      "start_sample": 814320,
+      "end_sample": 838320,
+      "text": "盘点呢",
+      "estimated": false
+    },
+    {
+      "start_sample": 868560,
+      "end_sample": 892560,
+      "text": "我们约好的",
+      "estimated": false
+    },
+    {
+      "start_sample": 915840,
+      "end_sample": 939840,
+      "text": "林小雪说",
+      "estimated": false
+    },
+    {
+      "start_sample": 981360,
+      "end_sample": 1050240,
+      "text": "约好的也得等",
+      "estimated": false
+    },
+    {
+      "start_sample": 1086960,
+      "end_sample": 1115280,
+      "text": "周远刚要开口",
+      "estimated": false
+    },
+    {
+      "start_sample": 1115280,
+      "end_sample": 1147440,
+      "text": "被她拦住了",
+      "estimated": false
+    },
+    {
+      "start_sample": 1147440,
+      "end_sample": 1177200,
+      "text": "他想",
+      "estimated": false
+    },
+    {
+      "start_sample": 1177200,
+      "end_sample": 1222800,
+      "text": "这人怕是记错了日子",
+      "estimated": false
+    },
+    {
+      "start_sample": 1242240,
+      "end_sample": 1262400,
+      "text": "三点十五",
+      "estimated": false
+    },
+    {
+      "start_sample": 1262400,
+      "end_sample": 1298880,
+      "text": "张师傅亲口说的",
+      "estimated": false
+    },
+    {
+      "start_sample": 1325520,
+      "end_sample": 1365840,
+      "text": "她把手机屏幕转过去",
+      "estimated": false
+    },
+    {
+      "start_sample": 1388880,
+      "end_sample": 1397280,
+      "text": "您看",
+      "estimated": false
+    },
+    {
+      "start_sample": 1397280,
+      "end_sample": 1428000,
+      "text": "短信还在",
+      "estimated": false
+    },
+    {
+      "start_sample": 1454160,
+      "end_sample": 1519440,
+      "text": "门后的人沉默了几秒 把门推开了",
+      "estimated": false
+    },
+    {
+      "start_sample": 1558080,
+      "end_sample": 1582080,
+      "text": "进来吧",
+      "estimated": false
+    },
+    {
+      "start_sample": 1608480,
+      "end_sample": 1654680,
+      "text": "店里堆着半人高的纸箱",
+      "estimated": true
+    },
+    {
+      "start_sample": 1654680,
+      "end_sample": 1719360,
+      "text": "一个中年男人从柜台后面站起来",
+      "estimated": true
+    },
+    {
+      "start_sample": 1719360,
+      "end_sample": 1756320,
+      "text": "手里还捏着计算器",
+      "estimated": true
+    },
+    {
+      "start_sample": 1787520,
+      "end_sample": 1829040,
+      "text": "你们是来取那台 CD 机的？",
+      "estimated": false
+    },
+    {
+      "start_sample": 1865520,
+      "end_sample": 1889520,
+      "text": "是",
+      "estimated": false
+    },
+    {
+      "start_sample": 1927440,
+      "end_sample": 1956040,
+      "text": "押金三百二",
+      "estimated": true
+    },
+    {
+      "start_sample": 1956040,
+      "end_sample": 1996080,
+      "text": "机器一千零八十",
+      "estimated": true
+    },
+    {
+      "start_sample": 2052960,
+      "end_sample": 2087520,
+      "text": "张师傅翻了翻本子",
+      "estimated": false
+    },
+    {
+      "start_sample": 2128800,
+      "end_sample": 2193120,
+      "text": "上回登记的是周先生吧？",
+      "estimated": false
+    },
+    {
+      "start_sample": 2228160,
+      "end_sample": 2251920,
+      "text": "周远点点头",
+      "estimated": false
+    },
+    {
+      "start_sample": 2251920,
+      "end_sample": 2316240,
+      "text": "林小雪凑过去看那本子",
+      "estimated": false
+    },
+    {
+      "start_sample": 2316240,
+      "end_sample": 2378640,
+      "text": "上面一行字被水洇开了",
+      "estimated": false
+    },
+    {
+      "start_sample": 2378640,
+      "end_sample": 2418240,
+      "text": "只剩下半个雪字",
+      "estimated": false
+    },
+    {
+      "start_sample": 2445360,
+      "end_sample": 2479440,
+      "text": "这单子还能用吗？",
+      "estimated": false
+    },
+    {
+      "start_sample": 2507280,
+      "end_sample": 2531280,
+      "text": "她问",
+      "estimated": false
+    },
+    {
+      "start_sample": 2550000,
+      "end_sample": 2574000,
+      "text": "能用",
+      "estimated": false
+    },
+    {
+      "start_sample": 2583120,
+      "end_sample": 2617200,
+      "text": "张师傅说完又补了一句",
+      "estimated": false
+    },
+    {
+      "start_sample": 2657760,
+      "end_sample": 2730960,
+      "text": "不过下次别淋着雨来",
+      "estimated": false
+    }
+  ],
   "project_revision": 145
 }

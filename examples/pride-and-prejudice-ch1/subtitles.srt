@@ -1,33 +1,33 @@
 1
-00:00:00,210 --> 00:00:02,524
+00:00:00,210 --> 00:00:02,700
 It is a truth universally acknowledged
 
 2
-00:00:02,524 --> 00:00:06,660
+00:00:02,700 --> 00:00:06,660
 that a single man in possession of a
 good fortune must be in want of a wife
 
 3
-00:00:07,360 --> 00:00:11,174
+00:00:07,360 --> 00:00:11,280
 However little known the feelings or
 views of such a man may be on his first
 
 4
-00:00:11,174 --> 00:00:12,549
+00:00:11,280 --> 00:00:12,430
 entering a neighbourhood
 
 5
-00:00:12,549 --> 00:00:16,050
+00:00:12,430 --> 00:00:16,050
 this truth is so well fixed in the
 minds of the surrounding families
 
 6
-00:00:16,690 --> 00:00:20,270
+00:00:16,690 --> 00:00:20,260
 that he is considered as the rightful
 property of some one or other of their
 
 7
-00:00:20,270 --> 00:00:21,270
+00:00:20,260 --> 00:00:21,260
 daughters
 
 8
@@ -56,12 +56,12 @@ But it is
 returned she
 
 14
-00:00:37,120 --> 00:00:39,283
-for Mrs. Long has just been here and
+00:00:37,120 --> 00:00:39,050
+for Mrs. Long has just been here
 
 15
-00:00:39,283 --> 00:00:40,750
-she told me all about it
+00:00:39,050 --> 00:00:40,750
+and she told me all about it
 
 16
 00:00:41,730 --> 00:00:43,370
@@ -76,11 +76,11 @@ Do not you want to know who has taken it?
 cried his wife impatiently
 
 19
-00:00:50,340 --> 00:00:51,353
+00:00:50,340 --> 00:00:51,560
 You want to tell me
 
 20
-00:00:51,353 --> 00:00:53,380
+00:00:51,600 --> 00:00:53,380
 and I have no objection to hearing it
 
 21
@@ -88,47 +88,47 @@ and I have no objection to hearing it
 This was invitation enough
 
 22
-00:00:56,410 --> 00:00:57,389
-Why my dear you
+00:00:56,410 --> 00:00:57,470
+Why my dear
 
 23
-00:00:57,389 --> 00:00:58,614
-must know Mrs. Long
+00:00:57,690 --> 00:00:58,690
+you must know
 
 24
-00:00:58,614 --> 00:01:03,919
-says that Netherfield is taken by a young
-man of large fortune from the north of
+00:00:58,690 --> 00:01:03,890
+Mrs. Long says that Netherfield is taken
+by a young man of large fortune from the
 
 25
-00:01:03,919 --> 00:01:04,919
-England
+00:01:03,890 --> 00:01:04,890
+north of England
 
 26
-00:01:05,320 --> 00:01:08,300
-that he came down on Monday in
-a chaise and four to see the
+00:01:05,320 --> 00:01:08,480
+that he came down on Monday in a
+chaise and four to see the place
 
 27
-00:01:08,300 --> 00:01:10,373
-place and was so much delighted with it
+00:01:08,480 --> 00:01:10,500
+and was so much delighted with it
 
 28
-00:01:10,373 --> 00:01:12,640
+00:01:10,500 --> 00:01:12,640
 that he agreed with Mr. Morris immediately
 
 29
-00:01:13,400 --> 00:01:16,002
-that he is to take
-possession before Michaelmas
+00:01:13,400 --> 00:01:16,119
+that he is to take possession
+before Michaelmas and some of
 
 30
-00:01:16,002 --> 00:01:17,498
-and some of his servants are
+00:01:16,119 --> 00:01:17,602
+his servants are to be in
 
 31
-00:01:17,498 --> 00:01:19,580
-to be in the house by the end of next week
+00:01:17,602 --> 00:01:19,580
+the house by the end of next week
 
 32
 00:01:20,390 --> 00:01:21,730
@@ -143,28 +143,28 @@ Bingley
 Is he married or single?
 
 35
-00:01:26,720 --> 00:01:29,950
-Oh single my dear to be sure! A single
+00:01:26,720 --> 00:01:29,240
+Oh single my dear to be sure!
 
 36
-00:01:29,950 --> 00:01:32,289
-man of large fortune four
+00:01:30,070 --> 00:01:31,770
+A single man of large fortune
 
 37
-00:01:32,289 --> 00:01:34,405
-or five thousand a year
+00:01:31,970 --> 00:01:34,070
+four or five thousand a year
 
 38
-00:01:34,405 --> 00:01:37,190
+00:01:34,750 --> 00:01:37,190
 What a fine thing for our girls!
 
 39
-00:01:38,130 --> 00:01:38,927
-How so? how
+00:01:38,130 --> 00:01:39,250
+How so?
 
 40
-00:01:38,927 --> 00:01:40,420
-can it affect them?
+00:01:39,340 --> 00:01:40,420
+how can it affect them?
 
 41
 00:01:41,300 --> 00:01:42,400
@@ -175,36 +175,36 @@ My dear Mr. Bennet
 replied his wife
 
 43
-00:01:45,010 --> 00:01:47,680
-how can you be so tiresome? You must
+00:01:45,010 --> 00:01:46,910
+how can you be so tiresome?
 
 44
-00:01:47,680 --> 00:01:51,590
-know that I am thinking of
-his marrying one of them
+00:01:47,910 --> 00:01:51,590
+You must know that I am thinking
+of his marrying one of them
 
 45
 00:01:52,550 --> 00:01:54,710
 Is that his design in settling here?
 
 46
-00:01:55,690 --> 00:01:56,231
+00:01:55,690 --> 00:01:56,690
 Design?
 
 47
-00:01:56,231 --> 00:01:57,764
-Nonsense how can you
+00:01:56,690 --> 00:01:57,690
+Nonsense
 
 48
-00:01:57,764 --> 00:01:59,297
-talk so! But it is very
+00:01:57,850 --> 00:01:58,850
+how can you talk so!
 
 49
-00:01:59,297 --> 00:02:02,994
-likely that he may fall in
-love with one of them and
+00:01:59,350 --> 00:02:02,770
+But it is very likely that he
+may fall in love with one of them
 
 50
-00:02:02,994 --> 00:02:06,510
-therefore you must visit
+00:02:03,170 --> 00:02:06,510
+and therefore you must visit
 him as soon as he comes

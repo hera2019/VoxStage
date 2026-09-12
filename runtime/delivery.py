@@ -68,7 +68,7 @@ def write_delivery(output, entries, rendered, rate, total_samples, cues=None):
         # The same cues the SRT carries: two subtitle files in one package must
         # not disagree about when a line is on screen or what it says.
         lines = ['WEBVTT\n']
-        for index, (start, end, shown) in enumerate(cues or [], 1):
+        for index, (start, end, shown, _) in enumerate(cues or [], 1):
             lines.append(f'{index}\n{_vtt_time(start,rate)} --> {_vtt_time(end,rate)}\n'
                          f'{html.escape(shown,quote=False)}\n')
         (staging/'subtitles.vtt').write_text('\n'.join(lines),encoding='utf-8')

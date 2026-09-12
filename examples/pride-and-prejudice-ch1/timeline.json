@@ -1140,5 +1140,307 @@
       "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
     }
   ],
+  "subtitle_cues": [
+    {
+      "start_sample": 5040,
+      "end_sample": 64800,
+      "text": "It is a truth universally acknowledged",
+      "estimated": false
+    },
+    {
+      "start_sample": 64800,
+      "end_sample": 159840,
+      "text": "that a single man in possession of a\ngood fortune must be in want of a wife",
+      "estimated": false
+    },
+    {
+      "start_sample": 176640,
+      "end_sample": 270720,
+      "text": "However little known the feelings or\nviews of such a man may be on his first",
+      "estimated": false
+    },
+    {
+      "start_sample": 270720,
+      "end_sample": 298320,
+      "text": "entering a neighbourhood",
+      "estimated": false
+    },
+    {
+      "start_sample": 298320,
+      "end_sample": 385200,
+      "text": "this truth is so well fixed in the\nminds of the surrounding families",
+      "estimated": false
+    },
+    {
+      "start_sample": 400560,
+      "end_sample": 486240,
+      "text": "that he is considered as the rightful\nproperty of some one or other of their",
+      "estimated": false
+    },
+    {
+      "start_sample": 486240,
+      "end_sample": 510240,
+      "text": "daughters",
+      "estimated": false
+    },
+    {
+      "start_sample": 521760,
+      "end_sample": 548160,
+      "text": "My dear Mr. Bennet",
+      "estimated": false
+    },
+    {
+      "start_sample": 572160,
+      "end_sample": 609360,
+      "text": "said his lady to him one day",
+      "estimated": false
+    },
+    {
+      "start_sample": 631440,
+      "end_sample": 701520,
+      "text": "have you heard that Netherfield\nPark is let at last?",
+      "estimated": false
+    },
+    {
+      "start_sample": 735120,
+      "end_sample": 785520,
+      "text": "Mr. Bennet replied that he had not",
+      "estimated": false
+    },
+    {
+      "start_sample": 802320,
+      "end_sample": 832800,
+      "text": "But it is",
+      "estimated": false
+    },
+    {
+      "start_sample": 853680,
+      "end_sample": 877680,
+      "text": "returned she",
+      "estimated": false
+    },
+    {
+      "start_sample": 890880,
+      "end_sample": 937200,
+      "text": "for Mrs. Long has just been here",
+      "estimated": false
+    },
+    {
+      "start_sample": 937200,
+      "end_sample": 978000,
+      "text": "and she told me all about it",
+      "estimated": false
+    },
+    {
+      "start_sample": 1001520,
+      "end_sample": 1040880,
+      "text": "Mr. Bennet made no answer",
+      "estimated": false
+    },
+    {
+      "start_sample": 1066080,
+      "end_sample": 1117920,
+      "text": "Do not you want to know who has taken it?",
+      "estimated": false
+    },
+    {
+      "start_sample": 1142160,
+      "end_sample": 1187760,
+      "text": "cried his wife impatiently",
+      "estimated": false
+    },
+    {
+      "start_sample": 1208160,
+      "end_sample": 1237440,
+      "text": "You want to tell me",
+      "estimated": false
+    },
+    {
+      "start_sample": 1238400,
+      "end_sample": 1281120,
+      "text": "and I have no objection to hearing it",
+      "estimated": false
+    },
+    {
+      "start_sample": 1298880,
+      "end_sample": 1338480,
+      "text": "This was invitation enough",
+      "estimated": false
+    },
+    {
+      "start_sample": 1353840,
+      "end_sample": 1379280,
+      "text": "Why my dear",
+      "estimated": false
+    },
+    {
+      "start_sample": 1384560,
+      "end_sample": 1408560,
+      "text": "you must know",
+      "estimated": false
+    },
+    {
+      "start_sample": 1408560,
+      "end_sample": 1533360,
+      "text": "Mrs. Long says that Netherfield is taken\nby a young man of large fortune from the",
+      "estimated": false
+    },
+    {
+      "start_sample": 1533360,
+      "end_sample": 1557360,
+      "text": "north of England",
+      "estimated": false
+    },
+    {
+      "start_sample": 1567680,
+      "end_sample": 1643520,
+      "text": "that he came down on Monday in a\nchaise and four to see the place",
+      "estimated": false
+    },
+    {
+      "start_sample": 1643520,
+      "end_sample": 1692000,
+      "text": "and was so much delighted with it",
+      "estimated": false
+    },
+    {
+      "start_sample": 1692000,
+      "end_sample": 1743360,
+      "text": "that he agreed with Mr. Morris immediately",
+      "estimated": false
+    },
+    {
+      "start_sample": 1761600,
+      "end_sample": 1826861,
+      "text": "that he is to take possession\nbefore Michaelmas and some of",
+      "estimated": true
+    },
+    {
+      "start_sample": 1826861,
+      "end_sample": 1862458,
+      "text": "his servants are to be in",
+      "estimated": true
+    },
+    {
+      "start_sample": 1862458,
+      "end_sample": 1909920,
+      "text": "the house by the end of next week",
+      "estimated": true
+    },
+    {
+      "start_sample": 1929360,
+      "end_sample": 1961520,
+      "text": "What is his name?",
+      "estimated": false
+    },
+    {
+      "start_sample": 1984080,
+      "end_sample": 2008080,
+      "text": "Bingley",
+      "estimated": true
+    },
+    {
+      "start_sample": 2020800,
+      "end_sample": 2059200,
+      "text": "Is he married or single?",
+      "estimated": false
+    },
+    {
+      "start_sample": 2081280,
+      "end_sample": 2141760,
+      "text": "Oh single my dear to be sure!",
+      "estimated": false
+    },
+    {
+      "start_sample": 2161680,
+      "end_sample": 2202480,
+      "text": "A single man of large fortune",
+      "estimated": false
+    },
+    {
+      "start_sample": 2207280,
+      "end_sample": 2257680,
+      "text": "four or five thousand a year",
+      "estimated": false
+    },
+    {
+      "start_sample": 2274000,
+      "end_sample": 2332560,
+      "text": "What a fine thing for our girls!",
+      "estimated": false
+    },
+    {
+      "start_sample": 2355120,
+      "end_sample": 2382000,
+      "text": "How so?",
+      "estimated": false
+    },
+    {
+      "start_sample": 2384160,
+      "end_sample": 2410080,
+      "text": "how can it affect them?",
+      "estimated": false
+    },
+    {
+      "start_sample": 2431200,
+      "end_sample": 2457600,
+      "text": "My dear Mr. Bennet",
+      "estimated": false
+    },
+    {
+      "start_sample": 2479440,
+      "end_sample": 2503440,
+      "text": "replied his wife",
+      "estimated": false
+    },
+    {
+      "start_sample": 2520240,
+      "end_sample": 2565840,
+      "text": "how can you be so tiresome?",
+      "estimated": false
+    },
+    {
+      "start_sample": 2589840,
+      "end_sample": 2678160,
+      "text": "You must know that I am thinking\nof his marrying one of them",
+      "estimated": false
+    },
+    {
+      "start_sample": 2701200,
+      "end_sample": 2753040,
+      "text": "Is that his design in settling here?",
+      "estimated": false
+    },
+    {
+      "start_sample": 2776560,
+      "end_sample": 2800560,
+      "text": "Design?",
+      "estimated": false
+    },
+    {
+      "start_sample": 2800560,
+      "end_sample": 2824560,
+      "text": "Nonsense",
+      "estimated": false
+    },
+    {
+      "start_sample": 2828400,
+      "end_sample": 2852400,
+      "text": "how can you talk so!",
+      "estimated": false
+    },
+    {
+      "start_sample": 2864400,
+      "end_sample": 2946480,
+      "text": "But it is very likely that he\nmay fall in love with one of them",
+      "estimated": false
+    },
+    {
+      "start_sample": 2956080,
+      "end_sample": 3036240,
+      "text": "and therefore you must visit\nhim as soon as he comes",
+      "estimated": false
+    }
+  ],
   "project_revision": 149
 }

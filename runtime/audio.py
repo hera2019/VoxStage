@@ -70,8 +70,8 @@ def export_audio(project, directory: Path, output: Path, *, delivery=False):
                         'synthetic_audio':True,'speech_rate':speed,'tempo_mapping':mapping,
                         'processed_checks':{**{k:v for k,v in analyze(pcm,rate).items() if k!='waveform'},'notice':'成品低能量检查；时间为该句成品秒数，不代表自然度通过。'},
                         'processed_check_scope':'final_segment_audio; pace requires original ASR timings'})
-        cues += [c[:3] for c in subtitle_cues(segment, segment['text'], start, end,
-                                              project['language'], pcm, rate)]
+        cues += subtitle_cues(segment, segment['text'], start, end, project['language'],
+                              pcm, rate, mapping, position)
         parts.append(pcm)
         if delivery:rendered.append(pcm)
         position += len(pcm)
@@ -87,11 +87,15 @@ def export_audio(project, directory: Path, output: Path, *, delivery=False):
     cues = hold_briefest(cues, rate)
     (output / 'subtitles.srt').write_text('\n'.join(
         f'{i+1}\n{timestamp(a, rate)} --> {timestamp(b, rate)}\n{shown}\n'
-        for i, (a, b, shown) in enumerate(cues)), encoding='utf-8')
+        for i, (a, b, shown, _) in enumerate(cues)), encoding='utf-8')
     if delivery:
         from .delivery import write_delivery
         write_delivery(output,entries,rendered,rate,position,cues)
-    return {'synthetic_audio':True, 'speech_rate':project.get('speech_rate',1.0), 'sample_rate':rate, 'total_samples':position, 'segments':entries}
+    return {'synthetic_audio':True, 'speech_rate':project.get('speech_rate',1.0), 'sample_rate':rate, 'total_samples':position, 'segments':entries,
+            # The cues as written to the SRT/VTT. `estimated` marks a cue whose
+            # inner boundaries were placed by character count because no timing
+            # known to describe this audio was available.
+            'subtitle_cues':[{'start_sample':a,'end_sample':b,'text':shown,'estimated':estimated} for a,b,shown,estimated in cues]}
 
 # 最后更新：2026-09-09 · Astra
 
