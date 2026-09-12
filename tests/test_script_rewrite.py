@@ -41,7 +41,11 @@ def client(tmp_path):
 
 def make(client, source=SOURCE):
     draft = client.post('/api/attribution/draft', json={'script': source, 'language': 'zh'}).json()
-    labels = [{k: u[k] for k in ('id', 'kind', 'speaker')} for u in draft['units']]
+    # The draft hands back a name the text never uses as UNKNOWN with the guess
+    # kept aside; a reviewer would type a name, and so does this helper.
+    labels = [{'id': u['id'], 'kind': u['kind'],
+               'speaker': u.get('suggested') or u['speaker'] if u['speaker'] == 'UNKNOWN' else u['speaker']}
+              for u in draft['units']]
     project = client.post('/api/attribution/confirm',
                           json={'draft_id': draft['draft_id'], 'name': '改稿测试', 'labels': labels}).json()
     client.post(f"/api/projects/{project['id']}/render/start", json={'revision': project['revision']})

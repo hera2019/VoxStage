@@ -1,5 +1,5 @@
 import {useEffect,useState} from 'react';
-type Unit={id:string;text:string;kind:'narration'|'dialogue';speaker:string;blank?:boolean};
+type Unit={id:string;text:string;kind:'narration'|'dialogue';speaker:string;blank?:boolean;suggested?:string};
 type Draft={draft_id:string;units:Unit[]};
 type Props={request:(path:string,method?:string,data?:unknown)=>Promise<any>;onCreated:(project:any)=>Promise<void>;onClose:()=>void;seed?:{name:string;language:'zh'|'en';text:string}|null};
 export function RoleImport({request,onCreated,onClose,seed}:Props){
@@ -21,7 +21,7 @@ export function RoleImport({request,onCreated,onClose,seed}:Props){
   </>:<><p>逐段核对旁白 / 对白和角色姓名。待指定：{unknown} 处。</p><div className="hint"><strong>这只是初步草稿，把说话人对上就够了。</strong>拆分、合并、改字、不朗读，进了工程之后在编辑页里都能做。<br/>人物称呼：{names.join('、')||'暂无对白角色'}。同一人物的不同称呼，请统一填写同一名字。</div>
    <div className="role-units">{draft.units.filter(u=>!u.blank).map((u,i)=><article className={'role-unit '+(u.kind==='dialogue'&&(!u.speaker.trim()||u.speaker.trim().toUpperCase()==='UNKNOWN')?'role-unknown':'')} key={u.id}>
     <p><small>片段 {i+1}</small><br/>{u.text}</p><div className="role-fields"><label>类型<select aria-label={`片段 ${i+1} 类型`} disabled={waiting} value={u.kind} onChange={e=>{const kind=e.target.value as Unit['kind'];change(u.id,{kind,speaker:kind==='narration'?'NARRATOR':u.speaker==='NARRATOR'?'UNKNOWN':u.speaker})}}><option value="narration">旁白</option><option value="dialogue">对白</option></select></label>
-    {u.kind==='dialogue'?<label>说话人<input aria-label={`片段 ${i+1} 说话人`} disabled={waiting} value={u.speaker.trim().toUpperCase()==='UNKNOWN'?'':u.speaker} placeholder="待指定，请填写" maxLength={80} list="role-names" onChange={e=>change(u.id,{speaker:e.target.value||'UNKNOWN'})}/></label>:<span>旁白</span>}</div>
+    {u.kind==='dialogue'?<label>说话人<input aria-label={`片段 ${i+1} 说话人`} disabled={waiting} value={u.speaker.trim().toUpperCase()==='UNKNOWN'?'':u.speaker} placeholder={u.suggested?`模型写的是 ${u.suggested}，原文里没有这个名字，请填写`:"待指定，请填写"} maxLength={80} list="role-names" onChange={e=>change(u.id,{speaker:e.target.value||'UNKNOWN'})}/></label>:<span>旁白</span>}</div>
    </article>)}</div><datalist id="role-names">{names.filter(n=>n!=='UNKNOWN').map(n=><option key={n} value={n}/>)}</datalist>
    <div className="buttons"><button disabled={waiting} onClick={()=>{setDraft(null);setError('')}}>返回原文</button><button className="primary" disabled={waiting||unknown>0} onClick={()=>void run(async()=>{const project=await request('/attribution/confirm','POST',{name,draft_id:draft.draft_id,labels:draft.units.map(({id,kind,speaker})=>({id,kind,speaker}))});await onCreated(project)})}>{waiting?'正在保存…':'已复核，创建工程'}</button></div>
   </>}{error&&<p role="alert" className="line-error">{error}</p>}

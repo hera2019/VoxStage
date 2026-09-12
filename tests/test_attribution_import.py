@@ -96,3 +96,25 @@ def test_a_drafted_name_loses_a_trailing_speech_verb_but_keeps_short_names():
     assert tidy_speaker('晴雯') == '晴雯'
     assert tidy_speaker('  宝玉  ') == '宝玉'
     assert tidy_speaker('') == ''
+
+
+def test_a_name_the_story_never_uses_is_handed_back_as_unresolved(tmp_path):
+    """The model wrote ME for 我 and WU DI for 吴迪. Neither is in the text."""
+    class Romanising(Roles):
+        def annotate(self, text, log_path):
+            units = source_units(text)
+            return {'labels': [{'id': u['id'], 'kind': 'dialogue' if u['text'].startswith('“') else 'narration',
+                                'speaker': self.name if u['text'].startswith('“') else 'NARRATOR'} for u in units],
+                    'model_sha256': 'fixture'}
+    engine = Romanising()
+    with TestClient(create_app(tmp_path / 'p', FixtureEngine(), role_engine=engine),
+                    base_url='http://127.0.0.1', headers=HEADERS) as c:
+        engine.name = 'WU DI'
+        d = draft(c, '吴迪看着我。“别干了，好吗？”')
+        quoted = next(u for u in d['units'] if u['text'].startswith('“'))
+        assert quoted['speaker'] == 'UNKNOWN' and quoted['suggested'] == 'WU DI'
+        # A name that is in the text passes through untouched.
+        engine.name = '吴迪'
+        d = draft(c, '吴迪看着我。“别干了，好吗？”')
+        quoted = next(u for u in d['units'] if u['text'].startswith('“'))
+        assert quoted['speaker'] == '吴迪' and 'suggested' not in quoted

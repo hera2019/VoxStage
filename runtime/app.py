@@ -377,12 +377,19 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             record = {**result,'draft_id':draft_id,'source_script':body.script,'language':body.language}
             (drafts/(draft_id+'.json')).write_text(json.dumps(record,ensure_ascii=False,indent=2))
             labels = {x['id']:x for x in result['labels']}
+            # A name the model invents -- ME for 我, WU DI for 吴迪 -- is not a
+            # name the story uses. Anything not found in the text is handed to
+            # the reviewer as unresolved, with the model's guess kept as a hint.
+            def vetted(label):
+                speaker = label['speaker'].strip()
+                if label['kind'] == 'dialogue' and speaker.upper() not in ('', 'UNKNOWN', 'NARRATOR') and speaker not in body.script:
+                    return {'kind': 'dialogue', 'speaker': 'UNKNOWN', 'suggested': speaker}
+                return {'kind': label['kind'], 'speaker': speaker}
             # Whitespace between two quoted lines is a unit like any other and
             # still needs a label, but showing the reviewer an empty row to
             # assign a character to is noise. Mark it; the UI leaves it out.
             return {'draft_id':draft_id,
-                    'units':[{**unit, **{k:labels[unit['id']][k] for k in ('kind','speaker')},
-                              'blank': not unit['text'].strip()}
+                    'units':[{**unit, **vetted(labels[unit['id']]), 'blank': not unit['text'].strip()}
                              for unit in source_units(body.script)]}
         except ValueError as exc:
             # bind_labels rejects a malformed model response. Its wording names
