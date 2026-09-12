@@ -140,3 +140,35 @@ def test_a_break_prefers_the_comma_over_the_nearest_space():
     # the real phrase boundary, and beats the space right there.
     at = text.index('truth')
     assert text[_snap(text, at, 12):].lstrip().startswith('this truth')
+
+
+def test_a_few_character_tail_joins_the_cue_before_it():
+    """但总觉有些单调 | 有些无聊 → one cue; the stub was a flash on screen."""
+    text = '但总觉有些单调，有些无聊。'
+    # Silence right before the tail, so the pause rule would cut it off.
+    pcm = speech([(2.0, True), (.3, False), (.8, True)])
+    out = cues({}, text, 0, 24000 * 3, 'zh', pcm, 24000, None, 0)
+    assert [c[2] for c in out] == ['但总觉有些单调 有些无聊']
+
+
+def test_a_stub_that_would_overflow_its_neighbour_is_left_alone():
+    from runtime.subtitles import _absorb_stubs
+    long = '一' * 18
+    out = _absorb_stubs([(0, 10, long, False), (10, 20, '好的', False)], 'zh', 20)
+    assert [c[2] for c in out] == [long, '好的']
+
+
+def test_a_break_falls_before_a_conjunction_when_there_is_no_punctuation():
+    from runtime.subtitles import _split, _snap
+    text = '他站在门口看了很久然后转身走进了里屋'
+    runs = [text[a:b] for a, b in _split(text, 12)]
+    assert runs[0].endswith('很久') and runs[1].startswith('然后')
+    at = text.index('转身')                       # a pause landing a word late
+    assert text[_snap(text, at, 3):].startswith('然后')
+
+
+def test_dashes_and_ellipses_break_before_commas():
+    from runtime.subtitles import _split
+    text = '这是二十多年前的事——现在每碗要涨到十文，靠柜外站着'
+    runs = [text[a:b] for a, b in _split(text, 16)]
+    assert runs[0].endswith('——')

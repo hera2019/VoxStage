@@ -105,7 +105,7 @@ Zero duration anomalies in this run.
 
 ## Subtitles are shorter here than in English
 
-Subtitles are not the segments. The 29 lines of audio become **48 cues**, cut
+Subtitles are not the segments. The 29 lines of audio become **44 cues**, cut
 where the voice actually stops rather than where the script has a full stop,
 then stripped of what a screen does not need — quotation marks and sentence-final
 punctuation go, commas become spaces, and `？` and `！` stay because losing them

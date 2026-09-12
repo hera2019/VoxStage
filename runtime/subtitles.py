@@ -27,7 +27,17 @@ LIMITS = {'zh': {'cue': 20, 'line': 20}, 'en': {'cue': 84, 'line': 42}}
 
 # Sentence-final marks a cue may be split after, strongest first. Question and
 # exclamation marks carry tone, so they are split points but never removed.
-BREAKS = ('。！？!?；;\n', '，、,：:—–…', ' \u3000')
+BREAKS = ('。！？!?；;\n—–…', '，、,：:', ' \u3000')
+
+# A break may also fall just before one of these: where the sentence turns,
+# a reader expects a new cue. Two-character forms only, so 但 inside 不但
+# cannot match. Used after punctuation and before a mere space.
+CONJUNCTIONS = ('但是', '可是', '然而', '于是', '然后', '接着', '因为', '所以', '如果',
+                '虽然', '只是', '不过', '而且', '并且', '因此', '结果', '后来', '这时')
+
+# A cue shorter than this is a flash and is folded into its neighbour when
+# the pair still fits on the screen.
+MIN_UNITS = {'zh': 5, 'en': 3}
 
 QUOTES = '“”‘’「」『』《》＂"'
 # Dropped at the end of a cue: a full stop earns nothing on screen. ？ and ！
@@ -97,11 +107,16 @@ def _split(text, limit):
                 end = found[-1]
                 break
         else:
-            # No punctuation to break on. Rather than cut mid-phrase at exactly
-            # the limit, run on to the next break if one is close behind.
-            nxt = next((i + 1 for i in range(end, min(len(text), end + limit // 8))
-                        if text[i] in BREAKS[0] + BREAKS[1]), None)
-            end = nxt or end
+            # No punctuation to break on. A conjunction inside the window is the
+            # next best place; failing that, rather than cut mid-phrase at
+            # exactly the limit, run on to the next break if one is close behind.
+            turns = [i for i in range(start + 1, end) if text.startswith(CONJUNCTIONS, i)]
+            if turns:
+                end = turns[-1]
+            else:
+                nxt = next((i + 1 for i in range(end, min(len(text), end + limit // 8))
+                            if text[i] in BREAKS[0] + BREAKS[1]), None)
+                end = nxt or end
         runs.append((start, end))
         start = end
     return [r for r in runs if text[r[0]:r[1]].strip()]
@@ -218,12 +233,15 @@ def _snap(text, index, window):
         return None
     def after_punctuation(i):
         return 0 < i < len(text) and text[i - 1] in BREAKS[0] + BREAKS[1] + QUOTES
+    def before_conjunction(i):
+        return 0 < i < len(text) and text.startswith(CONJUNCTIONS, i)
     def after_space(i):
         return 0 < i < len(text) and text[i - 1].isspace() and not text[i].isspace()
     # A comma or full stop near the silence is a better witness to where the
     # phrase ends than the nearest space: a pause that lands one word late
-    # would otherwise drag that word onto the wrong cue.
-    for test in (after_punctuation, after_space):
+    # would otherwise drag that word onto the wrong cue. A conjunction is the
+    # next best witness.
+    for test in (after_punctuation, before_conjunction, after_space):
         found = next((i for offset in range(window + 1)
                       for i in (index - offset, index + offset) if test(i)), None)
         if found is not None:
@@ -268,6 +286,7 @@ def cues(segment, text, start_sample, end_sample, language,
         out.append((max(start_sample, head), min(end_sample, tail), shown, not trusted))
     if not out:
         return [(start_sample, end_sample, text.strip(), not trusted)]
+    out = _absorb_stubs(out, language, limits['line'])
     # Keep the segment's own boundaries exact and never let cues overlap.
     out[0] = (start_sample,) + out[0][1:]
     out[-1] = out[-1][:1] + (end_sample,) + out[-1][2:]
@@ -275,6 +294,40 @@ def cues(segment, text, start_sample, end_sample, language,
         if out[i][1] > out[i + 1][0]:
             out[i] = out[i][:1] + (out[i + 1][0],) + out[i][2:]
     return [c for c in out if c[1] > c[0]]
+
+
+def _absorb_stubs(out, language, line_limit):
+    """Fold a cue of a few characters into its neighbour when the pair fits.
+
+    A four-character tail left over at the end of a sentence — 有些无聊 after
+    但总觉有些单调 — is a flash on screen, not a cue. It joins the cue before
+    it (or after it, for a leading stub) as long as the result stays within one
+    line; a stub that would push its neighbour over the limit is left alone.
+    """
+    minimum = MIN_UNITS.get(language, MIN_UNITS['en'])
+    def units(shown):
+        return len(shown.replace('\n', '')) if language == 'zh' else len(shown.split())
+    def joined(a, b):
+        # The seam almost always had a comma, which the screen shows as a
+        # space; a stub with nothing before it gets the same space.
+        return a.replace('\n', ' ') + ' ' + b.replace('\n', ' ')
+    cues = list(out)
+    i = 0
+    while i < len(cues) and len(cues) > 1:
+        start, end, shown, estimated = cues[i]
+        if units(shown) >= minimum:
+            i += 1
+            continue
+        j = i - 1 if i > 0 else i + 1
+        text = joined(cues[j][2], shown) if j < i else joined(shown, cues[j][2])
+        if len(text) > line_limit:
+            i += 1
+            continue
+        a, b = (cues[j], cues[i]) if j < i else (cues[i], cues[j])
+        merged = (a[0], b[1], screen_text(text, line_limit), a[3] or b[3])
+        cues[min(i, j):max(i, j) + 1] = [merged]
+        i = max(0, min(i, j))
+    return cues
 
 
 def _runs(text, breaks):

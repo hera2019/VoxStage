@@ -1,1446 +1,1427 @@
 {
-  "synthetic_audio": true,
-  "speech_rate": 1.0,
-  "sample_rate": 24000,
-  "total_samples": 3047760,
-  "segments": [
+ "synthetic_audio": true,
+ "speech_rate": 1.0,
+ "sample_rate": 24000,
+ "total_samples": 3047760,
+ "segments": [
+  {
+   "id": "664b1dd0bfcf488bbecad619d2622a47",
+   "speaker": "Narrator",
+   "text": "It is a truth universally acknowledged, that a single man in possession of a good fortune must be in want of a wife.\n",
+   "file_start_sample": 0,
+   "file_end_sample": 167040,
+   "speech_start_sample": 5040,
+   "speech_end_sample": 159840,
+   "speech_boundary_method": "estimated_rms_10ms",
+   "synthetic_audio": true,
+   "speech_rate": 1.0,
+   "tempo_mapping": [
     {
-      "id": "664b1dd0bfcf488bbecad619d2622a47",
-      "speaker": "Narrator",
-      "text": "It is a truth universally acknowledged, that a single man in possession of a good fortune must be in want of a wife.\n",
-      "file_start_sample": 0,
-      "file_end_sample": 167040,
-      "speech_start_sample": 5040,
-      "speech_end_sample": 159840,
-      "speech_boundary_method": "estimated_rms_10ms",
-      "synthetic_audio": true,
-      "speech_rate": 1.0,
-      "tempo_mapping": [
-        {
-          "source_start": 0.0,
-          "source_end": 6.96,
-          "output_start": 0.0,
-          "output_end": 6.96,
-          "speed": 1.0
-        }
-      ],
-      "processed_checks": {
-        "version": "listening-cues-v2-duration",
-        "duration": 6.96,
-        "markers": [],
-        "pace": {
-          "status": "unavailable",
-          "reason": "文字时间信息不足，语速起伏请人工试听。"
-        },
-        "manual_checkpoints": [
-          "尾音是否自然、是否拖音",
-          "同一角色声线是否一致",
-          "停顿是否符合句意、前后语速是否合适"
-        ],
-        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
-      },
-      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
-    },
-    {
-      "id": "41a8ab3ad633414b947ce859c2003283",
-      "speaker": "Narrator",
-      "text": "However little known the feelings or views of such a man may be on his first entering a neighbourhood, this truth is so well fixed in the minds of the surrounding families, ",
-      "file_start_sample": 173040,
-      "file_end_sample": 391920,
-      "speech_start_sample": 176640,
-      "speech_end_sample": 385200,
-      "speech_boundary_method": "estimated_rms_10ms",
-      "synthetic_audio": true,
-      "speech_rate": 1.0,
-      "tempo_mapping": [
-        {
-          "source_start": 0.0,
-          "source_end": 9.12,
-          "output_start": 0.0,
-          "output_end": 9.12,
-          "speed": 1.0
-        }
-      ],
-      "processed_checks": {
-        "version": "listening-cues-v2-duration",
-        "duration": 9.12,
-        "markers": [
-          {
-            "kind": "pause",
-            "start": 5.12,
-            "end": 5.66,
-            "label": "较长停顿 · 请试听",
-            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
-          }
-        ],
-        "pace": {
-          "status": "unavailable",
-          "reason": "文字时间信息不足，语速起伏请人工试听。"
-        },
-        "manual_checkpoints": [
-          "尾音是否自然、是否拖音",
-          "同一角色声线是否一致",
-          "停顿是否符合句意、前后语速是否合适"
-        ],
-        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
-      },
-      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
-    },
-    {
-      "id": "8e2fb8145be7408ba100d9d10dc638ef",
-      "speaker": "Narrator",
-      "text": "that he is considered as the rightful property of some one or other of their daughters.\n",
-      "file_start_sample": 397920,
-      "file_end_sample": 507360,
-      "speech_start_sample": 400560,
-      "speech_end_sample": 498960,
-      "speech_boundary_method": "estimated_rms_10ms",
-      "synthetic_audio": true,
-      "speech_rate": 1.0,
-      "tempo_mapping": [
-        {
-          "source_start": 0.0,
-          "source_end": 4.56,
-          "output_start": 0.0,
-          "output_end": 4.56,
-          "speed": 1.0
-        }
-      ],
-      "processed_checks": {
-        "version": "listening-cues-v2-duration",
-        "duration": 4.56,
-        "markers": [],
-        "pace": {
-          "status": "unavailable",
-          "reason": "文字时间信息不足，语速起伏请人工试听。"
-        },
-        "manual_checkpoints": [
-          "尾音是否自然、是否拖音",
-          "同一角色声线是否一致",
-          "停顿是否符合句意、前后语速是否合适"
-        ],
-        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
-      },
-      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
-    },
-    {
-      "id": "4938f4f824a042a282433e66e1fb65f6",
-      "speaker": "Mrs. Bennet",
-      "text": "“My dear Mr. Bennet,” ",
-      "file_start_sample": 513360,
-      "file_end_sample": 561360,
-      "speech_start_sample": 521760,
-      "speech_end_sample": 548160,
-      "speech_boundary_method": "estimated_rms_10ms",
-      "synthetic_audio": true,
-      "speech_rate": 1.0,
-      "tempo_mapping": [
-        {
-          "source_start": 0.0,
-          "source_end": 2.0,
-          "output_start": 0.0,
-          "output_end": 2.0,
-          "speed": 1.0
-        }
-      ],
-      "processed_checks": {
-        "version": "listening-cues-v2-duration",
-        "duration": 2.0,
-        "markers": [],
-        "pace": {
-          "status": "unavailable",
-          "reason": "文字时间信息不足，语速起伏请人工试听。"
-        },
-        "manual_checkpoints": [
-          "尾音是否自然、是否拖音",
-          "同一角色声线是否一致",
-          "停顿是否符合句意、前后语速是否合适"
-        ],
-        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
-      },
-      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
-    },
-    {
-      "id": "cd55e29af46e4bcbbb87fd7a6d2ed055",
-      "speaker": "Narrator",
-      "text": "said his lady to him one day, ",
-      "file_start_sample": 567360,
-      "file_end_sample": 615360,
-      "speech_start_sample": 572160,
-      "speech_end_sample": 609360,
-      "speech_boundary_method": "estimated_rms_10ms",
-      "synthetic_audio": true,
-      "speech_rate": 1.0,
-      "tempo_mapping": [
-        {
-          "source_start": 0.0,
-          "source_end": 2.0,
-          "output_start": 0.0,
-          "output_end": 2.0,
-          "speed": 1.0
-        }
-      ],
-      "processed_checks": {
-        "version": "listening-cues-v2-duration",
-        "duration": 2.0,
-        "markers": [],
-        "pace": {
-          "status": "unavailable",
-          "reason": "文字时间信息不足，语速起伏请人工试听。"
-        },
-        "manual_checkpoints": [
-          "尾音是否自然、是否拖音",
-          "同一角色声线是否一致",
-          "停顿是否符合句意、前后语速是否合适"
-        ],
-        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
-      },
-      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
-    },
-    {
-      "id": "d38b899be669442a9d4744a6539fa10a",
-      "speaker": "Mrs. Bennet",
-      "text": "“have you heard that Netherfield Park is let at last?”\n",
-      "file_start_sample": 621360,
-      "file_end_sample": 715440,
-      "speech_start_sample": 631440,
-      "speech_end_sample": 701520,
-      "speech_boundary_method": "estimated_rms_10ms",
-      "synthetic_audio": true,
-      "speech_rate": 1.0,
-      "tempo_mapping": [
-        {
-          "source_start": 0.0,
-          "source_end": 3.92,
-          "output_start": 0.0,
-          "output_end": 3.92,
-          "speed": 1.0
-        }
-      ],
-      "processed_checks": {
-        "version": "listening-cues-v2-duration",
-        "duration": 3.92,
-        "markers": [],
-        "pace": {
-          "status": "unavailable",
-          "reason": "文字时间信息不足，语速起伏请人工试听。"
-        },
-        "manual_checkpoints": [
-          "尾音是否自然、是否拖音",
-          "同一角色声线是否一致",
-          "停顿是否符合句意、前后语速是否合适"
-        ],
-        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
-      },
-      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
-    },
-    {
-      "id": "3a90e941815e48508b4b4289a853dbe6",
-      "speaker": "Narrator",
-      "text": "Mr. Bennet replied that he had not.\n",
-      "file_start_sample": 721440,
-      "file_end_sample": 788640,
-      "speech_start_sample": 735120,
-      "speech_end_sample": 785520,
-      "speech_boundary_method": "estimated_rms_10ms",
-      "synthetic_audio": true,
-      "speech_rate": 1.0,
-      "tempo_mapping": [
-        {
-          "source_start": 0.0,
-          "source_end": 2.8,
-          "output_start": 0.0,
-          "output_end": 2.8,
-          "speed": 1.0
-        }
-      ],
-      "processed_checks": {
-        "version": "listening-cues-v2-duration",
-        "duration": 2.8,
-        "markers": [],
-        "pace": {
-          "status": "unavailable",
-          "reason": "文字时间信息不足，语速起伏请人工试听。"
-        },
-        "manual_checkpoints": [
-          "尾音是否自然、是否拖音",
-          "同一角色声线是否一致",
-          "停顿是否符合句意、前后语速是否合适"
-        ],
-        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
-      },
-      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
-    },
-    {
-      "id": "01af48b021e343abaf913d208100eccf",
-      "speaker": "Mrs. Bennet",
-      "text": "“But it is,” ",
-      "file_start_sample": 794640,
-      "file_end_sample": 840720,
-      "speech_start_sample": 802320,
-      "speech_end_sample": 832800,
-      "speech_boundary_method": "estimated_rms_10ms",
-      "synthetic_audio": true,
-      "speech_rate": 1.0,
-      "tempo_mapping": [
-        {
-          "source_start": 0.0,
-          "source_end": 1.92,
-          "output_start": 0.0,
-          "output_end": 1.92,
-          "speed": 1.0
-        }
-      ],
-      "processed_checks": {
-        "version": "listening-cues-v2-duration",
-        "duration": 1.92,
-        "markers": [],
-        "pace": {
-          "status": "unavailable",
-          "reason": "文字时间信息不足，语速起伏请人工试听。"
-        },
-        "manual_checkpoints": [
-          "尾音是否自然、是否拖音",
-          "同一角色声线是否一致",
-          "停顿是否符合句意、前后语速是否合适"
-        ],
-        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
-      },
-      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
-    },
-    {
-      "id": "8d2bf1fa27224e45a3052f5a170dffdd",
-      "speaker": "Narrator",
-      "text": "returned she; ",
-      "file_start_sample": 846720,
-      "file_end_sample": 873600,
-      "speech_start_sample": 853680,
-      "speech_end_sample": 872400,
-      "speech_boundary_method": "estimated_rms_10ms",
-      "synthetic_audio": true,
-      "speech_rate": 1.0,
-      "tempo_mapping": [
-        {
-          "source_start": 0.0,
-          "source_end": 1.12,
-          "output_start": 0.0,
-          "output_end": 1.12,
-          "speed": 1.0
-        }
-      ],
-      "processed_checks": {
-        "version": "listening-cues-v2-duration",
-        "duration": 1.12,
-        "markers": [],
-        "pace": {
-          "status": "unavailable",
-          "reason": "文字时间信息不足，语速起伏请人工试听。"
-        },
-        "manual_checkpoints": [
-          "尾音是否自然、是否拖音",
-          "同一角色声线是否一致",
-          "停顿是否符合句意、前后语速是否合适"
-        ],
-        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
-      },
-      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
-    },
-    {
-      "id": "8f4a1c16a2474bfdaeed78c81b3d5a8a",
-      "speaker": "Mrs. Bennet",
-      "text": "“for Mrs. Long has just been here, and she told me all about it.”\n",
-      "file_start_sample": 879600,
-      "file_end_sample": 989040,
-      "speech_start_sample": 890880,
-      "speech_end_sample": 978000,
-      "speech_boundary_method": "estimated_rms_10ms",
-      "synthetic_audio": true,
-      "speech_rate": 1.0,
-      "tempo_mapping": [
-        {
-          "source_start": 0.0,
-          "source_end": 4.56,
-          "output_start": 0.0,
-          "output_end": 4.56,
-          "speed": 1.0
-        }
-      ],
-      "processed_checks": {
-        "version": "listening-cues-v2-duration",
-        "duration": 4.56,
-        "markers": [],
-        "pace": {
-          "status": "unavailable",
-          "reason": "文字时间信息不足，语速起伏请人工试听。"
-        },
-        "manual_checkpoints": [
-          "尾音是否自然、是否拖音",
-          "同一角色声线是否一致",
-          "停顿是否符合句意、前后语速是否合适"
-        ],
-        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
-      },
-      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
-    },
-    {
-      "id": "d31c2dab46d8404795f062d3e4d337c0",
-      "speaker": "Narrator",
-      "text": "Mr. Bennet made no answer.\n",
-      "file_start_sample": 995040,
-      "file_end_sample": 1048800,
-      "speech_start_sample": 1001520,
-      "speech_end_sample": 1040880,
-      "speech_boundary_method": "estimated_rms_10ms",
-      "synthetic_audio": true,
-      "speech_rate": 1.0,
-      "tempo_mapping": [
-        {
-          "source_start": 0.0,
-          "source_end": 2.24,
-          "output_start": 0.0,
-          "output_end": 2.24,
-          "speed": 1.0
-        }
-      ],
-      "processed_checks": {
-        "version": "listening-cues-v2-duration",
-        "duration": 2.24,
-        "markers": [],
-        "pace": {
-          "status": "unavailable",
-          "reason": "文字时间信息不足，语速起伏请人工试听。"
-        },
-        "manual_checkpoints": [
-          "尾音是否自然、是否拖音",
-          "同一角色声线是否一致",
-          "停顿是否符合句意、前后语速是否合适"
-        ],
-        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
-      },
-      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
-    },
-    {
-      "id": "0d56d8ced64e47e59f44a6655f42539c",
-      "speaker": "Mrs. Bennet",
-      "text": "“Do not you want to know who has taken it?” ",
-      "file_start_sample": 1054800,
-      "file_end_sample": 1131600,
-      "speech_start_sample": 1066080,
-      "speech_end_sample": 1117920,
-      "speech_boundary_method": "estimated_rms_10ms",
-      "synthetic_audio": true,
-      "speech_rate": 1.0,
-      "tempo_mapping": [
-        {
-          "source_start": 0.0,
-          "source_end": 3.2,
-          "output_start": 0.0,
-          "output_end": 3.2,
-          "speed": 1.0
-        }
-      ],
-      "processed_checks": {
-        "version": "listening-cues-v2-duration",
-        "duration": 3.2,
-        "markers": [],
-        "pace": {
-          "status": "unavailable",
-          "reason": "文字时间信息不足，语速起伏请人工试听。"
-        },
-        "manual_checkpoints": [
-          "尾音是否自然、是否拖音",
-          "同一角色声线是否一致",
-          "停顿是否符合句意、前后语速是否合适"
-        ],
-        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
-      },
-      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
-    },
-    {
-      "id": "3fed9034c1164fe58fc8e44d237148b5",
-      "speaker": "Narrator",
-      "text": "cried his wife, impatiently.\n",
-      "file_start_sample": 1137600,
-      "file_end_sample": 1197120,
-      "speech_start_sample": 1142160,
-      "speech_end_sample": 1187760,
-      "speech_boundary_method": "estimated_rms_10ms",
-      "synthetic_audio": true,
-      "speech_rate": 1.0,
-      "tempo_mapping": [
-        {
-          "source_start": 0.0,
-          "source_end": 2.48,
-          "output_start": 0.0,
-          "output_end": 2.48,
-          "speed": 1.0
-        }
-      ],
-      "processed_checks": {
-        "version": "listening-cues-v2-duration",
-        "duration": 2.48,
-        "markers": [],
-        "pace": {
-          "status": "unavailable",
-          "reason": "文字时间信息不足，语速起伏请人工试听。"
-        },
-        "manual_checkpoints": [
-          "尾音是否自然、是否拖音",
-          "同一角色声线是否一致",
-          "停顿是否符合句意、前后语速是否合适"
-        ],
-        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
-      },
-      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
-    },
-    {
-      "id": "a23d7a924d794c468b73acac63704094",
-      "speaker": "Mr. Bennet",
-      "text": "“You want to tell me, and I have no objection to hearing it.”\n\n",
-      "file_start_sample": 1203120,
-      "file_end_sample": 1287600,
-      "speech_start_sample": 1208160,
-      "speech_end_sample": 1281120,
-      "speech_boundary_method": "estimated_rms_10ms",
-      "synthetic_audio": true,
-      "speech_rate": 1.0,
-      "tempo_mapping": [
-        {
-          "source_start": 0.0,
-          "source_end": 3.52,
-          "output_start": 0.0,
-          "output_end": 3.52,
-          "speed": 1.0
-        }
-      ],
-      "processed_checks": {
-        "version": "listening-cues-v2-duration",
-        "duration": 3.52,
-        "markers": [
-          {
-            "kind": "pause",
-            "start": 1.07,
-            "end": 1.47,
-            "label": "较长停顿 · 请试听",
-            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
-          }
-        ],
-        "pace": {
-          "status": "unavailable",
-          "reason": "文字时间信息不足，语速起伏请人工试听。"
-        },
-        "manual_checkpoints": [
-          "尾音是否自然、是否拖音",
-          "同一角色声线是否一致",
-          "停顿是否符合句意、前后语速是否合适"
-        ],
-        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
-      },
-      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
-    },
-    {
-      "id": "0e3502b7116745438cf8a8f338d8718a",
-      "speaker": "Narrator",
-      "text": "This was invitation enough.\n",
-      "file_start_sample": 1293600,
-      "file_end_sample": 1339680,
-      "speech_start_sample": 1298880,
-      "speech_end_sample": 1338480,
-      "speech_boundary_method": "estimated_rms_10ms",
-      "synthetic_audio": true,
-      "speech_rate": 1.0,
-      "tempo_mapping": [
-        {
-          "source_start": 0.0,
-          "source_end": 1.92,
-          "output_start": 0.0,
-          "output_end": 1.92,
-          "speed": 1.0
-        }
-      ],
-      "processed_checks": {
-        "version": "listening-cues-v2-duration",
-        "duration": 1.92,
-        "markers": [],
-        "pace": {
-          "status": "unavailable",
-          "reason": "文字时间信息不足，语速起伏请人工试听。"
-        },
-        "manual_checkpoints": [
-          "尾音是否自然、是否拖音",
-          "同一角色声线是否一致",
-          "停顿是否符合句意、前后语速是否合适"
-        ],
-        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
-      },
-      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
-    },
-    {
-      "id": "26144df17a5741f89fb231381c274175",
-      "speaker": "Mrs. Bennet",
-      "text": "“Why, my dear, you must know, Mrs. Long says that Netherfield is taken by a young man of large fortune from the north of England; ",
-      "file_start_sample": 1345680,
-      "file_end_sample": 1556880,
-      "speech_start_sample": 1353840,
-      "speech_end_sample": 1547760,
-      "speech_boundary_method": "estimated_rms_10ms",
-      "synthetic_audio": true,
-      "speech_rate": 1.0,
-      "tempo_mapping": [
-        {
-          "source_start": 0.0,
-          "source_end": 8.8,
-          "output_start": 0.0,
-          "output_end": 8.8,
-          "speed": 1.0
-        }
-      ],
-      "processed_checks": {
-        "version": "listening-cues-v2-duration",
-        "duration": 8.8,
-        "markers": [
-          {
-            "kind": "pause",
-            "start": 1.13,
-            "end": 1.62,
-            "label": "较长停顿 · 请试听",
-            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
-          }
-        ],
-        "pace": {
-          "status": "unavailable",
-          "reason": "文字时间信息不足，语速起伏请人工试听。"
-        },
-        "manual_checkpoints": [
-          "尾音是否自然、是否拖音",
-          "同一角色声线是否一致",
-          "停顿是否符合句意、前后语速是否合适"
-        ],
-        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
-      },
-      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
-    },
-    {
-      "id": "9ec3d67b40e84cc7a8bba7c4f89fb448",
-      "speaker": "Mrs. Bennet",
-      "text": "that he came down on Monday in a chaise and four to see the place, and was so much delighted with it that he agreed with Mr. Morris immediately; ",
-      "file_start_sample": 1562880,
-      "file_end_sample": 1751040,
-      "speech_start_sample": 1567680,
-      "speech_end_sample": 1743360,
-      "speech_boundary_method": "estimated_rms_10ms",
-      "synthetic_audio": true,
-      "speech_rate": 1.0,
-      "tempo_mapping": [
-        {
-          "source_start": 0.0,
-          "source_end": 7.84,
-          "output_start": 0.0,
-          "output_end": 7.84,
-          "speed": 1.0
-        }
-      ],
-      "processed_checks": {
-        "version": "listening-cues-v2-duration",
-        "duration": 7.84,
-        "markers": [
-          {
-            "kind": "pause",
-            "start": 3.15,
-            "end": 3.53,
-            "label": "较长停顿 · 请试听",
-            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
-          }
-        ],
-        "pace": {
-          "status": "unavailable",
-          "reason": "文字时间信息不足，语速起伏请人工试听。"
-        },
-        "manual_checkpoints": [
-          "尾音是否自然、是否拖音",
-          "同一角色声线是否一致",
-          "停顿是否符合句意、前后语速是否合适"
-        ],
-        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
-      },
-      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
-    },
-    {
-      "id": "8d01a0ab500f4fedbabe3efcdbec6e2e",
-      "speaker": "Mrs. Bennet",
-      "text": "that he is to take possession before Michaelmas, and some of his servants are to be in the house by the end of next week.”\n",
-      "file_start_sample": 1757040,
-      "file_end_sample": 1918320,
-      "speech_start_sample": 1761600,
-      "speech_end_sample": 1909920,
-      "speech_boundary_method": "estimated_rms_10ms",
-      "synthetic_audio": true,
-      "speech_rate": 1.0,
-      "tempo_mapping": [
-        {
-          "source_start": 0.0,
-          "source_end": 6.72,
-          "output_start": 0.0,
-          "output_end": 6.72,
-          "speed": 1.0
-        }
-      ],
-      "processed_checks": {
-        "version": "listening-cues-v2-duration",
-        "duration": 6.72,
-        "markers": [],
-        "pace": {
-          "status": "unavailable",
-          "reason": "文字时间信息不足，语速起伏请人工试听。"
-        },
-        "manual_checkpoints": [
-          "尾音是否自然、是否拖音",
-          "同一角色声线是否一致",
-          "停顿是否符合句意、前后语速是否合适"
-        ],
-        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
-      },
-      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
-    },
-    {
-      "id": "feee4bb286a548b1b23a36a18bf51ca5",
-      "speaker": "Mr. Bennet",
-      "text": "“What is his name?”\n",
-      "file_start_sample": 1924320,
-      "file_end_sample": 1968480,
-      "speech_start_sample": 1929360,
-      "speech_end_sample": 1961520,
-      "speech_boundary_method": "estimated_rms_10ms",
-      "synthetic_audio": true,
-      "speech_rate": 1.0,
-      "tempo_mapping": [
-        {
-          "source_start": 0.0,
-          "source_end": 1.84,
-          "output_start": 0.0,
-          "output_end": 1.84,
-          "speed": 1.0
-        }
-      ],
-      "processed_checks": {
-        "version": "listening-cues-v2-duration",
-        "duration": 1.84,
-        "markers": [],
-        "pace": {
-          "status": "unavailable",
-          "reason": "文字时间信息不足，语速起伏请人工试听。"
-        },
-        "manual_checkpoints": [
-          "尾音是否自然、是否拖音",
-          "同一角色声线是否一致",
-          "停顿是否符合句意、前后语速是否合适"
-        ],
-        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
-      },
-      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
-    },
-    {
-      "id": "180afab1a0cf4c8591f745ea518df367",
-      "speaker": "Mrs. Bennet",
-      "text": "“Bingley.”\n",
-      "file_start_sample": 1974480,
-      "file_end_sample": 2009040,
-      "speech_start_sample": 1984080,
-      "speech_end_sample": 1999680,
-      "speech_boundary_method": "estimated_rms_10ms",
-      "synthetic_audio": true,
-      "speech_rate": 1.0,
-      "tempo_mapping": [
-        {
-          "source_start": 0.0,
-          "source_end": 1.44,
-          "output_start": 0.0,
-          "output_end": 1.44,
-          "speed": 1.0
-        }
-      ],
-      "processed_checks": {
-        "version": "listening-cues-v2-duration",
-        "duration": 1.44,
-        "markers": [],
-        "pace": {
-          "status": "unavailable",
-          "reason": "文字时间信息不足，语速起伏请人工试听。"
-        },
-        "manual_checkpoints": [
-          "尾音是否自然、是否拖音",
-          "同一角色声线是否一致",
-          "停顿是否符合句意、前后语速是否合适"
-        ],
-        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
-      },
-      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
-    },
-    {
-      "id": "8a5bf51602454d1c9fdfffaec039f9ba",
-      "speaker": "Mr. Bennet",
-      "text": "“Is he married or single?”\n",
-      "file_start_sample": 2015040,
-      "file_end_sample": 2064960,
-      "speech_start_sample": 2020800,
-      "speech_end_sample": 2059200,
-      "speech_boundary_method": "estimated_rms_10ms",
-      "synthetic_audio": true,
-      "speech_rate": 1.0,
-      "tempo_mapping": [
-        {
-          "source_start": 0.0,
-          "source_end": 2.08,
-          "output_start": 0.0,
-          "output_end": 2.08,
-          "speed": 1.0
-        }
-      ],
-      "processed_checks": {
-        "version": "listening-cues-v2-duration",
-        "duration": 2.08,
-        "markers": [],
-        "pace": {
-          "status": "unavailable",
-          "reason": "文字时间信息不足，语速起伏请人工试听。"
-        },
-        "manual_checkpoints": [
-          "尾音是否自然、是否拖音",
-          "同一角色声线是否一致",
-          "停顿是否符合句意、前后语速是否合适"
-        ],
-        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
-      },
-      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
-    },
-    {
-      "id": "df153bddd4314e1abf09c9e3d54f7b86",
-      "speaker": "Mrs. Bennet",
-      "text": "“Oh, single, my dear, to be sure! A single man of large fortune; four or five thousand a year. What a fine thing for our girls!”\n",
-      "file_start_sample": 2070960,
-      "file_end_sample": 2343600,
-      "speech_start_sample": 2081280,
-      "speech_end_sample": 2332560,
-      "speech_boundary_method": "estimated_rms_10ms",
-      "synthetic_audio": true,
-      "speech_rate": 1.0,
-      "tempo_mapping": [
-        {
-          "source_start": 0.0,
-          "source_end": 11.36,
-          "output_start": 0.0,
-          "output_end": 11.36,
-          "speed": 1.0
-        }
-      ],
-      "processed_checks": {
-        "version": "listening-cues-v2-duration",
-        "duration": 11.36,
-        "markers": [
-          {
-            "kind": "pause",
-            "start": 3.43,
-            "end": 3.8,
-            "label": "较长停顿 · 请试听",
-            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
-          },
-          {
-            "kind": "pause",
-            "start": 5.78,
-            "end": 6.13,
-            "label": "较长停顿 · 请试听",
-            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
-          },
-          {
-            "kind": "pause",
-            "start": 8.09,
-            "end": 8.51,
-            "label": "较长停顿 · 请试听",
-            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
-          }
-        ],
-        "pace": {
-          "status": "unavailable",
-          "reason": "文字时间信息不足，语速起伏请人工试听。"
-        },
-        "manual_checkpoints": [
-          "尾音是否自然、是否拖音",
-          "同一角色声线是否一致",
-          "停顿是否符合句意、前后语速是否合适"
-        ],
-        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
-      },
-      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
-    },
-    {
-      "id": "ceb8669b8ad34b85b5f956269347c34a",
-      "speaker": "Mr. Bennet",
-      "text": "“How so? how can it affect them?”\n",
-      "file_start_sample": 2349600,
-      "file_end_sample": 2416800,
-      "speech_start_sample": 2355120,
-      "speech_end_sample": 2410080,
-      "speech_boundary_method": "estimated_rms_10ms",
-      "synthetic_audio": true,
-      "speech_rate": 1.0,
-      "tempo_mapping": [
-        {
-          "source_start": 0.0,
-          "source_end": 2.8,
-          "output_start": 0.0,
-          "output_end": 2.8,
-          "speed": 1.0
-        }
-      ],
-      "processed_checks": {
-        "version": "listening-cues-v2-duration",
-        "duration": 2.8,
-        "markers": [
-          {
-            "kind": "pause",
-            "start": 0.9,
-            "end": 1.33,
-            "label": "较长停顿 · 请试听",
-            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
-          }
-        ],
-        "pace": {
-          "status": "unavailable",
-          "reason": "文字时间信息不足，语速起伏请人工试听。"
-        },
-        "manual_checkpoints": [
-          "尾音是否自然、是否拖音",
-          "同一角色声线是否一致",
-          "停顿是否符合句意、前后语速是否合适"
-        ],
-        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
-      },
-      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
-    },
-    {
-      "id": "f87ca587e7a64ce08b2e893277db7464",
-      "speaker": "Mrs. Bennet",
-      "text": "“My dear Mr. Bennet,” ",
-      "file_start_sample": 2422800,
-      "file_end_sample": 2470800,
-      "speech_start_sample": 2431200,
-      "speech_end_sample": 2457600,
-      "speech_boundary_method": "estimated_rms_10ms",
-      "synthetic_audio": true,
-      "speech_rate": 1.0,
-      "tempo_mapping": [
-        {
-          "source_start": 0.0,
-          "source_end": 2.0,
-          "output_start": 0.0,
-          "output_end": 2.0,
-          "speed": 1.0
-        }
-      ],
-      "processed_checks": {
-        "version": "listening-cues-v2-duration",
-        "duration": 2.0,
-        "markers": [],
-        "pace": {
-          "status": "unavailable",
-          "reason": "文字时间信息不足，语速起伏请人工试听。"
-        },
-        "manual_checkpoints": [
-          "尾音是否自然、是否拖音",
-          "同一角色声线是否一致",
-          "停顿是否符合句意、前后语速是否合适"
-        ],
-        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
-      },
-      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
-    },
-    {
-      "id": "4baf6cbc6ebe411c98918b97a77b2a3f",
-      "speaker": "Narrator",
-      "text": "replied his wife, ",
-      "file_start_sample": 2476800,
-      "file_end_sample": 2503680,
-      "speech_start_sample": 2479440,
-      "speech_end_sample": 2501760,
-      "speech_boundary_method": "estimated_rms_10ms",
-      "synthetic_audio": true,
-      "speech_rate": 1.0,
-      "tempo_mapping": [
-        {
-          "source_start": 0.0,
-          "source_end": 1.12,
-          "output_start": 0.0,
-          "output_end": 1.12,
-          "speed": 1.0
-        }
-      ],
-      "processed_checks": {
-        "version": "listening-cues-v2-duration",
-        "duration": 1.12,
-        "markers": [],
-        "pace": {
-          "status": "unavailable",
-          "reason": "文字时间信息不足，语速起伏请人工试听。"
-        },
-        "manual_checkpoints": [
-          "尾音是否自然、是否拖音",
-          "同一角色声线是否一致",
-          "停顿是否符合句意、前后语速是否合适"
-        ],
-        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
-      },
-      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
-    },
-    {
-      "id": "afdb3b62e0aa46269d6afe55457be452",
-      "speaker": "Mrs. Bennet",
-      "text": "“how can you be so tiresome? You must know that I am thinking of his marrying one of them.”\n",
-      "file_start_sample": 2509680,
-      "file_end_sample": 2690160,
-      "speech_start_sample": 2520240,
-      "speech_end_sample": 2678160,
-      "speech_boundary_method": "estimated_rms_10ms",
-      "synthetic_audio": true,
-      "speech_rate": 1.0,
-      "tempo_mapping": [
-        {
-          "source_start": 0.0,
-          "source_end": 7.52,
-          "output_start": 0.0,
-          "output_end": 7.52,
-          "speed": 1.0
-        }
-      ],
-      "processed_checks": {
-        "version": "listening-cues-v2-duration",
-        "duration": 7.52,
-        "markers": [
-          {
-            "kind": "pause",
-            "start": 2.83,
-            "end": 3.59,
-            "label": "较长停顿 · 请试听",
-            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
-          }
-        ],
-        "pace": {
-          "status": "unavailable",
-          "reason": "文字时间信息不足，语速起伏请人工试听。"
-        },
-        "manual_checkpoints": [
-          "尾音是否自然、是否拖音",
-          "同一角色声线是否一致",
-          "停顿是否符合句意、前后语速是否合适"
-        ],
-        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
-      },
-      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
-    },
-    {
-      "id": "4a50fc270a214734b5251b3f506790df",
-      "speaker": "Mr. Bennet",
-      "text": "“Is that his design in settling here?”\n",
-      "file_start_sample": 2696160,
-      "file_end_sample": 2759520,
-      "speech_start_sample": 2701200,
-      "speech_end_sample": 2753040,
-      "speech_boundary_method": "estimated_rms_10ms",
-      "synthetic_audio": true,
-      "speech_rate": 1.0,
-      "tempo_mapping": [
-        {
-          "source_start": 0.0,
-          "source_end": 2.64,
-          "output_start": 0.0,
-          "output_end": 2.64,
-          "speed": 1.0
-        }
-      ],
-      "processed_checks": {
-        "version": "listening-cues-v2-duration",
-        "duration": 2.64,
-        "markers": [],
-        "pace": {
-          "status": "unavailable",
-          "reason": "文字时间信息不足，语速起伏请人工试听。"
-        },
-        "manual_checkpoints": [
-          "尾音是否自然、是否拖音",
-          "同一角色声线是否一致",
-          "停顿是否符合句意、前后语速是否合适"
-        ],
-        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
-      },
-      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
-    },
-    {
-      "id": "5bd4be05d6204e46be601c66ac12be9f",
-      "speaker": "Mrs. Bennet",
-      "text": "“Design? Nonsense, how can you talk so! But it is very likely that he may fall in love with one of them, and therefore you must visit him as soon as he comes.”\n",
-      "file_start_sample": 2765520,
-      "file_end_sample": 3047760,
-      "speech_start_sample": 2776560,
-      "speech_end_sample": 3036240,
-      "speech_boundary_method": "estimated_rms_10ms",
-      "synthetic_audio": true,
-      "speech_rate": 1.0,
-      "tempo_mapping": [
-        {
-          "source_start": 0.0,
-          "source_end": 11.76,
-          "output_start": 0.0,
-          "output_end": 11.76,
-          "speed": 1.0
-        }
-      ],
-      "processed_checks": {
-        "version": "listening-cues-v2-duration",
-        "duration": 11.76,
-        "markers": [
-          {
-            "kind": "pause",
-            "start": 0.81,
-            "end": 1.53,
-            "label": "较长停顿 · 请试听",
-            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
-          },
-          {
-            "kind": "pause",
-            "start": 2.26,
-            "end": 2.71,
-            "label": "较长停顿 · 请试听",
-            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
-          },
-          {
-            "kind": "pause",
-            "start": 3.72,
-            "end": 4.24,
-            "label": "较长停顿 · 请试听",
-            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
-          },
-          {
-            "kind": "pause",
-            "start": 7.6,
-            "end": 7.99,
-            "label": "较长停顿 · 请试听",
-            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
-          }
-        ],
-        "pace": {
-          "status": "unavailable",
-          "reason": "文字时间信息不足，语速起伏请人工试听。"
-        },
-        "manual_checkpoints": [
-          "尾音是否自然、是否拖音",
-          "同一角色声线是否一致",
-          "停顿是否符合句意、前后语速是否合适"
-        ],
-        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
-      },
-      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+     "source_start": 0.0,
+     "source_end": 6.96,
+     "output_start": 0.0,
+     "output_end": 6.96,
+     "speed": 1.0
     }
-  ],
-  "subtitle_cues": [
-    {
-      "start_sample": 5040,
-      "end_sample": 64800,
-      "text": "It is a truth universally acknowledged",
-      "estimated": false
+   ],
+   "processed_checks": {
+    "version": "listening-cues-v2-duration",
+    "duration": 6.96,
+    "markers": [],
+    "pace": {
+     "status": "unavailable",
+     "reason": "文字时间信息不足，语速起伏请人工试听。"
     },
+    "manual_checkpoints": [
+     "尾音是否自然、是否拖音",
+     "同一角色声线是否一致",
+     "停顿是否符合句意、前后语速是否合适"
+    ],
+    "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+   },
+   "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+  },
+  {
+   "id": "41a8ab3ad633414b947ce859c2003283",
+   "speaker": "Narrator",
+   "text": "However little known the feelings or views of such a man may be on his first entering a neighbourhood, this truth is so well fixed in the minds of the surrounding families, ",
+   "file_start_sample": 173040,
+   "file_end_sample": 391920,
+   "speech_start_sample": 176640,
+   "speech_end_sample": 385200,
+   "speech_boundary_method": "estimated_rms_10ms",
+   "synthetic_audio": true,
+   "speech_rate": 1.0,
+   "tempo_mapping": [
     {
-      "start_sample": 64800,
-      "end_sample": 159840,
-      "text": "that a single man in possession of a\ngood fortune must be in want of a wife",
-      "estimated": false
-    },
-    {
-      "start_sample": 176640,
-      "end_sample": 270720,
-      "text": "However little known the feelings or\nviews of such a man may be on his first",
-      "estimated": false
-    },
-    {
-      "start_sample": 270720,
-      "end_sample": 298320,
-      "text": "entering a neighbourhood",
-      "estimated": false
-    },
-    {
-      "start_sample": 298320,
-      "end_sample": 385200,
-      "text": "this truth is so well fixed in the\nminds of the surrounding families",
-      "estimated": false
-    },
-    {
-      "start_sample": 400560,
-      "end_sample": 486240,
-      "text": "that he is considered as the rightful\nproperty of some one or other of their",
-      "estimated": false
-    },
-    {
-      "start_sample": 486240,
-      "end_sample": 510240,
-      "text": "daughters",
-      "estimated": false
-    },
-    {
-      "start_sample": 521760,
-      "end_sample": 548160,
-      "text": "My dear Mr. Bennet",
-      "estimated": false
-    },
-    {
-      "start_sample": 572160,
-      "end_sample": 609360,
-      "text": "said his lady to him one day",
-      "estimated": false
-    },
-    {
-      "start_sample": 631440,
-      "end_sample": 701520,
-      "text": "have you heard that Netherfield\nPark is let at last?",
-      "estimated": false
-    },
-    {
-      "start_sample": 735120,
-      "end_sample": 785520,
-      "text": "Mr. Bennet replied that he had not",
-      "estimated": false
-    },
-    {
-      "start_sample": 802320,
-      "end_sample": 832800,
-      "text": "But it is",
-      "estimated": false
-    },
-    {
-      "start_sample": 853680,
-      "end_sample": 877680,
-      "text": "returned she",
-      "estimated": false
-    },
-    {
-      "start_sample": 890880,
-      "end_sample": 937200,
-      "text": "for Mrs. Long has just been here",
-      "estimated": false
-    },
-    {
-      "start_sample": 937200,
-      "end_sample": 978000,
-      "text": "and she told me all about it",
-      "estimated": false
-    },
-    {
-      "start_sample": 1001520,
-      "end_sample": 1040880,
-      "text": "Mr. Bennet made no answer",
-      "estimated": false
-    },
-    {
-      "start_sample": 1066080,
-      "end_sample": 1117920,
-      "text": "Do not you want to know who has taken it?",
-      "estimated": false
-    },
-    {
-      "start_sample": 1142160,
-      "end_sample": 1187760,
-      "text": "cried his wife impatiently",
-      "estimated": false
-    },
-    {
-      "start_sample": 1208160,
-      "end_sample": 1237440,
-      "text": "You want to tell me",
-      "estimated": false
-    },
-    {
-      "start_sample": 1238400,
-      "end_sample": 1281120,
-      "text": "and I have no objection to hearing it",
-      "estimated": false
-    },
-    {
-      "start_sample": 1298880,
-      "end_sample": 1338480,
-      "text": "This was invitation enough",
-      "estimated": false
-    },
-    {
-      "start_sample": 1353840,
-      "end_sample": 1379280,
-      "text": "Why my dear",
-      "estimated": false
-    },
-    {
-      "start_sample": 1384560,
-      "end_sample": 1408560,
-      "text": "you must know",
-      "estimated": false
-    },
-    {
-      "start_sample": 1408560,
-      "end_sample": 1533360,
-      "text": "Mrs. Long says that Netherfield is taken\nby a young man of large fortune from the",
-      "estimated": false
-    },
-    {
-      "start_sample": 1533360,
-      "end_sample": 1557360,
-      "text": "north of England",
-      "estimated": false
-    },
-    {
-      "start_sample": 1567680,
-      "end_sample": 1643520,
-      "text": "that he came down on Monday in a\nchaise and four to see the place",
-      "estimated": false
-    },
-    {
-      "start_sample": 1643520,
-      "end_sample": 1692000,
-      "text": "and was so much delighted with it",
-      "estimated": false
-    },
-    {
-      "start_sample": 1692000,
-      "end_sample": 1743360,
-      "text": "that he agreed with Mr. Morris immediately",
-      "estimated": false
-    },
-    {
-      "start_sample": 1761600,
-      "end_sample": 1826861,
-      "text": "that he is to take possession\nbefore Michaelmas and some of",
-      "estimated": true
-    },
-    {
-      "start_sample": 1826861,
-      "end_sample": 1862458,
-      "text": "his servants are to be in",
-      "estimated": true
-    },
-    {
-      "start_sample": 1862458,
-      "end_sample": 1909920,
-      "text": "the house by the end of next week",
-      "estimated": true
-    },
-    {
-      "start_sample": 1929360,
-      "end_sample": 1961520,
-      "text": "What is his name?",
-      "estimated": false
-    },
-    {
-      "start_sample": 1984080,
-      "end_sample": 2008080,
-      "text": "Bingley",
-      "estimated": true
-    },
-    {
-      "start_sample": 2020800,
-      "end_sample": 2059200,
-      "text": "Is he married or single?",
-      "estimated": false
-    },
-    {
-      "start_sample": 2081280,
-      "end_sample": 2141760,
-      "text": "Oh single my dear to be sure!",
-      "estimated": false
-    },
-    {
-      "start_sample": 2161680,
-      "end_sample": 2202480,
-      "text": "A single man of large fortune",
-      "estimated": false
-    },
-    {
-      "start_sample": 2207280,
-      "end_sample": 2257680,
-      "text": "four or five thousand a year",
-      "estimated": false
-    },
-    {
-      "start_sample": 2274000,
-      "end_sample": 2332560,
-      "text": "What a fine thing for our girls!",
-      "estimated": false
-    },
-    {
-      "start_sample": 2355120,
-      "end_sample": 2382000,
-      "text": "How so?",
-      "estimated": false
-    },
-    {
-      "start_sample": 2384160,
-      "end_sample": 2410080,
-      "text": "how can it affect them?",
-      "estimated": false
-    },
-    {
-      "start_sample": 2431200,
-      "end_sample": 2457600,
-      "text": "My dear Mr. Bennet",
-      "estimated": false
-    },
-    {
-      "start_sample": 2479440,
-      "end_sample": 2503440,
-      "text": "replied his wife",
-      "estimated": false
-    },
-    {
-      "start_sample": 2520240,
-      "end_sample": 2565840,
-      "text": "how can you be so tiresome?",
-      "estimated": false
-    },
-    {
-      "start_sample": 2589840,
-      "end_sample": 2678160,
-      "text": "You must know that I am thinking\nof his marrying one of them",
-      "estimated": false
-    },
-    {
-      "start_sample": 2701200,
-      "end_sample": 2753040,
-      "text": "Is that his design in settling here?",
-      "estimated": false
-    },
-    {
-      "start_sample": 2776560,
-      "end_sample": 2800560,
-      "text": "Design?",
-      "estimated": false
-    },
-    {
-      "start_sample": 2800560,
-      "end_sample": 2824560,
-      "text": "Nonsense",
-      "estimated": false
-    },
-    {
-      "start_sample": 2828400,
-      "end_sample": 2852400,
-      "text": "how can you talk so!",
-      "estimated": false
-    },
-    {
-      "start_sample": 2864400,
-      "end_sample": 2946480,
-      "text": "But it is very likely that he\nmay fall in love with one of them",
-      "estimated": false
-    },
-    {
-      "start_sample": 2956080,
-      "end_sample": 3036240,
-      "text": "and therefore you must visit\nhim as soon as he comes",
-      "estimated": false
+     "source_start": 0.0,
+     "source_end": 9.12,
+     "output_start": 0.0,
+     "output_end": 9.12,
+     "speed": 1.0
     }
-  ],
-  "project_revision": 149
+   ],
+   "processed_checks": {
+    "version": "listening-cues-v2-duration",
+    "duration": 9.12,
+    "markers": [
+     {
+      "kind": "pause",
+      "start": 5.12,
+      "end": 5.66,
+      "label": "较长停顿 · 请试听",
+      "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+     }
+    ],
+    "pace": {
+     "status": "unavailable",
+     "reason": "文字时间信息不足，语速起伏请人工试听。"
+    },
+    "manual_checkpoints": [
+     "尾音是否自然、是否拖音",
+     "同一角色声线是否一致",
+     "停顿是否符合句意、前后语速是否合适"
+    ],
+    "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+   },
+   "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+  },
+  {
+   "id": "8e2fb8145be7408ba100d9d10dc638ef",
+   "speaker": "Narrator",
+   "text": "that he is considered as the rightful property of some one or other of their daughters.\n",
+   "file_start_sample": 397920,
+   "file_end_sample": 507360,
+   "speech_start_sample": 400560,
+   "speech_end_sample": 498960,
+   "speech_boundary_method": "estimated_rms_10ms",
+   "synthetic_audio": true,
+   "speech_rate": 1.0,
+   "tempo_mapping": [
+    {
+     "source_start": 0.0,
+     "source_end": 4.56,
+     "output_start": 0.0,
+     "output_end": 4.56,
+     "speed": 1.0
+    }
+   ],
+   "processed_checks": {
+    "version": "listening-cues-v2-duration",
+    "duration": 4.56,
+    "markers": [],
+    "pace": {
+     "status": "unavailable",
+     "reason": "文字时间信息不足，语速起伏请人工试听。"
+    },
+    "manual_checkpoints": [
+     "尾音是否自然、是否拖音",
+     "同一角色声线是否一致",
+     "停顿是否符合句意、前后语速是否合适"
+    ],
+    "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+   },
+   "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+  },
+  {
+   "id": "4938f4f824a042a282433e66e1fb65f6",
+   "speaker": "Mrs. Bennet",
+   "text": "“My dear Mr. Bennet,” ",
+   "file_start_sample": 513360,
+   "file_end_sample": 561360,
+   "speech_start_sample": 521760,
+   "speech_end_sample": 548160,
+   "speech_boundary_method": "estimated_rms_10ms",
+   "synthetic_audio": true,
+   "speech_rate": 1.0,
+   "tempo_mapping": [
+    {
+     "source_start": 0.0,
+     "source_end": 2.0,
+     "output_start": 0.0,
+     "output_end": 2.0,
+     "speed": 1.0
+    }
+   ],
+   "processed_checks": {
+    "version": "listening-cues-v2-duration",
+    "duration": 2.0,
+    "markers": [],
+    "pace": {
+     "status": "unavailable",
+     "reason": "文字时间信息不足，语速起伏请人工试听。"
+    },
+    "manual_checkpoints": [
+     "尾音是否自然、是否拖音",
+     "同一角色声线是否一致",
+     "停顿是否符合句意、前后语速是否合适"
+    ],
+    "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+   },
+   "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+  },
+  {
+   "id": "cd55e29af46e4bcbbb87fd7a6d2ed055",
+   "speaker": "Narrator",
+   "text": "said his lady to him one day, ",
+   "file_start_sample": 567360,
+   "file_end_sample": 615360,
+   "speech_start_sample": 572160,
+   "speech_end_sample": 609360,
+   "speech_boundary_method": "estimated_rms_10ms",
+   "synthetic_audio": true,
+   "speech_rate": 1.0,
+   "tempo_mapping": [
+    {
+     "source_start": 0.0,
+     "source_end": 2.0,
+     "output_start": 0.0,
+     "output_end": 2.0,
+     "speed": 1.0
+    }
+   ],
+   "processed_checks": {
+    "version": "listening-cues-v2-duration",
+    "duration": 2.0,
+    "markers": [],
+    "pace": {
+     "status": "unavailable",
+     "reason": "文字时间信息不足，语速起伏请人工试听。"
+    },
+    "manual_checkpoints": [
+     "尾音是否自然、是否拖音",
+     "同一角色声线是否一致",
+     "停顿是否符合句意、前后语速是否合适"
+    ],
+    "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+   },
+   "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+  },
+  {
+   "id": "d38b899be669442a9d4744a6539fa10a",
+   "speaker": "Mrs. Bennet",
+   "text": "“have you heard that Netherfield Park is let at last?”\n",
+   "file_start_sample": 621360,
+   "file_end_sample": 715440,
+   "speech_start_sample": 631440,
+   "speech_end_sample": 701520,
+   "speech_boundary_method": "estimated_rms_10ms",
+   "synthetic_audio": true,
+   "speech_rate": 1.0,
+   "tempo_mapping": [
+    {
+     "source_start": 0.0,
+     "source_end": 3.92,
+     "output_start": 0.0,
+     "output_end": 3.92,
+     "speed": 1.0
+    }
+   ],
+   "processed_checks": {
+    "version": "listening-cues-v2-duration",
+    "duration": 3.92,
+    "markers": [],
+    "pace": {
+     "status": "unavailable",
+     "reason": "文字时间信息不足，语速起伏请人工试听。"
+    },
+    "manual_checkpoints": [
+     "尾音是否自然、是否拖音",
+     "同一角色声线是否一致",
+     "停顿是否符合句意、前后语速是否合适"
+    ],
+    "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+   },
+   "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+  },
+  {
+   "id": "3a90e941815e48508b4b4289a853dbe6",
+   "speaker": "Narrator",
+   "text": "Mr. Bennet replied that he had not.\n",
+   "file_start_sample": 721440,
+   "file_end_sample": 788640,
+   "speech_start_sample": 735120,
+   "speech_end_sample": 785520,
+   "speech_boundary_method": "estimated_rms_10ms",
+   "synthetic_audio": true,
+   "speech_rate": 1.0,
+   "tempo_mapping": [
+    {
+     "source_start": 0.0,
+     "source_end": 2.8,
+     "output_start": 0.0,
+     "output_end": 2.8,
+     "speed": 1.0
+    }
+   ],
+   "processed_checks": {
+    "version": "listening-cues-v2-duration",
+    "duration": 2.8,
+    "markers": [],
+    "pace": {
+     "status": "unavailable",
+     "reason": "文字时间信息不足，语速起伏请人工试听。"
+    },
+    "manual_checkpoints": [
+     "尾音是否自然、是否拖音",
+     "同一角色声线是否一致",
+     "停顿是否符合句意、前后语速是否合适"
+    ],
+    "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+   },
+   "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+  },
+  {
+   "id": "01af48b021e343abaf913d208100eccf",
+   "speaker": "Mrs. Bennet",
+   "text": "“But it is,” ",
+   "file_start_sample": 794640,
+   "file_end_sample": 840720,
+   "speech_start_sample": 802320,
+   "speech_end_sample": 832800,
+   "speech_boundary_method": "estimated_rms_10ms",
+   "synthetic_audio": true,
+   "speech_rate": 1.0,
+   "tempo_mapping": [
+    {
+     "source_start": 0.0,
+     "source_end": 1.92,
+     "output_start": 0.0,
+     "output_end": 1.92,
+     "speed": 1.0
+    }
+   ],
+   "processed_checks": {
+    "version": "listening-cues-v2-duration",
+    "duration": 1.92,
+    "markers": [],
+    "pace": {
+     "status": "unavailable",
+     "reason": "文字时间信息不足，语速起伏请人工试听。"
+    },
+    "manual_checkpoints": [
+     "尾音是否自然、是否拖音",
+     "同一角色声线是否一致",
+     "停顿是否符合句意、前后语速是否合适"
+    ],
+    "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+   },
+   "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+  },
+  {
+   "id": "8d2bf1fa27224e45a3052f5a170dffdd",
+   "speaker": "Narrator",
+   "text": "returned she; ",
+   "file_start_sample": 846720,
+   "file_end_sample": 873600,
+   "speech_start_sample": 853680,
+   "speech_end_sample": 872400,
+   "speech_boundary_method": "estimated_rms_10ms",
+   "synthetic_audio": true,
+   "speech_rate": 1.0,
+   "tempo_mapping": [
+    {
+     "source_start": 0.0,
+     "source_end": 1.12,
+     "output_start": 0.0,
+     "output_end": 1.12,
+     "speed": 1.0
+    }
+   ],
+   "processed_checks": {
+    "version": "listening-cues-v2-duration",
+    "duration": 1.12,
+    "markers": [],
+    "pace": {
+     "status": "unavailable",
+     "reason": "文字时间信息不足，语速起伏请人工试听。"
+    },
+    "manual_checkpoints": [
+     "尾音是否自然、是否拖音",
+     "同一角色声线是否一致",
+     "停顿是否符合句意、前后语速是否合适"
+    ],
+    "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+   },
+   "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+  },
+  {
+   "id": "8f4a1c16a2474bfdaeed78c81b3d5a8a",
+   "speaker": "Mrs. Bennet",
+   "text": "“for Mrs. Long has just been here, and she told me all about it.”\n",
+   "file_start_sample": 879600,
+   "file_end_sample": 989040,
+   "speech_start_sample": 890880,
+   "speech_end_sample": 978000,
+   "speech_boundary_method": "estimated_rms_10ms",
+   "synthetic_audio": true,
+   "speech_rate": 1.0,
+   "tempo_mapping": [
+    {
+     "source_start": 0.0,
+     "source_end": 4.56,
+     "output_start": 0.0,
+     "output_end": 4.56,
+     "speed": 1.0
+    }
+   ],
+   "processed_checks": {
+    "version": "listening-cues-v2-duration",
+    "duration": 4.56,
+    "markers": [],
+    "pace": {
+     "status": "unavailable",
+     "reason": "文字时间信息不足，语速起伏请人工试听。"
+    },
+    "manual_checkpoints": [
+     "尾音是否自然、是否拖音",
+     "同一角色声线是否一致",
+     "停顿是否符合句意、前后语速是否合适"
+    ],
+    "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+   },
+   "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+  },
+  {
+   "id": "d31c2dab46d8404795f062d3e4d337c0",
+   "speaker": "Narrator",
+   "text": "Mr. Bennet made no answer.\n",
+   "file_start_sample": 995040,
+   "file_end_sample": 1048800,
+   "speech_start_sample": 1001520,
+   "speech_end_sample": 1040880,
+   "speech_boundary_method": "estimated_rms_10ms",
+   "synthetic_audio": true,
+   "speech_rate": 1.0,
+   "tempo_mapping": [
+    {
+     "source_start": 0.0,
+     "source_end": 2.24,
+     "output_start": 0.0,
+     "output_end": 2.24,
+     "speed": 1.0
+    }
+   ],
+   "processed_checks": {
+    "version": "listening-cues-v2-duration",
+    "duration": 2.24,
+    "markers": [],
+    "pace": {
+     "status": "unavailable",
+     "reason": "文字时间信息不足，语速起伏请人工试听。"
+    },
+    "manual_checkpoints": [
+     "尾音是否自然、是否拖音",
+     "同一角色声线是否一致",
+     "停顿是否符合句意、前后语速是否合适"
+    ],
+    "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+   },
+   "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+  },
+  {
+   "id": "0d56d8ced64e47e59f44a6655f42539c",
+   "speaker": "Mrs. Bennet",
+   "text": "“Do not you want to know who has taken it?” ",
+   "file_start_sample": 1054800,
+   "file_end_sample": 1131600,
+   "speech_start_sample": 1066080,
+   "speech_end_sample": 1117920,
+   "speech_boundary_method": "estimated_rms_10ms",
+   "synthetic_audio": true,
+   "speech_rate": 1.0,
+   "tempo_mapping": [
+    {
+     "source_start": 0.0,
+     "source_end": 3.2,
+     "output_start": 0.0,
+     "output_end": 3.2,
+     "speed": 1.0
+    }
+   ],
+   "processed_checks": {
+    "version": "listening-cues-v2-duration",
+    "duration": 3.2,
+    "markers": [],
+    "pace": {
+     "status": "unavailable",
+     "reason": "文字时间信息不足，语速起伏请人工试听。"
+    },
+    "manual_checkpoints": [
+     "尾音是否自然、是否拖音",
+     "同一角色声线是否一致",
+     "停顿是否符合句意、前后语速是否合适"
+    ],
+    "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+   },
+   "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+  },
+  {
+   "id": "3fed9034c1164fe58fc8e44d237148b5",
+   "speaker": "Narrator",
+   "text": "cried his wife, impatiently.\n",
+   "file_start_sample": 1137600,
+   "file_end_sample": 1197120,
+   "speech_start_sample": 1142160,
+   "speech_end_sample": 1187760,
+   "speech_boundary_method": "estimated_rms_10ms",
+   "synthetic_audio": true,
+   "speech_rate": 1.0,
+   "tempo_mapping": [
+    {
+     "source_start": 0.0,
+     "source_end": 2.48,
+     "output_start": 0.0,
+     "output_end": 2.48,
+     "speed": 1.0
+    }
+   ],
+   "processed_checks": {
+    "version": "listening-cues-v2-duration",
+    "duration": 2.48,
+    "markers": [],
+    "pace": {
+     "status": "unavailable",
+     "reason": "文字时间信息不足，语速起伏请人工试听。"
+    },
+    "manual_checkpoints": [
+     "尾音是否自然、是否拖音",
+     "同一角色声线是否一致",
+     "停顿是否符合句意、前后语速是否合适"
+    ],
+    "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+   },
+   "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+  },
+  {
+   "id": "a23d7a924d794c468b73acac63704094",
+   "speaker": "Mr. Bennet",
+   "text": "“You want to tell me, and I have no objection to hearing it.”\n\n",
+   "file_start_sample": 1203120,
+   "file_end_sample": 1287600,
+   "speech_start_sample": 1208160,
+   "speech_end_sample": 1281120,
+   "speech_boundary_method": "estimated_rms_10ms",
+   "synthetic_audio": true,
+   "speech_rate": 1.0,
+   "tempo_mapping": [
+    {
+     "source_start": 0.0,
+     "source_end": 3.52,
+     "output_start": 0.0,
+     "output_end": 3.52,
+     "speed": 1.0
+    }
+   ],
+   "processed_checks": {
+    "version": "listening-cues-v2-duration",
+    "duration": 3.52,
+    "markers": [
+     {
+      "kind": "pause",
+      "start": 1.07,
+      "end": 1.47,
+      "label": "较长停顿 · 请试听",
+      "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+     }
+    ],
+    "pace": {
+     "status": "unavailable",
+     "reason": "文字时间信息不足，语速起伏请人工试听。"
+    },
+    "manual_checkpoints": [
+     "尾音是否自然、是否拖音",
+     "同一角色声线是否一致",
+     "停顿是否符合句意、前后语速是否合适"
+    ],
+    "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+   },
+   "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+  },
+  {
+   "id": "0e3502b7116745438cf8a8f338d8718a",
+   "speaker": "Narrator",
+   "text": "This was invitation enough.\n",
+   "file_start_sample": 1293600,
+   "file_end_sample": 1339680,
+   "speech_start_sample": 1298880,
+   "speech_end_sample": 1338480,
+   "speech_boundary_method": "estimated_rms_10ms",
+   "synthetic_audio": true,
+   "speech_rate": 1.0,
+   "tempo_mapping": [
+    {
+     "source_start": 0.0,
+     "source_end": 1.92,
+     "output_start": 0.0,
+     "output_end": 1.92,
+     "speed": 1.0
+    }
+   ],
+   "processed_checks": {
+    "version": "listening-cues-v2-duration",
+    "duration": 1.92,
+    "markers": [],
+    "pace": {
+     "status": "unavailable",
+     "reason": "文字时间信息不足，语速起伏请人工试听。"
+    },
+    "manual_checkpoints": [
+     "尾音是否自然、是否拖音",
+     "同一角色声线是否一致",
+     "停顿是否符合句意、前后语速是否合适"
+    ],
+    "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+   },
+   "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+  },
+  {
+   "id": "26144df17a5741f89fb231381c274175",
+   "speaker": "Mrs. Bennet",
+   "text": "“Why, my dear, you must know, Mrs. Long says that Netherfield is taken by a young man of large fortune from the north of England; ",
+   "file_start_sample": 1345680,
+   "file_end_sample": 1556880,
+   "speech_start_sample": 1353840,
+   "speech_end_sample": 1547760,
+   "speech_boundary_method": "estimated_rms_10ms",
+   "synthetic_audio": true,
+   "speech_rate": 1.0,
+   "tempo_mapping": [
+    {
+     "source_start": 0.0,
+     "source_end": 8.8,
+     "output_start": 0.0,
+     "output_end": 8.8,
+     "speed": 1.0
+    }
+   ],
+   "processed_checks": {
+    "version": "listening-cues-v2-duration",
+    "duration": 8.8,
+    "markers": [
+     {
+      "kind": "pause",
+      "start": 1.13,
+      "end": 1.62,
+      "label": "较长停顿 · 请试听",
+      "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+     }
+    ],
+    "pace": {
+     "status": "unavailable",
+     "reason": "文字时间信息不足，语速起伏请人工试听。"
+    },
+    "manual_checkpoints": [
+     "尾音是否自然、是否拖音",
+     "同一角色声线是否一致",
+     "停顿是否符合句意、前后语速是否合适"
+    ],
+    "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+   },
+   "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+  },
+  {
+   "id": "9ec3d67b40e84cc7a8bba7c4f89fb448",
+   "speaker": "Mrs. Bennet",
+   "text": "that he came down on Monday in a chaise and four to see the place, and was so much delighted with it that he agreed with Mr. Morris immediately; ",
+   "file_start_sample": 1562880,
+   "file_end_sample": 1751040,
+   "speech_start_sample": 1567680,
+   "speech_end_sample": 1743360,
+   "speech_boundary_method": "estimated_rms_10ms",
+   "synthetic_audio": true,
+   "speech_rate": 1.0,
+   "tempo_mapping": [
+    {
+     "source_start": 0.0,
+     "source_end": 7.84,
+     "output_start": 0.0,
+     "output_end": 7.84,
+     "speed": 1.0
+    }
+   ],
+   "processed_checks": {
+    "version": "listening-cues-v2-duration",
+    "duration": 7.84,
+    "markers": [
+     {
+      "kind": "pause",
+      "start": 3.15,
+      "end": 3.53,
+      "label": "较长停顿 · 请试听",
+      "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+     }
+    ],
+    "pace": {
+     "status": "unavailable",
+     "reason": "文字时间信息不足，语速起伏请人工试听。"
+    },
+    "manual_checkpoints": [
+     "尾音是否自然、是否拖音",
+     "同一角色声线是否一致",
+     "停顿是否符合句意、前后语速是否合适"
+    ],
+    "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+   },
+   "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+  },
+  {
+   "id": "8d01a0ab500f4fedbabe3efcdbec6e2e",
+   "speaker": "Mrs. Bennet",
+   "text": "that he is to take possession before Michaelmas, and some of his servants are to be in the house by the end of next week.”\n",
+   "file_start_sample": 1757040,
+   "file_end_sample": 1918320,
+   "speech_start_sample": 1761600,
+   "speech_end_sample": 1909920,
+   "speech_boundary_method": "estimated_rms_10ms",
+   "synthetic_audio": true,
+   "speech_rate": 1.0,
+   "tempo_mapping": [
+    {
+     "source_start": 0.0,
+     "source_end": 6.72,
+     "output_start": 0.0,
+     "output_end": 6.72,
+     "speed": 1.0
+    }
+   ],
+   "processed_checks": {
+    "version": "listening-cues-v2-duration",
+    "duration": 6.72,
+    "markers": [],
+    "pace": {
+     "status": "unavailable",
+     "reason": "文字时间信息不足，语速起伏请人工试听。"
+    },
+    "manual_checkpoints": [
+     "尾音是否自然、是否拖音",
+     "同一角色声线是否一致",
+     "停顿是否符合句意、前后语速是否合适"
+    ],
+    "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+   },
+   "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+  },
+  {
+   "id": "feee4bb286a548b1b23a36a18bf51ca5",
+   "speaker": "Mr. Bennet",
+   "text": "“What is his name?”\n",
+   "file_start_sample": 1924320,
+   "file_end_sample": 1968480,
+   "speech_start_sample": 1929360,
+   "speech_end_sample": 1961520,
+   "speech_boundary_method": "estimated_rms_10ms",
+   "synthetic_audio": true,
+   "speech_rate": 1.0,
+   "tempo_mapping": [
+    {
+     "source_start": 0.0,
+     "source_end": 1.84,
+     "output_start": 0.0,
+     "output_end": 1.84,
+     "speed": 1.0
+    }
+   ],
+   "processed_checks": {
+    "version": "listening-cues-v2-duration",
+    "duration": 1.84,
+    "markers": [],
+    "pace": {
+     "status": "unavailable",
+     "reason": "文字时间信息不足，语速起伏请人工试听。"
+    },
+    "manual_checkpoints": [
+     "尾音是否自然、是否拖音",
+     "同一角色声线是否一致",
+     "停顿是否符合句意、前后语速是否合适"
+    ],
+    "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+   },
+   "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+  },
+  {
+   "id": "180afab1a0cf4c8591f745ea518df367",
+   "speaker": "Mrs. Bennet",
+   "text": "“Bingley.”\n",
+   "file_start_sample": 1974480,
+   "file_end_sample": 2009040,
+   "speech_start_sample": 1984080,
+   "speech_end_sample": 1999680,
+   "speech_boundary_method": "estimated_rms_10ms",
+   "synthetic_audio": true,
+   "speech_rate": 1.0,
+   "tempo_mapping": [
+    {
+     "source_start": 0.0,
+     "source_end": 1.44,
+     "output_start": 0.0,
+     "output_end": 1.44,
+     "speed": 1.0
+    }
+   ],
+   "processed_checks": {
+    "version": "listening-cues-v2-duration",
+    "duration": 1.44,
+    "markers": [],
+    "pace": {
+     "status": "unavailable",
+     "reason": "文字时间信息不足，语速起伏请人工试听。"
+    },
+    "manual_checkpoints": [
+     "尾音是否自然、是否拖音",
+     "同一角色声线是否一致",
+     "停顿是否符合句意、前后语速是否合适"
+    ],
+    "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+   },
+   "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+  },
+  {
+   "id": "8a5bf51602454d1c9fdfffaec039f9ba",
+   "speaker": "Mr. Bennet",
+   "text": "“Is he married or single?”\n",
+   "file_start_sample": 2015040,
+   "file_end_sample": 2064960,
+   "speech_start_sample": 2020800,
+   "speech_end_sample": 2059200,
+   "speech_boundary_method": "estimated_rms_10ms",
+   "synthetic_audio": true,
+   "speech_rate": 1.0,
+   "tempo_mapping": [
+    {
+     "source_start": 0.0,
+     "source_end": 2.08,
+     "output_start": 0.0,
+     "output_end": 2.08,
+     "speed": 1.0
+    }
+   ],
+   "processed_checks": {
+    "version": "listening-cues-v2-duration",
+    "duration": 2.08,
+    "markers": [],
+    "pace": {
+     "status": "unavailable",
+     "reason": "文字时间信息不足，语速起伏请人工试听。"
+    },
+    "manual_checkpoints": [
+     "尾音是否自然、是否拖音",
+     "同一角色声线是否一致",
+     "停顿是否符合句意、前后语速是否合适"
+    ],
+    "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+   },
+   "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+  },
+  {
+   "id": "df153bddd4314e1abf09c9e3d54f7b86",
+   "speaker": "Mrs. Bennet",
+   "text": "“Oh, single, my dear, to be sure! A single man of large fortune; four or five thousand a year. What a fine thing for our girls!”\n",
+   "file_start_sample": 2070960,
+   "file_end_sample": 2343600,
+   "speech_start_sample": 2081280,
+   "speech_end_sample": 2332560,
+   "speech_boundary_method": "estimated_rms_10ms",
+   "synthetic_audio": true,
+   "speech_rate": 1.0,
+   "tempo_mapping": [
+    {
+     "source_start": 0.0,
+     "source_end": 11.36,
+     "output_start": 0.0,
+     "output_end": 11.36,
+     "speed": 1.0
+    }
+   ],
+   "processed_checks": {
+    "version": "listening-cues-v2-duration",
+    "duration": 11.36,
+    "markers": [
+     {
+      "kind": "pause",
+      "start": 3.43,
+      "end": 3.8,
+      "label": "较长停顿 · 请试听",
+      "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+     },
+     {
+      "kind": "pause",
+      "start": 5.78,
+      "end": 6.13,
+      "label": "较长停顿 · 请试听",
+      "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+     },
+     {
+      "kind": "pause",
+      "start": 8.09,
+      "end": 8.51,
+      "label": "较长停顿 · 请试听",
+      "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+     }
+    ],
+    "pace": {
+     "status": "unavailable",
+     "reason": "文字时间信息不足，语速起伏请人工试听。"
+    },
+    "manual_checkpoints": [
+     "尾音是否自然、是否拖音",
+     "同一角色声线是否一致",
+     "停顿是否符合句意、前后语速是否合适"
+    ],
+    "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+   },
+   "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+  },
+  {
+   "id": "ceb8669b8ad34b85b5f956269347c34a",
+   "speaker": "Mr. Bennet",
+   "text": "“How so? how can it affect them?”\n",
+   "file_start_sample": 2349600,
+   "file_end_sample": 2416800,
+   "speech_start_sample": 2355120,
+   "speech_end_sample": 2410080,
+   "speech_boundary_method": "estimated_rms_10ms",
+   "synthetic_audio": true,
+   "speech_rate": 1.0,
+   "tempo_mapping": [
+    {
+     "source_start": 0.0,
+     "source_end": 2.8,
+     "output_start": 0.0,
+     "output_end": 2.8,
+     "speed": 1.0
+    }
+   ],
+   "processed_checks": {
+    "version": "listening-cues-v2-duration",
+    "duration": 2.8,
+    "markers": [
+     {
+      "kind": "pause",
+      "start": 0.9,
+      "end": 1.33,
+      "label": "较长停顿 · 请试听",
+      "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+     }
+    ],
+    "pace": {
+     "status": "unavailable",
+     "reason": "文字时间信息不足，语速起伏请人工试听。"
+    },
+    "manual_checkpoints": [
+     "尾音是否自然、是否拖音",
+     "同一角色声线是否一致",
+     "停顿是否符合句意、前后语速是否合适"
+    ],
+    "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+   },
+   "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+  },
+  {
+   "id": "f87ca587e7a64ce08b2e893277db7464",
+   "speaker": "Mrs. Bennet",
+   "text": "“My dear Mr. Bennet,” ",
+   "file_start_sample": 2422800,
+   "file_end_sample": 2470800,
+   "speech_start_sample": 2431200,
+   "speech_end_sample": 2457600,
+   "speech_boundary_method": "estimated_rms_10ms",
+   "synthetic_audio": true,
+   "speech_rate": 1.0,
+   "tempo_mapping": [
+    {
+     "source_start": 0.0,
+     "source_end": 2.0,
+     "output_start": 0.0,
+     "output_end": 2.0,
+     "speed": 1.0
+    }
+   ],
+   "processed_checks": {
+    "version": "listening-cues-v2-duration",
+    "duration": 2.0,
+    "markers": [],
+    "pace": {
+     "status": "unavailable",
+     "reason": "文字时间信息不足，语速起伏请人工试听。"
+    },
+    "manual_checkpoints": [
+     "尾音是否自然、是否拖音",
+     "同一角色声线是否一致",
+     "停顿是否符合句意、前后语速是否合适"
+    ],
+    "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+   },
+   "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+  },
+  {
+   "id": "4baf6cbc6ebe411c98918b97a77b2a3f",
+   "speaker": "Narrator",
+   "text": "replied his wife, ",
+   "file_start_sample": 2476800,
+   "file_end_sample": 2503680,
+   "speech_start_sample": 2479440,
+   "speech_end_sample": 2501760,
+   "speech_boundary_method": "estimated_rms_10ms",
+   "synthetic_audio": true,
+   "speech_rate": 1.0,
+   "tempo_mapping": [
+    {
+     "source_start": 0.0,
+     "source_end": 1.12,
+     "output_start": 0.0,
+     "output_end": 1.12,
+     "speed": 1.0
+    }
+   ],
+   "processed_checks": {
+    "version": "listening-cues-v2-duration",
+    "duration": 1.12,
+    "markers": [],
+    "pace": {
+     "status": "unavailable",
+     "reason": "文字时间信息不足，语速起伏请人工试听。"
+    },
+    "manual_checkpoints": [
+     "尾音是否自然、是否拖音",
+     "同一角色声线是否一致",
+     "停顿是否符合句意、前后语速是否合适"
+    ],
+    "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+   },
+   "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+  },
+  {
+   "id": "afdb3b62e0aa46269d6afe55457be452",
+   "speaker": "Mrs. Bennet",
+   "text": "“how can you be so tiresome? You must know that I am thinking of his marrying one of them.”\n",
+   "file_start_sample": 2509680,
+   "file_end_sample": 2690160,
+   "speech_start_sample": 2520240,
+   "speech_end_sample": 2678160,
+   "speech_boundary_method": "estimated_rms_10ms",
+   "synthetic_audio": true,
+   "speech_rate": 1.0,
+   "tempo_mapping": [
+    {
+     "source_start": 0.0,
+     "source_end": 7.52,
+     "output_start": 0.0,
+     "output_end": 7.52,
+     "speed": 1.0
+    }
+   ],
+   "processed_checks": {
+    "version": "listening-cues-v2-duration",
+    "duration": 7.52,
+    "markers": [
+     {
+      "kind": "pause",
+      "start": 2.83,
+      "end": 3.59,
+      "label": "较长停顿 · 请试听",
+      "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+     }
+    ],
+    "pace": {
+     "status": "unavailable",
+     "reason": "文字时间信息不足，语速起伏请人工试听。"
+    },
+    "manual_checkpoints": [
+     "尾音是否自然、是否拖音",
+     "同一角色声线是否一致",
+     "停顿是否符合句意、前后语速是否合适"
+    ],
+    "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+   },
+   "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+  },
+  {
+   "id": "4a50fc270a214734b5251b3f506790df",
+   "speaker": "Mr. Bennet",
+   "text": "“Is that his design in settling here?”\n",
+   "file_start_sample": 2696160,
+   "file_end_sample": 2759520,
+   "speech_start_sample": 2701200,
+   "speech_end_sample": 2753040,
+   "speech_boundary_method": "estimated_rms_10ms",
+   "synthetic_audio": true,
+   "speech_rate": 1.0,
+   "tempo_mapping": [
+    {
+     "source_start": 0.0,
+     "source_end": 2.64,
+     "output_start": 0.0,
+     "output_end": 2.64,
+     "speed": 1.0
+    }
+   ],
+   "processed_checks": {
+    "version": "listening-cues-v2-duration",
+    "duration": 2.64,
+    "markers": [],
+    "pace": {
+     "status": "unavailable",
+     "reason": "文字时间信息不足，语速起伏请人工试听。"
+    },
+    "manual_checkpoints": [
+     "尾音是否自然、是否拖音",
+     "同一角色声线是否一致",
+     "停顿是否符合句意、前后语速是否合适"
+    ],
+    "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+   },
+   "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+  },
+  {
+   "id": "5bd4be05d6204e46be601c66ac12be9f",
+   "speaker": "Mrs. Bennet",
+   "text": "“Design? Nonsense, how can you talk so! But it is very likely that he may fall in love with one of them, and therefore you must visit him as soon as he comes.”\n",
+   "file_start_sample": 2765520,
+   "file_end_sample": 3047760,
+   "speech_start_sample": 2776560,
+   "speech_end_sample": 3036240,
+   "speech_boundary_method": "estimated_rms_10ms",
+   "synthetic_audio": true,
+   "speech_rate": 1.0,
+   "tempo_mapping": [
+    {
+     "source_start": 0.0,
+     "source_end": 11.76,
+     "output_start": 0.0,
+     "output_end": 11.76,
+     "speed": 1.0
+    }
+   ],
+   "processed_checks": {
+    "version": "listening-cues-v2-duration",
+    "duration": 11.76,
+    "markers": [
+     {
+      "kind": "pause",
+      "start": 0.81,
+      "end": 1.53,
+      "label": "较长停顿 · 请试听",
+      "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+     },
+     {
+      "kind": "pause",
+      "start": 2.26,
+      "end": 2.71,
+      "label": "较长停顿 · 请试听",
+      "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+     },
+     {
+      "kind": "pause",
+      "start": 3.72,
+      "end": 4.24,
+      "label": "较长停顿 · 请试听",
+      "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+     },
+     {
+      "kind": "pause",
+      "start": 7.6,
+      "end": 7.99,
+      "label": "较长停顿 · 请试听",
+      "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+     }
+    ],
+    "pace": {
+     "status": "unavailable",
+     "reason": "文字时间信息不足，语速起伏请人工试听。"
+    },
+    "manual_checkpoints": [
+     "尾音是否自然、是否拖音",
+     "同一角色声线是否一致",
+     "停顿是否符合句意、前后语速是否合适"
+    ],
+    "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+   },
+   "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+  }
+ ],
+ "subtitle_cues": [
+  {
+   "start_sample": 5040,
+   "end_sample": 64800,
+   "text": "It is a truth universally acknowledged",
+   "estimated": false
+  },
+  {
+   "start_sample": 64800,
+   "end_sample": 159840,
+   "text": "that a single man in possession of a\ngood fortune must be in want of a wife",
+   "estimated": false
+  },
+  {
+   "start_sample": 176640,
+   "end_sample": 270720,
+   "text": "However little known the feelings or\nviews of such a man may be on his first",
+   "estimated": false
+  },
+  {
+   "start_sample": 270720,
+   "end_sample": 298320,
+   "text": "entering a neighbourhood",
+   "estimated": false
+  },
+  {
+   "start_sample": 298320,
+   "end_sample": 385200,
+   "text": "this truth is so well fixed in the\nminds of the surrounding families",
+   "estimated": false
+  },
+  {
+   "start_sample": 400560,
+   "end_sample": 486240,
+   "text": "that he is considered as the rightful\nproperty of some one or other of their",
+   "estimated": false
+  },
+  {
+   "start_sample": 486240,
+   "end_sample": 510240,
+   "text": "daughters",
+   "estimated": false
+  },
+  {
+   "start_sample": 521760,
+   "end_sample": 548160,
+   "text": "My dear Mr. Bennet",
+   "estimated": false
+  },
+  {
+   "start_sample": 572160,
+   "end_sample": 609360,
+   "text": "said his lady to him one day",
+   "estimated": false
+  },
+  {
+   "start_sample": 631440,
+   "end_sample": 701520,
+   "text": "have you heard that Netherfield\nPark is let at last?",
+   "estimated": false
+  },
+  {
+   "start_sample": 735120,
+   "end_sample": 785520,
+   "text": "Mr. Bennet replied that he had not",
+   "estimated": false
+  },
+  {
+   "start_sample": 802320,
+   "end_sample": 832800,
+   "text": "But it is",
+   "estimated": false
+  },
+  {
+   "start_sample": 853680,
+   "end_sample": 877680,
+   "text": "returned she",
+   "estimated": false
+  },
+  {
+   "start_sample": 890880,
+   "end_sample": 937200,
+   "text": "for Mrs. Long has just been here",
+   "estimated": false
+  },
+  {
+   "start_sample": 937200,
+   "end_sample": 978000,
+   "text": "and she told me all about it",
+   "estimated": false
+  },
+  {
+   "start_sample": 1001520,
+   "end_sample": 1040880,
+   "text": "Mr. Bennet made no answer",
+   "estimated": false
+  },
+  {
+   "start_sample": 1066080,
+   "end_sample": 1117920,
+   "text": "Do not you want to know who has taken it?",
+   "estimated": false
+  },
+  {
+   "start_sample": 1142160,
+   "end_sample": 1187760,
+   "text": "cried his wife impatiently",
+   "estimated": false
+  },
+  {
+   "start_sample": 1208160,
+   "end_sample": 1237440,
+   "text": "You want to tell me",
+   "estimated": false
+  },
+  {
+   "start_sample": 1238400,
+   "end_sample": 1281120,
+   "text": "and I have no objection to hearing it",
+   "estimated": false
+  },
+  {
+   "start_sample": 1298880,
+   "end_sample": 1338480,
+   "text": "This was invitation enough",
+   "estimated": false
+  },
+  {
+   "start_sample": 1353840,
+   "end_sample": 1379280,
+   "text": "Why my dear",
+   "estimated": false
+  },
+  {
+   "start_sample": 1384560,
+   "end_sample": 1408560,
+   "text": "you must know",
+   "estimated": false
+  },
+  {
+   "start_sample": 1408560,
+   "end_sample": 1533360,
+   "text": "Mrs. Long says that Netherfield is taken\nby a young man of large fortune from the",
+   "estimated": false
+  },
+  {
+   "start_sample": 1533360,
+   "end_sample": 1557360,
+   "text": "north of England",
+   "estimated": false
+  },
+  {
+   "start_sample": 1567680,
+   "end_sample": 1643520,
+   "text": "that he came down on Monday in a\nchaise and four to see the place",
+   "estimated": false
+  },
+  {
+   "start_sample": 1643520,
+   "end_sample": 1692000,
+   "text": "and was so much delighted with it",
+   "estimated": false
+  },
+  {
+   "start_sample": 1692000,
+   "end_sample": 1743360,
+   "text": "that he agreed with Mr. Morris immediately",
+   "estimated": false
+  },
+  {
+   "start_sample": 1761600,
+   "end_sample": 1826861,
+   "text": "that he is to take possession\nbefore Michaelmas and some of",
+   "estimated": true
+  },
+  {
+   "start_sample": 1826861,
+   "end_sample": 1862458,
+   "text": "his servants are to be in",
+   "estimated": true
+  },
+  {
+   "start_sample": 1862458,
+   "end_sample": 1909920,
+   "text": "the house by the end of next week",
+   "estimated": true
+  },
+  {
+   "start_sample": 1929360,
+   "end_sample": 1961520,
+   "text": "What is his name?",
+   "estimated": false
+  },
+  {
+   "start_sample": 1984080,
+   "end_sample": 2008080,
+   "text": "Bingley",
+   "estimated": true
+  },
+  {
+   "start_sample": 2020800,
+   "end_sample": 2059200,
+   "text": "Is he married or single?",
+   "estimated": false
+  },
+  {
+   "start_sample": 2081280,
+   "end_sample": 2141760,
+   "text": "Oh single my dear to be sure!",
+   "estimated": false
+  },
+  {
+   "start_sample": 2161680,
+   "end_sample": 2202480,
+   "text": "A single man of large fortune",
+   "estimated": false
+  },
+  {
+   "start_sample": 2207280,
+   "end_sample": 2257680,
+   "text": "four or five thousand a year",
+   "estimated": false
+  },
+  {
+   "start_sample": 2274000,
+   "end_sample": 2332560,
+   "text": "What a fine thing for our girls!",
+   "estimated": false
+  },
+  {
+   "start_sample": 2355120,
+   "end_sample": 2410080,
+   "text": "How so? how can it affect them?",
+   "estimated": false
+  },
+  {
+   "start_sample": 2431200,
+   "end_sample": 2457600,
+   "text": "My dear Mr. Bennet",
+   "estimated": false
+  },
+  {
+   "start_sample": 2479440,
+   "end_sample": 2503440,
+   "text": "replied his wife",
+   "estimated": false
+  },
+  {
+   "start_sample": 2520240,
+   "end_sample": 2565840,
+   "text": "how can you be so tiresome?",
+   "estimated": false
+  },
+  {
+   "start_sample": 2589840,
+   "end_sample": 2678160,
+   "text": "You must know that I am thinking\nof his marrying one of them",
+   "estimated": false
+  },
+  {
+   "start_sample": 2701200,
+   "end_sample": 2753040,
+   "text": "Is that his design in settling here?",
+   "estimated": false
+  },
+  {
+   "start_sample": 2776560,
+   "end_sample": 2846400,
+   "text": "Design? Nonsense how can you talk so!",
+   "estimated": false
+  },
+  {
+   "start_sample": 2864400,
+   "end_sample": 2946480,
+   "text": "But it is very likely that he\nmay fall in love with one of them",
+   "estimated": false
+  },
+  {
+   "start_sample": 2956080,
+   "end_sample": 3036240,
+   "text": "and therefore you must visit\nhim as soon as he comes",
+   "estimated": false
+  }
+ ]
 }

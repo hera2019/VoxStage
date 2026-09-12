@@ -115,7 +115,7 @@ more work per line.
 ## Known limitations, visible in these files
 
 - **Subtitles are cut on the pauses, so they are no longer the lines.** The 28
-  lines of audio become 50 cues, broken where the voice actually stops rather
+  lines of audio become 47 cues, broken where the voice actually stops rather
   than where the prose has a comma, and stripped of quotation marks and
   sentence-final stops. Longest line: 42 characters, at most two lines a cue.
   Before this the longest cue ran 173 characters and was a transcript, not a

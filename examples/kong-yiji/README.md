@@ -15,7 +15,7 @@ changed.
 | Text | 2,613 characters · 68 quoted/prose units · 92 lines |
 | Voices | 旁白 and 我 Dylan (the same person) — 孔乙己 Uncle_Fu — 掌柜 and 酒客 two voices cloned from an English preset |
 | Audio | 682.8 s, 24 kHz mono |
-| Subtitles | 287 cues, longest line 19 characters |
+| Subtitles | 251 cues, longest line 20 characters |
 | Machine | Mac Studio, Apple M2 Max, 32 GB. Fully offline. |
 
 ## Files
