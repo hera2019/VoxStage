@@ -172,3 +172,21 @@ def test_dashes_and_ellipses_break_before_commas():
     text = '这是二十多年前的事——现在每碗要涨到十文，靠柜外站着'
     runs = [text[a:b] for a, b in _split(text, 16)]
     assert runs[0].endswith('——')
+
+
+def test_a_cue_never_runs_across_the_end_of_a_sentence():
+    """No pause was heard at the full stop; the cue still ends there."""
+    text = '掌柜也不再问，仍然算他的帐。中秋过后，秋风一天凉比一天。'
+    out = cues({}, text, 0, 24000 * 6, 'zh', speech([(6.0, True)]), 24000, None, 0)
+    texts = [c[2] for c in out]
+    assert any(t.endswith('算他的帐') for t in texts)
+    assert not any('帐 中秋' in t or '帐中秋' in t for t in texts)
+
+
+def test_a_sentence_end_within_reach_beats_a_nearer_comma():
+    from runtime.subtitles import _snap
+    text = '他说完了，走了。她还站着'
+    # The silence lands just after the comma; the full stop two characters on
+    # is the real boundary and wins.
+    at = text.index('走')
+    assert text[_snap(text, at, 3):].startswith('她还站着')

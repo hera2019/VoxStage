@@ -28,6 +28,9 @@ LIMITS = {'zh': {'cue': 20, 'line': 20}, 'en': {'cue': 84, 'line': 42}}
 # Sentence-final marks a cue may be split after, strongest first. Question and
 # exclamation marks carry tone, so they are split points but never removed.
 BREAKS = ('。！？!?；;\n—–…', '，、,：:', ' \u3000')
+# Where a sentence ends. A cue is always cut here; a dash or an ellipsis is a
+# strong place to cut but not a compulsory one, and a run of …… stays whole.
+SENTENCE_END = '。！？!?'
 
 # A break may also fall just before one of these: where the sentence turns,
 # a reader expects a new cue. Two-character forms only, so 但 inside 不但
@@ -136,6 +139,7 @@ def screen_text(raw, line_limit):
     text = ''.join(c for c in text if c not in QUOTES).strip()
     text = re.sub(f'[{re.escape(SPACED)}]+', ' ', text)
     text = re.sub(r'\s+', ' ', text).strip(' ').strip(TRAILING).strip()
+    text = re.sub(r' (?=[…—–])', '', text)       # 读过书，…… → 读过书……, not 读过书 ……
     for mark in kept:
         text = text.replace(_HOLD, mark, 1)
     if len(text) <= line_limit:
@@ -231,17 +235,18 @@ def _snap(text, index, window):
     """
     if not 0 < index < len(text):
         return None
-    def after_punctuation(i):
-        return 0 < i < len(text) and text[i - 1] in BREAKS[0] + BREAKS[1] + QUOTES
+    def after_sentence_end(i):
+        return 0 < i < len(text) and (text[i - 1] in BREAKS[0] or (text[i - 1] in QUOTES and i > 1 and text[i - 2] in BREAKS[0])) and text[i] not in PUNCTUATION
+    def after_comma(i):
+        return 0 < i < len(text) and text[i - 1] in BREAKS[1] + QUOTES
     def before_conjunction(i):
         return 0 < i < len(text) and text.startswith(CONJUNCTIONS, i)
     def after_space(i):
         return 0 < i < len(text) and text[i - 1].isspace() and not text[i].isspace()
-    # A comma or full stop near the silence is a better witness to where the
-    # phrase ends than the nearest space: a pause that lands one word late
-    # would otherwise drag that word onto the wrong cue. A conjunction is the
-    # next best witness.
-    for test in (after_punctuation, before_conjunction, after_space):
+    # The end of a sentence within reach beats a comma, a comma beats a
+    # conjunction, and any of them beats the nearest space: a pause that lands
+    # a word late would otherwise drag that word onto the wrong cue.
+    for test in (after_sentence_end, after_comma, before_conjunction, after_space):
         found = next((i for offset in range(window + 1)
                       for i in (index - offset, index + offset) if test(i)), None)
         if found is not None:
@@ -263,6 +268,13 @@ def cues(segment, text, start_sample, end_sample, language,
     position, trusted = _positions(segment, text, start_sample, end_sample, rate, file_start, mapping, language)
     spoken = sorted(position)
     breaks, window = set(), 3 if language == 'zh' else 12
+    # A cue never runs across the end of a sentence. Where the text puts a full
+    # stop, question mark or exclamation mark, the cue ends there whether or not
+    # the voice paused; a fragment left too short is folded back afterwards.
+    for i in range(1, len(text)):
+        if text[i - 1] in SENTENCE_END or (text[i - 1] in QUOTES and i > 1 and text[i - 2] in SENTENCE_END):
+            if text[i:].strip() and text[i] not in PUNCTUATION:
+                breaks.add(i)
     if pcm is not None and rate and file_start is not None:
         for seconds in pauses(pcm, rate):
             at_sample = file_start + round(seconds * rate)
