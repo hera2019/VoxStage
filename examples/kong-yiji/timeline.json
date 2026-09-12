@@ -1,0 +1,5977 @@
+{
+  "synthetic_audio": true,
+  "speech_rate": 1.0,
+  "sample_rate": 24000,
+  "total_samples": 16386607,
+  "segments": [
+    {
+      "id": "3dfc55f870dd4984a7b34ba32322f32b",
+      "speaker": "旁白",
+      "text": "鲁镇的酒店的格局，是和别处不同的：都是当街一个曲尺形的大柜台，柜里面豫备着热水，可以随时温酒。",
+      "file_start_sample": 0,
+      "file_end_sample": 249600,
+      "speech_start_sample": 8160,
+      "speech_end_sample": 226080,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 10.4,
+          "output_start": 0.0,
+          "output_end": 10.4,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 10.4,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 3.23,
+            "end": 3.71,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "149c72b00e054e5294d2abb7d8e8d3d4",
+      "speaker": "旁白",
+      "text": "做工的人，傍午傍晚散了工，每每花四文铜钱，买一碗酒——这是二十多年前的事，现在每碗要涨到十文，——靠柜外站着，",
+      "file_start_sample": 255600,
+      "file_end_sample": 608880,
+      "speech_start_sample": 292560,
+      "speech_end_sample": 570960,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 14.72,
+          "output_start": 0.0,
+          "output_end": 14.72,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 14.72,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 3.93,
+            "end": 4.47,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 8.71,
+            "end": 9.69,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "5f5849d6501f471cb4cef9a46fd9490e",
+      "speaker": "旁白",
+      "text": "热热的喝了休息；",
+      "file_start_sample": 614880,
+      "file_end_sample": 674400,
+      "speech_start_sample": 625680,
+      "speech_end_sample": 655680,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 2.48,
+          "output_start": 0.0,
+          "output_end": 2.48,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 2.48,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "9103d765da234b52a03b61eb9b13d17c",
+      "speaker": "旁白",
+      "text": "倘肯多花一文，便可以买一碟盐煮笋，或者茴香豆，做下酒物了，如果出到了十几文，那就能买一样荤菜，但这些顾客，多是短衣帮，",
+      "file_start_sample": 680400,
+      "file_end_sample": 1012560,
+      "speech_start_sample": 694560,
+      "speech_end_sample": 996720,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 13.84,
+          "output_start": 0.0,
+          "output_end": 13.84,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 13.84,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 6.33,
+            "end": 7.11,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 10.33,
+            "end": 10.91,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "6dc0684385434194925a36cf1d9c2d4a",
+      "speaker": "旁白",
+      "text": "大抵没有这样阔绰。只有穿长衫的，才踱进店面隔壁的房子里，要酒要菜，慢慢地坐喝。\n",
+      "file_start_sample": 1018560,
+      "file_end_sample": 1239360,
+      "speech_start_sample": 1028640,
+      "speech_end_sample": 1234560,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 9.2,
+          "output_start": 0.0,
+          "output_end": 9.2,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 9.2,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 1.81,
+            "end": 2.86,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 6.15,
+            "end": 6.86,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 7.65,
+            "end": 8.07,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "a3a074fbf5cd4b4ba39fd94bdd8f05c4",
+      "speaker": "旁白",
+      "text": "我从十二岁起，便在镇口的咸亨酒店里当伙计，掌柜说，样子太儍，怕侍候不了长衫主顾，就在外面做点事罢。",
+      "file_start_sample": 1245360,
+      "file_end_sample": 1496880,
+      "speech_start_sample": 1253520,
+      "speech_end_sample": 1483920,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 10.48,
+          "output_start": 0.0,
+          "output_end": 10.48,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 10.48,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 4.11,
+            "end": 4.51,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "2f347b693be64e61bcc479fed1b4d083",
+      "speaker": "旁白",
+      "text": "外面的短衣主顾，虽然容易说话，但唠唠叨叨缠夹不清的也很不少。",
+      "file_start_sample": 1502880,
+      "file_end_sample": 1643040,
+      "speech_start_sample": 1511280,
+      "speech_end_sample": 1630800,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 5.84,
+          "output_start": 0.0,
+          "output_end": 5.84,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 5.84,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "30e51376a3494c4ab7f4945233aecc0c",
+      "speaker": "旁白",
+      "text": "他们往往要亲眼看着黄酒从坛子里舀出，看过壶子底里有水没有，又亲看将壶子放在热水里，然后放心：在这严重监督之下，",
+      "file_start_sample": 1649040,
+      "file_end_sample": 1950480,
+      "speech_start_sample": 1661040,
+      "speech_end_sample": 1938240,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 12.56,
+          "output_start": 0.0,
+          "output_end": 12.56,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 12.56,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 3.83,
+            "end": 4.19,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 6.17,
+            "end": 6.66,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 8.85,
+            "end": 9.34,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "d83a2fe8b1344689b9e833004ca7f1ee",
+      "speaker": "旁白",
+      "text": "羼水也很为难。所以过了几天，掌柜又说我干不了这事。幸亏荐头的情面大，辞退不得，便改为专管温酒的一种无聊职务了。\n",
+      "file_start_sample": 1956480,
+      "file_end_sample": 2286720,
+      "speech_start_sample": 1984320,
+      "speech_end_sample": 2253600,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 13.76,
+          "output_start": 0.0,
+          "output_end": 13.76,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 13.76,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 2.54,
+            "end": 3.07,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 6.22,
+            "end": 6.73,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "e67ada48370a47e39f2d112a97e86e7e",
+      "speaker": "旁白",
+      "text": "我从此便整天的站在柜台里，专管我的职务。虽然没有什么失职，但总觉有些单调，有些无聊。",
+      "file_start_sample": 2292720,
+      "file_end_sample": 2498160,
+      "speech_start_sample": 2301840,
+      "speech_end_sample": 2486640,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 8.56,
+          "output_start": 0.0,
+          "output_end": 8.56,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 8.56,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 3.9,
+            "end": 4.39,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "c672545190f141f38d4081957be54ba6",
+      "speaker": "旁白",
+      "text": "掌柜是一副凶脸孔，主顾也没有好声气，教人活泼不得；只有孔乙己到店，才可以笑几声，所以至今还记得。\n",
+      "file_start_sample": 2504160,
+      "file_end_sample": 2774880,
+      "speech_start_sample": 2522400,
+      "speech_end_sample": 2745360,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 11.28,
+          "output_start": 0.0,
+          "output_end": 11.28,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 11.28,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 3.87,
+            "end": 4.31,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 5.47,
+            "end": 6.06,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "accb12e6868646d2bffb49d5631d830d",
+      "speaker": "旁白",
+      "text": "孔乙己是站着喝酒而穿长衫的唯一的人。他身材很高大；青白脸色，皱纹间时常夹些伤痕；一部乱蓬蓬的花白的胡子。",
+      "file_start_sample": 2780880,
+      "file_end_sample": 3138000,
+      "speech_start_sample": 2819760,
+      "speech_end_sample": 3098640,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 14.88,
+          "output_start": 0.0,
+          "output_end": 14.88,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 14.88,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 5.1,
+            "end": 5.8,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 10.65,
+            "end": 11.18,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "69fe6b07b4b543d2bf9dd925508f297b",
+      "speaker": "旁白",
+      "text": "穿的虽然是长衫，可是又脏又破，似乎十多年没有补，也没有洗。他对人说话，总是满口之乎者也，教人半懂不懂的。",
+      "file_start_sample": 3144000,
+      "file_end_sample": 3472320,
+      "speech_start_sample": 3172320,
+      "speech_end_sample": 3435600,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 13.68,
+          "output_start": 0.0,
+          "output_end": 13.68,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 13.68,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 4.11,
+            "end": 4.53,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 6.96,
+            "end": 7.5,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 10.14,
+            "end": 10.53,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "13e21885a0c4477b8c5fbd53d1531db0",
+      "speaker": "旁白",
+      "text": "因为他姓孔，别人便从描红纸上的“上大人孔乙己”",
+      "file_start_sample": 3478320,
+      "file_end_sample": 3610800,
+      "speech_start_sample": 3492720,
+      "speech_end_sample": 3594720,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 5.52,
+          "output_start": 0.0,
+          "output_end": 5.52,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 5.52,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 1.59,
+            "end": 2.01,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "accee3bd0c0547c0bdb08955300dde8a",
+      "speaker": "旁白",
+      "text": "这半懂不懂的话里，替他取下一个绰号，叫作孔乙己。孔乙己一到店，所有喝酒的人便都看着他笑，有的叫道：",
+      "file_start_sample": 3616800,
+      "file_end_sample": 3918240,
+      "speech_start_sample": 3645120,
+      "speech_end_sample": 3900480,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 12.56,
+          "output_start": 0.0,
+          "output_end": 12.56,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 12.56,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 5.61,
+            "end": 6.39,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 10.18,
+            "end": 11.02,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "1b898825a34b4b8ebc06e513e25b772f",
+      "speaker": "酒客",
+      "text": "“孔乙己，你脸上又添上新伤疤了！”",
+      "file_start_sample": 3924240,
+      "file_end_sample": 4004881,
+      "speech_start_sample": 3932640,
+      "speech_end_sample": 4000560,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 3.3600416666666666,
+          "output_start": 0.0,
+          "output_end": 3.3600416666666666,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 3.3600416666666666,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "75a6b9483eba4475bd737f7772003706",
+      "speaker": "旁白",
+      "text": "他不回答，对柜里说：",
+      "file_start_sample": 4010881,
+      "file_end_sample": 4083841,
+      "speech_start_sample": 4026241,
+      "speech_end_sample": 4072081,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 3.04,
+          "output_start": 0.0,
+          "output_end": 3.04,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 3.04,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "e16a0e3924874483aa0eb68ea3f1c729",
+      "speaker": "孔乙己",
+      "text": "“温两碗酒，要一碟茴香豆。”",
+      "file_start_sample": 4089841,
+      "file_end_sample": 4206961,
+      "speech_start_sample": 4121521,
+      "speech_end_sample": 4193521,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 4.88,
+          "output_start": 0.0,
+          "output_end": 4.88,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 4.88,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 2.43,
+            "end": 2.78,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "f5d29dca22ab496a8ff3532044f96806",
+      "speaker": "旁白",
+      "text": "便排出九文大钱。他们又故意的高声嚷道：",
+      "file_start_sample": 4212961,
+      "file_end_sample": 4318561,
+      "speech_start_sample": 4219921,
+      "speech_end_sample": 4308241,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 4.4,
+          "output_start": 0.0,
+          "output_end": 4.4,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 4.4,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 1.61,
+            "end": 2.12,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "a5457f2e45cf4339996227df9a421863",
+      "speaker": "酒客",
+      "text": "“你一定又偸了人家的东西了！”",
+      "file_start_sample": 4324561,
+      "file_end_sample": 4376401,
+      "speech_start_sample": 4333441,
+      "speech_end_sample": 4374241,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 2.16,
+          "output_start": 0.0,
+          "output_end": 2.16,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 2.16,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "1b0c0f19eb1b455bac102b9c3ca6873e",
+      "speaker": "旁白",
+      "text": "孔乙己睁大眼睛说：",
+      "file_start_sample": 4382401,
+      "file_end_sample": 4482241,
+      "speech_start_sample": 4410961,
+      "speech_end_sample": 4458001,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 4.16,
+          "output_start": 0.0,
+          "output_end": 4.16,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 4.16,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "c4d5d8b46e1449f7908a63146b37a7ce",
+      "speaker": "孔乙己",
+      "text": "“你怎么这样凭空污人清白……”",
+      "file_start_sample": 4488241,
+      "file_end_sample": 4597681,
+      "speech_start_sample": 4516801,
+      "speech_end_sample": 4575121,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 4.56,
+          "output_start": 0.0,
+          "output_end": 4.56,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 4.56,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "3d063d711dfc43568683d3347a9e5284",
+      "speaker": "酒客",
+      "text": "“什么清白？我前天亲眼见你偸了何家的书，吊着打。”",
+      "file_start_sample": 4603681,
+      "file_end_sample": 4716961,
+      "speech_start_sample": 4610401,
+      "speech_end_sample": 4713361,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 4.72,
+          "output_start": 0.0,
+          "output_end": 4.72,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 4.72,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 1.08,
+            "end": 1.48,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "c0708dc09b55488d84bb7ceac7484cdc",
+      "speaker": "旁白",
+      "text": "孔乙己便涨红了脸，额上的青筋条条绽出，争辩道：",
+      "file_start_sample": 4722961,
+      "file_end_sample": 4909201,
+      "speech_start_sample": 4750801,
+      "speech_end_sample": 4867681,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 7.76,
+          "output_start": 0.0,
+          "output_end": 7.76,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 7.76,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 2.88,
+            "end": 3.31,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "c159338571e047129aa694a2cc6aa7a5",
+      "speaker": "孔乙己",
+      "text": "“窃书不能算偸……窃书！……读书人的事，能算偸么？”",
+      "file_start_sample": 4915201,
+      "file_end_sample": 5157121,
+      "speech_start_sample": 4935601,
+      "speech_end_sample": 5133601,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 10.08,
+          "output_start": 0.0,
+          "output_end": 10.08,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 10.08,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 2.59,
+            "end": 4.67,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 5.23,
+            "end": 6.62,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 7.65,
+            "end": 8.26,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "62fd53fae9bc468598528e8e786a31ba",
+      "speaker": "旁白",
+      "text": "接连便是难懂的话，什么“君子固穷”，什么“者乎”",
+      "file_start_sample": 5163121,
+      "file_end_sample": 5287921,
+      "speech_start_sample": 5186401,
+      "speech_end_sample": 5277601,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 5.2,
+          "output_start": 0.0,
+          "output_end": 5.2,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 5.2,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "c341119dda844dfb8b33d4128c9540f2",
+      "speaker": "旁白",
+      "text": "之类，引得众人都哄笑起来；店内外充满了快活的空气。\n听人家背地里谈论，孔乙己原来也读过书，但终于没有进学，又不会营生；",
+      "file_start_sample": 5293921,
+      "file_end_sample": 5589601,
+      "speech_start_sample": 5304961,
+      "speech_end_sample": 5575681,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 12.32,
+          "output_start": 0.0,
+          "output_end": 12.32,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 12.32,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 2.63,
+            "end": 3.1,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 5.15,
+            "end": 5.71,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "3ebe2948b7b84965bd5bc3f1e9d5a3ba",
+      "speaker": "旁白",
+      "text": "于是愈过愈穷，弄到将要讨饭了。幸而写得一笔好字，便替人家钞钞书，换一碗饭吃。可惜他又有一样坏脾气，便是好喝懒做。",
+      "file_start_sample": 5595601,
+      "file_end_sample": 5902801,
+      "speech_start_sample": 5605921,
+      "speech_end_sample": 5888161,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 12.8,
+          "output_start": 0.0,
+          "output_end": 12.8,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 12.8,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 3.25,
+            "end": 3.97,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 8.1,
+            "end": 8.6,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 10.73,
+            "end": 11.08,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "efd92e0acb284e4e96b4d35f5a07007c",
+      "speaker": "旁白",
+      "text": "坐不到几天，便连人和书籍纸张笔砚，一齐失踪。如是几次，叫他钞书的人也没有了。孔乙己没有法，便免不了偶然做些偸窃的事。",
+      "file_start_sample": 5908801,
+      "file_end_sample": 6212161,
+      "speech_start_sample": 5920321,
+      "speech_end_sample": 6201841,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 12.64,
+          "output_start": 0.0,
+          "output_end": 12.64,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 12.64,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 4.7,
+            "end": 5.24,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 7.86,
+            "end": 8.63,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "d5463745bc0a4a2a9343079bb58ace31",
+      "speaker": "旁白",
+      "text": "但他在我们店里，品行却比别人都好，就是从不拖欠；",
+      "file_start_sample": 6218161,
+      "file_end_sample": 6350641,
+      "speech_start_sample": 6227041,
+      "speech_end_sample": 6336961,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 5.52,
+          "output_start": 0.0,
+          "output_end": 5.52,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 5.52,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "4daa375bb35b49bdbd114a0fabf9597e",
+      "speaker": "旁白",
+      "text": "虽然间或没有现钱，暂时记在粉板上，但不出一月，定然还清，从粉板上拭去了孔乙己的名字。\n",
+      "file_start_sample": 6356641,
+      "file_end_sample": 6596641,
+      "speech_start_sample": 6369841,
+      "speech_end_sample": 6585121,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 10.0,
+          "output_start": 0.0,
+          "output_end": 10.0,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 10.0,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 4.03,
+            "end": 4.51,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "ddfdb49f586e4166ad04e183120122a4",
+      "speaker": "旁白",
+      "text": "孔乙己喝过半碗酒，涨红的脸色渐渐复了原，旁人便又问道，",
+      "file_start_sample": 6602641,
+      "file_end_sample": 6821521,
+      "speech_start_sample": 6630721,
+      "speech_end_sample": 6781441,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 9.12,
+          "output_start": 0.0,
+          "output_end": 9.12,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 9.12,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 2.97,
+            "end": 3.37,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 5.51,
+            "end": 6.02,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "147b707afc794bc986d7c7ef07079859",
+      "speaker": "酒客",
+      "text": "“孔乙己，你当真认识字么？”",
+      "file_start_sample": 6827521,
+      "file_end_sample": 6887041,
+      "speech_start_sample": 6833521,
+      "speech_end_sample": 6886561,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 2.48,
+          "output_start": 0.0,
+          "output_end": 2.48,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 2.48,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "74c3c8e2eb2c4284b13d6fdb95c6881d",
+      "speaker": "旁白",
+      "text": "孔乙己看着问他的人，显出不屑置辩的神气。他们便接着说道：",
+      "file_start_sample": 6893041,
+      "file_end_sample": 7096561,
+      "speech_start_sample": 6921601,
+      "speech_end_sample": 7052641,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 8.48,
+          "output_start": 0.0,
+          "output_end": 8.48,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 8.48,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 4.83,
+            "end": 5.37,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "d558eb2959c2401785351c42cb6d3842",
+      "speaker": "酒客",
+      "text": "“你怎的连半个秀才也捞不到呢？”",
+      "file_start_sample": 7102561,
+      "file_end_sample": 7181281,
+      "speech_start_sample": 7110721,
+      "speech_end_sample": 7180321,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 3.28,
+          "output_start": 0.0,
+          "output_end": 3.28,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 3.28,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "3f67e0d80b904f4fa9745cd5e4b6559f",
+      "speaker": "旁白",
+      "text": "孔乙己立刻显出颓唐不安模样，脸上笼上了一层灰色，嘴里说些话；这回可是全是之乎者也之类，一些不懂了。",
+      "file_start_sample": 7187281,
+      "file_end_sample": 7490641,
+      "speech_start_sample": 7215361,
+      "speech_end_sample": 7454401,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 12.64,
+          "output_start": 0.0,
+          "output_end": 12.64,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 12.64,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 3.74,
+            "end": 4.34,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 7.34,
+            "end": 7.79,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 9.92,
+            "end": 10.3,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "0e6dbd09e4594b3d8d61783c5f936034",
+      "speaker": "旁白",
+      "text": "在这时候，众人也都哄笑起来：店内外充满了快活的空气。\n在这些时候，我可以附和着笑，掌柜是决不责备的。",
+      "file_start_sample": 7496641,
+      "file_end_sample": 7794241,
+      "speech_start_sample": 7525441,
+      "speech_end_sample": 7764721,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 12.4,
+          "output_start": 0.0,
+          "output_end": 12.4,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 12.4,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 3.36,
+            "end": 4.02,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 6.07,
+            "end": 6.84,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 9.03,
+            "end": 9.71,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "93a9b001846f480fa1726c363b793a7d",
+      "speaker": "旁白",
+      "text": "而且掌柜见了孔乙己，也每每这样问他，引人发笑。孔乙己自己知道不能和他们谈天，便只好向孩子说话。有一回对我说道，",
+      "file_start_sample": 7800241,
+      "file_end_sample": 8090161,
+      "speech_start_sample": 7808641,
+      "speech_end_sample": 8078881,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 12.08,
+          "output_start": 0.0,
+          "output_end": 12.08,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 12.08,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 4.21,
+            "end": 4.91,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 7.5,
+            "end": 8.22,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 9.7,
+            "end": 10.43,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "e3c575bdd82e450d87ac65a3a963fda6",
+      "speaker": "孔乙己",
+      "text": "“你读过书么？”",
+      "file_start_sample": 8096161,
+      "file_end_sample": 8153761,
+      "speech_start_sample": 8116081,
+      "speech_end_sample": 8136721,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 2.4,
+          "output_start": 0.0,
+          "output_end": 2.4,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 2.4,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "825a94cb963640dc875bf8d07c961efe",
+      "speaker": "旁白",
+      "text": "我略略点一点头。他说，",
+      "file_start_sample": 8159761,
+      "file_end_sample": 8226961,
+      "speech_start_sample": 8174161,
+      "speech_end_sample": 8218321,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 2.8,
+          "output_start": 0.0,
+          "output_end": 2.8,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 2.8,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "2ce4279d2de7413792b05ac645c95113",
+      "speaker": "孔乙己",
+      "text": "“读过书，……我便考你一考。茴香豆的茴字，怎样写的？”",
+      "file_start_sample": 8232961,
+      "file_end_sample": 8407681,
+      "speech_start_sample": 8261281,
+      "speech_end_sample": 8377921,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 7.28,
+          "output_start": 0.0,
+          "output_end": 7.28,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 7.28,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 1.76,
+            "end": 2.22,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 3.13,
+            "end": 3.94,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "af107b3b1e7a4c73966c88b81c13292e",
+      "speaker": "旁白",
+      "text": "我想，讨饭一样的人，也配考我么？便回过脸去，不再理会。孔乙己等了许久，很恳切的说道：",
+      "file_start_sample": 8413681,
+      "file_end_sample": 8663281,
+      "speech_start_sample": 8422081,
+      "speech_end_sample": 8647681,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 10.4,
+          "output_start": 0.0,
+          "output_end": 10.4,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 10.4,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 3.27,
+            "end": 4.01,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 5.99,
+            "end": 7.1,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "c0382be6ce9a471a835a8d2142d7f00c",
+      "speaker": "孔乙己",
+      "text": "“不能写罢？……我教给你，记着！这些字应该记着。将来做掌柜的时候，写帐要用。”",
+      "file_start_sample": 8669281,
+      "file_end_sample": 8964961,
+      "speech_start_sample": 8689441,
+      "speech_end_sample": 8940001,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 12.32,
+          "output_start": 0.0,
+          "output_end": 12.32,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 12.32,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 1.81,
+            "end": 2.54,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 3.28,
+            "end": 3.87,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 4.29,
+            "end": 4.93,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 5.63,
+            "end": 6.04,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 6.89,
+            "end": 8.03,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 9.56,
+            "end": 10.25,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "85dcf63bec1147e2972728e27aac6b9a",
+      "speaker": "旁白",
+      "text": "我暗想我和掌柜的等级还很远呢，而且我们掌柜也从不将茴香豆上帐；又好笑，又不耐烦，懒懒的答他道：",
+      "file_start_sample": 8970961,
+      "file_end_sample": 9224401,
+      "speech_start_sample": 8979121,
+      "speech_end_sample": 9216241,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 10.56,
+          "output_start": 0.0,
+          "output_end": 10.56,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 10.56,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 2.98,
+            "end": 3.39,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 6.55,
+            "end": 6.96,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 8.43,
+            "end": 9.11,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "a0cd806032f1470f94507ec27eeb8a0c",
+      "speaker": "我",
+      "text": "“谁要你教，不是草头底下一个来回的回字么？”",
+      "file_start_sample": 9230401,
+      "file_end_sample": 9336001,
+      "speech_start_sample": 9243121,
+      "speech_end_sample": 9319201,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 4.4,
+          "output_start": 0.0,
+          "output_end": 4.4,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 4.4,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "f7f3477a317445a7833f0f1c7546c7c0",
+      "speaker": "旁白",
+      "text": "孔乙己显出极高兴的样子，将两个指头的长指甲敲着柜台，点头说：",
+      "file_start_sample": 9342001,
+      "file_end_sample": 9558961,
+      "speech_start_sample": 9370561,
+      "speech_end_sample": 9518881,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 9.04,
+          "output_start": 0.0,
+          "output_end": 9.04,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 9.04,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 3.26,
+            "end": 3.75,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 6.3,
+            "end": 6.67,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "5adb49a804b740ac9ab97d28d82073cd",
+      "speaker": "孔乙己",
+      "text": "“对呀对呀！……回字有四样写法，你知道么？”",
+      "file_start_sample": 9564961,
+      "file_end_sample": 9716641,
+      "speech_start_sample": 9588961,
+      "speech_end_sample": 9693601,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 6.32,
+          "output_start": 0.0,
+          "output_end": 6.32,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 6.32,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 2.01,
+            "end": 2.53,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 4.15,
+            "end": 4.65,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "a88d679c130b42a190fdb37fb0222d95",
+      "speaker": "旁白",
+      "text": "我愈不耐烦了，努着嘴走远。孔乙己刚用指甲蘸了酒，想在柜上写字，见我毫不热心，便又叹一口气，显出极惋惜的样子。\n",
+      "file_start_sample": 9722641,
+      "file_end_sample": 10002961,
+      "speech_start_sample": 9731521,
+      "speech_end_sample": 9985441,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 11.68,
+          "output_start": 0.0,
+          "output_end": 11.68,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 11.68,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 2.6,
+            "end": 3.18,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 8.02,
+            "end": 8.39,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "8a49c2e134084c32b702b5b07fcf17ed",
+      "speaker": "旁白",
+      "text": "有几回，邻舍孩子听得笑声，也赶热闹，围住了孔乙己。他便给他们茴香豆吃，一人一颗。孩子吃完豆，仍然不散，眼睛都望着碟子。",
+      "file_start_sample": 10008961,
+      "file_end_sample": 10335361,
+      "speech_start_sample": 10021441,
+      "speech_end_sample": 10322161,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 13.6,
+          "output_start": 0.0,
+          "output_end": 13.6,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 13.6,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 4.04,
+            "end": 4.46,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 5.72,
+            "end": 6.24,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 8.93,
+            "end": 9.61,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "7e13f111d1994568841240d178909303",
+      "speaker": "旁白",
+      "text": "孔乙己着了慌，伸开五指将碟子罩住，弯腰下去说道：",
+      "file_start_sample": 10341361,
+      "file_end_sample": 10527601,
+      "speech_start_sample": 10369921,
+      "speech_end_sample": 10488001,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 7.76,
+          "output_start": 0.0,
+          "output_end": 7.76,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 7.76,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 2.32,
+            "end": 2.7,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "5f0f090cff8943c89bce338c41de6353",
+      "speaker": "孔乙己",
+      "text": "“不多了，我已经不多了。”",
+      "file_start_sample": 10533601,
+      "file_end_sample": 10662241,
+      "speech_start_sample": 10561921,
+      "speech_end_sample": 10638001,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 5.36,
+          "output_start": 0.0,
+          "output_end": 5.36,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 5.36,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 2.28,
+            "end": 2.81,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "23508ebd86674e4cb517db9b69d22e78",
+      "speaker": "旁白",
+      "text": "直起身又看一看豆，自己摇头说：",
+      "file_start_sample": 10668241,
+      "file_end_sample": 10743121,
+      "speech_start_sample": 10679281,
+      "speech_end_sample": 10735201,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 3.12,
+          "output_start": 0.0,
+          "output_end": 3.12,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 3.12,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "2d20cb3d25b44655b11b956ca0b27db4",
+      "speaker": "孔乙己",
+      "text": "“不多不多！多乎哉？不多也。”",
+      "file_start_sample": 10749121,
+      "file_end_sample": 10875841,
+      "speech_start_sample": 10768081,
+      "speech_end_sample": 10860961,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 5.28,
+          "output_start": 0.0,
+          "output_end": 5.28,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 5.28,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 1.66,
+            "end": 2.81,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 3.37,
+            "end": 4.07,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "53d137bdf11848f28fd915f64aa99ce6",
+      "speaker": "旁白",
+      "text": "于是这一群孩子都在笑声里走散了。\n孔乙己是这样的使人快活，可是没有他，别人也便这么过。\n",
+      "file_start_sample": 10881841,
+      "file_end_sample": 11112241,
+      "speech_start_sample": 10892161,
+      "speech_end_sample": 11103601,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 9.6,
+          "output_start": 0.0,
+          "output_end": 9.6,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 9.6,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 3.32,
+            "end": 4.26,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 6.46,
+            "end": 7.01,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "c1660aecad3d467f8863027a9b8cb82f",
+      "speaker": "旁白",
+      "text": "有一天，大约是中秋前的两三天，掌柜正在慢慢的结帐，取下粉板，忽然说：",
+      "file_start_sample": 11118241,
+      "file_end_sample": 11300641,
+      "speech_start_sample": 11128321,
+      "speech_end_sample": 11286481,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 7.6,
+          "output_start": 0.0,
+          "output_end": 7.6,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 7.6,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 2.81,
+            "end": 3.17,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 6.01,
+            "end": 6.46,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "15673b37456641dc981ac743e72f1e35",
+      "speaker": "掌柜",
+      "text": "“孔乙己长久没有来了。还欠十九个钱呢！”",
+      "file_start_sample": 11306641,
+      "file_end_sample": 11394961,
+      "speech_start_sample": 11311201,
+      "speech_end_sample": 11393281,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 3.68,
+          "output_start": 0.0,
+          "output_end": 3.68,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 3.68,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "f36e43843ace4a3dbc0cb84a24a0db79",
+      "speaker": "旁白",
+      "text": "我才也觉得他的确长久没有来了。一个喝酒的人说道，",
+      "file_start_sample": 11400961,
+      "file_end_sample": 11533441,
+      "speech_start_sample": 11409361,
+      "speech_end_sample": 11509921,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 5.52,
+          "output_start": 0.0,
+          "output_end": 5.52,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 5.52,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 2.75,
+            "end": 3.2,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "0db4d2493f7d446bb3ec9fece90be734",
+      "speaker": "酒客",
+      "text": "“他怎么会来？……他打折了腿了。”",
+      "file_start_sample": 11539441,
+      "file_end_sample": 11602802,
+      "speech_start_sample": 11548801,
+      "speech_end_sample": 11602081,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 2.640041666666667,
+          "output_start": 0.0,
+          "output_end": 2.640041666666667,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 2.640041666666667,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "277309a680ce47aba99f7d0939d8d5af",
+      "speaker": "旁白",
+      "text": "掌柜说：",
+      "file_start_sample": 11608802,
+      "file_end_sample": 11666402,
+      "speech_start_sample": 11627042,
+      "speech_end_sample": 11644562,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 2.4,
+          "output_start": 0.0,
+          "output_end": 2.4,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 2.4,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "ee50a5dd23004d10bae88bca0ac0e464",
+      "speaker": "掌柜",
+      "text": "“哦！”",
+      "file_start_sample": 11672402,
+      "file_end_sample": 11683922,
+      "speech_start_sample": 11675522,
+      "speech_end_sample": 11682002,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 0.48,
+          "output_start": 0.0,
+          "output_end": 0.48,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 0.48,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "d9decfb4448b40d9b271ff6f8ed2d420",
+      "speaker": "酒客",
+      "text": "“他总仍旧是偸。这一回，是自己发昏，竟偸到丁举人家里去了。他家的东西，偸得的么？”",
+      "file_start_sample": 11689922,
+      "file_end_sample": 11901727,
+      "speech_start_sample": 11699762,
+      "speech_end_sample": 11891522,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 8.825208333333334,
+          "output_start": 0.0,
+          "output_end": 8.825208333333334,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 8.825208333333334,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 1.59,
+            "end": 2.16,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "9e82e892e4ca49ffbcfa7c32182c891a",
+      "speaker": "掌柜",
+      "text": "“后来怎么样？”",
+      "file_start_sample": 11907727,
+      "file_end_sample": 11928847,
+      "speech_start_sample": 11909167,
+      "speech_end_sample": 11927167,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 0.88,
+          "output_start": 0.0,
+          "output_end": 0.88,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 0.88,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "4c70f065873b468cbf202037a7fce236",
+      "speaker": "酒客",
+      "text": "“怎么样？先写服辩，后来是打，打了大半夜，再打折了腿。”",
+      "file_start_sample": 11934847,
+      "file_end_sample": 12080767,
+      "speech_start_sample": 11944447,
+      "speech_end_sample": 12073807,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 6.08,
+          "output_start": 0.0,
+          "output_end": 6.08,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 6.08,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 0.88,
+            "end": 1.29,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 2.23,
+            "end": 2.63,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "7cd3346e49d84d6fa10a39a160c6579b",
+      "speaker": "掌柜",
+      "text": "“后来呢？”",
+      "file_start_sample": 12086767,
+      "file_end_sample": 12102127,
+      "speech_start_sample": 12088447,
+      "speech_end_sample": 12100447,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 0.64,
+          "output_start": 0.0,
+          "output_end": 0.64,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 0.64,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "78a746e2583d4e5b8abb0a31dfaa3433",
+      "speaker": "酒客",
+      "text": "“后来打折了腿了。”",
+      "file_start_sample": 12108127,
+      "file_end_sample": 12144607,
+      "speech_start_sample": 12113407,
+      "speech_end_sample": 12142927,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 1.52,
+          "output_start": 0.0,
+          "output_end": 1.52,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 1.52,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "ca75da11dea54180a4e73c0b4ea20e62",
+      "speaker": "掌柜",
+      "text": "“打折了怎样呢？”",
+      "file_start_sample": 12150607,
+      "file_end_sample": 12179407,
+      "speech_start_sample": 12153247,
+      "speech_end_sample": 12178687,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 1.2,
+          "output_start": 0.0,
+          "output_end": 1.2,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 1.2,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "a03e42c3f0f446e690bdd60681e0b0bd",
+      "speaker": "酒客",
+      "text": "“怎样？……谁晓得？许是死了。”",
+      "file_start_sample": 12185407,
+      "file_end_sample": 12271807,
+      "speech_start_sample": 12193807,
+      "speech_end_sample": 12270847,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 3.6,
+          "output_start": 0.0,
+          "output_end": 3.6,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 3.6,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 0.94,
+            "end": 1.53,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 2.22,
+            "end": 2.73,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "ddc93d993cb54e2ab516a6d7ecddbbe2",
+      "speaker": "旁白",
+      "text": "掌柜也不再问，仍然慢慢的算他的帐。\n中秋过后，秋风是一天凉比一天，看看将近初冬；我整天的靠着火，也须穿上棉袄了。",
+      "file_start_sample": 12277807,
+      "file_end_sample": 12631087,
+      "speech_start_sample": 12296287,
+      "speech_end_sample": 12604687,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 14.72,
+          "output_start": 0.0,
+          "output_end": 14.72,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 14.72,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 1.83,
+            "end": 2.27,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 3.92,
+            "end": 4.7,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 9.43,
+            "end": 10.45,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "1f47750096c44e3d94924f3b32b8f79e",
+      "speaker": "旁白",
+      "text": "一天的下半天，没有一个顾客，我正合了眼坐着。忽然间听得一个声音，",
+      "file_start_sample": 12637087,
+      "file_end_sample": 12804127,
+      "speech_start_sample": 12653407,
+      "speech_end_sample": 12789007,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 6.96,
+          "output_start": 0.0,
+          "output_end": 6.96,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 6.96,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 4.25,
+            "end": 4.78,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "5f6f952e295949bab1c3907c22988281",
+      "speaker": "孔乙己",
+      "text": "“温一碗酒。”",
+      "file_start_sample": 12810127,
+      "file_end_sample": 12908047,
+      "speech_start_sample": 12838687,
+      "speech_end_sample": 12890767,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 4.08,
+          "output_start": 0.0,
+          "output_end": 4.08,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 4.08,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "c15f561ba7e147fb94577917d3b6d421",
+      "speaker": "旁白",
+      "text": "这声音虽然极低，却很耳熟。看时又全没有人。站起来向外一望，那孔乙己便在柜台下对了门槛坐着。他脸上黑而且瘦，已经不成样子；",
+      "file_start_sample": 12914047,
+      "file_end_sample": 13305727,
+      "speech_start_sample": 12942367,
+      "speech_end_sample": 13269967,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 16.32,
+          "output_start": 0.0,
+          "output_end": 16.32,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 16.32,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 3.86,
+            "end": 4.51,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 6.09,
+            "end": 6.62,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 7.84,
+            "end": 8.32,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 11.67,
+            "end": 12.31,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "41df260b8aca40ad9ec238639846df21",
+      "speaker": "旁白",
+      "text": "穿一件破夹袄，盘着两腿，下面垫一个蒲包，用草绳在肩上挂住；见了我，又说道，",
+      "file_start_sample": 13311727,
+      "file_end_sample": 13553647,
+      "speech_start_sample": 13340047,
+      "speech_end_sample": 13526287,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 10.08,
+          "output_start": 0.0,
+          "output_end": 10.08,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 10.08,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 2.41,
+            "end": 2.92,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 7.11,
+            "end": 7.56,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "1da154b9f01f45448f2a4f2648ee45b2",
+      "speaker": "孔乙己",
+      "text": "“温一碗酒。”",
+      "file_start_sample": 13559647,
+      "file_end_sample": 13657567,
+      "speech_start_sample": 13588207,
+      "speech_end_sample": 13640287,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 4.08,
+          "output_start": 0.0,
+          "output_end": 4.08,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 4.08,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "1ff983331cc749da928dc9d516c67e55",
+      "speaker": "旁白",
+      "text": "掌柜也伸出头去，一面说：",
+      "file_start_sample": 13663567,
+      "file_end_sample": 13763407,
+      "speech_start_sample": 13682047,
+      "speech_end_sample": 13737247,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 4.16,
+          "output_start": 0.0,
+          "output_end": 4.16,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 4.16,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 2.1,
+            "end": 2.46,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "c08f3d9ad0ba4c0da05d3acc5ee912d5",
+      "speaker": "掌柜",
+      "text": "“孔乙己么？你还欠十九个钱呢！”",
+      "file_start_sample": 13769407,
+      "file_end_sample": 13827007,
+      "speech_start_sample": 13772047,
+      "speech_end_sample": 13822447,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 2.4,
+          "output_start": 0.0,
+          "output_end": 2.4,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 2.4,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "1befe2a865d64d83b33825ef2f72e099",
+      "speaker": "旁白",
+      "text": "孔乙己很颓唐的仰面答道，",
+      "file_start_sample": 13833007,
+      "file_end_sample": 13948207,
+      "speech_start_sample": 13861087,
+      "speech_end_sample": 13906687,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 4.8,
+          "output_start": 0.0,
+          "output_end": 4.8,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 4.8,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "10d62b4cd17b40779fa9acae20d5b68a",
+      "speaker": "孔乙己",
+      "text": "“这……下回还清罢。这一回是现钱，酒要好。”",
+      "file_start_sample": 13954207,
+      "file_end_sample": 14217247,
+      "speech_start_sample": 13998607,
+      "speech_end_sample": 14181487,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 10.96,
+          "output_start": 0.0,
+          "output_end": 10.96,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 10.96,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 2.31,
+            "end": 3.28,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 4.78,
+            "end": 5.55,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 6.3,
+            "end": 6.68,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 7.71,
+            "end": 8.32,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "fc4d754f11e344eaa5cba14088a244c3",
+      "speaker": "旁白",
+      "text": "掌柜仍然同平常一样，笑着对他说，",
+      "file_start_sample": 14223247,
+      "file_end_sample": 14323087,
+      "speech_start_sample": 14241487,
+      "speech_end_sample": 14310127,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 4.16,
+          "output_start": 0.0,
+          "output_end": 4.16,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 4.16,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "b432a572b80a4c138a2ecaa03cc1186d",
+      "speaker": "掌柜",
+      "text": "“孔乙己，你又偸了东西了！”",
+      "file_start_sample": 14329087,
+      "file_end_sample": 14382847,
+      "speech_start_sample": 14333647,
+      "speech_end_sample": 14380927,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 2.24,
+          "output_start": 0.0,
+          "output_end": 2.24,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 2.24,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "3ec44c2b863244dab322307ec3cadf2d",
+      "speaker": "旁白",
+      "text": "但他这回却不十分分辩，单说了一句",
+      "file_start_sample": 14388847,
+      "file_end_sample": 14486767,
+      "speech_start_sample": 14397727,
+      "speech_end_sample": 14475727,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 4.08,
+          "output_start": 0.0,
+          "output_end": 4.08,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 4.08,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 2.36,
+            "end": 2.82,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "ce482a780dee48abb8f47a74c47a9abf",
+      "speaker": "孔乙己",
+      "text": "“不要取笑！”",
+      "file_start_sample": 14492767,
+      "file_end_sample": 14552287,
+      "speech_start_sample": 14512687,
+      "speech_end_sample": 14538127,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 2.48,
+          "output_start": 0.0,
+          "output_end": 2.48,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 2.48,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "ba75a0220fc6420da9a6faf0ebea0613",
+      "speaker": "掌柜",
+      "text": "“取笑？要是不偸，怎么会打断腿？”",
+      "file_start_sample": 14558287,
+      "file_end_sample": 14629327,
+      "speech_start_sample": 14560927,
+      "speech_end_sample": 14625487,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 2.96,
+          "output_start": 0.0,
+          "output_end": 2.96,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 2.96,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "16632620b0b14e579a5100c7642ad4c6",
+      "speaker": "旁白",
+      "text": "孔乙己低声说道：",
+      "file_start_sample": 14635327,
+      "file_end_sample": 14712127,
+      "speech_start_sample": 14655487,
+      "speech_end_sample": 14692207,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 3.2,
+          "output_start": 0.0,
+          "output_end": 3.2,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 3.2,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "0536c241a6464272aa213355af572869",
+      "speaker": "孔乙己",
+      "text": "“跌断，跌，跌……”",
+      "file_start_sample": 14718127,
+      "file_end_sample": 15134767,
+      "speech_start_sample": 14757487,
+      "speech_end_sample": 14835727,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 17.36,
+          "output_start": 0.0,
+          "output_end": 17.36,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 17.36,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 2.27,
+            "end": 4.63,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "388e8d71d2db456fb72344f71f9fc331",
+      "speaker": "旁白",
+      "text": "他的眼色，很像恳求掌柜，不要再提。此时已经聚集了几个人，便和掌柜都笑了。我温了酒，端出去，放在门槛上。",
+      "file_start_sample": 15140767,
+      "file_end_sample": 15423007,
+      "speech_start_sample": 15153007,
+      "speech_end_sample": 15411247,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 11.76,
+          "output_start": 0.0,
+          "output_end": 11.76,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 11.76,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 3.83,
+            "end": 4.37,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 7.88,
+            "end": 8.54,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "8bae91eb529646648c113b7d6d2c8d18",
+      "speaker": "旁白",
+      "text": "他从破衣袋里摸出四文大钱，放在我手里，见他满手是泥，原来他便用这手走来的。",
+      "file_start_sample": 15429007,
+      "file_end_sample": 15640207,
+      "speech_start_sample": 15439807,
+      "speech_end_sample": 15627247,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 8.8,
+          "output_start": 0.0,
+          "output_end": 8.8,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 8.8,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 4.14,
+            "end": 4.59,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "3377977fac48430faeac8a0e4f330176",
+      "speaker": "旁白",
+      "text": "不一会，他喝完酒，便又在旁人的说笑声中，坐着用这手慢慢走去了。\n自此以后，又长久没有看见孔乙己。",
+      "file_start_sample": 15646207,
+      "file_end_sample": 15886207,
+      "speech_start_sample": 15655087,
+      "speech_end_sample": 15872287,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 10.0,
+          "output_start": 0.0,
+          "output_end": 10.0,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 10.0,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 5.7,
+            "end": 6.32,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "f5d917f95d784e6ba9b1252578ad1311",
+      "speaker": "旁白",
+      "text": "到了年关，掌柜取下粉板说：",
+      "file_start_sample": 15892207,
+      "file_end_sample": 15974767,
+      "speech_start_sample": 15901327,
+      "speech_end_sample": 15961087,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 3.44,
+          "output_start": 0.0,
+          "output_end": 3.44,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 3.44,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "a26aac0da05644b1b3662a8cf04b75e9",
+      "speaker": "掌柜",
+      "text": "“孔乙己还欠十九个钱呢！”",
+      "file_start_sample": 15980767,
+      "file_end_sample": 16034527,
+      "speech_start_sample": 15983407,
+      "speech_end_sample": 16029487,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 2.24,
+          "output_start": 0.0,
+          "output_end": 2.24,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 2.24,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "af40f9819778495ca875332099e25be4",
+      "speaker": "旁白",
+      "text": "到第二年的端午，又说：",
+      "file_start_sample": 16040527,
+      "file_end_sample": 16107727,
+      "speech_start_sample": 16049407,
+      "speech_end_sample": 16098607,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 2.8,
+          "output_start": 0.0,
+          "output_end": 2.8,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 2.8,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "950d3b3d2b6a4922ab19f015ea705dcd",
+      "speaker": "掌柜",
+      "text": "“孔乙己还欠十九个钱呢！”",
+      "file_start_sample": 16113727,
+      "file_end_sample": 16167487,
+      "speech_start_sample": 16116367,
+      "speech_end_sample": 16162447,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 2.24,
+          "output_start": 0.0,
+          "output_end": 2.24,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 2.24,
+        "markers": [],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    },
+    {
+      "id": "be211392cd19406794b8bedd477126b1",
+      "speaker": "旁白",
+      "text": "到中秋可是没有说，再到年关也没有看见他。\n我到现在终于没有见——大约孔乙己的确死了。",
+      "file_start_sample": 16173487,
+      "file_end_sample": 16386607,
+      "speech_start_sample": 16182607,
+      "speech_end_sample": 16374127,
+      "speech_boundary_method": "estimated_rms_10ms",
+      "synthetic_audio": true,
+      "speech_rate": 1.0,
+      "tempo_mapping": [
+        {
+          "source_start": 0.0,
+          "source_end": 8.88,
+          "output_start": 0.0,
+          "output_end": 8.88,
+          "speed": 1.0
+        }
+      ],
+      "processed_checks": {
+        "version": "listening-cues-v2-duration",
+        "duration": 8.88,
+        "markers": [
+          {
+            "kind": "pause",
+            "start": 1.72,
+            "end": 2.18,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 3.86,
+            "end": 4.64,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          },
+          {
+            "kind": "pause",
+            "start": 6.27,
+            "end": 6.62,
+            "label": "较长停顿 · 请试听",
+            "basis": "低能量持续至少 0.35 秒，可能是正常断句。"
+          }
+        ],
+        "pace": {
+          "status": "unavailable",
+          "reason": "文字时间信息不足，语速起伏请人工试听。"
+        },
+        "manual_checkpoints": [
+          "尾音是否自然、是否拖音",
+          "同一角色声线是否一致",
+          "停顿是否符合句意、前后语速是否合适"
+        ],
+        "notice": "成品低能量检查；时间为该句成品秒数，不代表自然度通过。"
+      },
+      "processed_check_scope": "final_segment_audio; pace requires original ASR timings"
+    }
+  ],
+  "subtitle_cues": [
+    {
+      "start_sample": 8160,
+      "end_sample": 40320,
+      "text": "鲁镇的酒店的格局",
+      "estimated": false
+    },
+    {
+      "start_sample": 40320,
+      "end_sample": 78720,
+      "text": "是和别处不同的",
+      "estimated": false
+    },
+    {
+      "start_sample": 78720,
+      "end_sample": 143520,
+      "text": "都是当街一个曲尺形的大柜台",
+      "estimated": false
+    },
+    {
+      "start_sample": 143520,
+      "end_sample": 226080,
+      "text": "柜里面豫备着热水 可以随时温酒",
+      "estimated": false
+    },
+    {
+      "start_sample": 292560,
+      "end_sample": 310320,
+      "text": "做工的人",
+      "estimated": false
+    },
+    {
+      "start_sample": 310320,
+      "end_sample": 349680,
+      "text": "傍午傍晚散了工",
+      "estimated": false
+    },
+    {
+      "start_sample": 349680,
+      "end_sample": 396720,
+      "text": "每每花四文铜钱",
+      "estimated": false
+    },
+    {
+      "start_sample": 396720,
+      "end_sample": 422640,
+      "text": "买一碗酒——",
+      "estimated": false
+    },
+    {
+      "start_sample": 422640,
+      "end_sample": 464880,
+      "text": "这是二十多年前的事",
+      "estimated": false
+    },
+    {
+      "start_sample": 464880,
+      "end_sample": 535920,
+      "text": "现在每碗要涨到十文 ——",
+      "estimated": false
+    },
+    {
+      "start_sample": 535920,
+      "end_sample": 570960,
+      "text": "靠柜外站着",
+      "estimated": false
+    },
+    {
+      "start_sample": 625680,
+      "end_sample": 655680,
+      "text": "热热的喝了休息",
+      "estimated": false
+    },
+    {
+      "start_sample": 694560,
+      "end_sample": 723600,
+      "text": "倘肯多花一文",
+      "estimated": false
+    },
+    {
+      "start_sample": 723600,
+      "end_sample": 774000,
+      "text": "便可以买一碟盐煮笋",
+      "estimated": false
+    },
+    {
+      "start_sample": 774000,
+      "end_sample": 805200,
+      "text": "或者茴香豆",
+      "estimated": false
+    },
+    {
+      "start_sample": 805200,
+      "end_sample": 833040,
+      "text": "做下酒物了",
+      "estimated": false
+    },
+    {
+      "start_sample": 833040,
+      "end_sample": 886320,
+      "text": "如果出到了十几文",
+      "estimated": false
+    },
+    {
+      "start_sample": 886320,
+      "end_sample": 929040,
+      "text": "那就能买一样荤菜",
+      "estimated": false
+    },
+    {
+      "start_sample": 929040,
+      "end_sample": 963600,
+      "text": "但这些顾客",
+      "estimated": false
+    },
+    {
+      "start_sample": 963600,
+      "end_sample": 996720,
+      "text": "多是短衣帮",
+      "estimated": false
+    },
+    {
+      "start_sample": 1028640,
+      "end_sample": 1062240,
+      "text": "大抵没有这样阔绰",
+      "estimated": false
+    },
+    {
+      "start_sample": 1062240,
+      "end_sample": 1116960,
+      "text": "只有穿长衫的",
+      "estimated": false
+    },
+    {
+      "start_sample": 1116960,
+      "end_sample": 1169280,
+      "text": "才踱进店面隔壁的房子里",
+      "estimated": false
+    },
+    {
+      "start_sample": 1169280,
+      "end_sample": 1201440,
+      "text": "要酒要菜",
+      "estimated": false
+    },
+    {
+      "start_sample": 1201440,
+      "end_sample": 1234560,
+      "text": "慢慢地坐喝",
+      "estimated": false
+    },
+    {
+      "start_sample": 1253520,
+      "end_sample": 1282320,
+      "text": "我从十二岁起",
+      "estimated": false
+    },
+    {
+      "start_sample": 1282320,
+      "end_sample": 1342800,
+      "text": "便在镇口的咸亨酒店里当伙计",
+      "estimated": false
+    },
+    {
+      "start_sample": 1342800,
+      "end_sample": 1367280,
+      "text": "掌柜说",
+      "estimated": false
+    },
+    {
+      "start_sample": 1367280,
+      "end_sample": 1395600,
+      "text": "样子太儍",
+      "estimated": false
+    },
+    {
+      "start_sample": 1395600,
+      "end_sample": 1442640,
+      "text": "怕侍候不了长衫主顾",
+      "estimated": false
+    },
+    {
+      "start_sample": 1442640,
+      "end_sample": 1483920,
+      "text": "就在外面做点事罢",
+      "estimated": false
+    },
+    {
+      "start_sample": 1511280,
+      "end_sample": 1564320,
+      "text": "外面的短衣主顾 虽然容易说话",
+      "estimated": false
+    },
+    {
+      "start_sample": 1564320,
+      "end_sample": 1630800,
+      "text": "但唠唠叨叨缠夹不清的也很不少",
+      "estimated": false
+    },
+    {
+      "start_sample": 1661040,
+      "end_sample": 1740240,
+      "text": "他们往往要亲眼看着黄酒从坛子里舀出",
+      "estimated": false
+    },
+    {
+      "start_sample": 1740240,
+      "end_sample": 1797360,
+      "text": "看过壶子底里有水没有",
+      "estimated": false
+    },
+    {
+      "start_sample": 1797360,
+      "end_sample": 1862160,
+      "text": "又亲看将壶子放在热水里",
+      "estimated": false
+    },
+    {
+      "start_sample": 1862160,
+      "end_sample": 1891440,
+      "text": "然后放心",
+      "estimated": false
+    },
+    {
+      "start_sample": 1891440,
+      "end_sample": 1938240,
+      "text": "在这严重监督之下",
+      "estimated": false
+    },
+    {
+      "start_sample": 1984320,
+      "end_sample": 2016000,
+      "text": "羼水也很为难",
+      "estimated": false
+    },
+    {
+      "start_sample": 2016000,
+      "end_sample": 2054400,
+      "text": "所以过了几天",
+      "estimated": false
+    },
+    {
+      "start_sample": 2054400,
+      "end_sample": 2105280,
+      "text": "掌柜又说我干不了这事",
+      "estimated": false
+    },
+    {
+      "start_sample": 2105280,
+      "end_sample": 2154240,
+      "text": "幸亏荐头的情面大",
+      "estimated": false
+    },
+    {
+      "start_sample": 2154240,
+      "end_sample": 2178720,
+      "text": "辞退不得",
+      "estimated": false
+    },
+    {
+      "start_sample": 2178720,
+      "end_sample": 2253600,
+      "text": "便改为专管温酒的一种无聊职务了",
+      "estimated": false
+    },
+    {
+      "start_sample": 2301840,
+      "end_sample": 2361775,
+      "text": "我从此便整天的站在柜台里",
+      "estimated": true
+    },
+    {
+      "start_sample": 2361775,
+      "end_sample": 2391743,
+      "text": "专管我的职务",
+      "estimated": true
+    },
+    {
+      "start_sample": 2391743,
+      "end_sample": 2466662,
+      "text": "虽然没有什么失职 但总觉有些单调",
+      "estimated": true
+    },
+    {
+      "start_sample": 2466662,
+      "end_sample": 2490662,
+      "text": "有些无聊",
+      "estimated": true
+    },
+    {
+      "start_sample": 2522400,
+      "end_sample": 2558400,
+      "text": "掌柜是一副凶脸孔",
+      "estimated": false
+    },
+    {
+      "start_sample": 2558400,
+      "end_sample": 2598240,
+      "text": "主顾也没有好声气",
+      "estimated": false
+    },
+    {
+      "start_sample": 2598240,
+      "end_sample": 2635200,
+      "text": "教人活泼不得",
+      "estimated": false
+    },
+    {
+      "start_sample": 2635200,
+      "end_sample": 2710080,
+      "text": "只有孔乙己到店 才可以笑几声",
+      "estimated": false
+    },
+    {
+      "start_sample": 2710080,
+      "end_sample": 2745360,
+      "text": "所以至今还记得",
+      "estimated": false
+    },
+    {
+      "start_sample": 2819760,
+      "end_sample": 2901840,
+      "text": "孔乙己是站着喝酒而穿长衫的唯一的人",
+      "estimated": false
+    },
+    {
+      "start_sample": 2901840,
+      "end_sample": 2950800,
+      "text": "他身材很高大",
+      "estimated": false
+    },
+    {
+      "start_sample": 2950800,
+      "end_sample": 2980560,
+      "text": "青白脸色",
+      "estimated": false
+    },
+    {
+      "start_sample": 2980560,
+      "end_sample": 3034320,
+      "text": "皱纹间时常夹些伤痕",
+      "estimated": false
+    },
+    {
+      "start_sample": 3034320,
+      "end_sample": 3098640,
+      "text": "一部乱蓬蓬的花白的胡子",
+      "estimated": false
+    },
+    {
+      "start_sample": 3172320,
+      "end_sample": 3208800,
+      "text": "穿的虽然是长衫",
+      "estimated": false
+    },
+    {
+      "start_sample": 3208800,
+      "end_sample": 3241920,
+      "text": "可是又脏又破",
+      "estimated": false
+    },
+    {
+      "start_sample": 3241920,
+      "end_sample": 3309120,
+      "text": "似乎十多年没有补 也没有洗",
+      "estimated": false
+    },
+    {
+      "start_sample": 3309120,
+      "end_sample": 3388320,
+      "text": "他对人说话 总是满口之乎者也",
+      "estimated": false
+    },
+    {
+      "start_sample": 3388320,
+      "end_sample": 3435600,
+      "text": "教人半懂不懂的",
+      "estimated": false
+    },
+    {
+      "start_sample": 3492720,
+      "end_sample": 3513840,
+      "text": "因为他姓孔",
+      "estimated": false
+    },
+    {
+      "start_sample": 3513840,
+      "end_sample": 3594720,
+      "text": "别人便从描红纸上的上大人孔乙己",
+      "estimated": false
+    },
+    {
+      "start_sample": 3645120,
+      "end_sample": 3720480,
+      "text": "这半懂不懂的话里 替他取下一个绰号",
+      "estimated": false
+    },
+    {
+      "start_sample": 3720480,
+      "end_sample": 3746880,
+      "text": "叫作孔乙己",
+      "estimated": false
+    },
+    {
+      "start_sample": 3746880,
+      "end_sample": 3797280,
+      "text": "孔乙己一到店",
+      "estimated": false
+    },
+    {
+      "start_sample": 3797280,
+      "end_sample": 3862080,
+      "text": "所有喝酒的人便都看着他笑",
+      "estimated": false
+    },
+    {
+      "start_sample": 3862080,
+      "end_sample": 3900480,
+      "text": "有的叫道",
+      "estimated": false
+    },
+    {
+      "start_sample": 3932640,
+      "end_sample": 4000560,
+      "text": "孔乙己 你脸上又添上新伤疤了！",
+      "estimated": false
+    },
+    {
+      "start_sample": 4026241,
+      "end_sample": 4046401,
+      "text": "他不回答",
+      "estimated": false
+    },
+    {
+      "start_sample": 4046401,
+      "end_sample": 4072081,
+      "text": "对柜里说",
+      "estimated": false
+    },
+    {
+      "start_sample": 4121521,
+      "end_sample": 4146481,
+      "text": "温两碗酒",
+      "estimated": false
+    },
+    {
+      "start_sample": 4152481,
+      "end_sample": 4193521,
+      "text": "要一碟茴香豆",
+      "estimated": false
+    },
+    {
+      "start_sample": 4219921,
+      "end_sample": 4249441,
+      "text": "便排出九文大钱",
+      "estimated": false
+    },
+    {
+      "start_sample": 4249441,
+      "end_sample": 4308241,
+      "text": "他们又故意的高声嚷道",
+      "estimated": false
+    },
+    {
+      "start_sample": 4333441,
+      "end_sample": 4374241,
+      "text": "你一定又偸了人家的东西了！",
+      "estimated": false
+    },
+    {
+      "start_sample": 4410961,
+      "end_sample": 4458001,
+      "text": "孔乙己睁大眼睛说",
+      "estimated": false
+    },
+    {
+      "start_sample": 4516801,
+      "end_sample": 4575121,
+      "text": "你怎么这样凭空污人清白……",
+      "estimated": false
+    },
+    {
+      "start_sample": 4610401,
+      "end_sample": 4639201,
+      "text": "什么清白？",
+      "estimated": false
+    },
+    {
+      "start_sample": 4641361,
+      "end_sample": 4713361,
+      "text": "我前天亲眼见你偸了何家的书 吊着打",
+      "estimated": false
+    },
+    {
+      "start_sample": 4750801,
+      "end_sample": 4791121,
+      "text": "孔乙己便涨红了脸",
+      "estimated": false
+    },
+    {
+      "start_sample": 4791121,
+      "end_sample": 4846801,
+      "text": "额上的青筋条条绽出",
+      "estimated": false
+    },
+    {
+      "start_sample": 4846801,
+      "end_sample": 4870801,
+      "text": "争辩道",
+      "estimated": false
+    },
+    {
+      "start_sample": 4935601,
+      "end_sample": 4977601,
+      "text": "窃书不能算偸……",
+      "estimated": false
+    },
+    {
+      "start_sample": 4977601,
+      "end_sample": 5041441,
+      "text": "窃书！……",
+      "estimated": false
+    },
+    {
+      "start_sample": 5041441,
+      "end_sample": 5097121,
+      "text": "读书人的事",
+      "estimated": false
+    },
+    {
+      "start_sample": 5097121,
+      "end_sample": 5133601,
+      "text": "能算偸么？",
+      "estimated": false
+    },
+    {
+      "start_sample": 5186401,
+      "end_sample": 5226961,
+      "text": "接连便是难懂的话 什么",
+      "estimated": false
+    },
+    {
+      "start_sample": 5226961,
+      "end_sample": 5252401,
+      "text": "君子固穷",
+      "estimated": false
+    },
+    {
+      "start_sample": 5252401,
+      "end_sample": 5277601,
+      "text": "什么者乎",
+      "estimated": false
+    },
+    {
+      "start_sample": 5304961,
+      "end_sample": 5363041,
+      "text": "之类 引得众人都哄笑起来",
+      "estimated": false
+    },
+    {
+      "start_sample": 5363041,
+      "end_sample": 5418241,
+      "text": "店内外充满了快活的空气",
+      "estimated": false
+    },
+    {
+      "start_sample": 5418241,
+      "end_sample": 5465761,
+      "text": "听人家背地里谈论",
+      "estimated": false
+    },
+    {
+      "start_sample": 5465761,
+      "end_sample": 5509441,
+      "text": "孔乙己原来也读过书",
+      "estimated": false
+    },
+    {
+      "start_sample": 5509441,
+      "end_sample": 5575681,
+      "text": "但终于没有进学 又不会营生",
+      "estimated": false
+    },
+    {
+      "start_sample": 5605921,
+      "end_sample": 5679121,
+      "text": "于是愈过愈穷 弄到将要讨饭了",
+      "estimated": false
+    },
+    {
+      "start_sample": 5679121,
+      "end_sample": 5727121,
+      "text": "幸而写得一笔好字",
+      "estimated": false
+    },
+    {
+      "start_sample": 5727121,
+      "end_sample": 5790481,
+      "text": "便替人家钞钞书 换一碗饭吃",
+      "estimated": false
+    },
+    {
+      "start_sample": 5790481,
+      "end_sample": 5852401,
+      "text": "可惜他又有一样坏脾气",
+      "estimated": false
+    },
+    {
+      "start_sample": 5852401,
+      "end_sample": 5888161,
+      "text": "便是好喝懒做",
+      "estimated": false
+    },
+    {
+      "start_sample": 5920321,
+      "end_sample": 5942401,
+      "text": "坐不到几天",
+      "estimated": false
+    },
+    {
+      "start_sample": 5942401,
+      "end_sample": 6021121,
+      "text": "便连人和书籍纸张笔砚 一齐失踪",
+      "estimated": false
+    },
+    {
+      "start_sample": 6021121,
+      "end_sample": 6098401,
+      "text": "如是几次 叫他钞书的人也没有了",
+      "estimated": false
+    },
+    {
+      "start_sample": 6098401,
+      "end_sample": 6143521,
+      "text": "孔乙己没有法",
+      "estimated": false
+    },
+    {
+      "start_sample": 6143521,
+      "end_sample": 6201841,
+      "text": "便免不了偶然做些偸窃的事",
+      "estimated": false
+    },
+    {
+      "start_sample": 6227041,
+      "end_sample": 6305041,
+      "text": "但他在我们店里 品行却比别人都好",
+      "estimated": false
+    },
+    {
+      "start_sample": 6305041,
+      "end_sample": 6336961,
+      "text": "就是从不拖欠",
+      "estimated": false
+    },
+    {
+      "start_sample": 6369841,
+      "end_sample": 6411361,
+      "text": "虽然间或没有现钱",
+      "estimated": false
+    },
+    {
+      "start_sample": 6411361,
+      "end_sample": 6454081,
+      "text": "暂时记在粉板上",
+      "estimated": false
+    },
+    {
+      "start_sample": 6454081,
+      "end_sample": 6487201,
+      "text": "但不出一月",
+      "estimated": false
+    },
+    {
+      "start_sample": 6487201,
+      "end_sample": 6512641,
+      "text": "定然还清",
+      "estimated": false
+    },
+    {
+      "start_sample": 6512641,
+      "end_sample": 6585121,
+      "text": "从粉板上拭去了孔乙己的名字",
+      "estimated": false
+    },
+    {
+      "start_sample": 6630721,
+      "end_sample": 6672721,
+      "text": "孔乙己喝过半碗酒",
+      "estimated": false
+    },
+    {
+      "start_sample": 6672721,
+      "end_sample": 6733681,
+      "text": "涨红的脸色渐渐复了原",
+      "estimated": false
+    },
+    {
+      "start_sample": 6733681,
+      "end_sample": 6781441,
+      "text": "旁人便又问道",
+      "estimated": false
+    },
+    {
+      "start_sample": 6833521,
+      "end_sample": 6886561,
+      "text": "孔乙己 你当真认识字么？",
+      "estimated": false
+    },
+    {
+      "start_sample": 6921601,
+      "end_sample": 6960241,
+      "text": "孔乙己看着问他的人",
+      "estimated": false
+    },
+    {
+      "start_sample": 6960241,
+      "end_sample": 7008241,
+      "text": "显出不屑置辩的神气",
+      "estimated": false
+    },
+    {
+      "start_sample": 7008241,
+      "end_sample": 7052641,
+      "text": "他们便接着说道",
+      "estimated": false
+    },
+    {
+      "start_sample": 7110721,
+      "end_sample": 7180321,
+      "text": "你怎的连半个秀才也捞不到呢？",
+      "estimated": false
+    },
+    {
+      "start_sample": 7215361,
+      "end_sample": 7280881,
+      "text": "孔乙己立刻显出颓唐不安模样",
+      "estimated": false
+    },
+    {
+      "start_sample": 7280881,
+      "end_sample": 7337041,
+      "text": "脸上笼上了一层灰色",
+      "estimated": false
+    },
+    {
+      "start_sample": 7337041,
+      "end_sample": 7364881,
+      "text": "嘴里说些话",
+      "estimated": false
+    },
+    {
+      "start_sample": 7364881,
+      "end_sample": 7425841,
+      "text": "这回可是全是之乎者也之类",
+      "estimated": false
+    },
+    {
+      "start_sample": 7425841,
+      "end_sample": 7454401,
+      "text": "一些不懂了",
+      "estimated": false
+    },
+    {
+      "start_sample": 7525441,
+      "end_sample": 7540321,
+      "text": "在这时候",
+      "estimated": false
+    },
+    {
+      "start_sample": 7540321,
+      "end_sample": 7590721,
+      "text": "众人也都哄笑起来",
+      "estimated": false
+    },
+    {
+      "start_sample": 7590721,
+      "end_sample": 7642561,
+      "text": "店内外充满了快活的空气",
+      "estimated": false
+    },
+    {
+      "start_sample": 7642561,
+      "end_sample": 7681441,
+      "text": "在这些时候",
+      "estimated": false
+    },
+    {
+      "start_sample": 7681441,
+      "end_sample": 7714561,
+      "text": "我可以附和着笑",
+      "estimated": false
+    },
+    {
+      "start_sample": 7714561,
+      "end_sample": 7764721,
+      "text": "掌柜是决不责备的",
+      "estimated": false
+    },
+    {
+      "start_sample": 7808641,
+      "end_sample": 7879921,
+      "text": "而且掌柜见了孔乙己 也每每这样问他",
+      "estimated": false
+    },
+    {
+      "start_sample": 7879921,
+      "end_sample": 7902001,
+      "text": "引人发笑",
+      "estimated": false
+    },
+    {
+      "start_sample": 7902001,
+      "end_sample": 7980241,
+      "text": "孔乙己自己知道不能和他们谈天",
+      "estimated": false
+    },
+    {
+      "start_sample": 7980241,
+      "end_sample": 8034481,
+      "text": "便只好向孩子说话",
+      "estimated": false
+    },
+    {
+      "start_sample": 8034481,
+      "end_sample": 8078881,
+      "text": "有一回对我说道",
+      "estimated": false
+    },
+    {
+      "start_sample": 8116081,
+      "end_sample": 8140081,
+      "text": "你读过书么？",
+      "estimated": false
+    },
+    {
+      "start_sample": 8174161,
+      "end_sample": 8202961,
+      "text": "我略略点一点头",
+      "estimated": false
+    },
+    {
+      "start_sample": 8202961,
+      "end_sample": 8226961,
+      "text": "他说",
+      "estimated": false
+    },
+    {
+      "start_sample": 8261281,
+      "end_sample": 8273761,
+      "text": "读过书 ……",
+      "estimated": false
+    },
+    {
+      "start_sample": 8273761,
+      "end_sample": 8308321,
+      "text": "我便考你一考",
+      "estimated": false
+    },
+    {
+      "start_sample": 8308321,
+      "end_sample": 8353921,
+      "text": "茴香豆的茴字",
+      "estimated": false
+    },
+    {
+      "start_sample": 8353921,
+      "end_sample": 8377921,
+      "text": "怎样写的？",
+      "estimated": false
+    },
+    {
+      "start_sample": 8422081,
+      "end_sample": 8462161,
+      "text": "我想 讨饭一样的人",
+      "estimated": false
+    },
+    {
+      "start_sample": 8462161,
+      "end_sample": 8493361,
+      "text": "也配考我么？",
+      "estimated": false
+    },
+    {
+      "start_sample": 8493361,
+      "end_sample": 8532721,
+      "text": "便回过脸去",
+      "estimated": false
+    },
+    {
+      "start_sample": 8532721,
+      "end_sample": 8559121,
+      "text": "不再理会",
+      "estimated": false
+    },
+    {
+      "start_sample": 8559121,
+      "end_sample": 8615761,
+      "text": "孔乙己等了许久",
+      "estimated": false
+    },
+    {
+      "start_sample": 8615761,
+      "end_sample": 8647681,
+      "text": "很恳切的说道",
+      "estimated": false
+    },
+    {
+      "start_sample": 8689441,
+      "end_sample": 8711521,
+      "text": "不能写罢？……",
+      "estimated": false
+    },
+    {
+      "start_sample": 8711521,
+      "end_sample": 8759041,
+      "text": "我教给你",
+      "estimated": false
+    },
+    {
+      "start_sample": 8759041,
+      "end_sample": 8772961,
+      "text": "记着！",
+      "estimated": false
+    },
+    {
+      "start_sample": 8772961,
+      "end_sample": 8836801,
+      "text": "这些字应该记着",
+      "estimated": false
+    },
+    {
+      "start_sample": 8836801,
+      "end_sample": 8896801,
+      "text": "将来做掌柜的时候",
+      "estimated": false
+    },
+    {
+      "start_sample": 8896801,
+      "end_sample": 8940001,
+      "text": "写帐要用",
+      "estimated": false
+    },
+    {
+      "start_sample": 8979121,
+      "end_sample": 9042481,
+      "text": "我暗想我和掌柜的等级还很远呢",
+      "estimated": false
+    },
+    {
+      "start_sample": 9042481,
+      "end_sample": 9128401,
+      "text": "而且我们掌柜也从不将茴香豆上帐",
+      "estimated": false
+    },
+    {
+      "start_sample": 9128401,
+      "end_sample": 9172081,
+      "text": "又好笑 又不耐烦",
+      "estimated": false
+    },
+    {
+      "start_sample": 9172081,
+      "end_sample": 9216241,
+      "text": "懒懒的答他道",
+      "estimated": false
+    },
+    {
+      "start_sample": 9243121,
+      "end_sample": 9263041,
+      "text": "谁要你教",
+      "estimated": false
+    },
+    {
+      "start_sample": 9263041,
+      "end_sample": 9319201,
+      "text": "不是草头底下一个来回的回字么？",
+      "estimated": false
+    },
+    {
+      "start_sample": 9370561,
+      "end_sample": 9430321,
+      "text": "孔乙己显出极高兴的样子",
+      "estimated": false
+    },
+    {
+      "start_sample": 9430321,
+      "end_sample": 9491761,
+      "text": "将两个指头的长指甲敲着柜台",
+      "estimated": false
+    },
+    {
+      "start_sample": 9491761,
+      "end_sample": 9518881,
+      "text": "点头说",
+      "estimated": false
+    },
+    {
+      "start_sample": 9588961,
+      "end_sample": 9624001,
+      "text": "对呀对呀！……",
+      "estimated": false
+    },
+    {
+      "start_sample": 9624001,
+      "end_sample": 9662881,
+      "text": "回字有四样写法",
+      "estimated": false
+    },
+    {
+      "start_sample": 9662881,
+      "end_sample": 9693601,
+      "text": "你知道么？",
+      "estimated": false
+    },
+    {
+      "start_sample": 9731521,
+      "end_sample": 9755761,
+      "text": "我愈不耐烦了",
+      "estimated": false
+    },
+    {
+      "start_sample": 9755761,
+      "end_sample": 9783601,
+      "text": "努着嘴走远",
+      "estimated": false
+    },
+    {
+      "start_sample": 9783601,
+      "end_sample": 9845521,
+      "text": "孔乙己刚用指甲蘸了酒",
+      "estimated": false
+    },
+    {
+      "start_sample": 9845521,
+      "end_sample": 9881521,
+      "text": "想在柜上写字",
+      "estimated": false
+    },
+    {
+      "start_sample": 9881521,
+      "end_sample": 9916081,
+      "text": "见我毫不热心",
+      "estimated": false
+    },
+    {
+      "start_sample": 9916081,
+      "end_sample": 9985441,
+      "text": "便又叹一口气 显出极惋惜的样子",
+      "estimated": false
+    },
+    {
+      "start_sample": 10021441,
+      "end_sample": 10082401,
+      "text": "有几回 邻舍孩子听得笑声",
+      "estimated": false
+    },
+    {
+      "start_sample": 10082401,
+      "end_sample": 10107361,
+      "text": "也赶热闹",
+      "estimated": false
+    },
+    {
+      "start_sample": 10107361,
+      "end_sample": 10142881,
+      "text": "围住了孔乙己",
+      "estimated": false
+    },
+    {
+      "start_sample": 10142881,
+      "end_sample": 10198081,
+      "text": "他便给他们茴香豆吃",
+      "estimated": false
+    },
+    {
+      "start_sample": 10198081,
+      "end_sample": 10222081,
+      "text": "一人一颗",
+      "estimated": false
+    },
+    {
+      "start_sample": 10222081,
+      "end_sample": 10286401,
+      "text": "孩子吃完豆 仍然不散",
+      "estimated": false
+    },
+    {
+      "start_sample": 10286401,
+      "end_sample": 10322161,
+      "text": "眼睛都望着碟子",
+      "estimated": false
+    },
+    {
+      "start_sample": 10369921,
+      "end_sample": 10400881,
+      "text": "孔乙己着了慌",
+      "estimated": false
+    },
+    {
+      "start_sample": 10400881,
+      "end_sample": 10454641,
+      "text": "伸开五指将碟子罩住",
+      "estimated": false
+    },
+    {
+      "start_sample": 10454641,
+      "end_sample": 10488001,
+      "text": "弯腰下去说道",
+      "estimated": false
+    },
+    {
+      "start_sample": 10561921,
+      "end_sample": 10584961,
+      "text": "不多了",
+      "estimated": false
+    },
+    {
+      "start_sample": 10584961,
+      "end_sample": 10638001,
+      "text": "我已经不多了",
+      "estimated": false
+    },
+    {
+      "start_sample": 10679281,
+      "end_sample": 10709041,
+      "text": "直起身又看一看豆",
+      "estimated": false
+    },
+    {
+      "start_sample": 10709041,
+      "end_sample": 10735201,
+      "text": "自己摇头说",
+      "estimated": false
+    },
+    {
+      "start_sample": 10768081,
+      "end_sample": 10786561,
+      "text": "不多不多！",
+      "estimated": false
+    },
+    {
+      "start_sample": 10786561,
+      "end_sample": 10829281,
+      "text": "多乎哉？",
+      "estimated": false
+    },
+    {
+      "start_sample": 10829281,
+      "end_sample": 10860961,
+      "text": "不多也",
+      "estimated": false
+    },
+    {
+      "start_sample": 10892161,
+      "end_sample": 10965361,
+      "text": "于是这一群孩子都在笑声里走散了",
+      "estimated": false
+    },
+    {
+      "start_sample": 10965361,
+      "end_sample": 11037361,
+      "text": "孔乙己是这样的使人快活",
+      "estimated": false
+    },
+    {
+      "start_sample": 11037361,
+      "end_sample": 11070961,
+      "text": "可是没有他",
+      "estimated": false
+    },
+    {
+      "start_sample": 11070961,
+      "end_sample": 11103601,
+      "text": "别人也便这么过",
+      "estimated": false
+    },
+    {
+      "start_sample": 11128321,
+      "end_sample": 11186401,
+      "text": "有一天 大约是中秋前的两三天",
+      "estimated": false
+    },
+    {
+      "start_sample": 11186401,
+      "end_sample": 11260321,
+      "text": "掌柜正在慢慢的结帐 取下粉板",
+      "estimated": false
+    },
+    {
+      "start_sample": 11260321,
+      "end_sample": 11286481,
+      "text": "忽然说",
+      "estimated": false
+    },
+    {
+      "start_sample": 11311201,
+      "end_sample": 11355841,
+      "text": "孔乙己长久没有来了",
+      "estimated": false
+    },
+    {
+      "start_sample": 11356321,
+      "end_sample": 11393281,
+      "text": "还欠十九个钱呢！",
+      "estimated": false
+    },
+    {
+      "start_sample": 11409361,
+      "end_sample": 11466241,
+      "text": "我才也觉得他的确长久没有来了",
+      "estimated": false
+    },
+    {
+      "start_sample": 11466241,
+      "end_sample": 11509921,
+      "text": "一个喝酒的人说道",
+      "estimated": false
+    },
+    {
+      "start_sample": 11548801,
+      "end_sample": 11602081,
+      "text": "他怎么会来？……他打折了腿了",
+      "estimated": false
+    },
+    {
+      "start_sample": 11627042,
+      "end_sample": 11651042,
+      "text": "掌柜说",
+      "estimated": false
+    },
+    {
+      "start_sample": 11675522,
+      "end_sample": 11699522,
+      "text": "哦！",
+      "estimated": false
+    },
+    {
+      "start_sample": 11699762,
+      "end_sample": 11724962,
+      "text": "他总仍旧是偸",
+      "estimated": false
+    },
+    {
+      "start_sample": 11724962,
+      "end_sample": 11782082,
+      "text": "这一回 是自己发昏",
+      "estimated": false
+    },
+    {
+      "start_sample": 11782082,
+      "end_sample": 11833922,
+      "text": "竟偸到丁举人家里去了",
+      "estimated": false
+    },
+    {
+      "start_sample": 11833922,
+      "end_sample": 11891522,
+      "text": "他家的东西 偸得的么？",
+      "estimated": false
+    },
+    {
+      "start_sample": 11909167,
+      "end_sample": 11933167,
+      "text": "后来怎么样？",
+      "estimated": false
+    },
+    {
+      "start_sample": 11944447,
+      "end_sample": 11968447,
+      "text": "怎么样？",
+      "estimated": false
+    },
+    {
+      "start_sample": 11969407,
+      "end_sample": 11993407,
+      "text": "先写服辩",
+      "estimated": false
+    },
+    {
+      "start_sample": 12000367,
+      "end_sample": 12025807,
+      "text": "后来是打",
+      "estimated": false
+    },
+    {
+      "start_sample": 12029407,
+      "end_sample": 12053647,
+      "text": "打了大半夜",
+      "estimated": false
+    },
+    {
+      "start_sample": 12055327,
+      "end_sample": 12079327,
+      "text": "再打折了腿",
+      "estimated": false
+    },
+    {
+      "start_sample": 12088447,
+      "end_sample": 12112447,
+      "text": "后来呢？",
+      "estimated": false
+    },
+    {
+      "start_sample": 12113407,
+      "end_sample": 12142927,
+      "text": "后来打折了腿了",
+      "estimated": false
+    },
+    {
+      "start_sample": 12153247,
+      "end_sample": 12178687,
+      "text": "打折了怎样呢？",
+      "estimated": false
+    },
+    {
+      "start_sample": 12193807,
+      "end_sample": 12213727,
+      "text": "怎样？……",
+      "estimated": false
+    },
+    {
+      "start_sample": 12213727,
+      "end_sample": 12237727,
+      "text": "谁晓得？",
+      "estimated": false
+    },
+    {
+      "start_sample": 12251647,
+      "end_sample": 12275647,
+      "text": "许是死了",
+      "estimated": false
+    },
+    {
+      "start_sample": 12296287,
+      "end_sample": 12321487,
+      "text": "掌柜也不再问",
+      "estimated": false
+    },
+    {
+      "start_sample": 12321487,
+      "end_sample": 12371407,
+      "text": "仍然慢慢的算他的帐",
+      "estimated": false
+    },
+    {
+      "start_sample": 12371407,
+      "end_sample": 12465487,
+      "text": "中秋过后 秋风是一天凉比一天",
+      "estimated": false
+    },
+    {
+      "start_sample": 12465487,
+      "end_sample": 12502927,
+      "text": "看看将近初冬",
+      "estimated": false
+    },
+    {
+      "start_sample": 12502927,
+      "end_sample": 12562927,
+      "text": "我整天的靠着火",
+      "estimated": false
+    },
+    {
+      "start_sample": 12562927,
+      "end_sample": 12604687,
+      "text": "也须穿上棉袄了",
+      "estimated": false
+    },
+    {
+      "start_sample": 12653407,
+      "end_sample": 12711521,
+      "text": "一天的下半天 没有一个顾客",
+      "estimated": true
+    },
+    {
+      "start_sample": 12711521,
+      "end_sample": 12745421,
+      "text": "我正合了眼坐着",
+      "estimated": true
+    },
+    {
+      "start_sample": 12745421,
+      "end_sample": 12789007,
+      "text": "忽然间听得一个声音",
+      "estimated": true
+    },
+    {
+      "start_sample": 12838687,
+      "end_sample": 12890767,
+      "text": "温一碗酒",
+      "estimated": false
+    },
+    {
+      "start_sample": 12942367,
+      "end_sample": 12977887,
+      "text": "这声音虽然极低",
+      "estimated": false
+    },
+    {
+      "start_sample": 12977887,
+      "end_sample": 13004767,
+      "text": "却很耳熟",
+      "estimated": false
+    },
+    {
+      "start_sample": 13004767,
+      "end_sample": 13060927,
+      "text": "看时又全没有人",
+      "estimated": false
+    },
+    {
+      "start_sample": 13060927,
+      "end_sample": 13105567,
+      "text": "站起来向外一望",
+      "estimated": false
+    },
+    {
+      "start_sample": 13105567,
+      "end_sample": 13195327,
+      "text": "那孔乙己便在柜台下对了门槛坐着",
+      "estimated": false
+    },
+    {
+      "start_sample": 13195327,
+      "end_sample": 13269967,
+      "text": "他脸上黑而且瘦 已经不成样子",
+      "estimated": false
+    },
+    {
+      "start_sample": 13340047,
+      "end_sample": 13368367,
+      "text": "穿一件破夹袄",
+      "estimated": false
+    },
+    {
+      "start_sample": 13368367,
+      "end_sample": 13399567,
+      "text": "盘着两腿",
+      "estimated": false
+    },
+    {
+      "start_sample": 13399567,
+      "end_sample": 13434127,
+      "text": "下面垫一个蒲包",
+      "estimated": false
+    },
+    {
+      "start_sample": 13434127,
+      "end_sample": 13483567,
+      "text": "用草绳在肩上挂住",
+      "estimated": false
+    },
+    {
+      "start_sample": 13483567,
+      "end_sample": 13511887,
+      "text": "见了我",
+      "estimated": false
+    },
+    {
+      "start_sample": 13511887,
+      "end_sample": 13535887,
+      "text": "又说道",
+      "estimated": false
+    },
+    {
+      "start_sample": 13588207,
+      "end_sample": 13640287,
+      "text": "温一碗酒",
+      "estimated": false
+    },
+    {
+      "start_sample": 13682047,
+      "end_sample": 13720687,
+      "text": "掌柜也伸出头去",
+      "estimated": true
+    },
+    {
+      "start_sample": 13720687,
+      "end_sample": 13744687,
+      "text": "一面说",
+      "estimated": true
+    },
+    {
+      "start_sample": 13772047,
+      "end_sample": 13793407,
+      "text": "孔乙己么？",
+      "estimated": false
+    },
+    {
+      "start_sample": 13793407,
+      "end_sample": 13822447,
+      "text": "你还欠十九个钱呢！",
+      "estimated": false
+    },
+    {
+      "start_sample": 13861087,
+      "end_sample": 13906687,
+      "text": "孔乙己很颓唐的仰面答道",
+      "estimated": false
+    },
+    {
+      "start_sample": 13998607,
+      "end_sample": 14004607,
+      "text": "这……",
+      "estimated": false
+    },
+    {
+      "start_sample": 14004607,
+      "end_sample": 14068927,
+      "text": "下回还清罢",
+      "estimated": false
+    },
+    {
+      "start_sample": 14068927,
+      "end_sample": 14138527,
+      "text": "这一回是现钱",
+      "estimated": false
+    },
+    {
+      "start_sample": 14138527,
+      "end_sample": 14181487,
+      "text": "酒要好",
+      "estimated": false
+    },
+    {
+      "start_sample": 14241487,
+      "end_sample": 14310127,
+      "text": "掌柜仍然同平常一样 笑着对他说",
+      "estimated": false
+    },
+    {
+      "start_sample": 14333647,
+      "end_sample": 14356207,
+      "text": "孔乙己",
+      "estimated": false
+    },
+    {
+      "start_sample": 14356207,
+      "end_sample": 14380927,
+      "text": "你又偸了东西了！",
+      "estimated": false
+    },
+    {
+      "start_sample": 14397727,
+      "end_sample": 14445967,
+      "text": "但他这回却不十分分辩",
+      "estimated": false
+    },
+    {
+      "start_sample": 14445967,
+      "end_sample": 14475727,
+      "text": "单说了一句",
+      "estimated": false
+    },
+    {
+      "start_sample": 14512687,
+      "end_sample": 14538127,
+      "text": "不要取笑！",
+      "estimated": false
+    },
+    {
+      "start_sample": 14560927,
+      "end_sample": 14584207,
+      "text": "取笑？",
+      "estimated": false
+    },
+    {
+      "start_sample": 14584207,
+      "end_sample": 14625487,
+      "text": "要是不偸 怎么会打断腿？",
+      "estimated": false
+    },
+    {
+      "start_sample": 14655487,
+      "end_sample": 14692207,
+      "text": "孔乙己低声说道",
+      "estimated": false
+    },
+    {
+      "start_sample": 14757487,
+      "end_sample": 14816167,
+      "text": "跌断 跌",
+      "estimated": true
+    },
+    {
+      "start_sample": 14816167,
+      "end_sample": 14840167,
+      "text": "跌……",
+      "estimated": true
+    },
+    {
+      "start_sample": 15153007,
+      "end_sample": 15172927,
+      "text": "他的眼色",
+      "estimated": false
+    },
+    {
+      "start_sample": 15172927,
+      "end_sample": 15231967,
+      "text": "很像恳求掌柜 不要再提",
+      "estimated": false
+    },
+    {
+      "start_sample": 15231967,
+      "end_sample": 15291967,
+      "text": "此时已经聚集了几个人",
+      "estimated": false
+    },
+    {
+      "start_sample": 15291967,
+      "end_sample": 15331327,
+      "text": "便和掌柜都笑了",
+      "estimated": false
+    },
+    {
+      "start_sample": 15331327,
+      "end_sample": 15411247,
+      "text": "我温了酒 端出去 放在门槛上",
+      "estimated": false
+    },
+    {
+      "start_sample": 15439807,
+      "end_sample": 15530287,
+      "text": "他从破衣袋里摸出四文大钱 放在我手里",
+      "estimated": false
+    },
+    {
+      "start_sample": 15530287,
+      "end_sample": 15567247,
+      "text": "见他满手是泥",
+      "estimated": false
+    },
+    {
+      "start_sample": 15567247,
+      "end_sample": 15627247,
+      "text": "原来他便用这手走来的",
+      "estimated": false
+    },
+    {
+      "start_sample": 15655087,
+      "end_sample": 15745146,
+      "text": "不一会 他喝完酒 便又在旁人的说笑声中",
+      "estimated": true
+    },
+    {
+      "start_sample": 15745146,
+      "end_sample": 15798121,
+      "text": "坐着用这手慢慢走去了",
+      "estimated": true
+    },
+    {
+      "start_sample": 15798121,
+      "end_sample": 15819311,
+      "text": "自此以后",
+      "estimated": true
+    },
+    {
+      "start_sample": 15819311,
+      "end_sample": 15872287,
+      "text": "又长久没有看见孔乙己",
+      "estimated": true
+    },
+    {
+      "start_sample": 15901327,
+      "end_sample": 15920047,
+      "text": "到了年关",
+      "estimated": false
+    },
+    {
+      "start_sample": 15920047,
+      "end_sample": 15961087,
+      "text": "掌柜取下粉板说",
+      "estimated": false
+    },
+    {
+      "start_sample": 15983407,
+      "end_sample": 16029487,
+      "text": "孔乙己还欠十九个钱呢！",
+      "estimated": false
+    },
+    {
+      "start_sample": 16049407,
+      "end_sample": 16075567,
+      "text": "到第二年的端午",
+      "estimated": false
+    },
+    {
+      "start_sample": 16075567,
+      "end_sample": 16099567,
+      "text": "又说",
+      "estimated": false
+    },
+    {
+      "start_sample": 16116367,
+      "end_sample": 16162447,
+      "text": "孔乙己还欠十九个钱呢！",
+      "estimated": false
+    },
+    {
+      "start_sample": 16182607,
+      "end_sample": 16213807,
+      "text": "到中秋可是没有说",
+      "estimated": false
+    },
+    {
+      "start_sample": 16213807,
+      "end_sample": 16266607,
+      "text": "再到年关也没有看见他",
+      "estimated": false
+    },
+    {
+      "start_sample": 16266607,
+      "end_sample": 16323727,
+      "text": "我到现在终于没有见——",
+      "estimated": false
+    },
+    {
+      "start_sample": 16323727,
+      "end_sample": 16374127,
+      "text": "大约孔乙己的确死了",
+      "estimated": false
+    }
+  ],
+  "project_revision": 434
+}

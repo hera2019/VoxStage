@@ -91,6 +91,13 @@ cases attribution is known to get wrong. It caught the trailing attribution that
 had failed twice before, and gave one character two names, which for synthesis
 means one person speaking in two voices.
 
+[Lu Xun's *Kong Yiji*](examples/kong-yiji/) — a whole story, eleven minutes, and a
+century old. The model named the right speaker every time it named one, and still
+needed 43 corrections, because it kept labelling four-character prose like `掌柜说：`
+as speech. The engine cannot read two 1938 character forms; the duration check caught
+a twelve-character line that came out at thirteen seconds; and the transcribe-back
+check learned that it cannot expect a recogniser to know a character's name.
+
 ## What works today
 
 | Capability | State |
