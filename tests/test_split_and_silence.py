@@ -179,3 +179,57 @@ def test_merging_and_tidying_never_cross_a_lock():
               {'speaker': '旁白', 'kind': 'narration', 'start': 5, 'end': 17}]
     assert _tidy(src, pieces)[0]['text'] == '周远点点头。'
     assert _tidy(src, pieces, {5})[0]['text'] == '周远点点头'
+
+
+def test_merge_is_the_mirror_of_split(ranged):
+    """Split then merge gives the original line back, apart from its id."""
+    client, p = ranged
+    base = '/api/projects/' + p['id']
+    target = next(s for s in p['segments'] if len(s['text']) > 3)
+    before = {k: v for k, v in target.items() if k not in ('id', 'audio', 'status', 'check_status', 'tempo_status',
+                                                            'rhythm_status', 'listening_status', 'lock_before', 'pause_after')}
+    n = len(p['segments'])
+    p = client.post(base + '/segments/' + target['id'] + '/split', json={'revision': p['revision'], 'at': 2}).json()
+    left = next(s for s in p['segments'] if s['source_start'] == target['source_start'])
+    r = client.post(base + '/segments/' + left['id'] + '/merge', json={'revision': p['revision'], 'direction': 'next'})
+    assert r.status_code == 200, r.text
+    p = r.json()
+    assert len(p['segments']) == n
+    merged = next(s for s in p['segments'] if s['source_start'] == target['source_start'])
+    assert {k: merged.get(k) for k in before} == before
+    assert merged['lock_before'] is False           # the hand-cut boundary is gone with the cut
+    assert ''.join(s['text'] for s in p['segments']) == p['source_script']
+
+
+def test_merge_refuses_what_would_break_the_script(ranged):
+    client, p = ranged
+    base = '/api/projects/' + p['id']
+    segs = p['segments']
+    # Different speakers: refused, and it says which two.
+    a = next(i for i in range(len(segs) - 1) if segs[i]['speaker'] != segs[i + 1]['speaker'])
+    r = client.post(base + '/segments/' + segs[a]['id'] + '/merge', json={'revision': p['revision'], 'direction': 'next'})
+    assert r.status_code == 400 and '说话人不同' in r.json()['detail']
+    # The last line has no next; the first has no previous.
+    r = client.post(base + '/segments/' + segs[-1]['id'] + '/merge', json={'revision': p['revision'], 'direction': 'next'})
+    assert r.status_code == 400 and '最后一句' in r.json()['detail']
+    r = client.post(base + '/segments/' + segs[0]['id'] + '/merge', json={'revision': p['revision'], 'direction': 'previous'})
+    assert r.status_code == 400 and '第一句' in r.json()['detail']
+
+
+def test_merge_refuses_across_the_read_aloud_switch_and_over_the_limit(ranged):
+    client, p = ranged
+    base = '/api/projects/' + p['id']
+    # Make an adjacent same-speaker pair by splitting, then silence the right half.
+    target = next(s for s in p['segments'] if len(s['text']) > 3)
+    p = client.post(base + '/segments/' + target['id'] + '/split', json={'revision': p['revision'], 'at': 2}).json()
+    left = next(s for s in p['segments'] if s['source_start'] == target['source_start'])
+    right = p['segments'][p['segments'].index(left) + 1]
+    p = client.patch(base, json={'revision': p['revision'], 'segment_id': right['id'], 'read_aloud': False}).json()
+    r = client.post(base + '/segments/' + left['id'] + '/merge', json={'revision': p['revision'], 'direction': 'next'})
+    assert r.status_code == 400 and '不朗读' in r.json()['detail']
+    from runtime.core import merge_segments
+    long = {'source_script': '甲' * 70, 'segments': [
+        {'id': 'x', 'speaker': '旁白', 'kind': 'narration', 'text': '甲' * 35, 'source_start': 0, 'source_end': 35, 'audio': None, 'error': None, 'spoken_as': ''},
+        {'id': 'y', 'speaker': '旁白', 'kind': 'narration', 'text': '甲' * 35, 'source_start': 35, 'source_end': 70, 'audio': None, 'error': None, 'spoken_as': ''}]}
+    with pytest.raises(ValueError, match='上限'):
+        merge_segments(long, 'x', 'next', 'zh')

@@ -92,6 +92,45 @@ def split_segment(project, segment_id, at):
     return left, right
 
 
+def merge_segments(project, segment_id, direction, language):
+    """Join one line with its neighbour, in place, source untouched. The mirror
+    of split_segment: the result takes a new id, loses its audio, keeps the
+    earlier line's lock and the later line's pause, and clears a replacement
+    reading that can no longer be trusted to cover both halves.
+    """
+    segments = project['segments']
+    index = next((i for i, s in enumerate(segments) if s['id'] == segment_id), None)
+    if index is None:
+        raise ValueError('找不到这一句。')
+    other = index + 1 if direction == 'next' else index - 1
+    if not 0 <= other < len(segments):
+        raise ValueError('这已经是最后一句，没有下一句可合并。' if direction == 'next' else '这已经是第一句，没有上一句可合并。')
+    first, second = (segments[index], segments[other]) if direction == 'next' else (segments[other], segments[index])
+    for s in (first, second):
+        if s.get('source_start') is None or s.get('source_end') is None:
+            raise ValueError('这个工程没有记录原稿位置，无法合并；可以在原稿编辑里重新切分。')
+    if first['source_end'] != second['source_start']:
+        raise ValueError('这两句在原稿里不相邻，不能合并。')
+    if first['speaker'] != second['speaker']:
+        raise ValueError(f'两句的说话人不同（{first["speaker"]} / {second["speaker"]}），先改成同一个人再合并。')
+    if first.get('read_aloud', True) != second.get('read_aloud', True):
+        raise ValueError('一句朗读、一句不朗读，不能合并。先把两句设成一样。')
+    text = first['text'] + second['text']
+    limit = 60 if language == 'zh' else 240
+    if len(text) > limit:
+        raise ValueError(f'合并后 {len(text)} 字，超过单句上限 {limit} 字。')
+    base = {k: v for k, v in first.items()
+            if k not in ('id', 'text', 'source_start', 'source_end', 'audio', 'error', 'spoken_as',
+                         'pause_after', 'lock_before', 'content_check', 'rhythm_check', 'tempo_edit',
+                         'listening_issue', 'listening_status', 'take')}
+    merged = {**base, 'id': uid(), 'text': text, 'spoken_as': '', 'audio': None, 'error': None,
+              'source_start': first['source_start'], 'source_end': second['source_end'],
+              'lock_before': first.get('lock_before', False), 'pause_after': second.get('pause_after')}
+    lo = min(index, other)
+    segments[lo:lo + 2] = [merged]
+    return merged
+
+
 def fingerprint(project, segment, engine, library=None):
     data = {'text':segment.get('spoken_as') or segment['text'], 'voice':project['voices'][segment['speaker']],
             'language':project['language'], 'engine':engine.identity, 'seed':260909+segment.get('take',0),

@@ -499,6 +499,17 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             return store.public(store.edit(project_id, body.revision,
                                            lambda p: split_segment(p, segment_id, body.at)), engine, checker)
 
+    class MergeRequest(RevisionRequest):
+        direction: Literal['next', 'previous'] = 'next'
+
+    @app.post('/api/projects/{project_id}/segments/{segment_id}/merge')
+    def merge(project_id: str, segment_id: str, body: MergeRequest):
+        """Join a line with the one after (or before) it. Undoable."""
+        from .core import merge_segments
+        with store.lock:
+            return store.public(store.edit(project_id, body.revision,
+                lambda p: merge_segments(p, segment_id, body.direction, p['language'])), engine, checker)
+
     @app.post('/api/projects/{project_id}/segments/{segment_id}/delete')
     def delete_segment(project_id: str, segment_id: str, body: RevisionRequest):
         """Drop one line and the source text behind it, so script and lines agree.
