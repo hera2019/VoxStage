@@ -10,7 +10,7 @@ import unicodedata
 import uuid
 from pathlib import Path
 
-NORMALIZATION_VERSION = 'spoken-units-v4-visible-chinese-integers'
+NORMALIZATION_VERSION = 'spoken-units-v6-period-particles'
 from .phonetics import chinese_keys
 from .numbers import numeric_spans, BASIS as NUMBER_BASIS, NOTICE as NUMBER_NOTICE
 DECODING = {'beam_size':5,'best_of':5,'temperature':0,'temperature_inc':0,'max_context':0,'no_fallback':True,'threads':4,'timing':'max-len-1-full-json-v1'}
@@ -51,7 +51,32 @@ def comparison_side(text, language):
     return grouped,grouped_keys
 
 
-def compare_text(expected, recognized, language):
+NAME_BASIS = '人名'
+PERIOD_BASIS = '旧白话'
+# Sentence particles as written a century ago and as a recogniser writes them
+# today. The voice reads the meaning either way; only the spelling differs.
+PERIOD_PARTICLES = {'么': '吗', '罢': '吧', '麽': '吗'}
+
+
+def _toneless(text):
+    from pypinyin import lazy_pinyin, Style
+    return ''.join(lazy_pinyin(text, style=Style.NORMAL, errors=lambda v: list(v)))
+
+
+def _is_name_slip(expected_span, recognized_span, names):
+    """A recogniser cannot know a character's name; it writes whatever common
+    characters share the sound. When the differing text lies inside a known name
+    and the recognised text reads the same without tones, that is what happened.
+    Tones are ignored because 乙 (yǐ) comes back as 一 (yī) every time; a
+    different syllable altogether — 己 (jǐ) heard as 姐 (jiě) — still reports.
+    """
+    span = expected_span.strip()
+    if not span or not any(span in name for name in names if name):
+        return False
+    return _toneless(span) == _toneless(recognized_span.strip())
+
+
+def compare_text(expected, recognized, language, names=()):
     left,keys_left=comparison_side(expected,language)
     right,keys_right=comparison_side(recognized,language)
     joiner=' ' if language=='en' else ''
@@ -67,6 +92,12 @@ def compare_text(expected, recognized, language):
             if language=='en' and ''.join(left[a:b])==''.join(right[c:d]) and left[a:b]:
                 equivalences.append({'expected':joiner.join(left[a:b]),
                                      'recognized':joiner.join(right[c:d]),'basis':'word-boundary'})
+            elif language=='zh' and kind=='replace' and _is_name_slip(joiner.join(left[a:b]),joiner.join(right[c:d]),names):
+                equivalences.append({'expected':joiner.join(left[a:b]),
+                                     'recognized':joiner.join(right[c:d]),'basis':NAME_BASIS})
+            elif (language=='zh' and kind=='replace' and b-a==1 and d-c==1
+                  and PERIOD_PARTICLES.get(left[a])==right[c]):
+                equivalences.append({'expected':left[a],'recognized':right[c],'basis':PERIOD_BASIS})
             else:
                 changes.append({'kind':kind,'expected':joiner.join(left[a:b]),'recognized':joiner.join(right[c:d])})
     return {'status':'match' if left and not changes else 'review','expected_text':expected,

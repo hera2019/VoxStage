@@ -120,3 +120,30 @@ def test_merging_stops_short_of_the_slicing_limit():
     labels = [{'id': u['id'], 'kind': 'narration', 'speaker': ''} for u in source_units(xue)]
     merged = project_segments(xue, labels, 'zh')
     assert len(merged) == 1 and merged[0]['text'] == xue
+
+
+def test_a_known_name_heard_as_common_homophones_is_a_visible_tolerance():
+    """The recogniser cannot know 孔乙己; it writes 空一季. Same sound without tones,
+    inside a name the project already has, so it is reported as a tolerance and
+    not as a misreading. A different syllable — 己 heard as 姐 — still reports."""
+    from runtime.content_check import compare_text
+    names = ['旁白', '孔乙己']
+    r = compare_text('孔乙己，你脸上又添上新伤疤了！', '空一季，你脸上又添上新伤疤了！', 'zh', names)
+    assert r['status'] == 'match'
+    assert [(e['expected'], e['recognized'], e['basis']) for e in r['equivalences']] == [('孔乙己', '空一季', '人名')]
+    r = compare_text('孔乙己低声说道：', '孔姨姐低声说道：', 'zh', names)
+    assert r['status'] == 'review'
+    # Without the name being known, the same slip is a difference.
+    r = compare_text('孔乙己睁大眼睛说：', '孔一己睁大眼睛说：', 'zh', [])
+    assert r['status'] == 'review'
+
+
+def test_a_century_old_particle_written_the_modern_way_is_a_visible_tolerance():
+    from runtime.content_check import compare_text
+    r = compare_text('你读过书么？', '你读过书吗？', 'zh')
+    assert r['status'] == 'match'
+    assert [(e['expected'], e['recognized'], e['basis']) for e in r['equivalences']] == [('么', '吗', '旧白话')]
+    r = compare_text('不能写罢？', '不能写吧？', 'zh')
+    assert r['status'] == 'match'
+    # Only the listed particles, and only one for one: 么 heard as 呢 still reports.
+    assert compare_text('你读过书么？', '你读过书呢？', 'zh')['status'] == 'review'

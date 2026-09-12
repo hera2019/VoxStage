@@ -763,7 +763,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                     if file_sha(source)!=before:raise ValueError('检查过程中音频发生变化，请重试。')
                     stat=source.stat()
                     result.update(transcript)
-                    result.update(compare_text(expected,transcript['recognized_text'],p['language']))
+                    result.update(compare_text(expected,transcript['recognized_text'],p['language'],names=list(p['voices'])))
                     result.update({'audio_sha256':before,'audio_stat':[stat.st_size,stat.st_mtime_ns]})
                 except Exception as exc:
                     logging.exception('Local content check failed for segment %s',sid)
