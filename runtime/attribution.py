@@ -38,14 +38,7 @@ def project_segments(source, labels, language, locks=()):
                 end = ahead[0]
             # Prefer an existing sentence boundary; never ask the model to rewrite.
             elif end < unit['end']:
-                # Prefer a sentence break; fall back to a clause, then a space.
-                # A cut at the character limit lands mid-phrase, which both reads
-                # badly and leaves a stranded fragment to synthesise on its own.
-                for marks in ('。！？；.!?;\n', '，、,:—–', ' \u3000'):
-                    boundaries = [i+1 for i in range(start, end) if source[i] in marks]
-                    if boundaries:
-                        end = boundaries[-1]
-                        break
+                end = _cut_point(source, start, end, unit['end'], limit)
             pieces.append({'speaker': speaker, 'kind': label['kind'], 'start': start, 'end': end})
             start = end
     # Merging is capped below the slicing limit on purpose. A segment is two
@@ -60,6 +53,36 @@ def project_segments(source, labels, language, locks=()):
     if not 1 <= len(segments) <= 500:
         raise ValueError('原稿切片数量超出范围。')
     return segments
+
+
+# Where a line may be cut, strongest first: the end of a sentence, then a
+# semicolon / dash / ellipsis, then a clause, then a space.
+CUT_TIERS = ('。！？.!?\n', '；;—–…', '，、,:：', ' \u3000')
+
+
+def _cut_point(source, start, end, unit_end, limit):
+    """Choose where a line longer than the limit is cut.
+
+    Taking the last sentence end in the window, whatever its position, cut
+    热热的喝了休息； off as an eight-character line because it was the only
+    full stop in reach. A cut is chosen so that both the line it closes and
+    what is left after it are of a reasonable length; among those, the
+    strongest punctuation wins, and the later position breaks ties. Only when
+    nothing satisfies the length rule does the old preference apply.
+    """
+    minimum = max(4, limit // 4)                       # 15 characters for Chinese
+    candidates = []                                    # (tier, position)
+    for tier, marks in enumerate(CUT_TIERS):
+        candidates += [(tier, i + 1) for i in range(start, end) if source[i] in marks]
+    if not candidates:
+        return end
+    def sound(position):
+        remainder = unit_end - position
+        return position - start >= minimum and (remainder == 0 or remainder >= minimum)
+    good = [c for c in candidates if sound(c[1])]
+    pool = good or candidates
+    best_tier = min(tier for tier, _ in pool)
+    return max(position for tier, position in pool if tier == best_tier)
 
 
 def merge_adjacent(segments, limit, locks=()):

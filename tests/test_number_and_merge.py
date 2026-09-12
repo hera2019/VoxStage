@@ -147,3 +147,17 @@ def test_a_century_old_particle_written_the_modern_way_is_a_visible_tolerance():
     assert r['status'] == 'match'
     # Only the listed particles, and only one for one: 么 heard as 呢 still reports.
     assert compare_text('你读过书么？', '你读过书呢？', 'zh')['status'] == 'review'
+
+
+def test_a_cut_is_never_placed_so_that_a_stub_is_left_behind():
+    """The only full stop in the window was eight characters in; the old rule cut
+    there and left 热热的喝了休息； as a line of its own."""
+    from runtime.attribution import _cut_point
+    text = '靠柜外站着，热热的喝了休息；倘肯多花一文，便可以买一碟盐煮笋，或者茴香豆，做下酒物了，如果出到了十几文，那就能买一样荤菜。'
+    end = _cut_point(text, 0, 60, len(text), 60)
+    assert end > 15 and text[end - 1] in '，；。'
+    # Both sides are of a reasonable length.
+    assert len(text[:end]) >= 15 and len(text[end:]) >= 15
+    # When nothing in the window satisfies the length rule, the strongest mark still wins.
+    short = '是。' + '一' * 80
+    assert _cut_point(short, 0, 60, len(short), 60) == 2
