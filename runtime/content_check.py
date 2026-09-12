@@ -104,11 +104,11 @@ def compare_text(expected, recognized, language, names=()):
             'recognized_text':recognized,'differences':changes,'equivalences':equivalences,'normalization':NORMALIZATION_VERSION,
             'compatibility_notices':[NUMBER_NOTICE] if any(e['basis']==NUMBER_BASIS for e in equivalences) else []}
 
-def check_status(segment, current_fingerprint, checker_id):
+def check_status(segment, current_fingerprint, checker_id, expected=None):
     check=segment.get('content_check')
     if not check:return 'not_checked'
     if (segment.get('status')!='ready' or check.get('source_fingerprint')!=current_fingerprint
-        or check.get('expected_text')!=(segment.get('spoken_as') or segment['text'])
+        or check.get('expected_text')!=(expected if expected is not None else (segment.get('spoken_as') or segment['text']))
         or check.get('checker_id')!=checker_id):return 'stale'
     if check['status']=='review' and check.get('reviewed'):return 'confirmed'
     return check['status']

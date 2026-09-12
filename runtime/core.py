@@ -131,8 +131,25 @@ def merge_segments(project, segment_id, direction, language):
     return merged
 
 
+def spoken_text(project, segment):
+    """What the voice is asked to read: the line, or its replacement reading,
+    with the project's pronunciation lexicon applied.
+
+    The lexicon is a project-wide table of written form -> read-as form, for
+    the cases a per-line replacement handled one line at a time: the 1938
+    edition's 偸 that the engine cannot read, eight times in Kong Yiji.
+    Longest entries apply first so 偸儿 wins over 偸. Because this feeds the
+    fingerprint, changing an entry invalidates exactly the lines it touches.
+    """
+    text = segment.get('spoken_as') or segment['text']
+    for written, read in sorted((project.get('lexicon') or {}).items(), key=lambda kv: -len(kv[0])):
+        if written and written in text:
+            text = text.replace(written, read)
+    return text
+
+
 def fingerprint(project, segment, engine, library=None):
-    data = {'text':segment.get('spoken_as') or segment['text'], 'voice':project['voices'][segment['speaker']],
+    data = {'text':spoken_text(project, segment), 'voice':project['voices'][segment['speaker']],
             'language':project['language'], 'engine':engine.identity, 'seed':260909+segment.get('take',0),
             **generation_parameters(project['language']),
             'runtime':'mlx-audio-0.5.1', 'processing':PROCESSING_VERSION}
@@ -155,7 +172,7 @@ def fingerprint(project, segment, engine, library=None):
     return hashlib.sha256(json.dumps(data, ensure_ascii=False, sort_keys=True).encode()).hexdigest()
 
 def edit_state(project):
-    return copy.deepcopy({**{k:project[k] for k in ('name','language','voices','segments','pause_ms')},'voice_profiles':project.get('voice_profiles',{}), 'archived':project.get('archived',False), 'speech_rate':project.get('speech_rate',1.0)})
+    return copy.deepcopy({**{k:project[k] for k in ('name','language','voices','segments','pause_ms')},'lexicon':project.get('lexicon',{}),'voice_profiles':project.get('voice_profiles',{}), 'archived':project.get('archived',False), 'speech_rate':project.get('speech_rate',1.0)})
 
 class Store:
     def __init__(self, root):
@@ -269,7 +286,7 @@ class Store:
                 # A line kept in the script but not in the recording. Whatever
                 # audio it had stays on disk for when it is switched back on.
                 s['status'] = 'silent'
-            s['check_status']=check_status(s,current,getattr(checker,'identity',None))
+            s['check_status']=check_status(s,current,getattr(checker,'identity',None),spoken_text(p,s))
             audio_stat=None
             if s['status']=='ready':
                 stat=(self.directory(p['id'])/'audio'/(current+'.wav')).stat()
@@ -280,7 +297,7 @@ class Store:
             s['rhythm_status']='not_checked'
             if rhythm:
                 if (s['status']!='ready' or rhythm.get('source_fingerprint')!=current or rhythm.get('audio_stat')!=audio_stat
-                    or rhythm.get('version')!=RHYTHM_VERSION or rhythm.get('expected_text')!=(s.get('spoken_as') or s['text'])):s['rhythm_status']='stale'
+                    or rhythm.get('version')!=RHYTHM_VERSION or rhythm.get('expected_text')!=spoken_text(p,s)):s['rhythm_status']='stale'
                 elif rhythm.get('error'):s['rhythm_status']='error'
                 else:s['rhythm_status']=('confirmed' if rhythm.get('reviewed') else 'review') if rhythm.get('markers') else 'checked'
             # A replaced file can retain its size and mtime; confirmed checks bind bytes too.
@@ -289,7 +306,7 @@ class Store:
                 for status_key,check_key in (('check_status','content_check'),('rhythm_status','rhythm_check')):
                     if s[status_key]=='confirmed' and s[check_key].get('audio_sha256')!=digest:
                         s[status_key]='stale'
-            s['listening_status']=listening_status(s,current,audio_stat,p.get('speech_rate',1.0))
+            s['listening_status']=listening_status(s,current,audio_stat,p.get('speech_rate',1.0),expected=spoken_text(p,s))
         return result
 
 # 最后更新：2026-09-09 · Astra

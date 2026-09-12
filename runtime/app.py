@@ -24,7 +24,7 @@ from .audio import process_audio, export_audio, prepare_segment
 from .clips import clip_plan, validate_clips
 from .fcp7 import timeline_xml, IMPORT_GUIDE
 from .rhythm import analyze_file, analyze, VERSION as RHYTHM_VERSION
-from .core import reads_aloud, Store, fingerprint
+from .core import reads_aloud, Store, fingerprint, spoken_text
 from .voices import VoiceLibrary, is_custom, custom_id, PREFIX as CUSTOM_PREFIX
 from .script_check import inspect as inspect_script, apply_fix
 from .attribution import RoleDraftEngine, project_segments, source_units, carry_locks
@@ -94,6 +94,7 @@ class EditRequest(BaseModel):
     pause_ms: int | None = Field(default=None, ge=0, le=2000)
     pause_after: int | None = Field(default=None, ge=0, le=2000, strict=True)
     read_aloud: bool | None = None
+    lexicon: dict[str, str] | None = None
 
 class TempoRegion(BaseModel):
     start: float = Field(ge=0, allow_inf_nan=False)
@@ -469,6 +470,14 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 p['speech_rate']=body.speech_rate
             if body.pause_ms is not None:
                 p['pause_ms'] = body.pause_ms
+            if body.lexicon is not None:
+                # Written form -> read-as form, project-wide. Empty entries and
+                # self-maps are dropped; feeding the fingerprint means only the
+                # lines an entry touches lose their audio.
+                clean = {k.strip(): v.strip() for k, v in body.lexicon.items() if k.strip() and v.strip() and k.strip() != v.strip()}
+                if len(clean) > 200 or any(len(k) > 40 or len(v) > 40 for k, v in clean.items()):
+                    raise ValueError('发音词典最多 200 条，每条不超过 40 字。')
+                p['lexicon'] = clean
             if body.segment_id:
                 s = next((s for s in p['segments'] if s['id']==body.segment_id), None)
                 if s is None:
@@ -656,7 +665,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 shutil.copyfile(source,temporary);temporary.replace(dest)
             if hashlib.sha256(dest.read_bytes()).hexdigest()!=digest:
                 raise ValueError('已有参考声音校验失败。')
-            profiles[segment['speaker']]={'sha256':digest,'text':segment.get('spoken_as') or segment['text'],
+            profiles[segment['speaker']]={'sha256':digest,'text':spoken_text(p,segment),
                 'voice':p['voices'][segment['speaker']],'source_fingerprint':audio['fingerprint'],
                 'source_engine':audio['engine'],'synthetic_audio':True,'consent_confirmed':True}
             for s in p['segments']:
@@ -696,16 +705,16 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                             digest_ref=profile['sha256']
                             if len(digest_ref)!=64 or any(c not in '0123456789abcdef' for c in digest_ref):
                                 raise ValueError('固定声线标识无效。')
-                            pcm,rate,metrics=engine.synthesize_reference(s.get('spoken_as') or s['text'],p['language'],
+                            pcm,rate,metrics=engine.synthesize_reference(spoken_text(p,s),p['language'],
                                 store.directory(project_id)/'references'/(digest_ref+'.wav'),profile['text'],
                                 260909+s.get('take',0),consent_confirmed=True,expected_sha256=digest_ref)
                         elif is_custom(p['voices'][s['speaker']]):
                             entry = library.get(custom_id(p['voices'][s['speaker']]))
-                            pcm,rate,metrics=engine.synthesize_reference(s.get('spoken_as') or s['text'],p['language'],
+                            pcm,rate,metrics=engine.synthesize_reference(spoken_text(p,s),p['language'],
                                 library.audio_path(entry['id']),entry['reference_text'],
                                 260909+s.get('take',0),consent_confirmed=True,expected_sha256=entry['sha256'])
                         else:
-                            pcm, rate, metrics = engine.synthesize(s.get('spoken_as') or s['text'],
+                            pcm, rate, metrics = engine.synthesize(spoken_text(p,s),
                                 p['voices'][s['speaker']], p['language'], 260909+s.get('take',0))
                         pcm, meta = process_audio(pcm, rate)
                         meta.update({'fingerprint':digest, 'engine':getattr(engine,'reference_identity',engine.identity) if p.get('voice_profiles',{}).get(s['speaker']) else engine.identity, **metrics})
@@ -782,7 +791,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                     p=store.read(project_id)
                     segment=next(s for s in p['segments'] if s['id']==sid)
                     digest=fingerprint(p,segment,engine,library)
-                    expected=segment.get('spoken_as') or segment['text']
+                    expected=spoken_text(p,segment)
                     source=store.directory(project_id)/'audio'/(digest+'.wav')
                     p['job']['current_segment']=sid;store.write(p)
                 rhythm={'source_fingerprint':digest,'version':RHYTHM_VERSION,'expected_text':expected}
@@ -865,7 +874,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             if before!=[stat.st_size,stat.st_mtime_ns]:raise ValueError('音频发生变化，请重新试听再标记。')
             segment['listening_issue']={'kind':body.kind,'note':body.note.strip(),'marked_at':time.time(),
                 'source_fingerprint':digest,'audio_sha256':sha,'audio_stat':before,'speech_rate':p.get('speech_rate',1.0),
-                'expected_text':segment.get('spoken_as') or segment['text'],'tempo_edit':segment.get('tempo_edit')}
+                'expected_text':spoken_text(p,segment),'tempo_edit':segment.get('tempo_edit')}
         return store.public(store.edit(project_id,body.revision,apply),engine,checker)
 
     @app.post('/api/projects/{project_id}/checks/review')
@@ -916,7 +925,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             p,s,path=ready_segment(project_id,segment_id)
             public=next(x for x in store.public(p,engine,checker)['segments'] if x['id']==segment_id)
             timed=s.get('content_check',{}).get('timed_text') if public['check_status'] not in ('stale','not_checked','error') else None
-            result=analyze_file(path,timed,p['language'],segment.get('spoken_as') or segment['text'])
+            result=analyze_file(path,timed,p['language'],spoken_text(p,segment))
             result.update(source_fingerprint=s['audio']['fingerprint'],revision=p['revision'])
             return result
 
