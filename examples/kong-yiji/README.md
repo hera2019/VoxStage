@@ -12,9 +12,9 @@ changed.
 
 | | |
 |---|---|
-| Text | 2,613 characters · 68 quoted/prose units · 92 lines |
+| Text | 2,613 characters · 68 quoted/prose units · 93 lines |
 | Voices | 旁白 and 我 Dylan (the same person) — 孔乙己 Uncle_Fu — 掌柜 and 酒客 two voices cloned from an English preset |
-| Audio | 682.8 s, 24 kHz mono |
+| Audio | 694.6 s, 24 kHz mono |
 | Subtitles | 251 cues, longest line 20 characters |
 | Machine | Mac Studio, Apple M2 Max, 32 GB. Fully offline. |
 
@@ -81,21 +81,24 @@ original spelling, and `script.txt` shows both.
 
 ## The transcribe-back check on a century-old text
 
-55 of 92 lines clean after review; 37 flagged. What the check tolerated, and shows:
+56 of 93 lines clean after review; 37 flagged. What the check tolerated, and shows:
 
 | Basis | Count | Example |
 |---|---|---|
-| Same pinyin and tone | 84 | `他`/`她` |
-| A known character's name heard as common homophones | 25 | `孔乙己`/`空一季` |
-| A 1919 particle written the modern way | 9 | `么`/`吗`, `罢`/`吧` |
-| 的 / 地 / 得 | 3 | |
-| Same number, different writing | 2 | |
+| Same pinyin and tone | 89 | `他`/`她` |
+| A known character's name heard as common homophones | 23 | `孔乙己`/`空一季` |
+| A 1919 particle written the modern way | 10 | `么`/`吗`, `罢`/`吧` |
+| 的 / 地 / 得 | 9 | |
 
 The name row is new with this sample. A recogniser cannot know 孔乙己; the project
 does, because he is a character in it. A difference inside a known name that reads
 the same without tones is reported as a tolerance. Tones are ignored because 乙 (yǐ)
 comes back as 一 (yī) every time; 己 heard as 姐 is a different syllable and still
 reports — there are seven of those.
+
+The lines are 93 rather than 92 because the slicer was changed after the first
+run: it no longer cuts a long sentence so that an eight-character tail is left
+on its own, and one line moved as a result. Seven lines were regenerated.
 
 What remains flagged is mostly single characters in narration heard one tone off —
 `倘`/`糖`, `踱`/`躲`, `煮`/`竹` — on vocabulary a recogniser trained on modern speech
@@ -107,8 +110,8 @@ mishearing is not known: **no line of this sample has been listened to.**
 | | |
 |---|---|
 | Attribution, 68 units | **25 s** |
-| Synthesis, 92 lines → 682.8 s of audio | **253 s** (real-time factor 0.37) |
-| Transcribe-back check, 92 lines | **106 s** |
+| Synthesis, 92 lines → 682.8 s of audio, first full run | **253 s** (real-time factor 0.37) |
+| Transcribe-back check, 92 lines, first full run | **106 s** |
 | Human corrections | **43** labels, 8 replacement readings, 1 retake, 1 voice change |
 
 ## Not verified

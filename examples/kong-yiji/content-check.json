@@ -1,5 +1,5 @@
 {
- "project_revision": 434,
+ "project_revision": 658,
  "synthetic_audio": true,
  "speech_rate": 1.0,
  "checked_audio": "original_generated_audio",
@@ -9,8 +9,13 @@
    "speaker": "旁白",
    "check_status": "review",
    "expected_text": "鲁镇的酒店的格局，是和别处不同的：都是当街一个曲尺形的大柜台，柜里面豫备着热水，可以随时温酒。",
-   "recognized_text": "鲁\n镇\n的\n酒\n店\n的\n格\n局\n是\n和\n别\n处\n不同\n的\n都是\n当\n街\n一个\n取\n齿\n形\n的\n大\n柜\n台\n柜\n里\n面\n预\n备\n着\n热\n水\n可以\n随\n时\n温\n酒",
+   "recognized_text": "卢\n镇\n的\n酒\n店\n的\n格\n局\n是\n和\n别\n处\n不同\n的\n都是\n当\n街\n一个\n取\n齿\n形\n的\n大\n柜\n台\n柜\n里\n面\n预\n备\n着\n热\n水\n可以\n随\n时\n温\n酒",
    "differences": [
+    {
+     "kind": "replace",
+     "expected": "鲁",
+     "recognized": "卢"
+    },
     {
      "kind": "replace",
      "expected": "曲",
@@ -33,13 +38,23 @@
   {
    "speaker": "旁白",
    "check_status": "review",
-   "expected_text": "做工的人，傍午傍晚散了工，每每花四文铜钱，买一碗酒——这是二十多年前的事，现在每碗要涨到十文，——靠柜外站着，",
-   "recognized_text": "做\n工\n的人\n傍\n午\n傍\n晚\n散\n了\n工\n每\n每\n花\n四\n文\n铜\n钱\n买\n一\n碗\n酒\n这是\n二\n十\n多\n年前\n的\n事\n现在\n每\n晚\n要\n长\n得\n十\n文\n靠\n柜\n外\n站\n着",
+   "expected_text": "做工的人，傍午傍晚散了工，每每花四文铜钱，买一碗酒——这是二十多年前的事，现在每碗要涨到十文",
+   "recognized_text": "做\n工\n的人\n帮\n午\n傍\n晚\n散\n了\n工\n每\n每\n花\n四\n吻\n铜\n钱\n买\n一\n碗\n酒\n这是\n二\n十\n多\n年前\n的\n事\n现在\n每\n晚\n要\n涨\n到\n十\n吻",
    "differences": [
     {
      "kind": "replace",
-     "expected": "到",
-     "recognized": "得"
+     "expected": "傍",
+     "recognized": "帮"
+    },
+    {
+     "kind": "replace",
+     "expected": "文",
+     "recognized": "吻"
+    },
+    {
+     "kind": "replace",
+     "expected": "文",
+     "recognized": "吻"
     }
    ],
    "equivalences": [
@@ -47,42 +62,38 @@
      "expected": "碗",
      "recognized": "晚",
      "basis": "pinyin"
-    },
-    {
-     "expected": "涨",
-     "recognized": "长",
-     "basis": "pinyin"
     }
    ]
   },
   {
    "speaker": "旁白",
    "check_status": "match",
-   "expected_text": "热热的喝了休息；",
-   "recognized_text": "热\n热\n的\n喝\n了\n休\n息",
+   "expected_text": "，——靠柜外站着，热热的喝了休息；",
+   "recognized_text": "靠\n柜\n外\n站\n着\n,\n热\n热\n地\n喝\n了\n休\n息\n。",
    "differences": [],
-   "equivalences": []
+   "equivalences": [
+    {
+     "expected": "的",
+     "recognized": "地",
+     "basis": "grammatical-de"
+    }
+   ]
   },
   {
    "speaker": "旁白",
    "check_status": "review",
    "expected_text": "倘肯多花一文，便可以买一碟盐煮笋，或者茴香豆，做下酒物了，如果出到了十几文，那就能买一样荤菜，但这些顾客，多是短衣帮，",
-   "recognized_text": "糖\n肯\n多\n花\n一\n蚊\n便\n可以\n买\n一\n叠\n盐\n竹\n笋\n或者\n回\n香\n道\n做\n下\n酒\n物\n了\n如果\n出\n到了\n十\n几\n蚊\n那就\n能\n买\n一\n样\n荤\n菜\n但\n这\n些\n顾\n客\n多\n是\n短\n一\n帮",
+   "recognized_text": "唐\n肯\n多\n花\n一\n蚊\n,\n便\n可以\n买\n一\n叠\n盐\n竹\n笋\n或者\n茴\n香\n豆\n,\n做\n下\n酒\n物\n了\n,\n如果\n出\n到了\n十\n几\n蚊\n,\n那就\n能\n买\n一\n样\n荤\n菜\n,\n但\n这\n些\n顾\n客\n多\n是\n短\n一\n帮\n。",
    "differences": [
     {
      "kind": "replace",
      "expected": "倘",
-     "recognized": "糖"
+     "recognized": "唐"
     },
     {
      "kind": "replace",
      "expected": "煮",
      "recognized": "竹"
-    },
-    {
-     "kind": "replace",
-     "expected": "豆",
-     "recognized": "道"
     },
     {
      "kind": "replace",
@@ -102,11 +113,6 @@
      "basis": "pinyin"
     },
     {
-     "expected": "茴",
-     "recognized": "回",
-     "basis": "pinyin"
-    },
-    {
      "expected": "文",
      "recognized": "蚊",
      "basis": "pinyin"
@@ -117,7 +123,7 @@
    "speaker": "旁白",
    "check_status": "review",
    "expected_text": "大抵没有这样阔绰。只有穿长衫的，才踱进店面隔壁的房子里，要酒要菜，慢慢地坐喝。\n",
-   "recognized_text": "大\n抵\n没有\n这样\n阔\n绰\n只有\n穿\n长\n衫\n的\n才\n躲\n进\n店\n面\n隔\n壁\n的\n房\n子\n里\n要\n酒\n要\n菜\n慢慢\n地\n坐\n喝",
+   "recognized_text": "大\n抵\n没有\n这样\n阔\n绰\n,\n只有\n穿\n长\n衫\n的\n才\n躲\n进\n店\n面\n隔\n壁\n的\n房\n子\n里\n,\n要\n酒\n要\n菜\n,\n慢慢\n地\n作\n喝\n。",
    "differences": [
     {
      "kind": "replace",
@@ -125,19 +131,20 @@
      "recognized": "躲"
     }
    ],
-   "equivalences": []
+   "equivalences": [
+    {
+     "expected": "坐",
+     "recognized": "作",
+     "basis": "pinyin"
+    }
+   ]
   },
   {
    "speaker": "旁白",
    "check_status": "review",
    "expected_text": "我从十二岁起，便在镇口的咸亨酒店里当伙计，掌柜说，样子太傻，怕侍候不了长衫主顾，就在外面做点事罢。",
-   "recognized_text": "我\n从\n十\n二\n岁\n起\n便\n在\n镇\n口\n的\n咸\n横\n酒\n店\n里\n当\n伙\n计\n掌\n柜\n说\n样\n子\n太\n傻\n怕\n事\n后\n不了\n长\n山\n主\n顾\n就\n在\n外\n面\n做\n点\n事\n吧",
+   "recognized_text": "我\n从\n十\n二\n岁\n起\n便\n在\n镇\n口\n的\n闲\n亨\n酒\n店\n里\n当\n伙\n计\n,\n掌\n柜\n说\n,\n样\n子\n太\n傻\n,\n怕\n事\n后\n不了\n长\n山\n主\n顾\n,\n就\n在\n外\n面\n做\n点\n事\n吧\n。",
    "differences": [
-    {
-     "kind": "replace",
-     "expected": "亨",
-     "recognized": "横"
-    },
     {
      "kind": "replace",
      "expected": "长",
@@ -145,6 +152,11 @@
     }
    ],
    "equivalences": [
+    {
+     "expected": "咸",
+     "recognized": "闲",
+     "basis": "pinyin"
+    },
     {
      "expected": "侍",
      "recognized": "事",
@@ -171,22 +183,22 @@
    "speaker": "旁白",
    "check_status": "match",
    "expected_text": "外面的短衣主顾，虽然容易说话，但唠唠叨叨缠夹不清的也很不少。",
-   "recognized_text": "外\n面\n的\n短\n衣\n主\n顾\n虽\n然\n容易\n说\n话\n但\n唠\n唠\n叨\n叨\n缠\n家\n不\n清\n的\n也\n很\n不\n少",
+   "recognized_text": "外\n面\n的\n短\n衣\n主\n顾\n虽\n然\n容易\n说\n话\n但\n唠\n唠\n叨\n叨\n缠\n夹\n不\n清\n的\n也\n很\n不\n少",
    "differences": [],
-   "equivalences": [
-    {
-     "expected": "夹",
-     "recognized": "家",
-     "basis": "pinyin"
-    }
-   ]
+   "equivalences": []
   },
   {
    "speaker": "旁白",
-   "check_status": "match",
+   "check_status": "review",
    "expected_text": "他们往往要亲眼看着黄酒从坛子里舀出，看过壶子底里有水没有，又亲看将壶子放在热水里，然后放心：在这严重监督之下，",
-   "recognized_text": "他们\n往\n往\n要\n亲\n眼\n看\n着\n黄\n酒\n从\n坛\n子\n里\n咬\n出\n看\n过\n湖\n子\n底\n里\n有\n水\n没有\n又\n亲\n看\n将\n湖\n子\n放\n在\n热\n水\n里\n然后\n放心\n在\n这\n严\n重\n监\n督\n之\n下",
-   "differences": [],
+   "recognized_text": "他们\n往\n往\n要\n亲\n眼\n看\n着\n黄\n酒\n从\n坛\n子\n里\n咬\n出\n,\n看\n过\n胡\n子\n底\n里\n有\n水\n没有\n,\n又\n轻\n看\n将\n胡\n子\n放\n在\n热\n水\n里\n,\n然后\n放心\n,\n在\n这\n严\n重\n监\n督\n之\n下\n。",
+   "differences": [
+    {
+     "kind": "replace",
+     "expected": "亲",
+     "recognized": "轻"
+    }
+   ],
    "equivalences": [
     {
      "expected": "舀",
@@ -195,28 +207,22 @@
     },
     {
      "expected": "壶",
-     "recognized": "湖",
+     "recognized": "胡",
      "basis": "pinyin"
     },
     {
      "expected": "壶",
-     "recognized": "湖",
+     "recognized": "胡",
      "basis": "pinyin"
     }
    ]
   },
   {
    "speaker": "旁白",
-   "check_status": "review",
+   "check_status": "match",
    "expected_text": "羼水也很为难。所以过了几天，掌柜又说我干不了这事。幸亏荐头的情面大，辞退不得，便改为专管温酒的一种无聊职务了。\n",
-   "recognized_text": "颤\n水\n也\n很\n为\n难\n所以\n过\n了\n几\n天\n掌\n柜\n又\n说\n我\n干\n不了\n这\n事\n幸\n亏\n箭\n头\n的\n情\n面\n大\n辞\n退\n不\n得\n便\n改\n为\n专\n管\n温\n酒\n的\n一\n种\n无\n聊\n之\n物\n了",
-   "differences": [
-    {
-     "kind": "replace",
-     "expected": "职",
-     "recognized": "之"
-    }
-   ],
+   "recognized_text": "颤\n水\n也\n很\n为\n难\n,\n所以\n过\n了\n几\n天\n,\n掌\n柜\n又\n说\n我\n干\n不了\n这\n事\n,\n幸\n亏\n箭\n头\n的\n情\n面\n大\n,\n辞\n退\n不\n得\n,\n便\n改\n为\n专\n管\n温\n酒\n的\n一\n种\n无\n聊\n职\n务\n了\n。",
+   "differences": [],
    "equivalences": [
     {
      "expected": "羼",
@@ -226,11 +232,6 @@
     {
      "expected": "荐",
      "recognized": "箭",
-     "basis": "pinyin"
-    },
-    {
-     "expected": "务",
-     "recognized": "物",
      "basis": "pinyin"
     }
    ]
@@ -256,16 +257,10 @@
   },
   {
    "speaker": "旁白",
-   "check_status": "review",
+   "check_status": "match",
    "expected_text": "掌柜是一副凶脸孔，主顾也没有好声气，教人活泼不得；只有孔乙己到店，才可以笑几声，所以至今还记得。\n",
-   "recognized_text": "掌\n柜\n是\n一\n副\n胸\n脸\n孔\n主\n顾\n也\n没有\n好\n生\n气\n娇\n人\n活\n泼\n不\n得\n只有\n孔\n已\n挤\n到\n殿\n才\n可以\n笑\n几\n声\n所以\n至\n今\n还\n记\n得",
-   "differences": [
-    {
-     "kind": "replace",
-     "expected": "教",
-     "recognized": "娇"
-    }
-   ],
+   "recognized_text": "掌\n柜\n是\n一\n副\n胸\n脸\n孔\n主\n顾\n也\n没有\n好\n生\n气\n教\n人\n活\n泼\n不\n得\n只有\n孔\n仪\n几\n道\n殿\n才\n可以\n笑\n几\n声\n所以\n至\n今\n还\n记\n得",
+   "differences": [],
    "equivalences": [
     {
      "expected": "凶",
@@ -279,12 +274,17 @@
     },
     {
      "expected": "乙",
-     "recognized": "已",
-     "basis": "pinyin"
+     "recognized": "仪",
+     "basis": "人名"
     },
     {
      "expected": "己",
-     "recognized": "挤",
+     "recognized": "几",
+     "basis": "pinyin"
+    },
+    {
+     "expected": "到",
+     "recognized": "道",
      "basis": "pinyin"
     },
     {
@@ -298,7 +298,7 @@
    "speaker": "旁白",
    "check_status": "match",
    "expected_text": "孔乙己是站着喝酒而穿长衫的唯一的人。他身材很高大；青白脸色，皱纹间时常夹些伤痕；一部乱蓬蓬的花白的胡子。",
-   "recognized_text": "孔\n一\n己\n是\n站\n着\n喝\n酒\n而\n穿\n长\n衫\n的\n唯\n一\n的人\n他\n身\n材\n很\n高\n大\n清\n白\n脸\n色\n皱\n纹\n间\n时\n常\n加\n些\n伤\n痕\n一\n部\n乱\n蓬\n蓬\n的\n花\n白\n的\n胡\n子",
+   "recognized_text": "孔\n一\n己\n是\n站\n着\n喝\n酒\n而\n穿\n长\n衫\n的\n唯\n一\n的人\n他\n身\n材\n很\n高\n大\n清\n白\n脸\n色\n皱\n纹\n间\n时\n常\n夹\n些\n伤\n痕\n一\n部\n乱\n蓬\n蓬\n的\n花\n白\n的\n胡\n子",
    "differences": [],
    "equivalences": [
     {
@@ -309,11 +309,6 @@
     {
      "expected": "青",
      "recognized": "清",
-     "basis": "pinyin"
-    },
-    {
-     "expected": "夹",
-     "recognized": "加",
      "basis": "pinyin"
     }
    ]
@@ -336,28 +331,27 @@
    "speaker": "旁白",
    "check_status": "match",
    "expected_text": "因为他姓孔，别人便从描红纸上的“上大人孔乙己”",
-   "recognized_text": "因为\n他\n姓\n孔\n别\n人\n便\n从\n描\n红\n纸\n上\n的\n上\n大\n人\n孔\n一\n己",
+   "recognized_text": "因为\n他\n姓\n孔\n别\n人\n便\n从\n苗\n红\n纸\n上\n的\n上\n大\n人\n孔\n遗\n迹",
    "differences": [],
    "equivalences": [
     {
-     "expected": "乙",
-     "recognized": "一",
+     "expected": "描",
+     "recognized": "苗",
+     "basis": "pinyin"
+    },
+    {
+     "expected": "乙己",
+     "recognized": "遗迹",
      "basis": "人名"
     }
    ]
   },
   {
    "speaker": "旁白",
-   "check_status": "review",
+   "check_status": "match",
    "expected_text": "这半懂不懂的话里，替他取下一个绰号，叫作孔乙己。孔乙己一到店，所有喝酒的人便都看着他笑，有的叫道：",
-   "recognized_text": "这\n般\n懂\n不\n懂\n的话\n里\n替\n他\n取\n下\n一个\n绰\n号\n叫\n做\n孔\n一\n己\n孔\n一\n己\n一\n到\n店\n所有\n喝\n酒\n的人\n便\n都\n看\n着\n他\n笑\n有\n的\n叫\n道",
-   "differences": [
-    {
-     "kind": "replace",
-     "expected": "半",
-     "recognized": "般"
-    }
-   ],
+   "recognized_text": "这\n半\n懂\n不\n懂\n的话\n里\n替\n他\n取\n下\n一个\n绰\n号\n叫\n做\n空\n仪\n己\n空\n仪\n己\n一\n道\n店\n所有\n喝\n酒\n的人\n便\n都\n看\n着\n他\n笑\n有\n的\n叫\n道",
+   "differences": [],
    "equivalences": [
     {
      "expected": "作",
@@ -365,29 +359,35 @@
      "basis": "pinyin"
     },
     {
-     "expected": "乙",
-     "recognized": "一",
+     "expected": "孔乙",
+     "recognized": "空仪",
      "basis": "人名"
     },
     {
-     "expected": "乙",
-     "recognized": "一",
+     "expected": "孔乙",
+     "recognized": "空仪",
      "basis": "人名"
+    },
+    {
+     "expected": "到",
+     "recognized": "道",
+     "basis": "pinyin"
     }
    ]
   },
   {
    "speaker": "酒客",
-   "check_status": "match",
+   "check_status": "review",
    "expected_text": "“孔乙己，你脸上又添上新伤疤了！”",
-   "recognized_text": "孔\n姨\n姬\n,\n你\n脸\n上\n又\n添\n上\n心\n伤\n疤\n了\n。",
-   "differences": [],
-   "equivalences": [
+   "recognized_text": "孔\n一\n姐\n你\n脸\n上\n又\n添\n上\n心\n伤\n疤\n了",
+   "differences": [
     {
+     "kind": "replace",
      "expected": "乙己",
-     "recognized": "姨姬",
-     "basis": "人名"
-    },
+     "recognized": "一姐"
+    }
+   ],
+   "equivalences": [
     {
      "expected": "新",
      "recognized": "心",
@@ -399,9 +399,20 @@
    "speaker": "旁白",
    "check_status": "match",
    "expected_text": "他不回答，对柜里说：",
-   "recognized_text": "他\n不\n回\n答\n对\n柜\n里\n说",
+   "recognized_text": "她\n不\n回\n答\n,\n对\n桂\n里\n说\n:",
    "differences": [],
-   "equivalences": []
+   "equivalences": [
+    {
+     "expected": "他",
+     "recognized": "她",
+     "basis": "pinyin"
+    },
+    {
+     "expected": "柜",
+     "recognized": "桂",
+     "basis": "pinyin"
+    }
+   ]
   },
   {
    "speaker": "孔乙己",
@@ -421,35 +432,45 @@
    "speaker": "旁白",
    "check_status": "match",
    "expected_text": "便排出九文大钱。他们又故意的高声嚷道：",
-   "recognized_text": "便\n排\n出\n九\n文\n大\n钱\n他们\n又\n故\n意\n的\n高\n声\n嚷\n道",
+   "recognized_text": "便\n排\n出\n九\n文\n大\n前\n他们\n又\n故\n意\n地\n高\n声\n嚷\n道",
    "differences": [],
-   "equivalences": []
+   "equivalences": [
+    {
+     "expected": "钱",
+     "recognized": "前",
+     "basis": "pinyin"
+    },
+    {
+     "expected": "的",
+     "recognized": "地",
+     "basis": "grammatical-de"
+    }
+   ]
   },
   {
    "speaker": "酒客",
-   "check_status": "review",
+   "check_status": "match",
    "expected_text": "“你一定又偷了人家的东西了！”",
-   "recognized_text": "你\n一定\n忧\n透\n了\n人\n家\n的\n东\n西\n了",
-   "differences": [
-    {
-     "kind": "replace",
-     "expected": "又偷",
-     "recognized": "忧透"
-    }
-   ],
+   "recognized_text": "你\n一定\n又\n偷\n了\n人\n家\n的\n东\n西\n了",
+   "differences": [],
    "equivalences": []
   },
   {
    "speaker": "旁白",
    "check_status": "match",
    "expected_text": "孔乙己睁大眼睛说：",
-   "recognized_text": "孔\n一\n己\n睁\n大\n眼\n睛\n说",
+   "recognized_text": "孔\n一\n几\n睁\n大\n眼\n睛\n说",
    "differences": [],
    "equivalences": [
     {
      "expected": "乙",
      "recognized": "一",
      "basis": "人名"
+    },
+    {
+     "expected": "己",
+     "recognized": "几",
+     "basis": "pinyin"
     }
    ]
   },
@@ -457,7 +478,7 @@
    "speaker": "孔乙己",
    "check_status": "match",
    "expected_text": "“你怎么这样凭空污人清白……”",
-   "recognized_text": "你\n怎么\n这样\n凭\n空\n乌\n人\n清\n白",
+   "recognized_text": "你\n怎么\n这样\n凭\n空\n乌\n人\n清\n白\n?",
    "differences": [],
    "equivalences": [
     {
@@ -471,7 +492,7 @@
    "speaker": "酒客",
    "check_status": "match",
    "expected_text": "“什么清白？我前天亲眼见你偷了何家的书，吊着打。”",
-   "recognized_text": "\"\n什么\n清\n白\n,\n我\n前\n天\n亲\n眼\n见\n你\n偷\n了\n何\n家\n的\n书\n,\n吊\n着\n打\n,",
+   "recognized_text": "什么\n清\n白\n我\n前\n天\n亲\n眼\n见\n你\n偷\n了\n何\n家\n的\n书\n吊\n着\n打",
    "differences": [],
    "equivalences": []
   },
@@ -479,23 +500,28 @@
    "speaker": "旁白",
    "check_status": "review",
    "expected_text": "孔乙己便涨红了脸，额上的青筋条条绽出，争辩道：",
-   "recognized_text": "孔\n姨\n姐\n便\n仗\n红\n了\n脸\n额\n上\n的\n青\n筋\n条\n条\n站\n出\n争\n辩\n的",
+   "recognized_text": "坑\n一\n几\n遍\n长\n红\n了\n脸\n额\n上\n的\n青\n筋\n条\n条\n站\n出\n争\n辩\n道",
    "differences": [
     {
      "kind": "replace",
-     "expected": "乙己",
-     "recognized": "姨姐"
+     "expected": "孔乙",
+     "recognized": "坑一"
     },
     {
      "kind": "replace",
-     "expected": "道",
-     "recognized": "的"
+     "expected": "涨",
+     "recognized": "长"
     }
    ],
    "equivalences": [
     {
-     "expected": "涨",
-     "recognized": "仗",
+     "expected": "己",
+     "recognized": "几",
+     "basis": "pinyin"
+    },
+    {
+     "expected": "便",
+     "recognized": "遍",
      "basis": "pinyin"
     },
     {
@@ -509,19 +535,9 @@
    "speaker": "孔乙己",
    "check_status": "match",
    "expected_text": "“窃书不能算偷……窃书！……读书人的事，能算偷么？”",
-   "recognized_text": "妾\n书\n不能\n算\n偷\n妾\n书\n读\n书\n人\n的\n事\n能\n算\n偷\n吗",
+   "recognized_text": "窃\n书\n不能\n算\n偷\n窃\n书\n读\n书\n人\n的\n事\n能\n算\n偷\n吗",
    "differences": [],
    "equivalences": [
-    {
-     "expected": "窃",
-     "recognized": "妾",
-     "basis": "pinyin"
-    },
-    {
-     "expected": "窃",
-     "recognized": "妾",
-     "basis": "pinyin"
-    },
     {
      "expected": "么",
      "recognized": "吗",
@@ -546,28 +562,23 @@
   {
    "speaker": "旁白",
    "check_status": "match",
-   "expected_text": "之类，引得众人都哄笑起来；店内外充满了快活的空气。\n听人家背地里谈论，孔乙己原来也读过书，但终于没有进学，又不会营生；",
-   "recognized_text": "支\n泪\n引\n得\n众\n人\n都\n哄\n笑\n起\n来\n店\n内\n外\n充\n满\n了\n快\n活\n的\n空\n气\n听\n人\n家\n背\n地\n里\n谈\n论\n孔\n一\n己\n原\n来\n也\n读\n过\n书\n但\n终\n于\n没有\n进\n学\n又\n不会\n迎\n生",
+   "expected_text": "之类，引得众人都哄笑起来；店内外充满了快活的空气。\n",
+   "recognized_text": "之\n泪\n引\n得\n众\n人\n都\n轰\n笑\n起\n来\n殿\n内\n外\n充\n满\n了\n快\n活\n的\n空\n气",
    "differences": [],
    "equivalences": [
-    {
-     "expected": "之",
-     "recognized": "支",
-     "basis": "pinyin"
-    },
     {
      "expected": "类",
      "recognized": "泪",
      "basis": "pinyin"
     },
     {
-     "expected": "乙",
-     "recognized": "一",
-     "basis": "人名"
+     "expected": "哄",
+     "recognized": "轰",
+     "basis": "pinyin"
     },
     {
-     "expected": "营",
-     "recognized": "迎",
+     "expected": "店",
+     "recognized": "殿",
      "basis": "pinyin"
     }
    ]
@@ -575,8 +586,27 @@
   {
    "speaker": "旁白",
    "check_status": "match",
-   "expected_text": "于是愈过愈穷，弄到将要讨饭了。幸而写得一笔好字，便替人家钞钞书，换一碗饭吃。可惜他又有一样坏脾气，便是好喝懒做。",
-   "recognized_text": "于\n是\n愈\n过\n愈\n穷\n弄\n到\n将\n要\n讨\n饭\n了\n幸\n而\n写\n的\n一\n笔\n好\n字\n便\n替\n人\n家\n抄\n抄\n书\n换\n一\n碗\n饭\n吃\n可\n惜\n他\n又\n有一\n样\n坏\n脾\n气\n便\n是\n好\n喝\n懒\n做",
+   "expected_text": "听人家背地里谈论，孔乙己原来也读过书，但终于没有进学，又不会营生；于是愈过愈穷，弄到将要讨饭了。",
+   "recognized_text": "听\n人\n家\n背\n地\n里\n谈\n论\n,\n孔\n乙\n己\n原\n来\n也\n读\n过\n书\n,\n但\n终\n于\n没有\n进\n学\n又\n不会\n营\n生\n,\n于\n是\n遇\n过\n遇\n穷\n弄\n到\n将\n要\n讨\n饭\n了\n。",
+   "differences": [],
+   "equivalences": [
+    {
+     "expected": "愈",
+     "recognized": "遇",
+     "basis": "pinyin"
+    },
+    {
+     "expected": "愈",
+     "recognized": "遇",
+     "basis": "pinyin"
+    }
+   ]
+  },
+  {
+   "speaker": "旁白",
+   "check_status": "match",
+   "expected_text": "幸而写得一笔好字，便替人家钞钞书，换一碗饭吃。可惜他又有一样坏脾气，便是好喝懒做。",
+   "recognized_text": "幸\n而\n写\n的\n一\n笔\n好\n字\n便\n替\n人\n家\n抄\n抄\n书\n换\n一\n碗\n饭\n吃\n可\n惜\n他\n又\n有一\n样\n坏\n脾\n气\n便\n是\n好\n喝\n懒\n做",
    "differences": [],
    "equivalences": [
     {
@@ -600,7 +630,7 @@
    "speaker": "旁白",
    "check_status": "review",
    "expected_text": "坐不到几天，便连人和书籍纸张笔砚，一齐失踪。如是几次，叫他钞书的人也没有了。孔乙己没有法，便免不了偶然做些偷窃的事。",
-   "recognized_text": "做\n不到\n几\n天\n便\n连\n人\n和\n书\n籍\n纸\n张\n笔\n燕\n一起\n失\n踪\n如\n是\n几\n次\n叫\n他\n抄\n书\n的人\n也\n没有\n了\n孔\n一\n己\n没有\n法\n便\n免\n不了\n偶\n然\n做\n些\n偷\n窃\n的\n事",
+   "recognized_text": "做\n不到\n几\n天\n便\n连\n人\n和\n书\n籍\n纸\n张\n笔\n验\n一起\n失\n踪\n如\n是\n几\n次\n叫\n他\n抄\n书\n的人\n也\n没有\n了\n恐\n一\n己\n没有\n法\n便\n免\n不了\n偶\n然\n做\n些\n偷\n窃\n的\n事",
    "differences": [
     {
      "kind": "replace",
@@ -616,12 +646,17 @@
     },
     {
      "expected": "砚",
-     "recognized": "燕",
+     "recognized": "验",
      "basis": "pinyin"
     },
     {
      "expected": "钞",
      "recognized": "抄",
+     "basis": "pinyin"
+    },
+    {
+     "expected": "孔",
+     "recognized": "恐",
      "basis": "pinyin"
     },
     {
@@ -633,34 +668,18 @@
   },
   {
    "speaker": "旁白",
-   "check_status": "review",
+   "check_status": "match",
    "expected_text": "但他在我们店里，品行却比别人都好，就是从不拖欠；",
-   "recognized_text": "但\n他\n在\n我们\n店\n里\n品\n乡\n却\n比\n别\n人\n都\n好\n就是\n从\n不\n拖\n欠",
-   "differences": [
-    {
-     "kind": "replace",
-     "expected": "行",
-     "recognized": "乡"
-    }
-   ],
+   "recognized_text": "但\n他\n在\n我们\n店\n里\n品\n行\n却\n比\n别\n人\n都\n好\n就是\n从\n不\n拖\n欠",
+   "differences": [],
    "equivalences": []
   },
   {
    "speaker": "旁白",
    "check_status": "review",
    "expected_text": "虽然间或没有现钱，暂时记在粉板上，但不出一月，定然还清，从粉板上拭去了孔乙己的名字。\n",
-   "recognized_text": "虽\n然\n间\n货\n没有\n现\n钱\n暂\n时\n系\n在\n坟\n板\n上\n但\n不\n出\n一\n月\n定\n然\n还\n清\n从\n坟\n板\n上\n逝\n去了\n孔\n一\n己\n的\n名\n字",
+   "recognized_text": "虽\n然\n建\n货\n没有\n现\n钱\n,\n暂\n时\n记\n在\n坟\n板\n上\n,\n但\n不\n出\n一\n月\n定\n然\n还\n清\n,\n从\n坟\n板\n上\n逝\n去了\n孔\n以\n己\n的\n名\n字\n。",
    "differences": [
-    {
-     "kind": "replace",
-     "expected": "间",
-     "recognized": "间"
-    },
-    {
-     "kind": "replace",
-     "expected": "记",
-     "recognized": "系"
-    },
     {
      "kind": "replace",
      "expected": "粉",
@@ -673,6 +692,11 @@
     }
    ],
    "equivalences": [
+    {
+     "expected": "间",
+     "recognized": "建",
+     "basis": "pinyin"
+    },
     {
      "expected": "或",
      "recognized": "货",
@@ -685,8 +709,8 @@
     },
     {
      "expected": "乙",
-     "recognized": "一",
-     "basis": "人名"
+     "recognized": "以",
+     "basis": "pinyin"
     }
    ]
   },
@@ -694,28 +718,28 @@
    "speaker": "旁白",
    "check_status": "review",
    "expected_text": "孔乙己喝过半碗酒，涨红的脸色渐渐复了原，旁人便又问道，",
-   "recognized_text": "孔\n一\n己\n喝\n过\n半\n碗\n酒\n张\n宏\n的\n脸\n色\n渐\n渐\n覆\n了\n圆\n旁\n人\n便\n又\n问\n道",
+   "recognized_text": "共\n一\n己\n喝\n过\n半\n碗\n酒\n张\n宏\n的\n脸\n色\n渐\n渐\n敷\n了\n圆\n旁\n人\n便\n又\n问\n道",
    "differences": [
+    {
+     "kind": "replace",
+     "expected": "孔乙",
+     "recognized": "共一"
+    },
     {
      "kind": "replace",
      "expected": "涨",
      "recognized": "张"
+    },
+    {
+     "kind": "replace",
+     "expected": "复",
+     "recognized": "敷"
     }
    ],
    "equivalences": [
     {
-     "expected": "乙",
-     "recognized": "一",
-     "basis": "人名"
-    },
-    {
      "expected": "红",
      "recognized": "宏",
-     "basis": "pinyin"
-    },
-    {
-     "expected": "复",
-     "recognized": "覆",
      "basis": "pinyin"
     },
     {
@@ -729,18 +753,13 @@
    "speaker": "酒客",
    "check_status": "match",
    "expected_text": "“孔乙己，你当真认识字么？”",
-   "recognized_text": "空\n一\n几\n,\n你\n当\n真\n认\n识\n字\n吗\n?",
+   "recognized_text": "孔\n一\n己\n你\n当\n真\n认\n识\n字\n吗",
    "differences": [],
    "equivalences": [
     {
-     "expected": "孔乙",
-     "recognized": "空一",
+     "expected": "乙",
+     "recognized": "一",
      "basis": "人名"
-    },
-    {
-     "expected": "己",
-     "recognized": "几",
-     "basis": "pinyin"
     },
     {
      "expected": "么",
@@ -753,12 +772,12 @@
    "speaker": "旁白",
    "check_status": "match",
    "expected_text": "孔乙己看着问他的人，显出不屑置辩的神气。他们便接着说道：",
-   "recognized_text": "孔\n一\n级\n看\n着\n问\n他\n的人\n显\n出\n不\n懈\n质\n变\n的\n神\n气\n他们\n便\n接\n着\n说\n道",
+   "recognized_text": "空\n一\n记\n看\n着\n问\n他\n的人\n显\n出\n不\n懈\n质\n变\n的\n神\n气\n他们\n便\n接\n着\n说\n道",
    "differences": [],
    "equivalences": [
     {
-     "expected": "乙己",
-     "recognized": "一级",
+     "expected": "孔乙己",
+     "recognized": "空一记",
      "basis": "人名"
     },
     {
@@ -782,33 +801,40 @@
    "speaker": "酒客",
    "check_status": "review",
    "expected_text": "“你怎的连半个秀才也捞不到呢？”",
-   "recognized_text": "你\n真的\n连\n半\n个\n秀\n才\n也\n捞\n不到\n呢",
+   "recognized_text": "你\n怎么\n连\n半\n个\n袖\n才\n也\n捞\n不到\n呢",
    "differences": [
     {
      "kind": "replace",
-     "expected": "怎",
-     "recognized": "真"
+     "expected": "的",
+     "recognized": "么"
     }
    ],
-   "equivalences": []
+   "equivalences": [
+    {
+     "expected": "秀",
+     "recognized": "袖",
+     "basis": "pinyin"
+    }
+   ]
   },
   {
    "speaker": "旁白",
-   "check_status": "match",
+   "check_status": "review",
    "expected_text": "孔乙己立刻显出颓唐不安模样，脸上笼上了一层灰色，嘴里说些话；这回可是全是之乎者也之类，一些不懂了。",
-   "recognized_text": "孔\n一\n己\n立\n刻\n显\n出\n颓\n唐\n不\n安\n模\n样\n脸\n上\n聋\n上\n了\n一\n层\n灰\n色\n嘴\n里\n说\n些\n话\n这\n回\n可是\n全\n是\n知\n乎\n者\n也\n之\n类\n一些\n不\n懂\n了",
-   "differences": [],
-   "equivalences": [
+   "recognized_text": "空\n夜\n立\n刻\n显\n出\n颓\n唐\n不\n安\n模\n样\n脸\n上\n浓\n上\n了\n一\n层\n灰\n色\n嘴\n里\n说\n些\n话\n这\n回\n可是\n全\n是\n知\n乎\n者\n也\n之\n类\n一些\n不\n懂\n了",
+   "differences": [
     {
-     "expected": "乙",
-     "recognized": "一",
-     "basis": "人名"
+     "kind": "replace",
+     "expected": "孔乙己",
+     "recognized": "空夜"
     },
     {
+     "kind": "replace",
      "expected": "笼",
-     "recognized": "聋",
-     "basis": "pinyin"
-    },
+     "recognized": "浓"
+    }
+   ],
+   "equivalences": [
     {
      "expected": "之",
      "recognized": "知",
@@ -818,11 +844,22 @@
   },
   {
    "speaker": "旁白",
-   "check_status": "match",
+   "check_status": "review",
    "expected_text": "在这时候，众人也都哄笑起来：店内外充满了快活的空气。\n在这些时候，我可以附和着笑，掌柜是决不责备的。",
-   "recognized_text": "在\n这\n时候\n众\n人\n也\n都\n哄\n笑\n起\n来\n店\n内\n外\n充\n满\n了\n快\n活\n的\n空\n气\n在\n这\n些\n时候\n我\n可以\n附\n和\n着\n笑\n掌\n柜\n是\n绝\n不\n责\n备\n的",
-   "differences": [],
+   "recognized_text": "在\n这\n时候\n,\n众\n人\n也\n都\n哄\n笑\n起\n来\n,\n店\n内\n外\n充\n满\n了\n快\n活\n的\n空\n气\n,\n在\n这\n些\n时候\n,\n我\n可以\n复\n合\n着\n笑\n,\n掌\n柜\n是\n绝\n不\n责\n备\n的\n。",
+   "differences": [
+    {
+     "kind": "replace",
+     "expected": "和",
+     "recognized": "合"
+    }
+   ],
    "equivalences": [
+    {
+     "expected": "附",
+     "recognized": "复",
+     "basis": "pinyin"
+    },
     {
      "expected": "决",
      "recognized": "绝",
@@ -832,26 +869,20 @@
   },
   {
    "speaker": "旁白",
-   "check_status": "review",
+   "check_status": "match",
    "expected_text": "而且掌柜见了孔乙己，也每每这样问他，引人发笑。孔乙己自己知道不能和他们谈天，便只好向孩子说话。有一回对我说道，",
-   "recognized_text": "而且\n掌\n柜\n见\n了\n孔\n仪\n姐\n也\n每\n每\n这样\n问\n她\n引\n人\n发\n笑\n孔\n仪\n姐\n自己\n知道\n不能\n和\n他们\n谈\n天\n便\n只\n好\n向\n孩子\n说\n话\n有一\n回\n对\n我\n说\n道",
-   "differences": [
-    {
-     "kind": "replace",
-     "expected": "乙己",
-     "recognized": "仪姐"
-    },
-    {
-     "kind": "replace",
-     "expected": "乙己",
-     "recognized": "仪姐"
-    }
-   ],
+   "recognized_text": "而且\n掌\n柜\n见\n了\n孔\n一\n己\n也\n每\n每\n这样\n问\n他\n引\n人\n发\n笑\n孔\n一\n己\n自己\n知道\n不能\n和\n他们\n谈\n天\n便\n只\n好\n向\n孩子\n说\n话\n有一\n回\n对\n我\n说\n道",
+   "differences": [],
    "equivalences": [
     {
-     "expected": "他",
-     "recognized": "她",
-     "basis": "pinyin"
+     "expected": "乙",
+     "recognized": "一",
+     "basis": "人名"
+    },
+    {
+     "expected": "乙",
+     "recognized": "一",
+     "basis": "人名"
     }
    ]
   },
@@ -881,17 +912,12 @@
    "speaker": "孔乙己",
    "check_status": "match",
    "expected_text": "“读过书，……我便考你一考。茴香豆的茴字，怎样写的？”",
-   "recognized_text": "读\n过\n书\n我\n便\n考\n你\n一\n考\n回\n乡\n豆\n的\n回\n字\n怎\n样\n写\n的",
+   "recognized_text": "读\n过\n书\n,\n我\n便\n考\n你\n一\n考\n,\n回\n香\n豆\n的\n回\n字\n怎\n样\n写\n的",
    "differences": [],
    "equivalences": [
     {
      "expected": "茴",
      "recognized": "回",
-     "basis": "pinyin"
-    },
-    {
-     "expected": "香",
-     "recognized": "乡",
      "basis": "pinyin"
     },
     {
@@ -905,7 +931,7 @@
    "speaker": "旁白",
    "check_status": "match",
    "expected_text": "我想，讨饭一样的人，也配考我么？便回过脸去，不再理会。孔乙己等了许久，很恳切的说道：",
-   "recognized_text": "我想\n讨\n饭\n一\n样\n的人\n也\n配\n考\n我\n吗\n便\n回\n过\n脸\n去\n不\n再\n理\n会\n孔\n一\n级\n等\n了\n许\n久\n很\n恳\n切\n地\n说\n道",
+   "recognized_text": "我想\n,\n讨\n饭\n一\n样\n的人\n,\n也\n配\n考\n我\n吗\n?\n便\n回\n过\n脸\n去\n,\n不\n再\n理\n会\n,\n孔\n一\n级\n等\n了\n许\n久\n,\n很\n恳\n切\n地\n说\n道\n,",
    "differences": [],
    "equivalences": [
     {
@@ -929,7 +955,7 @@
    "speaker": "孔乙己",
    "check_status": "match",
    "expected_text": "“不能写罢？……我教给你，记着！这些字应该记着。将来做掌柜的时候，写帐要用。”",
-   "recognized_text": "不能\n写\n吧\n我\n交\n给\n你\n记\n着\n这\n些\n字\n应\n该\n记\n着\n将\n来\n做\n掌\n柜\n的时候\n写\n账\n要\n用",
+   "recognized_text": "不能\n写\n吧\n,\n我\n交\n给\n你\n记\n着\n。\n这\n些\n字\n应\n该\n记\n着\n,\n将\n来\n做\n掌\n柜\n的时候\n写\n账\n要\n用\n。",
    "differences": [],
    "equivalences": [
     {
@@ -953,14 +979,9 @@
    "speaker": "旁白",
    "check_status": "match",
    "expected_text": "我暗想我和掌柜的等级还很远呢，而且我们掌柜也从不将茴香豆上帐；又好笑，又不耐烦，懒懒的答他道：",
-   "recognized_text": "我\n按\n想\n我\n和\n掌\n柜\n的\n等\n级\n还\n很\n远\n呢\n而且\n我们\n掌\n柜\n也\n从\n不\n将\n回\n乡\n斗\n上\n账\n又\n好\n笑\n又\n不\n耐\n烦\n懒\n懒\n的\n答\n他\n道",
+   "recognized_text": "我\n暗\n想\n我\n和\n掌\n柜\n的\n等\n级\n还\n很\n远\n呢\n而且\n我们\n掌\n柜\n也\n从\n不\n将\n回\n乡\n豆\n上\n账\n又\n好\n笑\n又\n不\n耐\n烦\n懒\n懒\n地\n答\n他\n道",
    "differences": [],
    "equivalences": [
-    {
-     "expected": "暗",
-     "recognized": "按",
-     "basis": "pinyin"
-    },
     {
      "expected": "茴",
      "recognized": "回",
@@ -972,51 +993,67 @@
      "basis": "pinyin"
     },
     {
-     "expected": "豆",
-     "recognized": "斗",
-     "basis": "pinyin"
-    },
-    {
      "expected": "帐",
      "recognized": "账",
      "basis": "pinyin"
+    },
+    {
+     "expected": "的",
+     "recognized": "地",
+     "basis": "grammatical-de"
     }
    ]
   },
   {
    "speaker": "我",
-   "check_status": "review",
+   "check_status": "match",
    "expected_text": "“谁要你教，不是草头底下一个来回的回字么？”",
-   "recognized_text": "谁\n要\n你\n教\n不是\n草\n头\n底\n下\n一个\n来\n回\n的\n回\n子\n吗",
-   "differences": [
+   "recognized_text": "谁\n要\n你\n教\n,\n不是\n草\n头\n底\n下\n一个\n来\n回\n的\n回\n字\n吗\n?",
+   "differences": [],
+   "equivalences": [
     {
-     "kind": "replace",
-     "expected": "字么",
-     "recognized": "子吗"
+     "expected": "么",
+     "recognized": "吗",
+     "basis": "旧白话"
     }
-   ],
-   "equivalences": []
+   ]
   },
   {
    "speaker": "旁白",
    "check_status": "match",
    "expected_text": "孔乙己显出极高兴的样子，将两个指头的长指甲敲着柜台，点头说：",
-   "recognized_text": "孔\n一\n吉\n显\n出\n极\n高\n兴\n的\n样\n子\n将\n两\n个\n指\n头\n的\n长\n指\n甲\n敲\n着\n柜\n台\n点\n头\n说",
+   "recognized_text": "孔\n一\n己\n显\n出\n极\n高\n性\n的\n样\n子\n将\n两\n个\n指\n头\n的\n长\n指\n甲\n敲\n着\n柜\n台\n点\n头\n说",
    "differences": [],
    "equivalences": [
     {
-     "expected": "乙己",
-     "recognized": "一吉",
+     "expected": "乙",
+     "recognized": "一",
      "basis": "人名"
+    },
+    {
+     "expected": "兴",
+     "recognized": "性",
+     "basis": "pinyin"
     }
    ]
   },
   {
    "speaker": "孔乙己",
-   "check_status": "match",
+   "check_status": "review",
    "expected_text": "“对呀对呀！……回字有四样写法，你知道么？”",
-   "recognized_text": "对\n呀\n对\n呀\n回\n字\n有\n四\n样\n写\n法\n你知道\n吗",
-   "differences": [],
+   "recognized_text": "对\n啊\n对\n啊\n回\n字\n有\n四\n样\n写\n法\n你知道\n吗",
+   "differences": [
+    {
+     "kind": "replace",
+     "expected": "呀",
+     "recognized": "啊"
+    },
+    {
+     "kind": "replace",
+     "expected": "呀",
+     "recognized": "啊"
+    }
+   ],
    "equivalences": [
     {
      "expected": "么",
@@ -1029,27 +1066,12 @@
    "speaker": "旁白",
    "check_status": "review",
    "expected_text": "我愈不耐烦了，努着嘴走远。孔乙己刚用指甲蘸了酒，想在柜上写字，见我毫不热心，便又叹一口气，显出极惋惜的样子。\n",
-   "recognized_text": "我\n欲\n不\n耐\n烦\n了\n目\n着\n嘴\n走\n远\n孔\n姨\n姐\n刚\n用\n指\n甲\n沾\n了\n酒\n想\n在\n柜\n上\n写\n字\n见\n我\n毫\n不\n热\n心\n边\n又\n叹\n一\n口\n气\n显\n出\n极\n惋\n惜\n的\n样\n子",
+   "recognized_text": "我\n欲\n不\n耐\n烦\n了\n,\n弩\n着\n嘴\n走\n远\n,\n空\n一\n己\n刚\n用\n指\n甲\n沾\n了\n酒\n,\n想\n在\n柜\n上\n写\n字\n,\n见\n我\n毫\n不\n热\n心\n,\n便\n又\n叹\n一\n口\n气\n,\n显\n出\n极\n惋\n惜\n的\n样\n子\n。",
    "differences": [
-    {
-     "kind": "replace",
-     "expected": "努",
-     "recognized": "目"
-    },
-    {
-     "kind": "replace",
-     "expected": "乙己",
-     "recognized": "姨姐"
-    },
     {
      "kind": "replace",
      "expected": "蘸",
      "recognized": "沾"
-    },
-    {
-     "kind": "replace",
-     "expected": "便",
-     "recognized": "边"
     }
    ],
    "equivalences": [
@@ -1057,21 +1079,25 @@
      "expected": "愈",
      "recognized": "欲",
      "basis": "pinyin"
+    },
+    {
+     "expected": "努",
+     "recognized": "弩",
+     "basis": "pinyin"
+    },
+    {
+     "expected": "孔乙",
+     "recognized": "空一",
+     "basis": "人名"
     }
    ]
   },
   {
    "speaker": "旁白",
-   "check_status": "review",
+   "check_status": "match",
    "expected_text": "有几回，邻舍孩子听得笑声，也赶热闹，围住了孔乙己。他便给他们茴香豆吃，一人一颗。孩子吃完豆，仍然不散，眼睛都望着碟子。",
-   "recognized_text": "有\n几\n回\n临\n摄\n孩子\n听\n着\n笑\n声\n也\n敢\n热\n闹\n围\n住\n了\n孔\n一\n己\n他\n便\n给\n他们\n茴\n香\n豆\n吃\n一\n人\n一\n颗\n孩子\n吃\n完\n豆\n仍\n然\n不\n散\n眼\n睛\n都\n望\n着\n碟\n子",
-   "differences": [
-    {
-     "kind": "replace",
-     "expected": "得",
-     "recognized": "着"
-    }
-   ],
+   "recognized_text": "有\n几\n回\n临\n摄\n孩子\n听\n得\n笑\n声\n也\n敢\n热\n闹\n,\n围\n住\n了\n孔\n以\n己\n,\n他\n便\n给\n他们\n回\n香\n豆\n吃\n,\n一\n人\n一\n颗\n,\n孩子\n吃\n完\n豆\n仍\n然\n不\n散\n,\n眼\n睛\n都\n望\n着\n碟\n子\n。",
+   "differences": [],
    "equivalences": [
     {
      "expected": "邻",
@@ -1090,21 +1116,32 @@
     },
     {
      "expected": "乙",
-     "recognized": "一",
-     "basis": "人名"
+     "recognized": "以",
+     "basis": "pinyin"
+    },
+    {
+     "expected": "茴",
+     "recognized": "回",
+     "basis": "pinyin"
     }
    ]
   },
   {
    "speaker": "旁白",
-   "check_status": "match",
+   "check_status": "review",
    "expected_text": "孔乙己着了慌，伸开五指将碟子罩住，弯腰下去说道：",
-   "recognized_text": "孔\n仪\n挤\n着\n了\n慌\n伸\n开\n五\n指\n将\n碟\n子\n罩\n住\n弯\n腰\n下去\n说\n道",
-   "differences": [],
+   "recognized_text": "空\n仪\n挤\n着\n了\n黄\n伸\n开\n五\n指\n将\n碟\n子\n罩\n住\n弯\n腰\n下去\n说\n道",
+   "differences": [
+    {
+     "kind": "replace",
+     "expected": "慌",
+     "recognized": "黄"
+    }
+   ],
    "equivalences": [
     {
-     "expected": "乙",
-     "recognized": "仪",
+     "expected": "孔乙",
+     "recognized": "空仪",
      "basis": "人名"
     },
     {
@@ -1118,28 +1155,34 @@
    "speaker": "孔乙己",
    "check_status": "match",
    "expected_text": "“不多了，我已经不多了。”",
-   "recognized_text": "不多\n了\n我\n已经\n不多\n了",
+   "recognized_text": "不多\n了\n,\n我\n已经\n不多\n了\n,",
    "differences": [],
    "equivalences": []
   },
   {
    "speaker": "旁白",
-   "check_status": "match",
+   "check_status": "review",
    "expected_text": "直起身又看一看豆，自己摇头说：",
-   "recognized_text": "直\n起\n身\n又\n看\n一\n看\n豆\n自己\n摇\n头\n说",
-   "differences": [],
+   "recognized_text": "只\n起\n身\n又\n看\n一\n看\n豆\n自己\n摇\n头\n说",
+   "differences": [
+    {
+     "kind": "replace",
+     "expected": "直",
+     "recognized": "只"
+    }
+   ],
    "equivalences": []
   },
   {
    "speaker": "孔乙己",
    "check_status": "review",
    "expected_text": "“不多不多！多乎哉？不多也。”",
-   "recognized_text": "不多\n不多\n多\n虎\n哉\n不多\n也",
+   "recognized_text": "不多\n,\n不多\n,\n多\n亏\n哉\n,\n不多\n也",
    "differences": [
     {
      "kind": "replace",
      "expected": "乎",
-     "recognized": "虎"
+     "recognized": "亏"
     }
    ],
    "equivalences": []
@@ -1148,15 +1191,30 @@
    "speaker": "旁白",
    "check_status": "review",
    "expected_text": "于是这一群孩子都在笑声里走散了。\n孔乙己是这样的使人快活，可是没有他，别人也便这么过。\n",
-   "recognized_text": "于\n是\n这\n一\n群\n孩子\n都\n在\n笑\n声\n里\n走\n散\n了\n孔\n姨\n姐\n是\n这样\n的\n使\n人\n快\n活\n可是\n没有\n她\n别\n人\n也\n变\n这么\n过",
+   "recognized_text": "于\n是\n这\n群\n孩子\n都\n在\n笑\n声\n里\n走\n散\n了\n孔\n姨\n几\n时\n这样\n的\n使\n人\n快\n活\n可是\n没有\n她\n别\n人\n也\n变\n这么\n过",
    "differences": [
     {
+     "kind": "delete",
+     "expected": "一",
+     "recognized": ""
+    },
+    {
      "kind": "replace",
-     "expected": "乙己",
-     "recognized": "姨姐"
+     "expected": "是",
+     "recognized": "时"
     }
    ],
    "equivalences": [
+    {
+     "expected": "乙",
+     "recognized": "姨",
+     "basis": "人名"
+    },
+    {
+     "expected": "己",
+     "recognized": "几",
+     "basis": "pinyin"
+    },
     {
      "expected": "他",
      "recognized": "她",
@@ -1173,7 +1231,7 @@
    "speaker": "旁白",
    "check_status": "review",
    "expected_text": "有一天，大约是中秋前的两三天，掌柜正在慢慢的结帐，取下粉板，忽然说：",
-   "recognized_text": "有一\n天\n大\n约\n是\n中\n秋\n前\n的\n两\n三\n天\n掌\n柜\n正\n在\n慢慢\n的\n结\n账\n取\n下\n坟\n板\n忽\n然\n说",
+   "recognized_text": "有一\n天\n,\n大\n约\n是\n中\n秋\n前\n的\n两\n三\n天\n,\n掌\n柜\n正\n在\n慢慢\n地\n结\n账\n,\n取\n下\n坟\n板\n,\n忽\n然\n说\n,",
    "differences": [
     {
      "kind": "replace",
@@ -1183,6 +1241,11 @@
    ],
    "equivalences": [
     {
+     "expected": "的",
+     "recognized": "地",
+     "basis": "grammatical-de"
+    },
+    {
      "expected": "帐",
      "recognized": "账",
      "basis": "pinyin"
@@ -1191,30 +1254,31 @@
   },
   {
    "speaker": "掌柜",
-   "check_status": "match",
+   "check_status": "review",
    "expected_text": "“孔乙己长久没有来了。还欠十九个钱呢！”",
-   "recognized_text": "孔\n一\n姬\n长\n久\n没有\n来了\n,\n还\n欠\n19\n个\n钱\n呢\n。",
-   "differences": [],
-   "equivalences": [
+   "recognized_text": "啊\n空\n遗\n己\n长\n久\n没有\n来了\n还\n欠\n十\n九\n个\n钱\n呢",
+   "differences": [
     {
-     "expected": "乙己",
-     "recognized": "一姬",
-     "basis": "人名"
-    },
-    {
-     "expected": "十九",
-     "recognized": "19",
-     "basis": "数字写法"
+     "kind": "replace",
+     "expected": "孔乙",
+     "recognized": "啊空遗"
     }
-   ]
+   ],
+   "equivalences": []
   },
   {
    "speaker": "旁白",
    "check_status": "match",
    "expected_text": "我才也觉得他的确长久没有来了。一个喝酒的人说道，",
-   "recognized_text": "我\n才\n也\n觉得\n他的\n确\n长\n久\n没有\n来了\n一个\n喝\n酒\n的人\n说\n道",
+   "recognized_text": "我\n才\n也\n觉得\n她\n的\n确\n长\n久\n没有\n来了\n一个\n喝\n酒\n的人\n说\n道",
    "differences": [],
-   "equivalences": []
+   "equivalences": [
+    {
+     "expected": "他",
+     "recognized": "她",
+     "basis": "pinyin"
+    }
+   ]
   },
   {
    "speaker": "酒客",
@@ -1236,38 +1300,32 @@
    "speaker": "掌柜",
    "check_status": "review",
    "expected_text": "“哦！”",
-   "recognized_text": "O",
+   "recognized_text": "哈",
    "differences": [
     {
      "kind": "replace",
      "expected": "哦",
-     "recognized": "o"
+     "recognized": "哈"
     }
    ],
    "equivalences": []
   },
   {
    "speaker": "酒客",
-   "check_status": "review",
+   "check_status": "match",
    "expected_text": "“他总仍旧是偷。这一回，是自己发昏，竟偷到丁举人家里去了。他家的东西，偷得的么？”",
-   "recognized_text": "他\n总\n人\n就是\n偷\n这\n一\n回\n是\n自己\n发\n婚\n竟\n偷\n到\n丁\n举\n人\n家\n里\n去了\n他\n家\n的\n东\n西\n偷\n得\n的\n吗",
-   "differences": [
-    {
-     "kind": "replace",
-     "expected": "仍",
-     "recognized": "人"
-    }
-   ],
+   "recognized_text": "他\n总\n仍\n旧\n是\n偷\n这\n一\n回\n是\n自己\n发\n婚\n竟\n偷\n到\n丁\n举\n人\n家\n里\n去了\n他\n家\n的\n东\n西\n偷\n的\n的\n吗",
+   "differences": [],
    "equivalences": [
-    {
-     "expected": "旧",
-     "recognized": "就",
-     "basis": "pinyin"
-    },
     {
      "expected": "昏",
      "recognized": "婚",
      "basis": "pinyin"
+    },
+    {
+     "expected": "得",
+     "recognized": "的",
+     "basis": "grammatical-de"
     },
     {
      "expected": "么",
@@ -1288,12 +1346,12 @@
    "speaker": "酒客",
    "check_status": "match",
    "expected_text": "“怎么样？先写服辩，后来是打，打了大半夜，再打折了腿。”",
-   "recognized_text": "怎么样\n?\n先\n写\n幅\n便\n,\n后\n来\n是\n打\n,\n打\n了\n大\n半\n夜\n,\n再\n打\n折\n了\n腿\n。",
+   "recognized_text": "怎么样\n先\n写\n福\n便\n后\n来\n是\n打\n打\n了\n大\n半\n夜\n再\n打\n折\n了\n腿",
    "differences": [],
    "equivalences": [
     {
      "expected": "服",
-     "recognized": "幅",
+     "recognized": "福",
      "basis": "pinyin"
     },
     {
@@ -1307,7 +1365,7 @@
    "speaker": "掌柜",
    "check_status": "match",
    "expected_text": "“后来呢？”",
-   "recognized_text": "后\n来\n呢",
+   "recognized_text": "后\n来\n呢\n?",
    "differences": [],
    "equivalences": []
   },
@@ -1323,7 +1381,7 @@
    "speaker": "掌柜",
    "check_status": "match",
    "expected_text": "“打折了怎样呢？”",
-   "recognized_text": "打\n折\n了\n怎\n样\n呢\n?",
+   "recognized_text": "打\n折\n了\n怎\n样\n呢",
    "differences": [],
    "equivalences": []
   },
@@ -1331,7 +1389,7 @@
    "speaker": "酒客",
    "check_status": "match",
    "expected_text": "“怎样？……谁晓得？许是死了。”",
-   "recognized_text": "怎\n样\n,\n谁\n晓\n得\n,\n许\n是\n死\n了",
+   "recognized_text": "怎\n样\n\n谁\n晓\n得\n许\n是\n死\n了",
    "differences": [],
    "equivalences": []
   },
@@ -1367,53 +1425,42 @@
   },
   {
    "speaker": "旁白",
-   "check_status": "review",
+   "check_status": "match",
    "expected_text": "一天的下半天，没有一个顾客，我正合了眼坐着。忽然间听得一个声音，",
-   "recognized_text": "一\n天\n的\n下\n半\n天\n没有\n一个\n顾\n客\n我\n正\n和\n脸\n坐\n着\n忽\n然\n间\n听\n了\n一个\n声\n音",
-   "differences": [
-    {
-     "kind": "replace",
-     "expected": "了眼",
-     "recognized": "脸"
-    },
-    {
-     "kind": "replace",
-     "expected": "得",
-     "recognized": "了"
-    }
-   ],
+   "recognized_text": "一\n天\n的\n下\n半\n天\n没有\n一个\n顾\n客\n我\n正\n合\n了\n眼\n坐\n着\n忽\n然\n间\n听\n的\n一个\n声\n音",
+   "differences": [],
    "equivalences": [
     {
-     "expected": "合",
-     "recognized": "和",
-     "basis": "pinyin"
+     "expected": "得",
+     "recognized": "的",
+     "basis": "grammatical-de"
     }
    ]
   },
   {
    "speaker": "孔乙己",
-   "check_status": "match",
+   "check_status": "review",
    "expected_text": "“温一碗酒。”",
-   "recognized_text": "瘟\n一\n碗\n酒",
-   "differences": [],
-   "equivalences": [
+   "recognized_text": "W\nen\nYi\nwan\nZhou",
+   "differences": [
     {
-     "expected": "温",
-     "recognized": "瘟",
-     "basis": "pinyin"
+     "kind": "replace",
+     "expected": "温一碗酒",
+     "recognized": "wenyiwanzhou"
     }
-   ]
+   ],
+   "equivalences": []
   },
   {
    "speaker": "旁白",
    "check_status": "match",
-   "expected_text": "这声音虽然极低，却很耳熟。看时又全没有人。站起来向外一望，那孔乙己便在柜台下对了门槛坐着。他脸上黑而且瘦，已经不成样子；",
-   "recognized_text": "这\n声\n音\n虽\n然\n极\n低\n却\n很\n耳\n熟\n看\n时\n又\n全\n没有\n人\n站\n起\n来\n向\n外\n一\n望\n那\n孔\n一\n己\n便\n在\n柜\n台\n下\n对\n了\n门\n槛\n坐\n着\n他\n脸\n上\n黑\n而且\n瘦\n已经\n不\n成\n样\n子",
+   "expected_text": "这声音虽然极低，却很耳熟。看时又全没有人。站起来向外一望，那孔乙己便在柜台下对了门槛坐着。",
+   "recognized_text": "这\n声\n音\n虽\n然\n极\n低\n,\n却\n很\n耳\n熟\n,\n看\n时\n又\n全\n没有\n人\n。\n站\n起\n来\n向\n外\n一\n望\n,\n那\n空\n一\n己\n便\n在\n柜\n台\n下\n对\n了\n门\n槛\n坐\n着\n。",
    "differences": [],
    "equivalences": [
     {
-     "expected": "乙",
-     "recognized": "一",
+     "expected": "孔乙",
+     "recognized": "空一",
      "basis": "人名"
     }
    ]
@@ -1421,62 +1468,66 @@
   {
    "speaker": "旁白",
    "check_status": "review",
-   "expected_text": "穿一件破夹袄，盘着两腿，下面垫一个蒲包，用草绳在肩上挂住；见了我，又说道，",
-   "recognized_text": "穿\n一\n件\n破\n甲\n袄\n盘\n着\n两\n腿\n下面\n垫\n一个\n蒲\n包\n用\n草\n绳\n在\n肩\n上\n挂\n住\n见\n了\n我\n又\n说\n道",
+   "expected_text": "他脸上黑而且瘦，已经不成样子；穿一件破夹袄，盘着两腿，下面垫一个蒲包，用草绳在肩上挂住；见了我，又说道，",
+   "recognized_text": "他\n脸\n上\n黑\n而且\n瘦\n,\n已经\n不\n成\n样\n子\n,\n穿\n一\n件\n破\n架\n袄\n,\n盘\n着\n两\n腿\n,\n下面\n垫\n一个\n蒲\n包\n,\n用\n草\n绳\n在\n肩\n上\n挂\n住\n,\n见\n了\n我\n,\n又\n说\n道\n。",
    "differences": [
     {
      "kind": "replace",
      "expected": "夹",
-     "recognized": "甲"
+     "recognized": "架"
     }
    ],
    "equivalences": []
   },
   {
    "speaker": "孔乙己",
-   "check_status": "match",
+   "check_status": "review",
    "expected_text": "“温一碗酒。”",
-   "recognized_text": "瘟\n一\n碗\n酒",
-   "differences": [],
-   "equivalences": [
+   "recognized_text": "W\nen\nYi\nwan\nZhou",
+   "differences": [
     {
-     "expected": "温",
-     "recognized": "瘟",
-     "basis": "pinyin"
+     "kind": "replace",
+     "expected": "温一碗酒",
+     "recognized": "wenyiwanzhou"
     }
-   ]
+   ],
+   "equivalences": []
   },
   {
    "speaker": "旁白",
-   "check_status": "review",
+   "check_status": "match",
    "expected_text": "掌柜也伸出头去，一面说：",
-   "recognized_text": "掌\n柜\n伸\n出\n头\n去\n一\n面\n说",
-   "differences": [
-    {
-     "kind": "delete",
-     "expected": "也",
-     "recognized": ""
-    }
-   ],
+   "recognized_text": "掌\n柜\n也\n伸\n出\n头\n去\n一\n面\n说",
+   "differences": [],
    "equivalences": []
   },
   {
    "speaker": "掌柜",
    "check_status": "review",
    "expected_text": "“孔乙己么？你还欠十九个钱呢！”",
-   "recognized_text": "空\n一\n级\n吗\n?\n你\n还\n欠\n19\n个\n钱\n呢\n?",
+   "recognized_text": "恐\n一\n挤\n嘛\n你\n还\n欠\n十\n九\n个\n钱\n呢",
    "differences": [
     {
      "kind": "replace",
-     "expected": "孔乙己么",
-     "recognized": "空一级吗"
+     "expected": "么",
+     "recognized": "嘛"
     }
    ],
    "equivalences": [
     {
-     "expected": "十九",
-     "recognized": "19",
-     "basis": "数字写法"
+     "expected": "孔",
+     "recognized": "恐",
+     "basis": "pinyin"
+    },
+    {
+     "expected": "乙",
+     "recognized": "一",
+     "basis": "人名"
+    },
+    {
+     "expected": "己",
+     "recognized": "挤",
+     "basis": "pinyin"
     }
    ]
   },
@@ -1484,21 +1535,15 @@
    "speaker": "旁白",
    "check_status": "review",
    "expected_text": "孔乙己很颓唐的仰面答道，",
-   "recognized_text": "孔\n一\n级\n很\n推\n荡\n的\n仰\n面\n答\n道",
+   "recognized_text": "啃\n一\n极\n很\n颓\n唐\n的\n仰\n面\n答\n道",
    "differences": [
     {
      "kind": "replace",
-     "expected": "颓唐",
-     "recognized": "推荡"
+     "expected": "孔乙己",
+     "recognized": "啃一极"
     }
    ],
-   "equivalences": [
-    {
-     "expected": "乙己",
-     "recognized": "一级",
-     "basis": "人名"
-    }
-   ]
+   "equivalences": []
   },
   {
    "speaker": "孔乙己",
@@ -1529,17 +1574,17 @@
   },
   {
    "speaker": "掌柜",
-   "check_status": "match",
+   "check_status": "review",
    "expected_text": "“孔乙己，你又偷了东西了！”",
-   "recognized_text": "孔\n一\n级\n,\n你\n又\n偷\n了\n东\n西\n了\n。",
-   "differences": [],
-   "equivalences": [
+   "recognized_text": "哄\n怡\n己\n你\n又\n偷\n了\n东\n西\n了",
+   "differences": [
     {
-     "expected": "乙己",
-     "recognized": "一级",
-     "basis": "人名"
+     "kind": "replace",
+     "expected": "孔乙",
+     "recognized": "哄怡"
     }
-   ]
+   ],
+   "equivalences": []
   },
   {
    "speaker": "旁白",
@@ -1557,49 +1602,50 @@
   },
   {
    "speaker": "孔乙己",
-   "check_status": "match",
+   "check_status": "review",
    "expected_text": "“不要取笑！”",
-   "recognized_text": "不要\n取\n笑",
-   "differences": [],
+   "recognized_text": "不要\n取\n消",
+   "differences": [
+    {
+     "kind": "replace",
+     "expected": "笑",
+     "recognized": "消"
+    }
+   ],
    "equivalences": []
   },
   {
    "speaker": "掌柜",
    "check_status": "match",
    "expected_text": "“取笑？要是不偷，怎么会打断腿？”",
-   "recognized_text": "取\n笑\n,\n要\n是\n不\n偷\n,\n怎么\n会\n打\n断\n腿\n?",
+   "recognized_text": "取\n笑\n要\n是\n不\n偷\n怎么\n会\n打\n断\n腿",
    "differences": [],
    "equivalences": []
   },
   {
    "speaker": "旁白",
-   "check_status": "review",
+   "check_status": "match",
    "expected_text": "孔乙己低声说道：",
-   "recognized_text": "孔\n一\n姐\n低\n声\n说\n道",
-   "differences": [
+   "recognized_text": "孔\n义\n姬\n低\n声\n说\n道\n,",
+   "differences": [],
+   "equivalences": [
     {
-     "kind": "replace",
      "expected": "乙己",
-     "recognized": "一姐"
+     "recognized": "义姬",
+     "basis": "人名"
     }
-   ],
-   "equivalences": []
+   ]
   },
   {
    "speaker": "孔乙己",
    "check_status": "review",
    "expected_text": "“跌断，跌，跌……”",
-   "recognized_text": "季\n断\n季",
+   "recognized_text": "D\nia\nDu\nan\nD\nia\nD\nia",
    "differences": [
     {
      "kind": "replace",
-     "expected": "跌",
-     "recognized": "季"
-    },
-    {
-     "kind": "replace",
-     "expected": "跌跌",
-     "recognized": "季"
+     "expected": "跌断跌跌",
+     "recognized": "diaduandiadia"
     }
    ],
    "equivalences": []
@@ -1608,7 +1654,7 @@
    "speaker": "旁白",
    "check_status": "match",
    "expected_text": "他的眼色，很像恳求掌柜，不要再提。此时已经聚集了几个人，便和掌柜都笑了。我温了酒，端出去，放在门槛上。",
-   "recognized_text": "他的\n眼\n色\n很\n像\n恳\n求\n掌\n柜\n不要\n再\n提\n此\n时\n已经\n聚\n集\n了\n几\n个\n人\n便\n和\n掌\n柜\n都\n笑\n了\n我\n温\n了\n酒\n端\n出去\n放\n在\n门\n槛\n上",
+   "recognized_text": "他的\n眼\n色\n很\n像\n恳\n求\n掌\n柜\n,\n不要\n再\n提\n。\n此\n时\n已经\n聚\n集\n了\n几\n个\n人\n,\n便\n和\n掌\n柜\n都\n笑\n了\n,\n我\n温\n了\n酒\n,\n端\n出去\n放\n在\n门\n槛\n上\n。",
    "differences": [],
    "equivalences": []
   },
@@ -1616,32 +1662,21 @@
    "speaker": "旁白",
    "check_status": "review",
    "expected_text": "他从破衣袋里摸出四文大钱，放在我手里，见他满手是泥，原来他便用这手走来的。",
-   "recognized_text": "他\n从\n破\n衣\n带\n脸\n摸\n出\n四\n文\n大\n钱\n放\n在\n我\n手\n里\n见\n他\n满\n手\n是\n你\n原\n来\n他\n便\n用\n这\n手\n走\n来\n的",
+   "recognized_text": "他\n从\n破\n衣\n袋\n里\n摸\n出\n四\n文\n大\n钱\n放\n在\n我\n手\n里\n见\n他\n满\n手\n是\n你\n原\n来\n他\n便\n用\n这\n手\n走\n来\n的",
    "differences": [
-    {
-     "kind": "replace",
-     "expected": "里",
-     "recognized": "脸"
-    },
     {
      "kind": "replace",
      "expected": "泥",
      "recognized": "你"
     }
    ],
-   "equivalences": [
-    {
-     "expected": "袋",
-     "recognized": "带",
-     "basis": "pinyin"
-    }
-   ]
+   "equivalences": []
   },
   {
    "speaker": "旁白",
    "check_status": "review",
-   "expected_text": "不一会，他喝完酒，便又在旁人的说笑声中，坐着用这手慢慢走去了。\n自此以后，又长久没有看见孔乙己。",
-   "recognized_text": "不\n一\n会\n儿\n他\n喝\n完\n酒\n便\n又\n在\n旁\n人\n的\n说\n笑\n声\n中\n坐\n着\n用\n这\n手\n慢慢\n走\n去了\n自\n此\n以\n后\n又\n长\n久\n没有\n看\n见\n孔\n一\n己",
+   "expected_text": "不一会，他喝完酒，便又在旁人的说笑声中，坐着用这手慢慢走去了。\n",
+   "recognized_text": "不\n一\n会\n儿\n,\n他\n喝\n完\n酒\n,\n便\n又\n在\n旁\n人\n的\n说\n笑\n声\n中\n坐\n着\n用\n这\n手\n慢慢\n走\n去了\n。",
    "differences": [
     {
      "kind": "insert",
@@ -1649,19 +1684,13 @@
      "recognized": "儿"
     }
    ],
-   "equivalences": [
-    {
-     "expected": "乙",
-     "recognized": "一",
-     "basis": "人名"
-    }
-   ]
+   "equivalences": []
   },
   {
    "speaker": "旁白",
    "check_status": "review",
-   "expected_text": "到了年关，掌柜取下粉板说：",
-   "recognized_text": "到了\n年\n关\n掌\n柜\n取\n下\n坟\n板\n说",
+   "expected_text": "自此以后，又长久没有看见孔乙己。到了年关，掌柜取下粉板说：",
+   "recognized_text": "自\n此\n以\n后\n,\n又\n长\n久\n没有\n看\n见\n孔\n仪\n己\n,\n到了\n年\n关\n,\n掌\n柜\n取\n下\n坟\n板\n说\n,\"",
    "differences": [
     {
      "kind": "replace",
@@ -1669,18 +1698,24 @@
      "recognized": "坟"
     }
    ],
-   "equivalences": []
+   "equivalences": [
+    {
+     "expected": "乙",
+     "recognized": "仪",
+     "basis": "人名"
+    }
+   ]
   },
   {
    "speaker": "掌柜",
    "check_status": "match",
    "expected_text": "“孔乙己还欠十九个钱呢！”",
-   "recognized_text": "孔\n一\n己\n还\n欠\n十\n九\n个\n钱\n呢",
+   "recognized_text": "孔\n一\n级\n还\n欠\n十\n九\n个\n钱\n呢",
    "differences": [],
    "equivalences": [
     {
-     "expected": "乙",
-     "recognized": "一",
+     "expected": "乙己",
+     "recognized": "一级",
      "basis": "人名"
     }
    ]
@@ -1697,12 +1732,12 @@
    "speaker": "掌柜",
    "check_status": "match",
    "expected_text": "“孔乙己还欠十九个钱呢！”",
-   "recognized_text": "孔\n一\n己\n还\n欠\n十\n九\n个\n钱\n呢",
+   "recognized_text": "孔\n一\n级\n还\n欠\n十\n九\n个\n钱\n呢",
    "differences": [],
    "equivalences": [
     {
-     "expected": "乙",
-     "recognized": "一",
+     "expected": "乙己",
+     "recognized": "一级",
      "basis": "人名"
     }
    ]
@@ -1711,7 +1746,7 @@
    "speaker": "旁白",
    "check_status": "match",
    "expected_text": "到中秋可是没有说，再到年关也没有看见他。\n我到现在终于没有见——大约孔乙己的确死了。",
-   "recognized_text": "到\n中\n秋\n可是\n没有\n说\n再\n到\n年\n关\n也\n没有\n看\n见\n他\n我\n到\n现在\n终\n于\n没有\n见\n大\n约\n孔\n一\n己\n的\n确\n死\n了",
+   "recognized_text": "到\n中\n秋\n可是\n没有\n说\n,\n再\n到\n年\n关\n也\n没有\n看\n见\n他\n,\n我\n到\n现在\n终\n于\n没有\n见\n,\n大\n约\n孔\n一\n己\n的\n确\n死\n了\n。",
    "differences": [],
    "equivalences": [
     {
