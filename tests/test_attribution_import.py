@@ -118,3 +118,21 @@ def test_a_name_the_story_never_uses_is_handed_back_as_unresolved(tmp_path):
         d = draft(c, '吴迪看着我。“别干了，好吗？”')
         quoted = next(u for u in d['units'] if u['text'].startswith('“'))
         assert quoted['speaker'] == '吴迪' and 'suggested' not in quoted
+
+
+def test_an_unquoted_unit_in_a_quoted_text_is_prose_whatever_the_model_says(tmp_path):
+    """掌柜说： is not the shopkeeper speaking. 27 of 27 reviewed cases agreed."""
+    class TagAsSpeech(Roles):
+        def annotate(self, text, log_path):
+            units = source_units(text)
+            return {'labels': [{'id': u['id'], 'kind': 'dialogue', 'speaker': '掌柜'} for u in units],
+                    'model_sha256': 'fixture'}
+    with TestClient(create_app(tmp_path / 'p', FixtureEngine(), role_engine=TagAsSpeech()),
+                    base_url='http://127.0.0.1', headers=HEADERS) as c:
+        d = draft(c, '掌柜说：“孔乙己么？你还欠十九个钱呢！”')
+        prose, quote = d['units'][0], d['units'][1]
+        assert prose['kind'] == 'narration' and prose['suggested'] == '掌柜'
+        assert quote['kind'] == 'dialogue' and quote['speaker'] == '掌柜'
+        # A text with no quotation marks at all is not touched by this rule.
+        d = draft(c, '掌柜说孔乙己还欠十九个钱呢。')
+        assert d['units'][0]['kind'] == 'dialogue'

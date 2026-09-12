@@ -380,8 +380,15 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             # A name the model invents -- ME for 我, WU DI for 吴迪 -- is not a
             # name the story uses. Anything not found in the text is handed to
             # the reviewer as unresolved, with the model's guess kept as a hint.
-            def vetted(label):
+            # In a text that marks speech with quotation marks, an unquoted unit
+            # is prose. The model labels 掌柜说： as the shopkeeper speaking; across
+            # four reviewed projects it did so 27 times and the reviewer disagreed
+            # 27 times. Texts with no quotation marks at all are left alone.
+            quoted = any(c in body.script for c in '“"「『')
+            def vetted(label, unit):
                 speaker = label['speaker'].strip()
+                if quoted and label['kind'] == 'dialogue' and not unit['text'].lstrip().startswith(('“', '"', '「', '『')):
+                    return {'kind': 'narration', 'speaker': 'NARRATOR', 'suggested': speaker}
                 if label['kind'] == 'dialogue' and speaker.upper() not in ('', 'UNKNOWN', 'NARRATOR') and speaker not in body.script:
                     return {'kind': 'dialogue', 'speaker': 'UNKNOWN', 'suggested': speaker}
                 return {'kind': label['kind'], 'speaker': speaker}
@@ -389,7 +396,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             # still needs a label, but showing the reviewer an empty row to
             # assign a character to is noise. Mark it; the UI leaves it out.
             return {'draft_id':draft_id,
-                    'units':[{**unit, **vetted(labels[unit['id']]), 'blank': not unit['text'].strip()}
+                    'units':[{**unit, **vetted(labels[unit['id']], unit), 'blank': not unit['text'].strip()}
                              for unit in source_units(body.script)]}
         except ValueError as exc:
             # bind_labels rejects a malformed model response. Its wording names
