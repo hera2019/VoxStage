@@ -138,3 +138,44 @@ def ranged(tmp_path):
         p = c.post('/api/attribution/confirm', json={'draft_id': d['draft_id'], 'name': '拆分', 'labels': labels})
         assert p.status_code == 200, p.text
         yield c, p.json()
+
+
+def test_a_hand_cut_boundary_survives_a_reslice(ranged):
+    """The slicer would merge the halves straight back; the lock stops it."""
+    client, p = ranged
+    base = '/api/projects/' + p['id']
+    target = next(s for s in p['segments'] if len(s['text']) > 3)
+    p = client.post(base + '/segments/' + target['id'] + '/split', json={'revision': p['revision'], 'at': 2}).json()
+    halves = [s['text'] for s in p['segments']]
+    locked = [s['text'] for s in p['segments'] if s['lock_before']]
+    assert len(locked) == 1
+    # Reslice with the source untouched: the halves stay apart.
+    preview = client.post(base + '/script', json={'revision': p['revision'], 'source_script': p['source_script']}).json()
+    p = client.post(base + '/script', json={'revision': p['revision'], 'source_script': p['source_script'],
+                                            'labels': preview['labels']}).json()
+    assert [s['text'] for s in p['segments']] == halves
+    assert [s['text'] for s in p['segments'] if s['lock_before']] == locked
+    # Reslice with text added before the cut: the lock moves with its line.
+    edited = '开头加一句。' + p['source_script']
+    preview = client.post(base + '/script', json={'revision': p['revision'], 'source_script': edited}).json()
+    p = client.post(base + '/script', json={'revision': p['revision'], 'source_script': edited,
+                                            'labels': preview['labels']}).json()
+    assert [s['text'] for s in p['segments'] if s['lock_before']] == locked
+    assert ''.join(s['text'] for s in p['segments']) == edited
+
+
+def test_merging_and_tidying_never_cross_a_lock():
+    from runtime.attribution import merge_adjacent, _tidy
+    src = '周远点点头。林小雪凑过去看那本子。'
+    pieces = [{'speaker': '旁白', 'kind': 'narration', 'start': 0, 'end': 6},
+              {'speaker': '旁白', 'kind': 'narration', 'start': 6, 'end': 17}]
+    free = merge_adjacent(_tidy(src, pieces), 60)
+    assert len(free) == 1                                      # same speaker, adjacent: merges
+    held = merge_adjacent(_tidy(src, pieces, {6}), 60, {6})
+    assert [s['text'] for s in held] == ['周远点点头。', '林小雪凑过去看那本子。']
+    # Orphaned punctuation is normally pulled back onto the previous line, but
+    # not across a lock.
+    pieces = [{'speaker': '旁白', 'kind': 'narration', 'start': 0, 'end': 5},
+              {'speaker': '旁白', 'kind': 'narration', 'start': 5, 'end': 17}]
+    assert _tidy(src, pieces)[0]['text'] == '周远点点头。'
+    assert _tidy(src, pieces, {5})[0]['text'] == '周远点点头'

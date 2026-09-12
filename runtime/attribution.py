@@ -15,7 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 MODEL_SHA = 'ae916ede1c010a26955ee8ae2e908bf8815a3f135ec860439ab924701c69d5f1'
 
 
-def project_segments(source, labels, language):
+def project_segments(source, labels, language, locks=()):
     # Validate IDs against preserved source, including duplicate/missing labels.
     bind_labels(source, json.dumps({'labels': labels}))
     by_id = {x['id']: x for x in labels}
@@ -29,10 +29,15 @@ def project_segments(source, labels, language):
         if not speaker or speaker.upper() == 'UNKNOWN' or len(speaker) > 80 or '\n' in speaker:
             raise ValueError('请为所有未识别片段填写角色名称。')
         start = unit['start']
+        locked = sorted(x for x in locks if unit['start'] < x < unit['end'])
         while start < unit['end']:
             end = min(start + limit, unit['end'])
+            # A boundary someone cut by hand is honoured before any other rule.
+            ahead = [x for x in locked if start < x <= end]
+            if ahead:
+                end = ahead[0]
             # Prefer an existing sentence boundary; never ask the model to rewrite.
-            if end < unit['end']:
+            elif end < unit['end']:
                 # Prefer a sentence break; fall back to a clause, then a space.
                 # A cut at the character limit lands mid-phrase, which both reads
                 # badly and leaves a stranded fragment to synthesise on its own.
@@ -49,19 +54,25 @@ def project_segments(source, labels, language):
     # screen. Merging up to the full slicing limit produced a 58-character cue
     # held for 12 seconds. Two thirds of the limit still repairs a stranded
     # quoted fragment without building a cue nobody can read.
-    segments = merge_adjacent(_tidy(source, pieces), limit * 2 // 3)
+    segments = merge_adjacent(_tidy(source, pieces, locks), limit * 2 // 3, locks)
+    for s in segments:
+        s['lock_before'] = s['source_start'] in locks
     if not 1 <= len(segments) <= 500:
         raise ValueError('原稿切片数量超出范围。')
     return segments
 
 
-def merge_adjacent(segments, limit):
-    """Only during explicit import/reslicing; retain exact source spans."""
+def merge_adjacent(segments, limit, locks=()):
+    """Only during explicit import/reslicing; retain exact source spans.
+
+    A boundary in `locks` was cut by hand and is never merged across.
+    """
     merged=[]
     for segment in segments:
         previous=merged[-1] if merged else None
         if (previous and previous['speaker']==segment['speaker'] and previous['kind']==segment['kind']
             and previous['source_end']==segment['source_start']
+            and segment['source_start'] not in locks
             and len(previous['text'])+len(segment['text'])<=limit):
             previous['text']+=segment['text']
             previous['source_end']=segment['source_end']
@@ -76,20 +87,21 @@ def merge_adjacent(segments, limit):
 TRAILING = '。！？，、；：…·．!?,;:. \t\n\r\u3000'
 
 
-def _tidy(source, pieces):
+def _tidy(source, pieces, locks=()):
     """Attach orphaned punctuation and blank runs to the line they belong to.
 
     Character coverage is unchanged: every index in the source still appears in
     exactly one segment, so the project keeps reconstructing the script exactly.
+    A boundary in `locks` was cut by hand: nothing moves across it.
     """
     kept = []
     for piece in pieces:
         text = source[piece['start']:piece['end']]
         moved = len(text) - len(text.lstrip(TRAILING))
-        if moved and kept:
+        if moved and kept and piece['start'] not in locks:
             kept[-1]['end'] = piece['start'] + moved
             piece = {**piece, 'start': piece['start'] + moved}
-        if source[piece['start']:piece['end']].strip():
+        if source[piece['start']:piece['end']].strip() or piece['start'] in locks:
             kept.append(dict(piece))
         elif kept:
             kept[-1]['end'] = piece['end']          # blank run joins the line before
@@ -219,6 +231,28 @@ def carry_labels(segments, source, language):
     return labels
 
 
+def carry_locks(segments, source):
+    """Where the boundaries someone cut by hand fall in a possibly edited source.
+
+    A lock belongs to the segment that starts at it. If that segment's text is
+    still in the source, in order, the lock moves with it; if the text is gone,
+    so is the lock. Never guessed from offsets alone, which shift under edits.
+    """
+    locks, cursor = set(), 0
+    for s in segments:
+        if not s.get('lock_before'):
+            continue
+        text = s.get('text', '')
+        if not text.strip():
+            continue
+        at = source.find(text, cursor)
+        if at < 0:
+            continue
+        locks.add(at)
+        cursor = at + len(text)
+    return locks
+
+
 def carry_state(old_segments, new_segments):
     """Move generated audio and review state onto identical lines after a reslice.
 
@@ -235,7 +269,7 @@ def carry_state(old_segments, new_segments):
         pool = pools.get((new['speaker'], new['text']))
         if pool:
             old = pool.pop(0)
-            carried = {k: v for k, v in old.items() if k not in ('source_start', 'source_end', 'kind')}
+            carried = {k: v for k, v in old.items() if k not in ('source_start', 'source_end', 'kind', 'lock_before')}
             new.update(carried)
             kept += 1
             kept_audio += bool(old.get('audio'))

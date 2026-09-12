@@ -27,7 +27,7 @@ from .rhythm import analyze_file, analyze, VERSION as RHYTHM_VERSION
 from .core import reads_aloud, Store, fingerprint
 from .voices import VoiceLibrary, is_custom, custom_id, PREFIX as CUSTOM_PREFIX
 from .script_check import inspect as inspect_script, apply_fix
-from .attribution import RoleDraftEngine, project_segments, source_units
+from .attribution import RoleDraftEngine, project_segments, source_units, carry_locks
 from .content_check import WhisperChecker, compare_text, file_sha
 from .engines import MlxEngine, FixtureEngine, VOICES
 
@@ -551,6 +551,9 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 raise ValueError(report['findings'][0]['message'])
             labels = ([label.model_dump() for label in body.labels] if body.labels
                       else carry_labels(project['segments'], body.source_script, language))
+            # Boundaries cut by hand survive a reslice; the slicer cuts there and
+            # never merges across them.
+            locks = carry_locks(project['segments'], body.source_script)
             if body.labels is None:
                 unresolved = [{**unit, **{k: label[k] for k in ('kind', 'speaker')}}
                               for unit, label in zip(source_units(body.source_script), labels)
@@ -559,11 +562,11 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 # Slicing rejects UNKNOWN, so count with a placeholder that never persists.
                 probe = [{**l, 'speaker': ('待指定' if l['speaker'].strip().upper() in ('', 'UNKNOWN')
                                            else l['speaker'])} for l in labels]
-                sliced = project_segments(body.source_script, probe, language)
+                sliced = project_segments(body.source_script, probe, language, locks)
                 _, stats = carry_state(project['segments'], [dict(s) for s in sliced])
                 return {'preview': True, 'labels': labels, 'unresolved': unresolved,
                         'report': report, 'segments': len(sliced), **stats}
-            segments = project_segments(body.source_script, labels, language)
+            segments = project_segments(body.source_script, labels, language, locks)
             preview, stats = carry_state(project['segments'], [dict(s) for s in segments])
             presets = ['Vivian','Uncle_Fu','Serena','Dylan'] if language == 'zh' else ['Ryan','Aiden']
             def change(p):
