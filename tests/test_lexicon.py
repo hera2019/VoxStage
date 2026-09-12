@@ -68,3 +68,32 @@ def test_a_project_can_choose_the_larger_preset_model(tmp_path):
         p = c.post('/api/projects', json={'name': 'x', 'language': 'zh', 'script': '旁白：你好。'}).json()
         r = c.patch('/api/projects/' + p['id'], json={'revision': p['revision'], 'preset_model': '1.7B'})
         assert r.status_code == 400 and '未安装' in r.json()['detail']
+
+
+def test_a_run_away_take_is_retried_once_with_the_next_seed(tmp_path):
+    """The engine reads the line and keeps going. The first take is never kept;
+    the second is, whatever it sounds like, and the take counter records it."""
+    import numpy as np
+    from fastapi.testclient import TestClient
+    from runtime.app import create_app
+    from tests.test_workflow import HEADERS, wait
+    class RunsAwayOnce:
+        ready = True; identity = 'runaway@1'; reference_ready = False; label = 'runaway'
+        calls = []
+        def synthesize(self, text, voice, language, seed=260909):
+            self.calls.append(seed)
+            seconds = 60.0 if len(self.calls) == 1 else 2.0       # first take: a minute for a short line
+            n = int(24000 * seconds)
+            tone = (0.2 * np.sin(np.arange(n) * 2 * np.pi * 440 / 24000)).astype('float32')
+            return tone, 24000, {'load_seconds': 0, 'generation_seconds': 0, 'mlx_peak_memory_bytes': 0, 'seed': seed, 'generation_parameters': {}}
+    eng = RunsAwayOnce()
+    with TestClient(create_app(tmp_path / 'p', eng, checker=type('C', (), {'ready': False, 'identity': 'x'})()),
+                    base_url='http://127.0.0.1', headers=HEADERS) as c:
+        p = c.post('/api/projects', json={'name': 'x', 'language': 'zh', 'script': '旁白：你一定又偷了人家的东西了。'}).json()
+        c.post('/api/projects/' + p['id'] + '/render/start', json={'revision': p['revision']})
+        p = wait(c, p['id'])
+        s = p['segments'][0]
+        assert eng.calls == [260909, 260910]                        # retried once, next seed
+        assert s['status'] == 'ready' and s['take'] == 1
+        assert s['audio']['auto_retake'] is True and s['audio']['first_take_seconds'] > 30
+        assert s['audio']['samples'] == 24000 * 2                   # the second take is what was kept

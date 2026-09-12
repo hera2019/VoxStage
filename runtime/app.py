@@ -23,7 +23,7 @@ from .tempo import ffmpeg_path, valid_regions, valid_cuts, edit_status, change_t
 from .audio import process_audio, export_audio, prepare_segment
 from .clips import clip_plan, validate_clips
 from .fcp7 import timeline_xml, IMPORT_GUIDE
-from .rhythm import analyze_file, analyze, VERSION as RHYTHM_VERSION
+from .rhythm import analyze_file, analyze, duration_marker, VERSION as RHYTHM_VERSION
 from .core import reads_aloud, Store, fingerprint, spoken_text
 from .voices import VoiceLibrary, is_custom, custom_id, PREFIX as CUSTOM_PREFIX
 from .script_check import inspect as inspect_script, apply_fix
@@ -725,6 +725,27 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                                 p['voices'][s['speaker']], p['language'], 260909+s.get('take',0),
                                 **({'size': p.get('preset_model','0.6B')} if hasattr(engine,'identity_for') else {}))
                         pcm, meta = process_audio(pcm, rate)
+                        # A run-away take: the engine read the line and kept going -- a
+                        # video outro, or a 26-character line rendered as 164 seconds.
+                        # Seen four times today across both model sizes. One more
+                        # attempt with the next seed, before anyone hears it; the
+                        # duration marker still reports if the second is bad too.
+                        spoken_seconds = (meta['speech_end_sample'] - meta['speech_start_sample']) / rate
+                        runaway = duration_marker(spoken_text(p,s), spoken_seconds, p['language'])
+                        if runaway and not metrics.get('auto_retake') and sid not in retake_ids and not p.get('voice_profiles',{}).get(s['speaker']) and not is_custom(p['voices'][s['speaker']]):
+                            logging.warning('Run-away take on %s (%.1fs for %d chars); retrying with the next seed', sid, spoken_seconds, len(spoken_text(p,s)))
+                            with store.lock:
+                                p = store.read(project_id)
+                                s = next(x for x in p['segments'] if x['id']==sid)
+                                s['take'] = s.get('take',0)+1
+                                digest = fingerprint(p, s, engine, library)
+                                path = folder/(digest+'.wav'); meta_path = folder/(digest+'.json')
+                                store.write(p)
+                            pcm, rate, metrics = engine.synthesize(spoken_text(p,s),
+                                p['voices'][s['speaker']], p['language'], 260909+s.get('take',0),
+                                **({'size': p.get('preset_model','0.6B')} if hasattr(engine,'identity_for') else {}))
+                            pcm, meta = process_audio(pcm, rate)
+                            metrics = {**metrics, 'auto_retake': True, 'first_take_seconds': round(spoken_seconds, 2)}
                         meta.update({'fingerprint':digest, 'engine':getattr(engine,'reference_identity',engine.identity) if p.get('voice_profiles',{}).get(s['speaker']) else engine.identity, **metrics})
                         temp = folder/(digest+'.tmp.wav')
                         sf.write(temp, pcm, rate, subtype='PCM_16')
