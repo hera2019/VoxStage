@@ -24,7 +24,7 @@ from .audio import process_audio, export_audio, prepare_segment
 from .clips import clip_plan, validate_clips
 from .fcp7 import timeline_xml, IMPORT_GUIDE
 from .rhythm import analyze_file, analyze, VERSION as RHYTHM_VERSION
-from .core import Store, fingerprint
+from .core import reads_aloud, Store, fingerprint
 from .voices import VoiceLibrary, is_custom, custom_id, PREFIX as CUSTOM_PREFIX
 from .script_check import inspect as inspect_script, apply_fix
 from .attribution import RoleDraftEngine, project_segments, source_units
@@ -93,6 +93,7 @@ class EditRequest(BaseModel):
     voice: str | None = None
     pause_ms: int | None = Field(default=None, ge=0, le=2000)
     pause_after: int | None = Field(default=None, ge=0, le=2000, strict=True)
+    read_aloud: bool | None = None
 
 class TempoRegion(BaseModel):
     start: float = Field(ge=0, allow_inf_nan=False)
@@ -449,6 +450,10 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 if has_pause:
                     # D48: null means inheritance; a gap never changes synthesis identity.
                     s['pause_after'] = body.pause_after
+                if body.read_aloud is not None:
+                    # Kept in the script, left out of the recording. Audio and
+                    # checks stay attached for when the line is switched back on.
+                    s['read_aloud'] = body.read_aloud
                 limit = 60 if p['language'] == 'zh' else 240
                 for field in ('text','spoken_as'):
                     value = getattr(body, field)
@@ -482,6 +487,17 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                     if s['speaker'] == body.speaker:
                         s['error'] = None
         return store.public(store.edit(project_id, body.revision, apply), engine, checker)
+
+    class SplitRequest(RevisionRequest):
+        at: int = Field(ge=1)
+
+    @app.post('/api/projects/{project_id}/segments/{segment_id}/split')
+    def split(project_id: str, segment_id: str, body: SplitRequest):
+        """Cut one line in two where the reader put the cursor. Undoable."""
+        from .core import split_segment
+        with store.lock:
+            return store.public(store.edit(project_id, body.revision,
+                                           lambda p: split_segment(p, segment_id, body.at)), engine, checker)
 
     @app.post('/api/projects/{project_id}/segments/{segment_id}/delete')
     def delete_segment(project_id: str, segment_id: str, body: RevisionRequest):
@@ -696,8 +712,11 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 retake_ids={s['id'] for s in store.public(p,engine,checker)['segments'] if s['listening_status']=='issue'}
                 if not retake_ids:raise ValueError('没有当前版本的声音问题标记。')
             selected = [s for s in p['segments'] if (s['id'] in retake_ids if body.marked_only else (not body.segment_id or s['id']==body.segment_id))]
+            if body.segment_id and selected and not reads_aloud(selected[0]):
+                raise ValueError('这一句已设为不朗读；要生成它，先把它切回朗读。')
+            selected = [s for s in selected if reads_aloud(s)]
             if not selected:
-                raise ValueError('Unknown segment')
+                raise ValueError('Unknown segment' if body.segment_id else '没有需要朗读的句子。')
             if body.force:
                 for s in selected:
                     s['take'] = s.get('take',0)+1
@@ -935,8 +954,12 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             p = store.read(project_id)
             if p['revision'] != body.revision or p['job']['status']=='running':
                 raise RuntimeError('Finish generation and reload before exporting')
-            if any(s['status']!='ready' for s in store.public(p,engine,checker)['segments']):
-                raise ValueError('Generate all pending or failed sentences before export')
+            public = store.public(p,engine,checker)['segments']
+            if all(s['status']=='silent' for s in public):
+                raise ValueError('所有句子都设为不朗读，没有可导出的内容。')
+            waiting = sum(1 for s in public if s['status'] not in ('ready','silent'))
+            if waiting:
+                raise ValueError(f'还有 {waiting} 句没有生成声音，先生成再导出。')
             out = store.directory(project_id)/'exports'/str(p['revision'])
             timeline = export_audio(p, store.directory(project_id), out, delivery=True)
             timeline['project_revision'] = p['revision']

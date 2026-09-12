@@ -57,7 +57,12 @@ def prepare_segment(project, segment, directory):
 def export_audio(project, directory: Path, output: Path, *, delivery=False):
     parts, entries, cues, rendered = [], [], [], []
     position, rate = 0, None
-    for index, segment in enumerate(project['segments']):
+    # A line switched off stays in the script and out of the recording: no
+    # audio, no cue, no delivery file, and no pause of its own.
+    spoken = [s for s in project['segments'] if s.get('read_aloud', True)]
+    if not spoken:
+        raise ValueError('所有句子都设为不朗读，没有可导出的内容。')
+    for index, segment in enumerate(spoken):
         pcm,current_rate,meta,mapping=prepare_segment(project,segment,directory)
         if rate is not None and current_rate!=rate:raise ValueError('Mixed sample rates cannot be exported')
         rate=current_rate;speed=project.get('speech_rate',1.0)
@@ -75,7 +80,7 @@ def export_audio(project, directory: Path, output: Path, *, delivery=False):
         parts.append(pcm)
         if delivery:rendered.append(pcm)
         position += len(pcm)
-        if index < len(project['segments'])-1:
+        if index < len(spoken)-1:
             pause_ms = segment.get('pause_after')
             if pause_ms is None:
                 pause_ms = project['pause_ms']

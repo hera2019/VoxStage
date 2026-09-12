@@ -48,6 +48,50 @@ def parse_script(script, language):
         raise ValueError(f'一个工程需要 1–500 行，当前 {len(segments)} 行。')
     return segments
 
+def reads_aloud(segment):
+    """Older projects have no flag; every line in them is read."""
+    return segment.get('read_aloud', True)
+
+
+def split_segment(project, segment_id, at):
+    """Cut one line in two at a code-point offset, in place, source untouched.
+
+    The two halves take new ids and lose their audio (their text changed, so
+    their fingerprints did). The right half keeps the pause that followed the
+    original and is locked against being merged back; the left half gets no
+    pause of its own, so splitting never inserts a gap that was not there.
+    A replacement reading cannot be shared out between halves by position, so
+    it is cleared and has to be typed again.
+    """
+    import unicodedata
+    index = next((i for i, s in enumerate(project['segments']) if s['id'] == segment_id), None)
+    if index is None:
+        raise ValueError('找不到这一句。')
+    original = project['segments'][index]
+    text = original['text']
+    if original.get('source_start') is None or original.get('source_end') is None:
+        raise ValueError('这个工程没有记录原稿位置，无法原地拆分；可以在原稿编辑里重新切分。')
+    if not 0 < at < len(text):
+        raise ValueError('拆分位置必须在这一句内部。')
+    if not text[:at].strip() or not text[at:].strip():
+        raise ValueError('拆开的两半都要有文字。')
+    # Never cut a character apart from a mark that belongs to it.
+    if unicodedata.combining(text[at]) or text[at] in '\u200d\ufe0f' or text[at - 1] == '\u200d':
+        raise ValueError('不能从一个字的中间拆开。')
+    base = {k: v for k, v in original.items()
+            if k not in ('id', 'text', 'source_start', 'source_end', 'audio', 'error', 'spoken_as',
+                         'pause_after', 'lock_before', 'content_check', 'rhythm_check', 'tempo_edit',
+                         'listening_issue', 'listening_status', 'take')}
+    left = {**base, 'id': uid(), 'text': text[:at], 'spoken_as': '', 'audio': None, 'error': None,
+            'source_start': original['source_start'], 'source_end': original['source_start'] + at,
+            'lock_before': original.get('lock_before', False), 'pause_after': 0}
+    right = {**base, 'id': uid(), 'text': text[at:], 'spoken_as': '', 'audio': None, 'error': None,
+             'source_start': original['source_start'] + at, 'source_end': original['source_end'],
+             'lock_before': True, 'pause_after': original.get('pause_after')}
+    project['segments'][index:index + 1] = [left, right]
+    return left, right
+
+
 def fingerprint(project, segment, engine, library=None):
     data = {'text':segment.get('spoken_as') or segment['text'], 'voice':project['voices'][segment['speaker']],
             'language':project['language'], 'engine':engine.identity, 'seed':260909+segment.get('take',0),
@@ -181,6 +225,11 @@ class Store:
             s['status'] = 'failed' if s.get('error') else 'pending'
             if audio and audio['fingerprint'] == current and (self.directory(p['id'])/'audio'/(current+'.wav')).exists():
                 s['status'] = 'ready'
+            s.setdefault('read_aloud', True); s.setdefault('lock_before', False)
+            if not s['read_aloud']:
+                # A line kept in the script but not in the recording. Whatever
+                # audio it had stays on disk for when it is switched back on.
+                s['status'] = 'silent'
             s['check_status']=check_status(s,current,getattr(checker,'identity',None))
             audio_stat=None
             if s['status']=='ready':
