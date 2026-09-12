@@ -221,3 +221,9 @@ main>footer{flex-shrink:0;margin:0 -36px -38px;border-top:1px solid #d5dccb}
 .consent input{width:auto;margin:2px 0 0}
 .custom-voices{border-top:1px solid #e2e5db;padding-top:14px;margin-top:16px}
 .custom-voices .voice-row button{font-size:11px;padding:6px 9px}
+
+/* A line kept in the script but left out of the recording. */
+.script>.line.silent .line-main{opacity:.55}
+.script>.line.silent .status.silent{background:var(--muted-bg,#eee);color:var(--muted,#666)}
+.inline-toggle{display:flex;align-items:center;gap:.4em;font-size:.9em;white-space:nowrap}
+.inline-toggle input{margin:0}
