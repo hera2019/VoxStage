@@ -43,8 +43,13 @@ def make(client, source=SOURCE):
     draft = client.post('/api/attribution/draft', json={'script': source, 'language': 'zh'}).json()
     # The draft hands back a name the text never uses as UNKNOWN with the guess
     # kept aside; a reviewer would type a name, and so does this helper.
-    labels = [{'id': u['id'], 'kind': u['kind'],
-               'speaker': u.get('suggested') or u['speaker'] if u['speaker'] == 'UNKNOWN' else u['speaker']}
+    # This helper stands in for a reviewer who keeps whatever the model said,
+    # including the guesses the draft set aside as suggestions -- so a quoted
+    # fragment the draft would fold into narration stays a line of its own,
+    # which is what the reslice tests below need to start from.
+    labels = [{'id': u['id'],
+               'kind': 'dialogue' if u.get('suggested') and u['kind'] == 'narration' else u['kind'],
+               'speaker': u.get('suggested') or u['speaker']}
               for u in draft['units']]
     project = client.post('/api/attribution/confirm',
                           json={'draft_id': draft['draft_id'], 'name': '改稿测试', 'labels': labels}).json()

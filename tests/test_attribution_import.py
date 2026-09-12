@@ -136,3 +136,26 @@ def test_an_unquoted_unit_in_a_quoted_text_is_prose_whatever_the_model_says(tmp_
         # A text with no quotation marks at all is not touched by this rule.
         d = draft(c, '掌柜说孔乙己还欠十九个钱呢。')
         assert d['units'][0]['kind'] == 'dialogue'
+
+
+def test_a_quoted_word_with_no_sentence_mark_inside_is_a_citation_not_speech(tmp_path):
+    """什么“君子固穷”，什么“者乎”之类 -- words being quoted, not people talking.
+    Six reviewed projects: 11 of 11 such units narration, 163 of 163 with a mark
+    inside speech."""
+    class Everything(Roles):
+        def annotate(self, text, log_path):
+            units = source_units(text)
+            return {'labels': [{'id': u['id'], 'kind': 'dialogue' if u['text'].startswith('“') else 'narration',
+                                'speaker': '孔乙己' if u['text'].startswith('“') else 'NARRATOR'} for u in units],
+                    'model_sha256': 'fixture'}
+    with TestClient(create_app(tmp_path / 'p', FixtureEngine(), role_engine=Everything()),
+                    base_url='http://127.0.0.1', headers=HEADERS) as c:
+        d = draft(c, '接连便是难懂的话，什么“君子固穷”，什么“者乎”之类。孔乙己说：“温一碗酒。”')
+        by = {u['text'].strip(): u for u in d['units']}
+        assert by['“君子固穷”']['kind'] == 'narration' and by['“君子固穷”']['suggested'] == '孔乙己'
+        assert by['“者乎”']['kind'] == 'narration'
+        assert by['“温一碗酒。”']['kind'] == 'dialogue' and by['“温一碗酒。”']['speaker'] == '孔乙己'
+        # Confirming as drafted folds the cited words back into their sentence.
+        labels = [{'id': u['id'], 'kind': u['kind'], 'speaker': u['speaker']} for u in d['units']]
+        p = c.post('/api/attribution/confirm', json={'draft_id': d['draft_id'], 'name': '引述', 'labels': labels}).json()
+        assert any('什么“君子固穷”，什么“者乎”之类' in s['text'] for s in p['segments'])

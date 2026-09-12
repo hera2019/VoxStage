@@ -385,9 +385,21 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             # four reviewed projects it did so 27 times and the reviewer disagreed
             # 27 times. Texts with no quotation marks at all are left alone.
             quoted = any(c in body.script for c in '“"「『')
+            def cites_rather_than_speaks(unit):
+                # Chinese puts the full stop inside the quotation marks. A quoted
+                # unit with no sentence-final mark inside -- “君子固穷”, “雪” -- is a
+                # word being cited, not a person speaking. Across six reviewed
+                # projects: 11 of 11 such units were narration, 163 of 163 with a
+                # mark inside were speech.
+                text = unit['text'].strip()
+                if not (text[:1] in '“"「『' and text[-1:] in '”"」』'):
+                    return False
+                return not any(c in text[1:-1] for c in '。！？…；!?')
             def vetted(label, unit):
                 speaker = label['speaker'].strip()
                 if quoted and label['kind'] == 'dialogue' and not unit['text'].lstrip().startswith(('“', '"', '「', '『')):
+                    return {'kind': 'narration', 'speaker': 'NARRATOR', 'suggested': speaker}
+                if label['kind'] == 'dialogue' and cites_rather_than_speaks(unit):
                     return {'kind': 'narration', 'speaker': 'NARRATOR', 'suggested': speaker}
                 if label['kind'] == 'dialogue' and speaker.upper() not in ('', 'UNKNOWN', 'NARRATOR') and speaker not in body.script:
                     return {'kind': 'dialogue', 'speaker': 'UNKNOWN', 'suggested': speaker}
