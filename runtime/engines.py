@@ -55,7 +55,9 @@ class MlxEngine:
         from mlx_audio.tts.utils import load_model
         start = time.perf_counter()
         if self.model is None:
-            self.reference_model = None
+            # Both variants stay resident. Evicting one to load the other cost
+            # 25 reloads across the 92 lines of Kong Yiji, because preset and
+            # cloned voices alternate line by line; weights are ~1.5 GB each.
             gc.collect(); mx.clear_cache()
             self.model = load_model(str(self.path))
         loaded = time.perf_counter()
@@ -96,7 +98,6 @@ class MlxEngine:
         from mlx_audio.tts.utils import load_model
         start=time.perf_counter()
         if self.reference_model is None:
-            self.model=None
             gc.collect(); mx.clear_cache()
             self.reference_model=load_model(str(self.base_path))
         loaded=time.perf_counter()
