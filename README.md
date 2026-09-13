@@ -114,12 +114,14 @@ cases attribution is known to get wrong. It caught the trailing attribution that
 had failed twice before, and gave one character two names, which for synthesis
 means one person speaking in two voices.
 
-[Lu Xun's *Kong Yiji*](examples/kong-yiji/) — a whole story, eleven minutes, and a
+[Lu Xun's *Kong Yiji*](examples/kong-yiji/) — a whole story, ten minutes, and a
 century old. The model named the right speaker every time it named one, and still
 needed 43 corrections, because it kept labelling four-character prose like `掌柜说：`
 as speech. The engine cannot read two 1938 character forms; the duration check caught
-a twelve-character line that came out at thirteen seconds; and the transcribe-back
-check learned that it cannot expect a recogniser to know a character's name.
+a twelve-character line that came out at thirteen seconds; the transcribe-back
+check learned that it cannot expect a recogniser to know a character's name; and
+three of the five voices — the narrator among them — were designed from a written
+sentence after the author rejected every preset for the part.
 
 ## What works today
 
@@ -136,7 +138,7 @@ check learned that it cannot expect a recogniser to know a character's name.
 | Subtitles cut where the voice pauses, wrapped for a screen, VTT and SRT in step | All three samples; longest line 20 / 42 characters |
 | Portable delivery package rebuilding full.wav to the sample; FCP7 XML at 24–60 fps | Zero-sample rebuild verified; imported into DaVinci Resolve 21 |
 | 0.6B and 1.7B preset models, chosen per project; pronunciation lexicon | Measured 2026-09-13; the author judged 1.7B more natural |
-| Voice library: keep a take, design a voice from a description, or supply a recording | Design used by the author; consent gate for supplied recordings is in code |
+| Voice library: keep a take, design a voice from a description, or supply a recording | Three designed voices carry the Kong Yiji sample; consent gate for supplied recordings is in code |
 | Waveform editing, clip reorder/split, speed | Implemented; listening review pending |
 
 Every row links to a run under [`results/`](results/), recorded as both
@@ -159,10 +161,10 @@ before, the same criterion had failed on two lines — that record stays in
 two presets, no retake, no span beyond 32 seconds, no seed change. A character
 still sounding like themselves in sentence 300 is not claimed.
 
-**Not listened to:** the published *Kong Yiji* sample line by line — it has
-been checked by machine only; the accent of its two cloned voices; the 1.7B
-model beyond the lines the author compared on 2026-09-13. A file that exists
-is not a file that has passed.
+**Not listened to:** the published *Kong Yiji* sample line by line — the author
+chose its voices by ear and confirmed one line, the rest is checked by machine
+only; the 1.7B model beyond the lines the author compared on 2026-09-13. A file
+that exists is not a file that has passed.
 
 ## Where this came from
 
