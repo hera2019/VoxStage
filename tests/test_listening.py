@@ -175,3 +175,23 @@ def test_archived_state_roundtrips_and_legacy_history_defaults_to_active(tmp_pat
         assert p['archived'] is True
         p=c.post(f'/api/projects/{p["id"]}/undo',json={'revision':p['revision']}).json()
         assert p['archived'] is False
+
+
+def test_only_an_archived_project_can_be_deleted(tmp_path):
+    from test_voice_library import LongFixtureEngine        # a take long enough for the library
+    with client_for(tmp_path, engine=LongFixtureEngine()) as c:
+        p=generate(c,create(c));url='/api/projects/'+p['id']
+        directory=c.app.state.store.directory(p['id'])
+        # Deleting a project in the working list is refused; archiving is the first step.
+        assert c.delete(url+'?revision='+str(p['revision'])).status_code==400
+        p=c.patch(url,json={'revision':p['revision'],'archived':True}).json()
+        assert c.delete(url+'?revision='+str(p['revision']-1)).status_code==409    # stale client
+        # A library voice kept from a take is its own file and outlives the project.
+        kept=c.post('/api/voices/custom',json={'name':'说书人','language':'zh','reference_text':'雨点敲着窗。','from_voice':'Vivian'})
+        assert kept.status_code==200,kept.text
+        assert c.delete(url+'?revision='+str(p['revision'])).status_code==200
+        assert not directory.exists()
+        assert [v['name'] for v in c.get('/api/voices/custom').json()]==['说书人']
+        assert c.get('/api/projects?include_archived=true').json()==[]
+        assert c.get(url).status_code in (400,404)
+        assert c.delete(url+'?revision=0').status_code in (400,404)

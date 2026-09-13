@@ -737,6 +737,11 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
     def duplicate_project(project_id: str, body: RevisionRequest):
         return store.public(store.duplicate(project_id,body.revision),engine,checker)
 
+    @app.delete('/api/projects/{project_id}')
+    def delete_project(project_id: str, revision: int):
+        store.delete(project_id, revision)
+        return {'deleted': project_id}
+
     @app.post('/api/projects/{project_id}/{action}')
     def history(project_id: str, action: Literal['undo','redo'], body: RevisionRequest):
         return store.public(store.edit(project_id, body.revision, lambda p:None, action), engine, checker)

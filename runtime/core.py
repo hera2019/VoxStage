@@ -284,6 +284,22 @@ class Store:
             self.write(p)
             return p
 
+    def delete(self, project_id, revision):
+        """Remove an archived project for good: its lines, generated audio,
+        exports and the references it fixed for its own characters. Library
+        voices and books are kept elsewhere and are untouched. Archiving first
+        is the deliberate step; deletion is the second one."""
+        with self.lock:
+            p = self.read(project_id)
+            if p['revision'] != revision or p['job']['status'] == 'running':
+                raise RuntimeError('工程已改变或正在处理，请重新载入后再删除。')
+            if not p.get('archived'):
+                raise ValueError('只能删除已归档的工程：先归档，确认不再需要，再删除。')
+            directory = self.directory(project_id)
+            if directory.is_symlink() or any(x.is_symlink() for x in directory.rglob('*')):
+                raise ValueError('工程目录含有链接，为了不误删链接指向的文件，请手动处理。')
+            shutil.rmtree(directory)
+
     def public(self, p, engine, checker=None, library=None):
         library = library or self.library
         # The undo stacks are the bulk of a long project and never leave the
