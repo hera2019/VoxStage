@@ -159,3 +159,19 @@ def test_a_quoted_word_with_no_sentence_mark_inside_is_a_citation_not_speech(tmp
         labels = [{'id': u['id'], 'kind': u['kind'], 'speaker': u['speaker']} for u in d['units']]
         p = c.post('/api/attribution/confirm', json={'draft_id': d['draft_id'], 'name': '引述', 'labels': labels}).json()
         assert any('什么“君子固穷”，什么“者乎”之类' in s['text'] for s in p['segments'])
+
+
+def test_the_citation_rule_is_chinese_only(tmp_path):
+    """English speech carries a comma inside the quotes before a tag; 11 of the
+    26 quoted units in the Austen sample would be misread as citations."""
+    class Speech(Roles):
+        def annotate(self, text, log_path):
+            units = source_units(text)
+            return {'labels': [{'id': u['id'], 'kind': 'dialogue' if u['text'].startswith('"') else 'narration',
+                                'speaker': 'Mr. Bennet' if u['text'].startswith('"') else 'NARRATOR'} for u in units],
+                    'model_sha256': 'fixture'}
+    with TestClient(create_app(tmp_path / 'p', FixtureEngine(), role_engine=Speech()),
+                    base_url='http://127.0.0.1', headers=HEADERS) as c:
+        d = draft(c, '"I know," said Mr. Bennet, "and I am glad of it."', language='en')
+        quoted = [u for u in d['units'] if u['text'].startswith('"')]
+        assert all(u['kind'] == 'dialogue' and u['speaker'] == 'Mr. Bennet' for u in quoted)

@@ -481,7 +481,10 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 # unit with no sentence-final mark inside -- “君子固穷”, “雪” -- is a
                 # word being cited, not a person speaking. Across six reviewed
                 # projects: 11 of 11 such units were narration, 163 of 163 with a
-                # mark inside were speech.
+                # mark inside were speech. Chinese only: English speech carries a
+                # comma inside the quotes before a tag ("I know," said Mr. Bennet),
+                # and 11 of the 26 quoted units in the Austen sample have no
+                # sentence-final mark.
                 text = unit['text'].strip()
                 if not (text[:1] in '“"「『' and text[-1:] in '”"」』'):
                     return False
@@ -490,7 +493,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 speaker = label['speaker'].strip()
                 if quoted and label['kind'] == 'dialogue' and not unit['text'].lstrip().startswith(('“', '"', '「', '『')):
                     return {'kind': 'narration', 'speaker': 'NARRATOR', 'suggested': speaker}
-                if label['kind'] == 'dialogue' and cites_rather_than_speaks(unit):
+                if body.language == 'zh' and label['kind'] == 'dialogue' and cites_rather_than_speaks(unit):
                     return {'kind': 'narration', 'speaker': 'NARRATOR', 'suggested': speaker}
                 if label['kind'] == 'dialogue' and speaker.upper() not in ('', 'UNKNOWN', 'NARRATOR') and speaker not in body.script:
                     return {'kind': 'dialogue', 'speaker': 'UNKNOWN', 'suggested': speaker}
