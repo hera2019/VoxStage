@@ -58,9 +58,9 @@ in your own files and never enter version control.
 On a configured Mac, double-click **Start VoxStage.command**. Use
 **Check VoxStage.command** for an environment report that downloads nothing.
 
-Step-by-step walkthroughs, written in Chinese:
-[first run](docs/public/quickstart-zh.md) ·
-[environment and models](docs/public/setup-zh.md)
+Step-by-step walkthroughs:
+[first run](docs/public/quickstart.md) ·
+[environment and models](docs/public/setup-zh.md) (Chinese)
 
 From a fresh checkout (Python 3.12, uv and Node.js required):
 
