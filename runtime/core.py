@@ -132,6 +132,17 @@ def merge_segments(project, segment_id, direction, language):
     return merged
 
 
+def spoken_source(project, segment):
+    """The spoken text with the lexicon applied but readings still as notation —
+    what the caveats are about."""
+    text = segment.get('spoken_as') or segment['text']
+    lexicon = {k: v for k, v in (project.get('lexicon') or {}).items() if k}
+    if lexicon:
+        pattern = re.compile('|'.join(re.escape(k) for k in sorted(lexicon, key=len, reverse=True)))
+        text = pattern.sub(lambda m: lexicon[m.group(0)], text)
+    return text
+
+
 def spoken_text(project, segment):
     """What the voice is asked to read: the line, or its replacement reading,
     with the project's pronunciation lexicon applied.
@@ -145,15 +156,11 @@ def spoken_text(project, segment):
     A pinned reading — 干[gan4] in the replacement or in a lexicon entry —
     is resolved last, to a character that reads only that way (runtime/readings).
     """
-    text = segment.get('spoken_as') or segment['text']
-    lexicon = {k: v for k, v in (project.get('lexicon') or {}).items() if k}
-    if lexicon:
-        # One pass, longest match first at each position, and a replacement is
-        # never scanned again: with 干净→干[gan1]净 and 干→干[gan4], the 干 that
-        # the first entry wrote must not be rewritten by the second — 擦拭干净
-        # read as gàn gān 净 was the result of replacing in sequence.
-        pattern = re.compile('|'.join(re.escape(k) for k in sorted(lexicon, key=len, reverse=True)))
-        text = pattern.sub(lambda m: lexicon[m.group(0)], text)
+    # The lexicon is one pass, longest match first at each position, and a
+    # replacement is never scanned again: with 干净→干[gan1]净 and 干→干[gan4],
+    # the 干 that the first entry wrote must not be rewritten by the second —
+    # 擦拭干净 read as gàn gān 净 was the result of replacing in sequence.
+    text = spoken_source(project, segment)
     try:
         return readings.resolve(text)
     except ValueError:
@@ -365,6 +372,7 @@ class Store:
             # What the voice is actually asked to read when that differs from
             # the field the person typed — a lexicon entry or 干[gan4] at work.
             s['reads_as'] = spoken if spoken != (s.get('spoken_as') or s['text']) else None
+            s['reads_note'] = readings.caveats(spoken_source(p, s)) or None
             audio_stat=None
             if s['status']=='ready':
                 stat=(self.directory(p['id'])/'audio'/(current+'.wav')).stat()

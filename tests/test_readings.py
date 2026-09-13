@@ -19,9 +19,11 @@ def test_brackets_that_are_not_pinyin_are_left_alone():
     assert resolve('[eng4]！干[gan4]活') == '[eng4]！赣活'             # a stray bracket does not block the real one
 
 
-def test_when_no_common_character_fits_the_original_stays_and_explain_says_so():
-    assert resolve('乐[le4]呵呵') == '乐呵呵'
-    assert explain('乐[le4] 干[gan4]') == [('乐[le4]', '乐'), ('干[gan4]', '赣')]
+def test_when_no_common_character_fits_a_rare_one_stands_in_with_a_caveat():
+    from runtime.readings import caveats
+    assert resolve('我操[cao4]') == '我肏'                              # 本人 2026-09-14: cào has no common character
+    assert explain('操[cao4] 干[gan4]') == [('操[cao4]', '肏', False), ('干[gan4]', '赣', True)]
+    assert caveats('我操[cao4]，干[gan4]活') == ['操[cao4] 用生僻字「肏」代读，模型未必认识，请试听']
 
 
 @pytest.mark.parametrize('bad, message', [('干[gan]', '缺声调'), ('干[gan9]', '1–5'), ('干[xyz4]', '没有读'), ('干[gan2]', '没有读')])

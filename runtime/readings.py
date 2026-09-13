@@ -9,11 +9,11 @@ check tolerates the difference because it compares pinyin with tone.
 
 The stand-in is a common character (GB2312 level one, the 3,755 most used)
 with exactly one reading; failing that, a common character whose first reading
-matches; never a rare character, which the voice may not know either, and never
-the annotated character itself while another exists. When nothing better
-exists the character stays as written and the voice reads it by context, and
-`explain` says so. The choice is deterministic for a pinned pypinyin, and it
-feeds the fingerprint like any other spoken text.
+matches; failing that, a rare character with the reading — 操[cao4] → 肏 — which
+the voice may not know, so the panel says so and the ear decides; never the
+annotated character itself while another exists. When no character at all has
+the reading, saving is refused. The choice is deterministic for a pinned
+pypinyin, and it feeds the fingerprint like any other spoken text.
 """
 import re
 
@@ -38,7 +38,7 @@ def _common(char):
 
 
 def _reverse():
-    """reading -> (common single-reading, common first-reading, every character with that reading)."""
+    """reading -> (common single-reading, common first-reading, rare single-reading, every character with the reading)."""
     global _table
     if _table is None:
         table = {}
@@ -48,10 +48,12 @@ def _reverse():
                 continue
             char, common = chr(code), _common(chr(code))
             for n, reading in enumerate(parts):
-                tiers = table.setdefault(reading, ([], [], []))
-                tiers[2].append(char)
+                tiers = table.setdefault(reading, ([], [], [], []))
+                tiers[3].append(char)
                 if common and n == 0:
                     (tiers[0] if len(parts) == 1 else tiers[1]).append(char)
+                elif not common and len(parts) == 1:
+                    tiers[2].append(char)
         _table = table
     return _table
 
@@ -64,15 +66,23 @@ def _marked(pinyin):
 
 
 def stand_in(char, pinyin):
-    """The character that reads as asked, or None when no character does."""
+    """The character that reads as asked, or None when no character does. The
+    annotated character itself is never preferred: the voice reads a
+    polyphone by context, and the dictionary's first reading is not what it
+    will choose — 干 is listed gàn first and read gān in 干净."""
     tiers = _reverse().get(_marked(pinyin) or '')
     if not tiers:
         return None
-    for tier in tiers[:2]:
+    for tier in tiers[:3]:
         others = sorted(c for c in tier if c != char)
         if others:
             return others[0]
-    return char if char in tiers[2] else None
+    others = sorted(c for c in tiers[3] if c != char)
+    return others[0] if others else (char if char in tiers[3] else None)
+
+
+def is_common(char):
+    return _common(char)
 
 
 def resolve(text):
@@ -86,21 +96,33 @@ def resolve(text):
             raise ValueError(f'「{char}[{pinyin}]」缺声调；写成 {char}[{pinyin}4] 这样，轻声用 5。')
         found = stand_in(char, pinyin)
         if found is None:
-            rare = [c for c in (_reverse().get(_marked(pinyin) or '') or ([], [], []))[2] if c != char]
-            if rare:
-                # A reading only rare or polyphonic characters have — cào is 肏 —
-                # is not pinned by the program; the person can type such a
-                # character into the reading themselves and listen.
-                raise ValueError(f'「{char}[{pinyin}]」：没有常用字只读 {pinyin}；有这个音的字有 {"、".join(rare[:5])}'
-                                 f'（生僻或多音），可以直接写进朗读文本试听。')
             raise ValueError(f'「{char}[{pinyin}]」：没有读 {pinyin} 的字，请检查拼音。')
         return found
     return NOTATION.sub(swap, text)
 
 
 def explain(text):
-    """[(字[拼音], 替身)] for every notation in the text — what the voice will read."""
-    return [(m.group(0), stand_in(m.group(1), m.group(2))) for m in NOTATION.finditer(text)]
+    """[(字[拼音], 替身, 常用字?)] for every notation in the text — what the voice will read."""
+    out = []
+    for m in NOTATION.finditer(text):
+        found = stand_in(m.group(1), m.group(2))
+        out.append((m.group(0), found, bool(found) and _common(found)))
+    return out
+
+
+def caveats(text):
+    """Stand-ins the voice may not know: rare characters, and a character left
+    as written because nothing else has its reading."""
+    notes = []
+    for notation, found, common in explain(text):
+        char = notation[0]
+        if found is None:
+            continue
+        if found == char:
+            notes.append(f'{notation} 没有别的字读这个音，照原字念')
+        elif not common:
+            notes.append(f'{notation} 用生僻字「{found}」代读，模型未必认识，请试听')
+    return notes
 
 
 # 最后更新：2026-09-14 · Claude Hera（多音字读音标注；本人提出「加个符号写拼音」）
