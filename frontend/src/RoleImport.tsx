@@ -1,6 +1,6 @@
 import {useEffect,useState} from 'react';
 type Unit={id:string;text:string;kind:'narration'|'dialogue';speaker:string;blank?:boolean;suggested?:string};
-type Draft={draft_id:string;units:Unit[]};
+type Draft={draft_id:string;units:Unit[];notice?:string|null};
 type Props={request:(path:string,method?:string,data?:unknown)=>Promise<any>;onCreated:(project:any)=>Promise<void>;onClose:()=>void;seed?:{name:string;language:'zh'|'en';text:string;knownNames?:string[];book?:{id:string;index:number}}|null};
 export function RoleImport({request,onCreated,onClose,seed}:Props){
  const [text,setText]=useState(seed?.text??'');const [name,setName]=useState(seed?.name??'新的故事');const [language,setLanguage]=useState<'zh'|'en'>(seed?.language??'zh');
@@ -22,7 +22,7 @@ export function RoleImport({request,onCreated,onClose,seed}:Props){
    <label>未标注角色的原文<textarea aria-label="未标注角色的原文" rows={10} maxLength={3000} disabled={waiting} value={text} onChange={e=>setText(e.target.value)}/></label>
    <p className="muted">每次最多 3000 字符。本机模型只填写标签，原文由程序保留。草稿需要人工复核。</p>
    <button className="primary wide" disabled={waiting||!text.trim()} onClick={()=>void run(async()=>setDraft(await request('/attribution/draft','POST',{script:text,language})))}>{waiting?'正在本机分角色，请稍候…':'生成角色草稿'}</button>
-  </>:<><p>逐段核对旁白 / 对白和角色姓名。待指定：{unknown} 处。</p><div className="hint"><strong>这只是初步草稿，把说话人对上就够了。</strong>拆分、合并、改字、不朗读，进了工程之后在编辑页里都能做。<br/>人物称呼：{names.join('、')||'暂无对白角色'}。同一人物的不同称呼，请统一填写同一名字。</div>
+  </>:<><p>逐段核对旁白 / 对白和角色姓名。待指定：{unknown} 处。</p>{draft.notice&&<p role="alert" className="line-error">{draft.notice}</p>}<div className="hint"><strong>这只是初步草稿，把说话人对上就够了。</strong>拆分、合并、改字、不朗读，进了工程之后在编辑页里都能做。<br/>人物称呼：{names.join('、')||'暂无对白角色'}。同一人物的不同称呼，请统一填写同一名字。</div>
    <div className="role-units">{draft.units.filter(u=>!u.blank).map((u,i)=><article className={'role-unit '+(u.kind==='dialogue'&&(!u.speaker.trim()||u.speaker.trim().toUpperCase()==='UNKNOWN')?'role-unknown':'')} key={u.id}>
     <p><small>片段 {i+1}</small><br/>{u.text}</p><div className="role-fields"><label>类型<select aria-label={`片段 ${i+1} 类型`} disabled={waiting} value={u.kind} onChange={e=>{const kind=e.target.value as Unit['kind'];change(u.id,{kind,speaker:kind==='narration'?'NARRATOR':u.speaker==='NARRATOR'?'UNKNOWN':u.speaker})}}><option value="narration">旁白</option><option value="dialogue">对白</option></select></label>
     {u.kind==='dialogue'?<label>说话人<input aria-label={`片段 ${i+1} 说话人`} disabled={waiting} value={u.speaker.trim().toUpperCase()==='UNKNOWN'?'':u.speaker} placeholder={turnTaking[u.id]?`一来一往，像是 ${turnTaking[u.id]}`:u.suggested?`模型写的是 ${u.suggested}，原文里没有这个名字，请填写`:"待指定，请填写"} maxLength={80} list="role-names" onChange={e=>change(u.id,{speaker:e.target.value||'UNKNOWN'})}/>{turnTaking[u.id]&&(!u.speaker.trim()||u.speaker.trim().toUpperCase()==='UNKNOWN')&&<button type="button" className="adopt" disabled={waiting} onClick={()=>change(u.id,{speaker:turnTaking[u.id]})}>用「{turnTaking[u.id]}」</button>}</label>:<span>旁白</span>}</div>

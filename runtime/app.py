@@ -576,12 +576,29 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 if label['kind'] == 'dialogue' and speaker.upper() not in ('', 'UNKNOWN', 'NARRATOR') and speaker not in body.script:
                     return {'kind': 'dialogue', 'speaker': 'UNKNOWN', 'suggested': speaker}
                 return {'kind': label['kind'], 'speaker': speaker}
+            units = source_units(body.script)
+            # A degenerate draft: the model called every quoted unit narration.
+            # Seen 2026-09-14 on an explicit web-novel chapter — 60 quoted units,
+            # 70 labels, all NARRATOR; the schema forces valid JSON, so a model
+            # that balks at the text answers with nothing. Hand the reviewer the
+            # structural draft instead: quoted units are speech with the speaker
+            # left blank (citations excepted), everything else narration.
+            notice = None
+            spoken = [u for u in units if u['text'].strip() and u['text'].strip()[0] in '“"「『']   # '' is "in" any string
+            silenced = [u for u in spoken if labels[u['id']]['kind'] == 'narration']
+            degenerate = len(spoken) >= 3 and (len(silenced) == len(spoken) or (len(spoken) >= 10 and len(silenced) >= 0.9 * len(spoken)))
+            if degenerate:
+                notice = (f'模型这次没有给出角色划分（{len(spoken)} 句引号里的话，{len(silenced)} 句被标成了旁白）。'
+                          '已按引号先把对白分出来，说话人留空，请你填写。')
+                for u in silenced:
+                    if not (body.language == 'zh' and cites_rather_than_speaks(u)):
+                        labels[u['id']] = {'id': u['id'], 'kind': 'dialogue', 'speaker': 'UNKNOWN'}
             # Whitespace between two quoted lines is a unit like any other and
             # still needs a label, but showing the reviewer an empty row to
             # assign a character to is noise. Mark it; the UI leaves it out.
-            return {'draft_id':draft_id,
+            return {'draft_id':draft_id, 'notice': notice,
                     'units':[{**unit, **vetted(labels[unit['id']], unit), 'blank': not unit['text'].strip()}
-                             for unit in source_units(body.script)]}
+                             for unit in units]}
         except ValueError as exc:
             # bind_labels rejects a malformed model response. Its wording names
             # internal structures, which tells the reader nothing they can act on.

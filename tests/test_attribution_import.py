@@ -184,3 +184,26 @@ def test_the_citation_rule_is_chinese_only(tmp_path):
         d = draft(c, '"I know," said Mr. Bennet, "and I am glad of it."', language='en')
         quoted = [u for u in d['units'] if u['text'].startswith('"')]
         assert all(u['kind'] == 'dialogue' and u['speaker'] == 'Mr. Bennet' for u in quoted)
+
+
+def test_a_draft_that_calls_every_quoted_line_narration_falls_back_to_the_quotes(tmp_path):
+    """2026-09-14: on an explicit chapter the model labelled all 70 units NARRATOR.
+    The reviewer gets the structural draft — quotes are speech, speaker blank —
+    and a notice, instead of sixty rows to flip by hand."""
+    class Balks(Roles):
+        def annotate(self, text, log_path):
+            return {'labels': [{'id': u['id'], 'kind': 'narration', 'speaker': 'NARRATOR'} for u in source_units(text)],
+                    'model_sha256': 'fixture'}
+    with TestClient(create_app(tmp_path / 'p', FixtureEngine(), role_engine=Balks()),
+                    base_url='http://127.0.0.1', headers=HEADERS) as c:
+        d = draft(c, '她说：“喜欢～，好滑呀～”\n他说：“嗯～”\n她笑了。“可能是吧～”门口挂着“今天不营业”。')
+        assert d['notice'] and '留空' in d['notice'] and '4 句引号' in d['notice']     # the line breaks are not quotes
+        assert all(u['kind'] == 'narration' for u in d['units'] if u['blank']), '空白单元不能变成待指定的对白'
+        by = {u['text'].strip(): u for u in d['units'] if not u['blank']}
+        assert by['“喜欢～，好滑呀～”']['kind'] == 'dialogue' and by['“喜欢～，好滑呀～”']['speaker'] == 'UNKNOWN'
+        assert by['“嗯～”']['kind'] == 'dialogue' and by['“可能是吧～”']['kind'] == 'dialogue'
+        assert by['“今天不营业”']['kind'] == 'narration'          # a citation stays prose
+        assert by['她笑了。']['kind'] == 'narration'
+        # Two quoted units are too few to call the model's answer degenerate.
+        d = draft(c, '她笑了。“好。”他说。')
+        assert d['notice'] is None
