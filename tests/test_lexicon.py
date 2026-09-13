@@ -119,11 +119,17 @@ def test_a_designed_voice_is_heard_first_and_then_kept_exactly_as_heard(tmp_path
         r = c.post('/api/voices/design', json={'description': '一位老先生', 'text': '你好。', 'language': 'zh'})
         assert r.status_code == 200, r.text
         heard = c.get(r.json()['url']).content
+        # Clicking again with the same words gives another voice, not the same file.
+        again = c.post('/api/voices/design', json={'description': '一位老先生', 'text': '你好。', 'language': 'zh'}).json()
+        assert again['seed'] != r.json()['seed'] and again['file'] != r.json()['file']
+        # A seed can be asked for by number, which is how a version is reproduced.
+        fixed = c.post('/api/voices/design', json={'description': '一位老先生', 'text': '你好。', 'language': 'zh', 'seed': r.json()['seed']}).json()
+        assert fixed['file'] == r.json()['file']
         saved = c.post('/api/voices/custom', json={'name': '老先生', 'language': 'zh', 'reference_text': '你好。', 'from_design': r.json()['file']})
         assert saved.status_code == 200, saved.text
         entry = saved.json()
         assert entry['source'] == 'generated' and entry['synthetic_audio'] is True
-        assert entry['derived_from'] == 'design:一位老先生'
+        assert entry['derived_from'] == f"design:一位老先生 · seed {r.json()['seed']}"
         kept = c.get(f"/api/voices/custom/{entry['id']}/audio").content
         assert sf.read(__import__('io').BytesIO(kept))[0].shape == sf.read(__import__('io').BytesIO(heard))[0].shape
         # A vanished audition cannot be saved, and a made-up file name is refused.

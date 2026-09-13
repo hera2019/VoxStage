@@ -6,6 +6,7 @@ import json
 import logging
 import time
 import os
+import random
 import re
 import threading
 from concurrent.futures import ThreadPoolExecutor
@@ -67,6 +68,7 @@ class VoiceDesignRequest(BaseModel):
     description: str = Field(min_length=1, max_length=300)
     text: str = Field(min_length=1, max_length=120)
     language: Literal['zh','en'] = 'zh'
+    seed: int | None = Field(default=None, ge=0, le=2**31 - 1)   # omitted: a fresh one each time
 
 class VoiceSaveRequest(BaseModel):
     name: str = Field(min_length=1, max_length=40)
@@ -296,7 +298,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 entry = library.create(name=body.name, pcm=pcm, rate=rate,
                     reference_text=note.get('text') or body.reference_text, language=body.language,
                     source='generated', consent_confirmed=True,
-                    derived_from='design:' + (note.get('description') or ''))
+                    derived_from='design:' + (note.get('description') or '') + (f' · seed {note["seed"]}' if note.get('seed') is not None else ''))
             elif body.from_voice:
                 if body.from_voice not in VOICES and not (is_custom(body.from_voice) and library.label(body.from_voice)):
                     raise ValueError('没有这个音色。')
@@ -397,16 +399,20 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 raise RuntimeError('正在处理其他任务，请稍后再试。')
             active['project_id'] = 'voice-design'
         try:
-            pcm, rate, metrics = engine.design_voice(body.text, body.description, body.language)
+            # One description, many voices: each click without a seed draws a new
+            # one, so the person can hear several candidates and keep the one they
+            # liked. The seed travels with the audition and into the library entry.
+            seed = body.seed if body.seed is not None else random.SystemRandom().randrange(1, 2**31 - 1)
+            pcm, rate, metrics = engine.design_voice(body.text, body.description, body.language, seed)
             pcm, meta = process_audio(pcm, rate); rate = meta['sample_rate']
             folder = workspace/'auditions'; folder.mkdir(parents=True, exist_ok=True)
-            for old in sorted(folder.glob('design-*.wav'))[:-8]:
+            for old in sorted(folder.glob('design-*.wav'), key=lambda x: x.stat().st_mtime)[:-8]:
                 old.unlink(missing_ok=True); old.with_suffix('.json').unlink(missing_ok=True)
-            name = 'design-' + hashlib.sha256(f'{body.description}|{body.text}|{body.language}'.encode()).hexdigest()[:16]
+            name = 'design-' + hashlib.sha256(f'{body.description}|{body.text}|{body.language}|{seed}'.encode()).hexdigest()[:16]
             sf.write(folder/(name+'.wav'), pcm, rate, subtype='PCM_16')
-            (folder/(name+'.json')).write_text(json.dumps({'description':body.description,'text':body.text,'language':body.language,
+            (folder/(name+'.json')).write_text(json.dumps({'description':body.description,'text':body.text,'language':body.language,'seed':seed,
                                                           'design_identity':metrics.get('design_identity'),'synthetic_audio':True},ensure_ascii=False))
-            return {'url': f'/api/voices/audition/{name}.wav', 'file': name+'.wav', 'seconds': len(pcm)/rate,
+            return {'url': f'/api/voices/audition/{name}.wav', 'file': name+'.wav', 'seconds': len(pcm)/rate, 'seed': seed,
                     'generation_seconds': round(metrics['generation_seconds'], 1), 'synthetic_audio': True}
         finally:
             with store.lock:

@@ -8,7 +8,7 @@ export function Settings({request,voices,language,speedReady,designReady,onClose
  const [tab,setTab]=useState<'voices'>('voices');
  const [text,setText]=useState(SAMPLES[language]);
  const [rate,setRate]=useState(1);
- const [design,setDesign]=useState('');const [designed,setDesigned]=useState<{file:string;seconds:number}|null>(null);const [designName,setDesignName]=useState('');
+ const [design,setDesign]=useState('');const [designs,setDesigns]=useState<{file:string;url:string;seconds:number;seed:number}[]>([]);const [designed,setDesigned]=useState<{file:string;seconds:number}|null>(null);const [designName,setDesignName]=useState('');
  const [favourites,setFavourites]=useState<string[]>([]);
  const [playing,setPlaying]=useState('');const [waiting,setWaiting]=useState('');const [error,setError]=useState('');
  const [heard,setHeard]=useState<Record<string,number>>({});
@@ -64,17 +64,18 @@ export function Settings({request,voices,language,speedReady,designReady,onClose
    <div className="section-label">设计一个新声线</div>
    <p className="muted">用一句话描述你要的声音——年龄、性别、嗓音、语气。听到满意的再保存，存下的就是你听到的这一段。
     {designReady?'':'（声音设计模型未安装：运行 scripts/setup_model.py --model design）'}</p>
-   <textarea aria-label="声音描述" rows={2} maxLength={300} disabled={!designReady||!!waiting} placeholder="例如：一位六十多岁的男性，声音沙哑苍老，说话慢，带着旧式读书人的腔调" value={design} onChange={e=>setDesign(e.target.value)}/>
+   <textarea aria-label="声音描述" rows={2} maxLength={300} disabled={!designReady||!!waiting} placeholder="例如：一位六十多岁的男性，声音沙哑苍老，说话慢，带着旧式读书人的腔调" value={design} onChange={e=>{setDesign(e.target.value);setDesigns([]);setDesigned(null)}}/>
    <div className="keep-row">
-    <button disabled={!designReady||!design.trim()||!!waiting} onClick={()=>void (async()=>{setWaiting('design');setError('');setDesigned(null);
-      try{const r=await request('/voices/design','POST',{description:design,text,language});setDesigned({file:r.file,seconds:r.seconds});setPlaying('');
+    <button disabled={!designReady||!design.trim()||!!waiting} onClick={()=>void (async()=>{setWaiting('design');setError('');
+      try{const r=await request('/voices/design','POST',{description:design,text,language});const v={file:r.file,url:r.url,seconds:r.seconds,seed:r.seed};setDesigns(list=>[v,...list].slice(0,8));setDesigned({file:v.file,seconds:v.seconds});setPlaying('');
         const audio=player.current;if(audio){audio.src=r.url;await audio.play().catch(()=>setError('请点击播放按钮试听。'))}}
-      catch(e){setError((e as Error).message)}finally{setWaiting('')}})()}>{waiting==='design'?'正在设计…':'按描述生成并试听'}</button>
+      catch(e){setError((e as Error).message)}finally{setWaiting('')}})()}>{waiting==='design'?'正在设计…':designs.length?'再来一版':'按描述生成并试听'}</button>
     <input aria-label="设计声线名称" maxLength={40} placeholder="满意了就起个名字" value={designName} disabled={!designed} onChange={e=>setDesignName(e.target.value)}/>
     <button disabled={!designed||!designName.trim()||!!saving} onClick={()=>void run(async()=>{setSaving('design');
-      try{await request('/voices/custom','POST',{name:designName,language,reference_text:text,from_design:designed!.file});setDesignName('');setDesigned(null);await reload()}finally{setSaving('')}})}>{saving==='design'?'保存中…':'保存为音色'}</button>
+      try{await request('/voices/custom','POST',{name:designName,language,reference_text:text,from_design:designed!.file});setDesignName('');setDesigned(null);setDesigns([]);await reload()}finally{setSaving('')}})}>{saving==='design'?'保存中…':'保存选中的这版'}</button>
    </div>
-   {designed&&<p className="muted">这一版 {designed.seconds.toFixed(1)} 秒。不满意就改描述再生成；同一描述每次结果相同，换措辞才会变。</p>}
+   {designs.length>0&&<ul className="design-versions" aria-label="已生成的版本">{designs.map((v,i)=><li key={v.file}><button className={designed?.file===v.file?'active':''} aria-pressed={designed?.file===v.file} onClick={()=>{setDesigned({file:v.file,seconds:v.seconds});setPlaying('');const audio=player.current;if(audio){audio.src=v.url;void audio.play().catch(()=>setError('请点击播放按钮试听。'))}}}>▶ 第 {designs.length-i} 版 · {v.seconds.toFixed(1)} 秒 <small>种子 {v.seed}</small></button></li>)}</ul>}
+   {designs.length>0&&<p className="muted">同一段描述每点一次出一版不同的声音，最多留 8 版；点哪版就听哪版，保存的就是它。改了描述会重新开始。</p>}
   </div>
 
   <div className="keep-voice">

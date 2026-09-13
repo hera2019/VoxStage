@@ -27,8 +27,10 @@ were made with the flow below. New material still needs listening to.
    the editor.
 4. Once the project exists, start with **角色音色** (voices): one voice per
    character. If the presets are not enough, open 音色试听 → 设计一个新声线,
-   describe the voice in a sentence — age, sex, timbre, manner — listen to one
-   line, and if it is right, name it and keep it. Characters can then use it.
+   describe the voice in a sentence — age, sex, timbre, manner — and listen.
+   Every click gives another voice for the same description (up to eight are
+   kept to compare); pick the one you like, name it, keep it. Characters can
+   then use it.
 5. **生成与检查** (generate and check): generate the pending lines, then run
    the check. Every line is transcribed back and compared with its text;
    misreadings and dropped words are flagged, and a line that ran on past its
