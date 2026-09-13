@@ -182,3 +182,26 @@ def test_audio_made_with_a_library_voice_is_recognised_as_ready(client):
     assert p['segments'][0]['status'] == 'ready', p['segments'][0]
     assert client.get(f"/api/projects/{p['id']}").json()['segments'][0]['status'] == 'ready', \
         '重新载入后仍应是已生成，否则指纹每次都在变'
+
+
+def test_each_audition_is_a_new_take_and_keeping_one_keeps_exactly_the_take_heard(client, tmp_path):
+    """The kept reference must be the bytes the person chose among several, at
+    the take's own speed — not a re-render on another seed or another model."""
+    import io, soundfile as sf
+    first = client.post('/api/voices/audition', json={'voice': 'Vivian', 'text': '雨点敲着窗。', 'language': 'zh'}).json()
+    second = client.post('/api/voices/audition', json={'voice': 'Vivian', 'text': '雨点敲着窗。', 'language': 'zh'}).json()
+    assert first['seed'] != second['seed'] and first['file'] != second['file']
+    named = client.post('/api/voices/audition', json={'voice': 'Vivian', 'text': '雨点敲着窗。', 'language': 'zh', 'seed': first['seed']}).json()
+    assert named['file'] == first['file']                                   # a seed reproduces a take
+    # A faster listening copy is a separate file; the take itself is what 'file' names.
+    fast = client.post('/api/voices/audition', json={'voice': 'Vivian', 'text': '雨点敲着窗。', 'language': 'zh', 'rate': 1.3, 'seed': first['seed']}).json()
+    assert fast['file'] == first['file'] and fast['url'].endswith('x130.wav')
+    heard = client.get('/api/voices/audition/' + first['file']).content
+    entry = client.post('/api/voices/custom', json={'name': '挑中的一版', 'language': 'zh', 'reference_text': '雨点敲着窗。',
+                                                    'from_audition': first['file']}).json()
+    assert entry['source'] == 'generated' and entry['synthetic_audio'] is True
+    assert entry['derived_from'] == f"Vivian · seed {first['seed']} · 0.6B"
+    kept = client.get(f"/api/voices/custom/{entry['id']}/audio").content
+    assert sf.read(io.BytesIO(kept))[0].tolist() == sf.read(io.BytesIO(heard))[0].tolist()
+    assert client.post('/api/voices/custom', json={'name': 'x', 'language': 'zh', 'reference_text': '雨', 'from_audition': '0000000000000000.wav'}).status_code == 400
+    assert client.post('/api/voices/custom', json={'name': 'x', 'language': 'zh', 'reference_text': '雨', 'from_audition': '../project.json'}).status_code == 400

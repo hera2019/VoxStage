@@ -63,6 +63,7 @@ class AuditionRequest(BaseModel):
     text: str = Field(min_length=1, max_length=120)
     language: Literal['zh','en'] = 'zh'
     rate: float = Field(default=1.0, ge=0.5, le=2.0, allow_inf_nan=False)
+    seed: int | None = Field(default=None, ge=0, le=2**31 - 1)   # omitted: a fresh take each time
 
 class VoiceDesignRequest(BaseModel):
     description: str = Field(min_length=1, max_length=300)
@@ -76,6 +77,7 @@ class VoiceSaveRequest(BaseModel):
     reference_text: str = Field(min_length=1, max_length=400)
     from_voice: str | None = Field(default=None, max_length=80)
     from_design: str | None = Field(default=None, max_length=64)   # an audition file name from /voices/design
+    from_audition: str | None = Field(default=None, max_length=64) # an audition file name from /voices/audition
     audio_base64: str | None = Field(default=None, max_length=8_000_000)
     consent_confirmed: bool = False
 
@@ -279,14 +281,28 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
         Saving an audition means a good sample never has to be hunted for again,
         and a reference steadies delivery — which is the whole reason to keep it.
         """
-        if sum(bool(x) for x in (body.from_voice, body.audio_base64, body.from_design)) != 1:
+        if sum(bool(x) for x in (body.from_voice, body.audio_base64, body.from_design, body.from_audition)) != 1:
             raise ValueError('请三选一：从现有音色生成、从设计的声线保存，或提供一段参考声音。')
         with store.lock:
             if active['project_id']:
                 raise RuntimeError('正在处理其他任务，请稍后再建立音色。')
             active['project_id'] = 'voice-library'
         try:
-            if body.from_design:
+            if body.from_audition:
+                # Keep exactly the take the person listened to, not a re-render with
+                # another seed or another model.
+                if not re.fullmatch(r'[0-9a-f]{16}\.wav', body.from_audition):
+                    raise ValueError('无效的试听文件名。')
+                sample = workspace/'auditions'/body.from_audition
+                if not sample.is_file() or not sample.with_suffix('.json').is_file():
+                    raise ValueError('这版试听已清理，请重新试听后再保存。')
+                note = json.loads(sample.with_suffix('.json').read_text())
+                pcm, rate = sf.read(sample, dtype='float32')
+                entry = library.create(name=body.name, pcm=pcm, rate=rate,
+                    reference_text=note.get('text') or body.reference_text, language=note.get('language') or body.language,
+                    source='generated', consent_confirmed=True,
+                    derived_from=f"{note.get('voice')} · seed {note.get('seed')} · {note.get('preset_model')}")
+            elif body.from_design:
                 # Keep exactly the sample the person listened to, not a re-render.
                 if not re.fullmatch(r'design-[0-9a-f]{16}\.wav', body.from_design):
                     raise ValueError('无效的设计试听文件名。')
@@ -368,23 +384,33 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             # The model a new project will actually use, so the audition is the
             # voice the person will get, not the smaller model's rendering of it.
             size = default_preset()
-            pcm, rate, _ = engine.synthesize(body.text, body.voice, body.language, seed=260909,
+            # A fresh take each click unless a seed is named: the same preset reads
+            # the same line differently from seed to seed, and the take a person
+            # keeps as a reference should be one they chose among several.
+            seed = body.seed if body.seed is not None else random.SystemRandom().randrange(1, 2**31 - 1)
+            pcm, rate, _ = engine.synthesize(body.text, body.voice, body.language, seed=seed,
                                              **({'size': size} if hasattr(engine, 'identity_for') else {}))
             pcm, meta = process_audio(pcm, rate)
             rate = meta['sample_rate']
-            # Rate here is a listening aid applied after synthesis, exactly as the
-            # project speed control is; it does not change how a line is generated.
-            if body.rate != 1.0:
-                pcm = change_tempo(pcm, rate, body.rate)
             folder = workspace/'auditions'
             folder.mkdir(parents=True, exist_ok=True)
-            for old in sorted(folder.glob('*.wav'))[:-8]:
-                old.unlink(missing_ok=True)
+            for old in sorted(folder.glob('[0-9a-f]*.wav'), key=lambda x: x.stat().st_mtime)[:-16]:
+                old.unlink(missing_ok=True); old.with_suffix('.json').unlink(missing_ok=True)
             name = hashlib.sha256(
-                f'{body.voice}|{body.text}|{body.language}|{body.rate}|{size}'.encode()).hexdigest()[:16]
+                f'{body.voice}|{body.text}|{body.language}|{size}|{seed}'.encode()).hexdigest()[:16]
+            # The take itself, at its own speed — this is the file that can be kept.
             sf.write(folder/(name+'.wav'), pcm, rate, subtype='PCM_16')
-            return {'url': f'/api/voices/audition/{name}.wav', 'seconds': len(pcm)/rate, 'preset_model': size,
-                    'voice': body.voice, 'rate': body.rate, 'synthetic_audio': True}
+            (folder/(name+'.json')).write_text(json.dumps({'voice':body.voice,'text':body.text,'language':body.language,
+                                                          'seed':seed,'preset_model':size,'synthetic_audio':True},ensure_ascii=False))
+            heard = name+'.wav'
+            # Rate is a listening aid applied after synthesis, exactly as the
+            # project speed control is; it does not change how a line is generated
+            # and it is not what gets kept.
+            if body.rate != 1.0:
+                heard = f'{name}x{round(body.rate*100):03d}.wav'
+                sf.write(folder/heard, change_tempo(pcm, rate, body.rate), rate, subtype='PCM_16')
+            return {'url': f'/api/voices/audition/{heard}', 'file': name+'.wav', 'seed': seed, 'seconds': len(pcm)/rate,
+                    'preset_model': size, 'voice': body.voice, 'rate': body.rate, 'synthetic_audio': True}
         finally:
             with store.lock:
                 active['project_id'] = None
@@ -420,7 +446,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
 
     @app.get('/api/voices/audition/{name}')
     def audition_file(name: str):
-        if not re.fullmatch(r'(?:design-)?[a-f0-9]{16}\.wav', name):
+        if not re.fullmatch(r'(?:design-)?[a-f0-9]{16}(?:x\d{3})?\.wav', name):
             raise ValueError('无效的试听文件名。')
         path = workspace/'auditions'/name
         if not path.is_file():

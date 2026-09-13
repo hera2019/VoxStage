@@ -11,7 +11,7 @@ export function Settings({request,voices,language,speedReady,designReady,onClose
  const [design,setDesign]=useState('');const [designs,setDesigns]=useState<{file:string;url:string;seconds:number;seed:number}[]>([]);const [designed,setDesigned]=useState<{file:string;seconds:number}|null>(null);const [designName,setDesignName]=useState('');
  const [favourites,setFavourites]=useState<string[]>([]);
  const [playing,setPlaying]=useState('');const [waiting,setWaiting]=useState('');const [error,setError]=useState('');
- const [heard,setHeard]=useState<Record<string,number>>({});
+ const [heard,setHeard]=useState<Record<string,{seconds:number;file:string;take:number;seed:number}>>({});
  const [custom,setCustom]=useState<Custom[]>([]);
  const [saving,setSaving]=useState('');const [newName,setNewName]=useState('');
  const [consent,setConsent]=useState(false);const file=useRef<HTMLInputElement>(null);
@@ -31,7 +31,7 @@ export function Settings({request,voices,language,speedReady,designReady,onClose
   setWaiting(voice);setError('');
   try{
    const r=await request('/voices/audition','POST',{voice,text,language,rate});
-   setHeard(h=>({...h,[voice]:r.seconds}));setPlaying(voice);
+   setHeard(h=>({...h,[voice]:{seconds:r.seconds,file:r.file,take:(h[voice]?.take??0)+1,seed:r.seed}}));setPlaying(voice);
    const audio=player.current;
    if(audio){audio.src=r.url;await audio.play().catch(()=>setError('请点击播放按钮试听。'))}
   }catch(e){setError((e as Error).message)}finally{setWaiting('')}
@@ -53,8 +53,8 @@ export function Settings({request,voices,language,speedReady,designReady,onClose
     <button className={'star '+(fav?'on':'')} aria-pressed={fav} title={fav?'取消收藏':'收藏，置顶显示'}
      aria-label={(fav?'取消收藏 ':'收藏 ')+voice} onClick={()=>void toggle(voice)}>{fav?'★':'☆'}</button>
     <div className="voice-name"><strong>{voice}</strong><small>{voices[voice]}</small></div>
-    {heard[voice]&&<small className="heard">{heard[voice].toFixed(1)} 秒</small>}
-    <button disabled={!!waiting} onClick={()=>void audition(voice)}>{waiting===voice?'正在生成…':'试听'}</button>
+    {heard[voice]&&<small className="heard" title={'种子 '+heard[voice].seed}>第 {heard[voice].take} 版 · {heard[voice].seconds.toFixed(1)} 秒</small>}
+    <button disabled={!!waiting} onClick={()=>void audition(voice)}>{waiting===voice?'正在生成…':heard[voice]?'再来一版':'试听'}</button>
     {onPick&&<button className="primary" onClick={()=>onPick(voice)}>用于此角色</button>}
    </article>})}
   </div>
@@ -80,15 +80,15 @@ export function Settings({request,voices,language,speedReady,designReady,onClose
 
   <div className="keep-voice">
    <div className="section-label">留下这个声音</div>
-   <p className="muted">把刚才试听的音色和这句话保存成一个具名音色。之后直接选它，不必再找当时那一版。
-    参考音会稳定朗读节奏——已实测把一个漂移的预设从 36% 变异压到 9%。</p>
+   <p className="muted">把刚才听到的那一版原样保存成一个具名音色——每点一次试听都是新的一版，存的就是最后听到的这版。
+    之后直接选它，不必再找当时那一版。参考音会稳定朗读节奏——已实测把一个漂移的预设从 36% 变异压到 9%。</p>
    <div className="keep-row">
     <input aria-label="新音色名称" maxLength={40} placeholder="例如：稳定旁白" value={newName} onChange={e=>setNewName(e.target.value)}/>
     <button disabled={!newName.trim()||!playing||!!saving} onClick={()=>void run(async()=>{
       setSaving('keep');
-      try{await request('/voices/custom','POST',{name:newName,language,reference_text:text,from_voice:playing});
+      try{await request('/voices/custom','POST',{name:newName,language,reference_text:text,from_audition:heard[playing]?.file});
         setNewName('');await reload()}finally{setSaving('')}
-     })}>{saving==='keep'?'保存中…':playing?`保存「${playing}」这一版`:'先试听一个音色'}</button>
+     })}>{saving==='keep'?'保存中…':playing&&heard[playing]?`保存「${playing}」第 ${heard[playing].take} 版`:'先试听一个音色'}</button>
    </div>
    <details className="provide-voice">
     <summary>或者提供一段自己的录音</summary>
