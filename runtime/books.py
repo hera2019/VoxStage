@@ -14,7 +14,9 @@ import uuid
 from pathlib import Path
 
 # From hera2019/TextToApp main.py:156 — 第三章, 第12回, 第一百零八回, 第二卷 …
-HEADING = re.compile(r'^\s*第[零一二三四五六七八九十百千万0-9０-９]+[章回节卷集部].*$')
+# and the English equivalents: Chapter 1, CHAPTER XII, Chapter One, Book II.
+HEADING = re.compile(r'^\s*(?:第[零一二三四五六七八九十百千万0-9０-９]+[章回节卷集部]|'
+                     r'(?:CHAPTER|Chapter|BOOK|Book|PART|Part)\s+(?:[IVXLC]+|\d+|[A-Z][a-z]+)\b).*$')
 
 CHAPTER_LIMIT = 3000          # the draft's own limit; a chapter over it is cut like headingless text
 PARAGRAPH_TARGET = 2600       # leave headroom under the limit when cutting at paragraphs

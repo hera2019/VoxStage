@@ -48,3 +48,12 @@ def test_a_book_hands_out_chapters_with_names_from_its_other_chapters(client):
     assert set(second['known_names']) == {'掌柜', '孔乙己'}
     assert client.get(f"/api/books/{book['id']}/chapters/9").status_code == 400
     assert client.get('/api/books/' + 'f' * 32).status_code == 400
+
+
+def test_english_chapter_headings_are_found_too():
+    book = 'CHAPTER I\n\nIt is a truth universally acknowledged.\n\nChapter Two\n\n"My dear Mr. Bennet," said his lady.\n\nChapter 3\n\nThe end.\n'
+    chapters = split_chapters(book)
+    assert [c['title'] for c in chapters] == ['CHAPTER I', 'Chapter Two', 'Chapter 3']
+    assert ''.join(c['text'] for c in chapters) == book
+    # A sentence that merely contains the word is not a heading.
+    assert len(split_chapters('He read the chapter twice.\n')) == 1
