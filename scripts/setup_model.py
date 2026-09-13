@@ -17,6 +17,19 @@ MODELS={
             'revision':'1eccf1cb2519b5a4e8a95b5f0544f3303568164f',
             'sha256':{'model.safetensors':'d7c7ed3e3464e3e59de0f955b3755891fa8319ff061c3f0307fe2e1343bc122d',
                       'speech_tokenizer/model.safetensors':TOKENIZER_SHA}},
+    # Larger preset model: the default for new projects when installed. Measured
+    # 2026-09-13: RTF 0.44 against 0.6B's 0.38, peak memory 7.9 GB; no run-away
+    # takes in the comparison where 0.6B produced one. ~4.2 GB on disk.
+    'preset-large':{'folder':'qwen-customvoice-1.7b','repo':'mlx-community/Qwen3-TTS-12Hz-1.7B-CustomVoice-bf16',
+            'revision':'52f4770fd9726457eae3d3b6aa92047a25a10776',
+            'sha256':{'model.safetensors':'3a791fb8250fc32ab0259b679d834159d3c8516af62f033ff2b9f42913e3fab6',
+                      'speech_tokenizer/model.safetensors':TOKENIZER_SHA}},
+    # Voice design: a voice from a written description, saved into the library
+    # as a reference. Official weights; mlx-audio converts them on load. ~4.2 GB.
+    'design':{'folder':'qwen-voicedesign-1.7b','repo':'Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign',
+            'revision':'5ecdb67327fd37bb2e042aab12ff7391903235d3',
+            'sha256':{'model.safetensors':'391e8db219f292c515297cdceeb43e4eae67cdde35fa57e79a6a8a532fca0522',
+                      'speech_tokenizer/model.safetensors':TOKENIZER_SHA}},
 }
 REQUIRED=['config.json','tokenizer_config.json','vocab.json','merges.txt',
           'speech_tokenizer/config.json','speech_tokenizer/configuration.json']
@@ -76,7 +89,7 @@ def prepare(kind, root=ROOT, verify_only=False, downloader=None):
         downloaded=True
         problems=verify_files(folder,spec)
         if problems:raise ValueError('模型未通过校验，未登记为可用：\n'+'\n'.join(problems))
-    if kind=='preset' and not folder.is_symlink():write_json(record,provenance)
+    if kind in ('preset','preset-large','design') and not folder.is_symlink():write_json(record,provenance)
     # Registry stays in this checkout even when weights are in a shared directory.
     write_json(Path(root)/'user-data/model-installations'/(kind+'.json'),provenance)
     return {'model':kind,'ready':True,'problems':[],'downloaded':downloaded,'read_only':False}
@@ -84,7 +97,7 @@ def prepare(kind, root=ROOT, verify_only=False, downloader=None):
 
 def main():
     parser=argparse.ArgumentParser(description='准备预设/固定声线模型，或仅离线校验已有文件')
-    parser.add_argument('--model',choices=['preset','base','all'],default='preset')
+    parser.add_argument('--model',choices=['preset','base','preset-large','design','all'],default='preset')
     parser.add_argument('--verify-only',action='store_true',help='只检查，不下载或修改任何文件')
     args=parser.parse_args()
     failed=False

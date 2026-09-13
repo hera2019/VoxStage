@@ -35,7 +35,7 @@ class FixtureEngine:
 class MlxEngine:
     label = 'Qwen3 · 本地预设音色'
     reference_identity = BASE_ID
-    def __init__(self, path, base_path=None, large_path=None):
+    def __init__(self, path, base_path=None, large_path=None, design_path=None):
         self.path = Path(path)
         self.model = None
         self.reference_model = None
@@ -47,6 +47,15 @@ class MlxEngine:
         if (self.large_path/'model.safetensors').is_file() and (self.large_path/'voxstage-model.json').is_file():
             provenance = json.loads((self.large_path/'voxstage-model.json').read_text())
             self.large_identity = provenance['repo'] + '@' + provenance['revision']
+        # Voice design: a voice from a written description. Used to make a
+        # reference that the library then keeps; never to read lines directly.
+        self.design_path = Path(design_path) if design_path else self.path.parent/'qwen-voicedesign-1.7b'
+        self.design_model = None
+        self.design_identity = None
+        if (self.design_path/'model.safetensors').is_file() and (self.design_path/'voxstage-model.json').is_file():
+            provenance = json.loads((self.design_path/'voxstage-model.json').read_text())
+            self.design_identity = provenance['repo'] + '@' + provenance['revision']
+
         self.base_path = Path(base_path or self.path.parent/'qwen-base')
         self.reference_ready = all((self.base_path/name).is_file() for name in BASE_SHA)
         self.base_verified = False
@@ -56,6 +65,32 @@ class MlxEngine:
             provenance = json.loads((self.path/'voxstage-model.json').read_text())
             self.identity = provenance['repo'] + '@' + provenance['revision']
 
+    @property
+    def design_ready(self):
+        return bool(self.design_identity)
+
+    def design_voice(self, text, description, language, seed=260909):
+        """Render one sample of a voice described in words."""
+        if not self.design_identity:
+            raise ValueError('声音设计模型未安装。')
+        if not description.strip():
+            raise ValueError('请先描述这个声音。')
+        import mlx.core as mx
+        from mlx_audio.tts.utils import load_model
+        start = time.perf_counter()
+        if self.design_model is None:
+            gc.collect(); mx.clear_cache()
+            self.design_model = load_model(str(self.design_path))
+        loaded = time.perf_counter()
+        mx.random.seed(seed); mx.reset_peak_memory()
+        results = list(self.design_model.generate(text=text, lang_code={'zh':'Chinese','en':'English'}[language],
+                                                  instruct=description.strip(), stream=False))
+        if not results or len({int(x.sample_rate) for x in results}) != 1:
+            raise ValueError('声音设计没有产生有效音频，请换一种描述再试。')
+        pcm = np.concatenate([np.asarray(x.audio, dtype=np.float32).reshape(-1) for x in results])
+        return pcm, int(results[0].sample_rate), {'load_seconds':loaded-start, 'generation_seconds':time.perf_counter()-loaded,
+                'mlx_peak_memory_bytes':mx.get_peak_memory(), 'seed':seed, 'generation_mode':'voice_design',
+                'design_identity':self.design_identity, 'description':description.strip()}
     def identity_for(self, size='0.6B'):
         return self.large_identity if size == '1.7B' and self.large_identity else self.identity
 
@@ -139,8 +174,8 @@ class MlxEngine:
 
     def unload(self):
         """Release synthesis models before the serial transcription job. Astra, 2026-09-09."""
-        if self.model is not None or self.reference_model is not None or self.large_model is not None:
-            self.model=None;self.reference_model=None;self.large_model=None
+        if self.model is not None or self.reference_model is not None or self.large_model is not None or self.design_model is not None:
+            self.model=None;self.reference_model=None;self.large_model=None;self.design_model=None
             gc.collect()
             import mlx.core as mx
             mx.clear_cache()

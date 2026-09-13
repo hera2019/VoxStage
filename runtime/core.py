@@ -208,13 +208,13 @@ class Store:
             os.fsync(stream.fileno())
         temporary.replace(path / 'project.json')
 
-    def create(self, name, script, language, *, segments=None):
+    def create(self, name, script, language, *, segments=None, preset_model='0.6B'):
         if segments is None:
             segments = parse_script(script, language)
         presets = ['Vivian','Uncle_Fu','Serena','Dylan'] if language == 'zh' else ['Ryan','Aiden']
         voices = {s:presets[i%len(presets)] for i,s in enumerate(dict.fromkeys(x['speaker'] for x in segments))}
         data = {'schema_version':1, 'id':uid(), 'name':name.strip() or 'Untitled', 'language':language,
-                'revision':0, 'source_script':script, 'voices':voices, 'segments':segments, 'pause_ms':250,
+                'revision':0, 'source_script':script, 'voices':voices, 'segments':segments, 'pause_ms':250, 'preset_model':preset_model,
                 'history':[], 'future':[], 'job':{'status':'idle'}, 'synthetic_audio':True}
         self.write(data)
         return data

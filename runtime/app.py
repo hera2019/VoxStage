@@ -58,11 +58,17 @@ class AuditionRequest(BaseModel):
     language: Literal['zh','en'] = 'zh'
     rate: float = Field(default=1.0, ge=0.5, le=2.0, allow_inf_nan=False)
 
+class VoiceDesignRequest(BaseModel):
+    description: str = Field(min_length=1, max_length=300)
+    text: str = Field(min_length=1, max_length=120)
+    language: Literal['zh','en'] = 'zh'
+
 class VoiceSaveRequest(BaseModel):
     name: str = Field(min_length=1, max_length=40)
     language: Literal['zh','en'] = 'zh'
     reference_text: str = Field(min_length=1, max_length=400)
     from_voice: str | None = Field(default=None, max_length=80)
+    from_design: str | None = Field(default=None, max_length=64)   # an audition file name from /voices/design
     audio_base64: str | None = Field(default=None, max_length=8_000_000)
     consent_confirmed: bool = False
 
@@ -170,6 +176,11 @@ def _splice_source(project, segment, text):
 
 def create_app(data_root=None, engine=None, frontend=None, checker=None, role_engine=None):
     store = Store(data_root or ROOT/'user-data/projects')
+    def default_preset():
+        # New projects start on the larger preset model when it is installed;
+        # existing projects keep whatever they were made with. 0.6B stays
+        # available for machines with less memory.
+        return '1.7B' if getattr(engine, 'large_identity', None) else '0.6B'
     # Settings and auditions live beside the projects folder, never inside it:
     # Store scans its own root for project.json.
     workspace = store.root.parent
@@ -233,7 +244,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
     @app.get('/api/config')
     def config():
         return {'engine':engine.label, 'engine_id':engine.identity, 'ready':engine.ready,
-                'attribution_ready':role_engine.ready, 'speed_ready':bool(ffmpeg_path()),'checker_ready':checker.ready, 'checker_id':checker.identity, 'voices':VOICES, 'fixed_voice_ready':getattr(engine,'reference_ready',False), 'preset_models':['0.6B']+(['1.7B'] if getattr(engine,'large_identity',None) else []), 'local_only':True, 'synthetic_audio':True}
+                'attribution_ready':role_engine.ready, 'speed_ready':bool(ffmpeg_path()),'checker_ready':checker.ready, 'checker_id':checker.identity, 'voices':VOICES, 'fixed_voice_ready':getattr(engine,'reference_ready',False), 'preset_models':['0.6B']+(['1.7B'] if getattr(engine,'large_identity',None) else []), 'default_preset_model':('1.7B' if getattr(engine,'large_identity',None) else '0.6B'), 'design_ready':getattr(engine,'design_ready',False), 'local_only':True, 'synthetic_audio':True}
 
     @app.get('/api/settings')
     def read_settings():
@@ -259,14 +270,27 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
         Saving an audition means a good sample never has to be hunted for again,
         and a reference steadies delivery — which is the whole reason to keep it.
         """
-        if bool(body.from_voice) == bool(body.audio_base64):
-            raise ValueError('请二选一：从现有音色生成，或提供一段参考声音。')
+        if sum(bool(x) for x in (body.from_voice, body.audio_base64, body.from_design)) != 1:
+            raise ValueError('请三选一：从现有音色生成、从设计的声线保存，或提供一段参考声音。')
         with store.lock:
             if active['project_id']:
                 raise RuntimeError('正在处理其他任务，请稍后再建立音色。')
             active['project_id'] = 'voice-library'
         try:
-            if body.from_voice:
+            if body.from_design:
+                # Keep exactly the sample the person listened to, not a re-render.
+                if not re.fullmatch(r'design-[0-9a-f]{16}\.wav', body.from_design):
+                    raise ValueError('无效的设计试听文件名。')
+                sample = workspace/'auditions'/body.from_design
+                if not sample.is_file():
+                    raise ValueError('设计试听已清理，请重新生成后再保存。')
+                note = json.loads(sample.with_suffix('.json').read_text()) if sample.with_suffix('.json').is_file() else {}
+                pcm, rate = sf.read(sample, dtype='float32')
+                entry = library.create(name=body.name, pcm=pcm, rate=rate,
+                    reference_text=note.get('text') or body.reference_text, language=body.language,
+                    source='generated', consent_confirmed=True,
+                    derived_from='design:' + (note.get('description') or ''))
+            elif body.from_voice:
                 if body.from_voice not in VOICES and not (is_custom(body.from_voice) and library.label(body.from_voice)):
                     raise ValueError('没有这个音色。')
                 if is_custom(body.from_voice):
@@ -352,9 +376,34 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             with store.lock:
                 active['project_id'] = None
 
+    @app.post('/api/voices/design')
+    def design_voice(body: VoiceDesignRequest):
+        """Hear a voice described in words. Nothing is kept until it is saved."""
+        if not getattr(engine, 'design_ready', False):
+            raise ValueError('声音设计模型未安装。')
+        with store.lock:
+            if active['project_id']:
+                raise RuntimeError('正在处理其他任务，请稍后再试。')
+            active['project_id'] = 'voice-design'
+        try:
+            pcm, rate, metrics = engine.design_voice(body.text, body.description, body.language)
+            pcm, meta = process_audio(pcm, rate); rate = meta['sample_rate']
+            folder = workspace/'auditions'; folder.mkdir(parents=True, exist_ok=True)
+            for old in sorted(folder.glob('design-*.wav'))[:-8]:
+                old.unlink(missing_ok=True); old.with_suffix('.json').unlink(missing_ok=True)
+            name = 'design-' + hashlib.sha256(f'{body.description}|{body.text}|{body.language}'.encode()).hexdigest()[:16]
+            sf.write(folder/(name+'.wav'), pcm, rate, subtype='PCM_16')
+            (folder/(name+'.json')).write_text(json.dumps({'description':body.description,'text':body.text,'language':body.language,
+                                                          'design_identity':metrics.get('design_identity'),'synthetic_audio':True},ensure_ascii=False))
+            return {'url': f'/api/voices/audition/{name}.wav', 'file': name+'.wav', 'seconds': len(pcm)/rate,
+                    'generation_seconds': round(metrics['generation_seconds'], 1), 'synthetic_audio': True}
+        finally:
+            with store.lock:
+                active['project_id'] = None
+
     @app.get('/api/voices/audition/{name}')
     def audition_file(name: str):
-        if not re.fullmatch(r'[a-f0-9]{16}\.wav', name):
+        if not re.fullmatch(r'(?:design-)?[a-f0-9]{16}\.wav', name):
             raise ValueError('无效的试听文件名。')
         path = workspace/'auditions'/name
         if not path.is_file():
@@ -430,7 +479,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
         labels = [label.model_dump() for label in body.labels]
         segments = project_segments(record['source_script'], labels, record['language'])
         with store.lock:
-            project = store.create(body.name, record['source_script'], record['language'], segments=segments)
+            project = store.create(body.name, record['source_script'], record['language'], segments=segments, preset_model=default_preset())
             project['attribution'] = {'draft_id':body.draft_id,'model_sha256':record.get('model_sha256'),
                 'model_labels':record['labels'],'confirmed_labels':labels,'human_confirmed':True}
             store.write(project)
@@ -449,7 +498,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
     @app.post('/api/projects')
     def import_project(body: ImportRequest):
         with store.lock:
-            return store.public(store.create(body.name, body.script, body.language), engine, checker)
+            return store.public(store.create(body.name, body.script, body.language, preset_model=default_preset()), engine, checker)
 
     @app.get('/api/projects/{project_id}')
     def get_project(project_id: str):

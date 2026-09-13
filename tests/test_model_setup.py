@@ -96,3 +96,21 @@ def test_corrupt_local_weights_request_fresh_download(tmp_path,tiny):
         assert kwargs['force_download'] is True
         (folder/'model.safetensors').write_bytes(b'valid weights')
     assert setup.prepare('preset',tmp_path,downloader=download)['ready']
+
+
+def test_the_real_engine_class_reports_what_is_installed(tmp_path):
+    """Constructing MlxEngine must set every attribute the app reads, with or
+    without the optional models. A structural slip once put half of __init__
+    inside another method and only the live server noticed."""
+    import json
+    from runtime.engines import MlxEngine
+    def fake(folder, repo):
+        folder.mkdir(parents=True); (folder / 'model.safetensors').write_bytes(b'x')
+        (folder / 'voxstage-model.json').write_text(json.dumps({'repo': repo, 'revision': 'r1', 'sha256': {}}))
+    fake(tmp_path / 'qwen-customvoice', 'small')
+    e = MlxEngine(tmp_path / 'qwen-customvoice')
+    assert e.ready and e.identity == 'small@r1'
+    assert e.large_identity is None and not e.design_ready and e.identity_for('1.7B') == 'small@r1'
+    fake(tmp_path / 'qwen-customvoice-1.7b', 'large'); fake(tmp_path / 'qwen-voicedesign-1.7b', 'design')
+    e = MlxEngine(tmp_path / 'qwen-customvoice')
+    assert e.large_identity == 'large@r1' and e.identity_for('1.7B') == 'large@r1' and e.design_ready

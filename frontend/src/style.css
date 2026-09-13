@@ -232,3 +232,5 @@ main>footer{flex-shrink:0;margin:0 -36px -38px;border-top:1px solid #d5dccb}
 .space-sm{margin-top:12px!important}
 .hint-flat{border-top:0;margin-top:6px;padding-top:0}
 .role-fields .adopt{margin-top:6px;font-size:11px;padding:5px 9px}
+.design-voice textarea{margin-top:8px}
+.design-voice .keep-row{margin-top:8px;flex-wrap:wrap}

@@ -1,13 +1,14 @@
 import {useEffect,useRef,useState} from 'react';
 type Custom={id:string;name:string;language:string;source:string;seconds:number;derived_from:string|null;consent_confirmed:boolean};
 type Props={request:(path:string,method?:string,data?:unknown)=>Promise<any>;voices:Record<string,string>;
- language:'zh'|'en';speedReady:boolean;onClose:()=>void;onPick?:(voice:string)=>void;pickFor?:string};
+ language:'zh'|'en';speedReady:boolean;designReady?:boolean;onClose:()=>void;onPick?:(voice:string)=>void;pickFor?:string};
 const SAMPLES={zh:'雨点轻轻敲着窗，她回头看了一眼。',en:'Rain tapped against the window, and she looked back once.'};
 
-export function Settings({request,voices,language,speedReady,onClose,onPick,pickFor}:Props){
+export function Settings({request,voices,language,speedReady,designReady,onClose,onPick,pickFor}:Props){
  const [tab,setTab]=useState<'voices'>('voices');
  const [text,setText]=useState(SAMPLES[language]);
  const [rate,setRate]=useState(1);
+ const [design,setDesign]=useState('');const [designed,setDesigned]=useState<{file:string;seconds:number}|null>(null);const [designName,setDesignName]=useState('');
  const [favourites,setFavourites]=useState<string[]>([]);
  const [playing,setPlaying]=useState('');const [waiting,setWaiting]=useState('');const [error,setError]=useState('');
  const [heard,setHeard]=useState<Record<string,number>>({});
@@ -58,6 +59,23 @@ export function Settings({request,voices,language,speedReady,onClose,onPick,pick
    </article>})}
   </div>
   <audio ref={player} controls preload="none"/>
+
+  <div className="keep-voice design-voice">
+   <div className="section-label">设计一个新声线</div>
+   <p className="muted">用一句话描述你要的声音——年龄、性别、嗓音、语气。听到满意的再保存，存下的就是你听到的这一段。
+    {designReady?'':'（声音设计模型未安装：运行 scripts/setup_model.py --model design）'}</p>
+   <textarea aria-label="声音描述" rows={2} maxLength={300} disabled={!designReady||!!waiting} placeholder="例如：一位六十多岁的男性，声音沙哑苍老，说话慢，带着旧式读书人的腔调" value={design} onChange={e=>setDesign(e.target.value)}/>
+   <div className="keep-row">
+    <button disabled={!designReady||!design.trim()||!!waiting} onClick={()=>void (async()=>{setWaiting('design');setError('');setDesigned(null);
+      try{const r=await request('/voices/design','POST',{description:design,text,language});setDesigned({file:r.file,seconds:r.seconds});setPlaying('');
+        const audio=player.current;if(audio){audio.src=r.url;await audio.play().catch(()=>setError('请点击播放按钮试听。'))}}
+      catch(e){setError((e as Error).message)}finally{setWaiting('')}})()}>{waiting==='design'?'正在设计…':'按描述生成并试听'}</button>
+    <input aria-label="设计声线名称" maxLength={40} placeholder="满意了就起个名字" value={designName} disabled={!designed} onChange={e=>setDesignName(e.target.value)}/>
+    <button disabled={!designed||!designName.trim()||!!saving} onClick={()=>void run(async()=>{setSaving('design');
+      try{await request('/voices/custom','POST',{name:designName,language,reference_text:text,from_design:designed!.file});setDesignName('');setDesigned(null);await reload()}finally{setSaving('')}})}>{saving==='design'?'保存中…':'保存为音色'}</button>
+   </div>
+   {designed&&<p className="muted">这一版 {designed.seconds.toFixed(1)} 秒。不满意就改描述再生成；同一描述每次结果相同，换措辞才会变。</p>}
+  </div>
 
   <div className="keep-voice">
    <div className="section-label">留下这个声音</div>

@@ -54,18 +54,21 @@ def test_a_project_can_choose_the_larger_preset_model(tmp_path):
     eng = TwoSizes()
     with TestClient(create_app(tmp_path / 'p', eng), base_url='http://127.0.0.1', headers=HEADERS) as c:
         p = c.post('/api/projects', json={'name': 'x', 'language': 'zh', 'script': '旁白：你好世界。\n旁白：再见。'}).json()
-        assert c.get('/api/config').json()['preset_models'] == ['0.6B', '1.7B']
-        small = {s['id']: fingerprint(p, s, eng) for s in p['segments']}
-        p = c.patch('/api/projects/' + p['id'], json={'revision': p['revision'], 'preset_model': '1.7B'}).json()
-        assert p['preset_model'] == '1.7B'
+        cfg = c.get('/api/config').json()
+        assert cfg['preset_models'] == ['0.6B', '1.7B'] and cfg['default_preset_model'] == '1.7B'
+        assert p['preset_model'] == '1.7B'                        # new projects start on the larger model
         large = {s['id']: fingerprint(p, s, eng) for s in p['segments']}
+        p = c.patch('/api/projects/' + p['id'], json={'revision': p['revision'], 'preset_model': '0.6B'}).json()
+        assert p['preset_model'] == '0.6B'                        # smaller machines can step down
+        small = {s['id']: fingerprint(p, s, eng) for s in p['segments']}
         assert all(small[k] != large[k] for k in small)
         p = c.post('/api/projects/' + p['id'] + '/undo', json={'revision': p['revision']}).json()
-        assert p.get('preset_model', '0.6B') == '0.6B'
+        assert p['preset_model'] == '1.7B'
     class OneSize(TwoSizes):
         large_identity = None
     with TestClient(create_app(tmp_path / 'q', OneSize()), base_url='http://127.0.0.1', headers=HEADERS) as c:
         p = c.post('/api/projects', json={'name': 'x', 'language': 'zh', 'script': '旁白：你好。'}).json()
+        assert p['preset_model'] == '0.6B'                        # without the larger model, the default stays
         r = c.patch('/api/projects/' + p['id'], json={'revision': p['revision'], 'preset_model': '1.7B'})
         assert r.status_code == 400 and '未安装' in r.json()['detail']
 
@@ -97,3 +100,32 @@ def test_a_run_away_take_is_retried_once_with_the_next_seed(tmp_path):
         assert s['status'] == 'ready' and s['take'] == 1
         assert s['audio']['auto_retake'] is True and s['audio']['first_take_seconds'] > 30
         assert s['audio']['samples'] == 24000 * 2                   # the second take is what was kept
+
+
+def test_a_designed_voice_is_heard_first_and_then_kept_exactly_as_heard(tmp_path):
+    import numpy as np, soundfile as sf
+    from fastapi.testclient import TestClient
+    from runtime.app import create_app
+    from tests.test_workflow import HEADERS
+    class Designs:
+        ready = True; identity = 'x@1'; reference_ready = False; label = 'design'; design_ready = True; design_identity = 'design@1'
+        def synthesize(self, *a, **k): raise AssertionError('not used')
+        def design_voice(self, text, description, language, seed=260909):
+            n = 24000 * 2
+            tone = (0.2 * np.sin(np.arange(n) * 2 * np.pi * (330 if '老' in description else 660) / 24000)).astype('float32')
+            return tone, 24000, {'load_seconds': 0, 'generation_seconds': 1.0, 'mlx_peak_memory_bytes': 0, 'seed': seed, 'generation_mode': 'voice_design', 'design_identity': 'design@1', 'description': description}
+    with TestClient(create_app(tmp_path / 'p', Designs()), base_url='http://127.0.0.1', headers=HEADERS) as c:
+        assert c.get('/api/config').json()['design_ready'] is True
+        r = c.post('/api/voices/design', json={'description': '一位老先生', 'text': '你好。', 'language': 'zh'})
+        assert r.status_code == 200, r.text
+        heard = c.get(r.json()['url']).content
+        saved = c.post('/api/voices/custom', json={'name': '老先生', 'language': 'zh', 'reference_text': '你好。', 'from_design': r.json()['file']})
+        assert saved.status_code == 200, saved.text
+        entry = saved.json()
+        assert entry['source'] == 'generated' and entry['synthetic_audio'] is True
+        assert entry['derived_from'] == 'design:一位老先生'
+        kept = c.get(f"/api/voices/custom/{entry['id']}/audio").content
+        assert sf.read(__import__('io').BytesIO(kept))[0].shape == sf.read(__import__('io').BytesIO(heard))[0].shape
+        # A vanished audition cannot be saved, and a made-up file name is refused.
+        assert c.post('/api/voices/custom', json={'name': 'x', 'language': 'zh', 'reference_text': '你好。', 'from_design': 'design-0000000000000000.wav'}).status_code == 400
+        assert c.post('/api/voices/custom', json={'name': 'x', 'language': 'zh', 'reference_text': '你好。', 'from_design': '../../etc/passwd'}).status_code == 400
