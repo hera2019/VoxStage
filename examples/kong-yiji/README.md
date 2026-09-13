@@ -13,7 +13,7 @@ changed.
 | | |
 |---|---|
 | Text | 2,613 characters · 68 quoted/prose units · 93 lines |
-| Voices | 旁白 and 我 Dylan (the same person) — 孔乙己 Uncle_Fu — 掌柜 and 酒客 two voices cloned from an English preset |
+| Voices | 旁白 Aiden (an English preset) — 我 and 孔乙己 two voices cloned from the English preset Ryan — 掌柜 Uncle_Fu — 酒客 Dylan |
 | Audio | 694.6 s, 24 kHz mono |
 | Subtitles | 251 cues, longest line 20 characters |
 | Machine | Mac Studio, Apple M2 Max, 32 GB. Fully offline. |
@@ -50,15 +50,25 @@ phrases that are not speech are narration; abstentions were resolved by reading
 the passage — ten to the unnamed drinkers (酒客), five to the shopkeeper, one to
 Kong Yiji himself.
 
-## Four men, three male voices
+## Five parts, three Chinese male presets
 
-The story has four male speaking parts and the engine ships three Chinese male
-presets. The narrator and 我 are the same person and share Dylan. Kong Yiji is
-Uncle_Fu. The shopkeeper and the drinkers use two voices cloned from the English
-preset Ryan — the cloning path reads Chinese from an English reference, and the
-transcribe-back check found their lines intact. Their accent has not been assessed
-by a native listener, and whether the two clones sound distinct enough from each
-other in the shopkeeper–drinker exchange has not been listened for.
+The story has a narrator and four male speaking parts; the engine ships three
+Chinese male presets. In the published audio the narrator is read by **Aiden, an
+English preset**, and 我 and Kong Yiji by **two voices cloned from the English
+preset Ryan** — the cloning path reads Chinese from an English reference. The
+shopkeeper is Uncle_Fu and the drinkers Dylan. The transcribe-back check found
+the English-voiced lines intact. (The first export of this sample used Dylan for
+the narrator and 我, Uncle_Fu for Kong Yiji and the two Ryan clones for the
+shopkeeper and the drinkers; the author swapped voices before the published
+export, and an earlier revision of this README still described the first
+assignment.)
+
+Whether an English-trained voice reads Chinese acceptably is a question for a
+native ear: the author, listening to an earlier revision in the app, found
+English voices reading Chinese "problematic", which is why a version with
+Chinese voices for every part — the 1.7B presets plus voices designed from a
+written description — is being prepared for listening. The narrator and 我 are
+the same person and here have different voices; that too is for the ear.
 
 The Sichuan-accented preset Eric was tried for the drinkers first and dropped:
 all ten of their lines were flagged, and swapping the voice cleared six of them
