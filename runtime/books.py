@@ -117,6 +117,13 @@ class Books:
             raise ValueError('找不到这本书。')
         return json.loads(path.read_text(encoding='utf-8'))
 
+    def delete(self, book_id):
+        """Forget a book. Projects made from its chapters are their own files and stay."""
+        path = self.root / (book_id + '.json')
+        if not re.fullmatch(r'[0-9a-f]{32}', book_id) or not path.is_file():
+            raise ValueError('找不到这本书。')
+        path.unlink()
+
     def list(self):
         out = []
         for path in sorted(self.root.glob('*.json')):

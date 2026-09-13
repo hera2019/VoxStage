@@ -48,6 +48,11 @@ def test_a_book_hands_out_chapters_with_names_from_its_other_chapters(client):
     assert set(second['known_names']) == {'掌柜', '孔乙己'}
     assert client.get(f"/api/books/{book['id']}/chapters/9").status_code == 400
     assert client.get('/api/books/' + 'f' * 32).status_code == 400
+    # Forgetting the book leaves the project made from it untouched.
+    assert client.delete('/api/books/' + book['id']).status_code == 200
+    assert client.get('/api/books').json() == []
+    assert client.delete('/api/books/' + book['id']).status_code == 400
+    assert client.get('/api/projects').json()[0]['name'] == '孔乙己 · 第一章 酒店'
 
 
 def test_english_chapter_headings_are_found_too():

@@ -432,6 +432,12 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
     def get_book(book_id: str):
         return books.public(books.get(book_id))
 
+    @app.delete('/api/books/{book_id}')
+    def delete_book(book_id: str):
+        with store.lock:
+            books.delete(book_id)
+        return {'deleted': book_id}
+
     @app.get('/api/books/{book_id}/chapters/{index}')
     def get_chapter(book_id: str, index: int):
         book = books.get(book_id)
