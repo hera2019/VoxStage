@@ -60,7 +60,7 @@ On a configured Mac, double-click **Start VoxStage.command**. Use
 
 Step-by-step walkthroughs:
 [first run](docs/public/quickstart.md) ·
-[environment and models](docs/public/setup-zh.md) (Chinese)
+[environment and models](docs/public/setup.md)
 
 From a fresh checkout (Python 3.12, uv and Node.js required):
 
