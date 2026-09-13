@@ -43,6 +43,11 @@ class RoleLabel(BaseModel):
     kind: Literal['narration','dialogue']
     speaker: str = Field(max_length=80)
 
+class BookRequest(BaseModel):
+    title: str = Field(default='', max_length=120)
+    script: str = Field(min_length=1, max_length=2_000_000)
+    language: Literal['zh','en']
+
 class RoleDraftRequest(BaseModel):
     script: str = Field(min_length=1, max_length=3000)
     language: Literal['zh','en']
@@ -176,6 +181,8 @@ def _splice_source(project, segment, text):
 
 def create_app(data_root=None, engine=None, frontend=None, checker=None, role_engine=None):
     store = Store(data_root or ROOT/'user-data/projects')
+    from .books import Books
+    books = Books(store.root.parent/'books')
     def default_preset():
         # New projects start on the larger preset model when it is installed;
         # existing projects keep whatever they were made with. 0.6B stays
@@ -409,6 +416,39 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
         if not path.is_file():
             raise ValueError('试听文件已清理，请重新生成。')
         return FileResponse(path, media_type='audio/wav')
+
+    @app.post('/api/books')
+    def create_book(body: BookRequest):
+        """Keep a long text as a book cut into chapters; each becomes a project later."""
+        with store.lock:
+            book = books.create(body.title, body.script, body.language)
+        return books.public(book)
+
+    @app.get('/api/books')
+    def list_books():
+        return books.list()
+
+    @app.get('/api/books/{book_id}')
+    def get_book(book_id: str):
+        return books.public(books.get(book_id))
+
+    @app.get('/api/books/{book_id}/chapters/{index}')
+    def get_chapter(book_id: str, index: int):
+        book = books.get(book_id)
+        chapter = next((c for c in book['chapters'] if c['index'] == index), None)
+        if chapter is None:
+            raise ValueError('没有这一章。')
+        # Names already confirmed in this book's other chapters, offered to the
+        # reviewer as candidates so 孔乙己 is typed once, not once per chapter.
+        prefix = book['title'] + ' · '
+        names = []
+        with store.lock:
+            for path in sorted(store.root.glob('*/project.json')):
+                p = json.loads(path.read_text())
+                if p['name'].startswith(prefix):
+                    names += [s for s in p['voices'] if s not in ('旁白', 'Narrator') and s not in names]
+        return {**chapter, 'book_title': book['title'], 'language': book['language'],
+                'project_name': f"{book['title']} · {chapter['title']}".strip(' ·'), 'known_names': names}
 
     @app.post('/api/attribution/draft')
     def role_draft(body: RoleDraftRequest):

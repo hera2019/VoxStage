@@ -1,12 +1,12 @@
 import {useEffect,useState} from 'react';
 type Unit={id:string;text:string;kind:'narration'|'dialogue';speaker:string;blank?:boolean;suggested?:string};
 type Draft={draft_id:string;units:Unit[]};
-type Props={request:(path:string,method?:string,data?:unknown)=>Promise<any>;onCreated:(project:any)=>Promise<void>;onClose:()=>void;seed?:{name:string;language:'zh'|'en';text:string}|null};
+type Props={request:(path:string,method?:string,data?:unknown)=>Promise<any>;onCreated:(project:any)=>Promise<void>;onClose:()=>void;seed?:{name:string;language:'zh'|'en';text:string;knownNames?:string[]}|null};
 export function RoleImport({request,onCreated,onClose,seed}:Props){
  const [text,setText]=useState(seed?.text??'');const [name,setName]=useState(seed?.name??'新的故事');const [language,setLanguage]=useState<'zh'|'en'>(seed?.language??'zh');
  const [draft,setDraft]=useState<Draft|null>(null);const [waiting,setWaiting]=useState(false);const [error,setError]=useState('');
  const unknown=draft?.units.filter(u=>u.kind==='dialogue'&&(!u.speaker.trim()||u.speaker.trim().toUpperCase()==='UNKNOWN')).length??0;
- const names=[...new Set(draft?.units.filter(u=>u.kind==='dialogue').map(u=>u.speaker.trim()).filter(Boolean)??[])];
+ const names=[...new Set([...(seed?.knownNames??[]),...(draft?.units.filter(u=>u.kind==='dialogue').map(u=>u.speaker.trim()).filter(Boolean)??[])])].filter(n=>n.toUpperCase()!=='UNKNOWN');
  // Two people taking turns: once the reviewer has named the last two distinct
  // speakers, an unresolved line is suggested as the one who did not speak last.
  // A suggestion only -- it is shown in the field, never adopted on its own.
