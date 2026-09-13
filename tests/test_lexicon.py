@@ -129,3 +129,22 @@ def test_a_designed_voice_is_heard_first_and_then_kept_exactly_as_heard(tmp_path
         # A vanished audition cannot be saved, and a made-up file name is refused.
         assert c.post('/api/voices/custom', json={'name': 'x', 'language': 'zh', 'reference_text': '你好。', 'from_design': 'design-0000000000000000.wav'}).status_code == 400
         assert c.post('/api/voices/custom', json={'name': 'x', 'language': 'zh', 'reference_text': '你好。', 'from_design': '../../etc/passwd'}).status_code == 400
+
+
+def test_an_audition_uses_the_model_a_new_project_would(tmp_path):
+    """Hearing a preset on 0.6B and then getting 1.7B in the project would make the audition a lie."""
+    from fastapi.testclient import TestClient
+    from runtime.app import create_app
+    from tests.test_workflow import HEADERS
+    heard = []
+    class TwoSizes:
+        ready = True; identity = 'small@1'; large_identity = 'large@1'; reference_ready = False; label = 'two sizes'
+        def identity_for(self, size='0.6B'): return self.large_identity if size == '1.7B' else self.identity
+        def synthesize(self, text, voice, language, seed=260909, size='0.6B'):
+            import numpy as np
+            heard.append(size)
+            return np.zeros(2400, dtype='float32') + .1, 24000, {}
+    with TestClient(create_app(tmp_path / 'p', TwoSizes()), base_url='http://127.0.0.1', headers=HEADERS) as c:
+        r = c.post('/api/voices/audition', json={'voice': 'Vivian', 'text': '雨点敲着窗。', 'language': 'zh'})
+        assert r.status_code == 200 and r.json()['preset_model'] == '1.7B'
+        assert heard == ['1.7B']
