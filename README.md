@@ -7,8 +7,8 @@ line transcribed back and checked against its text, and the source text
 guaranteed intact.
 
 > **Development preview.** The workflow runs end to end. It is not a released
-> product, and one quality criterion has explicitly **not** passed — see
-> [Open quality issue](#open-quality-issue).
+> product, and listening review covers specific things and not others — see
+> [What listening has covered](#what-listening-has-covered).
 
 *Also available in Chinese: [中文说明](README.zh-CN.md)*
 
@@ -146,17 +146,21 @@ Markdown and JSON. Acceptance criteria were written **before** implementation:
 > acceptance criteria and the attribution evaluation — are in English, and every
 > record has a machine-readable JSON companion beside it.
 
-## Open quality issue
+## What listening has covered
 
-**Same-speaker continuity has not passed listening review.** Two narrator lines
-from the same character were judged insufficiently consistent in perceived
-voice and acoustic space. Fixing a preset ID and a seed is not sufficient, and
-matching waveform metrics do not satisfy this criterion.
+**Same-speaker continuity was accepted on 2026-09-10.** Six consecutive
+narrator lines per language, about 32 seconds each, one take per line at a
+fixed seed with no selection among takes; the author judged timbre, acoustic
+space, pronunciation and completeness consistent in both languages. The day
+before, the same criterion had failed on two lines — that record stays in
+[`acceptance.md`](docs/public/acceptance.md) next to the pass and its scope:
+two presets, no retake, no span beyond 32 seconds, no seed change. A character
+still sounding like themselves in sentence 300 is not claimed.
 
-This is the current primary issue, and it matters more than any feature above:
-a multi-character reading is only usable if a character still sounds like
-themselves in sentence 300. It is tracked in
-[`acceptance.md`](docs/public/acceptance.md) and is **not** claimed as working.
+**Not listened to:** the published *Kong Yiji* sample line by line — it has
+been checked by machine only; the accent of its two cloned voices; the 1.7B
+model beyond the lines the author compared on 2026-09-13. A file that exists
+is not a file that has passed.
 
 ## Where this came from
 

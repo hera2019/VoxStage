@@ -140,3 +140,31 @@ Evidence: results/timeline-integration, timeline-english, timeline-browser,
 workflow-checks.
 
 Last updated: 2026-09-09 · Astra
+
+
+## Same-speaker continuity: accepted on 2026-09-10, within a stated scope
+
+This supersedes the "not accepted" records above, which stay as written.
+
+The author listened to six consecutive narrator lines per language — Chinese
+旁白 on Vivian, English Narrator on Ryan, about 32 seconds each — generated
+once per line at a fixed seed (260909), peak-normalised only, no trimming, no
+speed change, and **no selection among takes**: one attempt per line is what
+makes the listening result meaningful. All four human judgements were passed:
+same-speaker timbre, same acoustic space, pronunciation and completeness, and
+overall listening acceptance. This lifted the feature freeze in force since
+2026-09-09. The material is local (`user-data/`, not in the repository); the
+generating script and its runtime hashes are recorded with the result.
+
+What this pass does **not** cover, stated as scope rather than as a to-do list:
+other presets than the two heard; continuity across a single-line retake; spans
+longer than 32 seconds; a different seed; whether the two languages' fixed-voice
+configurations are equivalent. Distinctness *between* characters was judged not
+to need a separate test — different presets are different speaker embeddings
+with no mechanism that would pull them together, and it has been heard in use.
+
+The claim this supports is exactly: *the same character keeps its voice over
+tens of seconds of consecutive reading, by human listening.* It is not "voice
+quality has been accepted".
+
+Last updated: 2026-09-13 · Claude Hera (public record of acceptance-log entry 001, judged by the author on 2026-09-10)
