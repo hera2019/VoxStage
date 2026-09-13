@@ -5,8 +5,11 @@ Status: PASS
 These tests cover local workflow, startup and model preparation with fixtures; they are not a model benchmark or voice-quality assessment.
 
 ```text
-........................................................................ [ 59%]
-.................................................                        [100%]
+........................................................................ [ 21%]
+........................................................................ [ 42%]
+........................................................................ [ 63%]
+........................................................................ [ 84%]
+...................................................                      [100%]
 =============================== warnings summary ===============================
 .venv/lib/python3.12/site-packages/fastapi/testclient.py:1
   [project]/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
@@ -17,7 +20,7 @@ These tests cover local workflow, startup and model preparation with fixtures; t
     _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-121 passed, 2 warnings in 7.05s
+339 passed, 2 warnings in 14.95s
 
 ```
 
