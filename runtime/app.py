@@ -25,6 +25,7 @@ from .audio import process_audio, export_audio, prepare_segment
 from .clips import clip_plan, validate_clips
 from .fcp7 import timeline_xml, IMPORT_GUIDE
 from .rhythm import analyze_file, analyze, duration_marker, VERSION as RHYTHM_VERSION
+from . import readings
 from .core import reads_aloud, Store, fingerprint, spoken_text
 from .voices import VoiceLibrary, is_custom, custom_id, PREFIX as CUSTOM_PREFIX
 from .script_check import inspect as inspect_script, apply_fix
@@ -618,6 +619,8 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 clean = {k.strip(): v.strip() for k, v in body.lexicon.items() if k.strip() and v.strip() and k.strip() != v.strip()}
                 if len(clean) > 200 or any(len(k) > 40 or len(v) > 40 for k, v in clean.items()):
                     raise ValueError('发音词典最多 200 条，每条不超过 40 字。')
+                for read in clean.values():
+                    readings.resolve(read)            # a bad 字[拼音] is refused here, with its name
                 p['lexicon'] = clean
             if body.segment_id:
                 s = next((s for s in p['segments'] if s['id']==body.segment_id), None)
@@ -637,8 +640,11 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                         # One message per rule: a vague error sends people hunting.
                         if field == 'text' and not value.strip():
                             raise ValueError('这一句不能为空。要去掉它，请用「删除这一句」。')
-                        if '\n' in value:
-                            raise ValueError('一句里不能有换行。请删掉换行，或在「原稿编辑」里重新分句。')
+                        # A line break inside a line is allowed: the slicer keeps
+                        # paragraph breaks, the voice reads through them, the
+                        # subtitles break there. A split is the way to get a pause.
+                        if field == 'spoken_as':
+                            readings.resolve(value)
                         if len(value) > limit:
                             raise ValueError(f'一句最多 {limit} 个字符，当前 {len(value)} 个。请在「原稿编辑」里拆成两句。')
                         if field == 'text' and value != s['text']:

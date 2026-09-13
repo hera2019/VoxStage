@@ -53,6 +53,11 @@ were made with the flow below. New material still needs listening to.
   or the subtitles; changing an entry invalidates only the lines that contain it.
 - **朗读文本** (replacement reading, one line): what this line reads, with the
   text and subtitle unchanged.
+- **Pinning a reading**: a Chinese character with several readings can be told
+  which one — `干[gan4]` or `干[gàn]`, in a replacement reading or a lexicon
+  entry (`干活→干[gan4]活`). The voice is given a common character that reads
+  only that way (赣 here); the text and subtitles keep 干, and the panel shows
+  what will actually be read.
 - Everything is undoable, and generated audio is never lost by editing a
   different line.
 

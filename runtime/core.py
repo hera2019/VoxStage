@@ -8,6 +8,7 @@ import shutil
 import threading
 import uuid
 from pathlib import Path
+from . import readings
 from .audio import PROCESSING_VERSION
 from .content_check import check_status, file_sha
 from .listening import listening_status
@@ -140,12 +141,18 @@ def spoken_text(project, segment):
     edition's 偸 that the engine cannot read, eight times in Kong Yiji.
     Longest entries apply first so 偸儿 wins over 偸. Because this feeds the
     fingerprint, changing an entry invalidates exactly the lines it touches.
+
+    A pinned reading — 干[gan4] in the replacement or in a lexicon entry —
+    is resolved last, to a character that reads only that way (runtime/readings).
     """
     text = segment.get('spoken_as') or segment['text']
     for written, read in sorted((project.get('lexicon') or {}).items(), key=lambda kv: -len(kv[0])):
         if written and written in text:
             text = text.replace(written, read)
-    return text
+    try:
+        return readings.resolve(text)
+    except ValueError:
+        return text                       # saving refuses bad notation; anything older is read as written
 
 
 def fingerprint(project, segment, engine, library=None):
@@ -321,7 +328,11 @@ class Store:
                 # A line kept in the script but not in the recording. Whatever
                 # audio it had stays on disk for when it is switched back on.
                 s['status'] = 'silent'
-            s['check_status']=check_status(s,current,getattr(checker,'identity',None),spoken_text(p,s))
+            spoken = spoken_text(p,s)
+            s['check_status']=check_status(s,current,getattr(checker,'identity',None),spoken)
+            # What the voice is actually asked to read when that differs from
+            # the field the person typed — a lexicon entry or 干[gan4] at work.
+            s['reads_as'] = spoken if spoken != (s.get('spoken_as') or s['text']) else None
             audio_stat=None
             if s['status']=='ready':
                 stat=(self.directory(p['id'])/'audio'/(current+'.wav')).stat()

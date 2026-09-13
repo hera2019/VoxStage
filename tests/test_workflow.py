@@ -58,7 +58,7 @@ def test_roundtrip_cache_timeline_and_export(client, language):
         assert (root/'audio'/(digest+'.wav')).stat().st_mtime_ns==mtime
     # read_aloud/lock_before are filled in on read for projects saved before they existed.
     reloaded = client.app.state.store.read(p['id'])
-    assert reloaded['voices']==p['voices'] and reloaded['segments']==[{k:v for k,v in s.items() if k not in ('status','check_status','listening_status','tempo_status','rhythm_status','read_aloud','lock_before')} for s in p['segments']]
+    assert reloaded['voices']==p['voices'] and reloaded['segments']==[{k:v for k,v in s.items() if k not in ('status','check_status','listening_status','tempo_status','rhythm_status','read_aloud','lock_before','reads_as')} for s in p['segments']]
     links = client.post(f'/api/projects/{p["id"]}/export/create', json={'revision':p['revision']}).json()
     timeline = client.get(links['timeline.json']).json()
     assert timeline['synthetic_audio']

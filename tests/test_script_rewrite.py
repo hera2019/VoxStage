@@ -240,7 +240,8 @@ def test_the_last_line_cannot_be_deleted(client):
 # ── error messages that name the rule they enforce ───────────────────────────
 
 @pytest.mark.parametrize('value,expected', [
-    ('第一行\n第二行', '换行'),
+    # A line break inside a line is allowed since 2026-09-14 (the slicer keeps
+    # paragraph breaks; see tests/test_readings.py); the other rules stand.
     ('字' * 61, '61'),
     ('   ', '删除这一句'),
 ])
