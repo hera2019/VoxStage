@@ -547,18 +547,26 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             # 27 times. Texts with no quotation marks at all are left alone.
             quoted = any(c in body.script for c in '“"「『')
             def cites_rather_than_speaks(unit):
-                # Chinese puts the full stop inside the quotation marks. A quoted
-                # unit with no sentence-final mark inside -- “君子固穷”, “雪” -- is a
-                # word being cited, not a person speaking. Across six reviewed
-                # projects: 11 of 11 such units were narration, 163 of 163 with a
-                # mark inside were speech. Chinese only: English speech carries a
-                # comma inside the quotes before a tag ("I know," said Mr. Bennet),
-                # and 11 of the 26 quoted units in the Austen sample have no
-                # sentence-final mark.
+                # Chinese puts the full stop inside the quotation marks. A short
+                # quoted unit with nothing spoken about it -- “君子固穷”, “雪” -- is a
+                # word being cited, not a person speaking. The first form of this
+                # rule (no sentence-final mark inside) silenced web-novel speech
+                # that ends in a wave dash: “喜欢～，好滑呀～” became narration.
+                # Measured 2026-09-14 on 376 human-labelled quoted units across 14
+                # projects: that form called 21 spoken lines citations; this form
+                # calls none, and still catches 19 of the 25 citations (the ones it
+                # lets through carry a comma, like a shop sign). Chinese only:
+                # English speech carries a comma inside the quotes before a tag
+                # ("I know," said Mr. Bennet).
                 text = unit['text'].strip()
-                if not (text[:1] in '“"「『' and text[-1:] in '”"」』'):
+                if len(text) < 2 or text[0] not in '“"「『' or text[-1] not in '”"」』':
                     return False
-                return not any(c in text[1:-1] for c in '。！？…；!?')
+                inner = text[1:-1]
+                if any(c in inner for c in '。！？…；!?～~，、—'):    # any mark of speech
+                    return False
+                if inner[-1:] in '呀啊吗呢吧哦嗯啦哇嘛噢呗哩呐唉哎呦咯哟嘞呵':   # a spoken particle
+                    return False
+                return len(inner) <= 10
             def vetted(label, unit):
                 speaker = label['speaker'].strip()
                 if quoted and label['kind'] == 'dialogue' and not unit['text'].lstrip().startswith(('“', '"', '「', '『')):

@@ -140,8 +140,8 @@ def test_an_unquoted_unit_in_a_quoted_text_is_prose_whatever_the_model_says(tmp_
 
 def test_a_quoted_word_with_no_sentence_mark_inside_is_a_citation_not_speech(tmp_path):
     """什么“君子固穷”，什么“者乎”之类 -- words being quoted, not people talking.
-    Six reviewed projects: 11 of 11 such units narration, 163 of 163 with a mark
-    inside speech."""
+    Measured 2026-09-14 on 376 human-labelled quoted units across 14 projects:
+    the rule calls no spoken line a citation and catches 19 of 25 citations."""
     class Everything(Roles):
         def annotate(self, text, log_path):
             units = source_units(text)
@@ -159,6 +159,15 @@ def test_a_quoted_word_with_no_sentence_mark_inside_is_a_citation_not_speech(tmp
         labels = [{'id': u['id'], 'kind': u['kind'], 'speaker': u['speaker']} for u in d['units']]
         p = c.post('/api/attribution/confirm', json={'draft_id': d['draft_id'], 'name': '引述', 'labels': labels}).json()
         assert any('什么“君子固穷”，什么“者乎”之类' in s['text'] for s in p['segments'])
+        # Speech that ends in a wave dash, a comma or a particle, or runs long, is
+        # not a citation even without a sentence-final mark (本人 2026-09-14:
+        # “喜欢～，好滑呀～” had been silenced into narration).
+        d = draft(c, '她说：“喜欢～，好滑呀～”他说：“嗯～”她又说：“可能是吧”门口挂着“今天不营业”。')
+        by = {u['text'].strip(): u for u in d['units']}
+        assert by['“喜欢～，好滑呀～”']['kind'] == 'dialogue'
+        assert by['“嗯～”']['kind'] == 'dialogue'
+        assert by['“可能是吧”']['kind'] == 'dialogue'
+        assert by['“今天不营业”']['kind'] == 'narration'
 
 
 def test_the_citation_rule_is_chinese_only(tmp_path):

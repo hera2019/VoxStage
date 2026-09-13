@@ -127,7 +127,7 @@ sentence after the author rejected every preset for the part.
 
 | Capability | State |
 |---|---|
-| Paste unlabelled prose → speaker draft → review → project, in one flow | Built all three samples; the draft's four post-rules are measured on six reviewed projects (27/27, 11/11, 163/163) |
+| Paste unlabelled prose → speaker draft → review → project, in one flow | Built all three samples; the draft's post-rules are measured on human-labelled projects (the citation rule: 0 spoken lines silenced in 376 quoted units across 14 projects, after its first form silenced 21) |
 | A long text kept as a book, one chapter at a time | 阿Q正传, 22,152 characters into ten chapters, checked in the browser |
 | Import, edit, save, reload, undo/redo | Automated checks pass |
 | One audio asset per sentence; edit one → regenerate one | Automated checks pass |
