@@ -52,3 +52,13 @@ def test_a_line_may_contain_a_line_break(client):
     r = client.patch('/api/projects/' + p['id'], json={'revision': p['revision'], 'segment_id': s['id'], 'text': '他不再问。\n中秋过后，天凉了。'})
     assert r.status_code == 200, r.text
     assert r.json()['segments'][0]['text'] == '他不再问。\n中秋过后，天凉了。'
+
+
+def test_lexicon_entries_apply_once_each_longest_match_first():
+    """本人 2026-09-14: with 干净→干[gan1]净 and 干→干[gan4], 擦拭干净 came out gàn gān 净 —
+    the second entry had rewritten the 干 the first one produced."""
+    project = {'lexicon': {'干净': '干[gan1]净', '干': '干[gan4]'}}
+    assert spoken_text(project, {'text': '擦拭干净，再去干活。'}) == '擦拭肝净，再去赣活。'
+    project = {'lexicon': {'干': '干[gan4]', '干净': '干[gan1]净'}}          # order of entry does not matter
+    assert spoken_text(project, {'text': '擦拭干净，再去干活。'}) == '擦拭肝净，再去赣活。'
+    assert spoken_text({'lexicon': {'偸': '偷', '偷': '偸'}}, {'text': '偸偷'}) == '偷偸'   # no cascade either way

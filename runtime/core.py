@@ -146,9 +146,14 @@ def spoken_text(project, segment):
     is resolved last, to a character that reads only that way (runtime/readings).
     """
     text = segment.get('spoken_as') or segment['text']
-    for written, read in sorted((project.get('lexicon') or {}).items(), key=lambda kv: -len(kv[0])):
-        if written and written in text:
-            text = text.replace(written, read)
+    lexicon = {k: v for k, v in (project.get('lexicon') or {}).items() if k}
+    if lexicon:
+        # One pass, longest match first at each position, and a replacement is
+        # never scanned again: with 干净→干[gan1]净 and 干→干[gan4], the 干 that
+        # the first entry wrote must not be rewritten by the second — 擦拭干净
+        # read as gàn gān 净 was the result of replacing in sequence.
+        pattern = re.compile('|'.join(re.escape(k) for k in sorted(lexicon, key=len, reverse=True)))
+        text = pattern.sub(lambda m: lexicon[m.group(0)], text)
     try:
         return readings.resolve(text)
     except ValueError:
@@ -191,6 +196,33 @@ def drop_waveforms(project):
             if isinstance(check, dict) and 'waveform' in check:
                 del check['waveform']; removed = True
     return removed
+
+
+SETTINGS = ('lexicon', 'preset_model', 'pause_ms', 'speech_rate')
+
+
+def inherit_settings(target, source, source_dir, target_dir):
+    """Carry one project's configuration into another: the voice of every
+    character both have, the fixed-voice references for those characters (the
+    reference file is copied), the lexicon, the preset model, the pause and the
+    speed. Characters the source does not have keep what they had. Returns
+    what was carried, for the notice. Mutates target; the caller records the edit."""
+    carried = {'voices': [], 'profiles': [], 'settings': []}
+    for speaker in target['voices']:
+        if speaker in source.get('voices', {}):
+            target['voices'][speaker] = source['voices'][speaker]; carried['voices'].append(speaker)
+        profile = (source.get('voice_profiles') or {}).get(speaker)
+        if profile and speaker in source.get('voices', {}):
+            reference = Path(source_dir)/'references'/(profile['sha256'] + '.wav')
+            if reference.is_file():
+                folder = Path(target_dir)/'references'; folder.mkdir(exist_ok=True)
+                if not (folder/reference.name).exists():
+                    shutil.copyfile(reference, folder/reference.name)
+                target.setdefault('voice_profiles', {})[speaker] = copy.deepcopy(profile); carried['profiles'].append(speaker)
+    for key in SETTINGS:
+        if key in source and source[key] != target.get(key):
+            target[key] = copy.deepcopy(source[key]); carried['settings'].append(key)
+    return carried
 
 
 def edit_state(project):
