@@ -286,12 +286,14 @@ class Store:
 
     def public(self, p, engine, checker=None, library=None):
         library = library or self.library
-        result = copy.deepcopy(p)
+        # The undo stacks are the bulk of a long project and never leave the
+        # server; copy everything else.
+        result = copy.deepcopy({k: v for k, v in p.items() if k not in ('history', 'future')})
         result.setdefault('voice_profiles',{})
         result.setdefault('archived',False)
         result.setdefault('speech_rate',1.0)
         result['can_undo'], result['can_redo'] = bool(p['history']), bool(p['future'])
-        result.pop('history'); result.pop('future')
+        result.pop('history', None); result.pop('future', None)
         for s in result['segments']:
             current = fingerprint(p, s, engine, library)
             audio = s.get('audio')
