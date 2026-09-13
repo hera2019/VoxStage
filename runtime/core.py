@@ -171,6 +171,21 @@ def fingerprint(project, segment, engine, library=None):
                      'mode':'fixed_synthetic_reference-v1'})
     return hashlib.sha256(json.dumps(data, ensure_ascii=False, sort_keys=True).encode()).hexdigest()
 
+def drop_waveforms(project):
+    """Strip the per-line waveform envelope that earlier versions stored with
+    each rhythm check — in the live lines and in every undo snapshot. Returns
+    whether anything was removed. The envelope is derived from the audio file
+    and is recomputed by the preview endpoint when the timeline needs it."""
+    removed = False
+    states = [project] + list(project.get('history', [])) + list(project.get('future', []))
+    for state in states:
+        for segment in state.get('segments', []):
+            check = segment.get('rhythm_check')
+            if isinstance(check, dict) and 'waveform' in check:
+                del check['waveform']; removed = True
+    return removed
+
+
 def edit_state(project):
     return copy.deepcopy({**{k:project[k] for k in ('name','language','voices','segments','pause_ms')},'lexicon':project.get('lexicon',{}),'preset_model':project.get('preset_model','0.6B'),'voice_profiles':project.get('voice_profiles',{}), 'archived':project.get('archived',False), 'speech_rate':project.get('speech_rate',1.0)})
 
@@ -182,8 +197,10 @@ class Store:
         self.library = None          # set by create_app; see runtime/voices.py
         for path in self.root.glob('*/project.json'):
             data = json.loads(path.read_text())
+            changed = drop_waveforms(data)
             if data.get('job',{}).get('status') == 'running':
-                data['job']['status'] = 'interrupted'
+                data['job']['status'] = 'interrupted'; changed = True
+            if changed:
                 self.write(data)
 
     def directory(self, project_id):

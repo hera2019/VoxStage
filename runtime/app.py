@@ -363,7 +363,11 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 raise RuntimeError('正在处理其他任务，请稍后再试听。')
             active['project_id'] = 'voice-audition'
         try:
-            pcm, rate, _ = engine.synthesize(body.text, body.voice, body.language, seed=260909)
+            # The model a new project will actually use, so the audition is the
+            # voice the person will get, not the smaller model's rendering of it.
+            size = default_preset()
+            pcm, rate, _ = engine.synthesize(body.text, body.voice, body.language, seed=260909,
+                                             **({'size': size} if hasattr(engine, 'identity_for') else {}))
             pcm, meta = process_audio(pcm, rate)
             rate = meta['sample_rate']
             # Rate here is a listening aid applied after synthesis, exactly as the
@@ -375,9 +379,9 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             for old in sorted(folder.glob('*.wav'))[:-8]:
                 old.unlink(missing_ok=True)
             name = hashlib.sha256(
-                f'{body.voice}|{body.text}|{body.language}|{body.rate}'.encode()).hexdigest()[:16]
+                f'{body.voice}|{body.text}|{body.language}|{body.rate}|{size}'.encode()).hexdigest()[:16]
             sf.write(folder/(name+'.wav'), pcm, rate, subtype='PCM_16')
-            return {'url': f'/api/voices/audition/{name}.wav', 'seconds': len(pcm)/rate,
+            return {'url': f'/api/voices/audition/{name}.wav', 'seconds': len(pcm)/rate, 'preset_model': size,
                     'voice': body.voice, 'rate': body.rate, 'synthetic_audio': True}
         finally:
             with store.lock:
@@ -951,6 +955,11 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                         except Exception:
                             logging.exception('Pace timing analysis failed for %s',sid)
                             rhythm['pace']={'status':'unavailable','reason':'语速起伏估计失败，请人工试听。'}
+                    # The 3,200-point envelope is drawn from the audio on demand
+                    # (the preview endpoint); kept in the project it was 25 KB per
+                    # line, copied into every undo snapshot — 140 MB for a
+                    # 93-line story, rewritten after every checked line.
+                    rhythm.pop('waveform', None)
                     target['rhythm_check']=rhythm
                     target['content_check']=result
                     p['job']['completed']+=1;p['job']['failed']+=int(result['status']=='error' or bool(rhythm.get('error')))

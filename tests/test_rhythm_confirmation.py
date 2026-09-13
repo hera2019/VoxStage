@@ -89,3 +89,24 @@ def test_changed_bytes_before_first_confirmation_rejected(prepared):
     assert response.status_code==400
 
 # 最后更新：2026-09-11 · Astra
+
+
+def test_the_project_file_keeps_no_waveform_and_sheds_an_old_one_on_startup(prepared, tmp_path):
+    """The envelope was 25 KB per line, copied into every undo snapshot: 140 MB
+    for a 93-line story, rewritten after every checked line, and never read."""
+    import json
+    from runtime.core import Store
+    c, p, _ = prepared
+    path = c.app.state.store.directory(p['id']) / 'project.json'
+    data = json.loads(path.read_text())
+    assert 'markers' in data['segments'][0]['rhythm_check'] and 'waveform' not in data['segments'][0]['rhythm_check']
+    assert p['segments'][0]['rhythm_status'] == 'review'                  # the check itself is intact
+    # A project written by an earlier version carries the envelope everywhere.
+    data['segments'][0]['rhythm_check']['waveform'] = [0.1] * 3200
+    data['history'] = [{'segments': [{'id': 'x', 'rhythm_check': {'waveform': [0.2] * 3200, 'markers': []}}]}]
+    path.write_text(json.dumps(data, ensure_ascii=False))
+    Store(tmp_path / 'projects')                                            # startup migration
+    after = json.loads(path.read_text())
+    assert 'waveform' not in after['segments'][0]['rhythm_check']
+    assert after['history'][0]['segments'][0]['rhythm_check'] == {'markers': []}
+    assert after['revision'] == data['revision']                            # a cleanup is not an edit
