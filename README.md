@@ -116,16 +116,19 @@ check learned that it cannot expect a recogniser to know a character's name.
 
 | Capability | State |
 |---|---|
+| Paste unlabelled prose → speaker draft → review → project, in one flow | Built all three samples; the draft's four post-rules are measured on six reviewed projects (27/27, 11/11, 163/163) |
+| A long text kept as a book, one chapter at a time | 阿Q正传, 22,152 characters into ten chapters, checked in the browser |
 | Import, edit, save, reload, undo/redo | Automated checks pass |
 | One audio asset per sentence; edit one → regenerate one | Automated checks pass |
-| Per-sentence retake, keeping the previous take | Automated checks pass |
-| Failed sentence recorded, batch continues, retry works | Automated checks pass |
-| WAV + SRT export from actual sample counts | Automated checks pass |
-| Chinese and English preset voices, real model | Integration run recorded |
-| Transcribe-back content check | Implemented; detection rate not measured |
-| Voice library: keep a take, or supply a recording | Used in the sample; broader listening pending |
+| Split a line where the cursor is; merge with a neighbour; leave a line out of the recording | Automated checks pass; used on the Chinese samples |
+| Per-sentence retake; run-away takes retried once before anyone hears them | Automated checks pass; four run-away takes caught on 2026-09-13 |
+| Transcribe-back content check with visible tolerances (pinyin, numbers, known names, period particles) | Used on every sample; the tolerances are listed per sample |
+| Duration check for sound the engine added | Caught a 16-character line rendered as 31.7 s |
+| Subtitles cut where the voice pauses, wrapped for a screen, VTT and SRT in step | All three samples; longest line 20 / 42 characters |
+| Portable delivery package rebuilding full.wav to the sample; FCP7 XML at 24–60 fps | Zero-sample rebuild verified; imported into DaVinci Resolve 21 |
+| 0.6B and 1.7B preset models, chosen per project; pronunciation lexicon | Measured 2026-09-13; the author judged 1.7B more natural |
+| Voice library: keep a take, design a voice from a description, or supply a recording | Design used by the author; consent gate for supplied recordings is in code |
 | Waveform editing, clip reorder/split, speed | Implemented; listening review pending |
-| Speaker attribution from unlabelled prose | Evaluated, **not integrated** |
 
 Every row links to a run under [`results/`](results/), recorded as both
 Markdown and JSON. Acceptance criteria were written **before** implementation:
