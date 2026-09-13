@@ -87,11 +87,13 @@ Optional models, each pinned and hash-checked by the same script:
 .venv/bin/python scripts/setup_model.py --model base           # zero-shot cloning for the voice library
 ```
 
-New projects use the 1.7B model when it is installed — measured on the
-same lines it reads more naturally, and did not produce the run-away
-take the 0.6B model did. Peak memory is about 8 GB against 7.4; a
-16 GB Mac should stay on 0.6B, which every project can select. Every
-model is Apache-2.0.
+New projects use the 1.7B model when it is installed — on the same
+lines the author judged it more natural. It is not immune to run-away
+takes: on a full 93-line run it produced five in 69 preset lines, each
+caught by the duration check and re-rolled before anyone heard it. Peak
+memory is about 8 GB against 7.4 with one model resident (17.7 GB with
+all four loaded); a 16 GB Mac should stay on 0.6B, which every project
+can select. Every model is Apache-2.0.
 
 For the content check, install a compatible `whisper-cli`, then
 `scripts/setup_asr.py --cli <path>` (~547 MiB, SHA-256 verified).
