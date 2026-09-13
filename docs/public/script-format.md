@@ -12,4 +12,6 @@ Short, single-sentence utterances are recommended. Initial defensive maximum: 60
 
 The authoritative format is the versioned project JSON. The richer .voice.md format remains a future import/export adapter, so this milestone does not silently promise a complete Markdown parser. Stable IDs survive text edits; voices are mapped to speaker names in the project. User data is stored outside source-controlled files.
 
-最后更新：2026-09-09 · Astra
+Prose without labels does not go through this parser at all: the new-project dialog sends it to the speaker draft instead (see [first run](quickstart.md)), where the program cuts units at the quotation marks and a local model proposes the labels for review. A labelled line that is too long is refused with the line number, never shortened.
+
+最后更新：2026-09-09 · Astra ／ 2026-09-13 · Claude Hera（补充无标注原文走另一条路径）

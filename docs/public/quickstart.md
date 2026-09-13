@@ -12,7 +12,8 @@ were made with the flow below. New material still needs listening to.
    up to 3,000 characters. The button changes to 分角色并创建工程: the local
    model labels each unit narration or dialogue and names the speaker, then
    hands the result to you for review.
-   - A script already written one line per `Speaker: line` imports directly.
+   - A script already written one line per `Speaker: line` imports directly
+     ([format](script-format.md)).
    - **More than 3,000 characters** (a whole novel) is filed as a *book* and
      cut at its chapter headings — 第X章 or `Chapter 3` — or at paragraph
      breaks when there are none. Start from any chapter; names confirmed in
