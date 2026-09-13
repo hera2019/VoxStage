@@ -31,13 +31,28 @@ npm --prefix frontend run build
 .venv/bin/python scripts/setup_model.py --model base
 ```
 
-也可以一次准备两套：
+更大的预设声音模型（1.7B）。装了它以后，**新建工程默认用它**；已有工程保持原来的模型；
+内存较小（16 GB）的机器可以在「整个作品 → 预设音色模型」里选回 0.6B：
+
+```sh
+.venv/bin/python scripts/setup_model.py --model preset-large
+```
+
+声音设计——用一句话描述生成一个声线，试听满意后存进音色库：
+
+```sh
+.venv/bin/python scripts/setup_model.py --model design
+```
+
+也可以一次准备全部：
 
 ```sh
 .venv/bin/python scripts/setup_model.py --model all
 ```
 
-脚本固定模型版本，校验两份权重和所需关键文件，再登记。文件齐全时复用已有模型；缺文件会下载，权重损坏时请求重新下载。预设模型约 2.5 GB；同时保留两套模型需要更多空间，请留足下载与缓存空间。
+脚本固定模型版本，校验权重和所需关键文件，再登记。文件齐全时复用已有模型；缺文件会下载，权重损坏时请求重新下载。
+预设模型 0.6B 约 2.5 GB，1.7B 与声音设计各约 4.2 GB；全装约 15 GB，请留足下载与缓存空间。
+实测（2026-09-13，M2 Max 32 GB）：1.7B 生成速度比 0.6B 慢约 15%，峰值内存约 8 GB。所有模型均为 Apache-2.0。
 
 不想下载或更改文件，只查看完整性：
 

@@ -68,16 +68,30 @@ From a fresh checkout (Python 3.12, uv and Node.js required):
 uv venv --python 3.12
 uv pip install --python .venv/bin/python -r requirements.lock.txt
 cd frontend && npm ci && npm run build && cd ..
-.venv/bin/python scripts/setup_model.py      # ~2.5 GB, pinned revision
+.venv/bin/python scripts/setup_model.py      # 0.6B preset voices, ~2.5 GB, pinned revision
 .venv/bin/python -m runtime.launcher
 ```
+
+Optional models, each pinned and hash-checked by the same script:
+
+```sh
+.venv/bin/python scripts/setup_model.py --model preset-large   # 1.7B preset voices, ~4.2 GB
+.venv/bin/python scripts/setup_model.py --model design         # voice design from a description, ~4.2 GB
+.venv/bin/python scripts/setup_model.py --model base           # zero-shot cloning for the voice library
+```
+
+New projects use the 1.7B model when it is installed — measured on the
+same lines it reads more naturally, and did not produce the run-away
+take the 0.6B model did. Peak memory is about 8 GB against 7.4; a
+16 GB Mac should stay on 0.6B, which every project can select. Every
+model is Apache-2.0.
 
 For the content check, install a compatible `whisper-cli`, then
 `scripts/setup_asr.py --cli <path>` (~547 MiB, SHA-256 verified).
 
 This is a developer setup, not a consumer installer.
 
-## Two finished samples
+## Three finished samples
 
 [*Pride and Prejudice*, opening of Chapter 1](examples/pride-and-prejudice-ch1/) —
 unlabelled public-domain prose in, three-character audio and subtitles out, run
