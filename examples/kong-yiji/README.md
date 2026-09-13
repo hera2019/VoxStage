@@ -83,6 +83,14 @@ a retake with a different seed produced it in 2.2 seconds. This is the failure t
 duration check exists for: sound the engine added, which no transcript comparison
 would notice.
 
+**Four more duration flags stand in the published audio**, on lines 14, 43, 57 and
+83: 9.2, 16.0, 12.8 and 5.2 seconds of speech against roughly 4.2, 7.3, 3.3 and
+2.5 expected from their length. They were not retaken — the automatic retry that
+now re-rolls a run-away line before anyone hears it was added after this export.
+The 12.8-second one, the shopkeeper's 孔乙己长久没有来了, also transcribes with an
+extra 啊 at its start. Whether the other three are drawn-out delivery or added
+sound is for the ear.
+
 **Two characters the engine cannot read.** The 1938 edition spells 偷 as 偸 and 傻 as
 儍. The voice produced a different syllable for 偸 on every occurrence — the
 recogniser heard 塞, 知, 贼, 气 — which is not the recogniser's fault. Eight lines
