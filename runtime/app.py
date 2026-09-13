@@ -26,7 +26,7 @@ from .clips import clip_plan, validate_clips
 from .fcp7 import timeline_xml, IMPORT_GUIDE
 from .rhythm import analyze_file, analyze, duration_marker, VERSION as RHYTHM_VERSION
 from . import readings
-from .core import reads_aloud, Store, fingerprint, spoken_text
+from .core import reads_aloud, Store, fingerprint, spoken_text, inherit_settings
 from .voices import VoiceLibrary, is_custom, custom_id, PREFIX as CUSTOM_PREFIX
 from .script_check import inspect as inspect_script, apply_fix
 from .attribution import RoleDraftEngine, project_segments, source_units, carry_locks
@@ -58,6 +58,12 @@ class RoleConfirmRequest(BaseModel):
     draft_id: str = Field(pattern=r'^[a-f0-9]{32}$')
     name: str = Field(default='Untitled', max_length=120)
     labels: list[RoleLabel] = Field(min_length=1,max_length=80)
+    book_id: str | None = Field(default=None, pattern=r'^[a-f0-9]{32}$')   # the chapter this came from, if any
+    chapter_index: int | None = Field(default=None, ge=1)
+
+class InheritRequest(BaseModel):
+    revision: int = Field(ge=0)
+    source_id: str = Field(pattern=r'^[a-f0-9]{32}$')
 
 class AuditionRequest(BaseModel):
     voice: str = Field(max_length=40)
@@ -483,15 +489,36 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             raise ValueError('没有这一章。')
         # Names already confirmed in this book's other chapters, offered to the
         # reviewer as candidates so 孔乙己 is typed once, not once per chapter.
-        prefix = book['title'] + ' · '
-        names = []
+        names, existing = [], None
         with store.lock:
-            for path in sorted(store.root.glob('*/project.json')):
-                p = json.loads(path.read_text())
-                if p['name'].startswith(prefix):
-                    names += [s for s in p['voices'] if s not in ('旁白', 'Narrator') and s not in names]
-        return {**chapter, 'book_title': book['title'], 'language': book['language'],
-                'project_name': f"{book['title']} · {chapter['title']}".strip(' ·'), 'known_names': names}
+            for p in book_projects(book):
+                names += [s for s in p['voices'] if s not in ('旁白', 'Narrator') and s not in names]
+                if (p.get('book') or {}).get('index') == index and not p.get('archived'):
+                    existing = p['id']
+        return {**chapter, 'book_id': book['id'], 'book_title': book['title'], 'language': book['language'], 'chapters': len(book['chapters']),
+                'project_name': f"{book['title']} · {chapter['title']}".strip(' ·'), 'known_names': names, 'existing_project_id': existing}
+
+    def book_projects(book):
+        """Projects made from this book's chapters — linked by id, or, for projects
+        made before the link existed, by the name the chapter flow gave them."""
+        prefix = book['title'] + ' · '
+        by_name = {f"{book['title']} · {c['title']}".strip(' ·'): c['index'] for c in book['chapters']}
+        out = []
+        for path in sorted(store.root.glob('*/project.json')):
+            p = json.loads(path.read_text())
+            if (p.get('book') or {}).get('id') == book['id'] or p['name'].startswith(prefix):
+                if not p.get('book') and p['name'] in by_name:
+                    # Made before projects remembered their chapter: link it now,
+                    # by the name the chapter flow gave it. Not an edit — no revision bump.
+                    p['book'] = {'id': book['id'], 'title': book['title'], 'index': by_name[p['name']], 'chapters': len(book['chapters'])}
+                    store.write(p)
+                out.append(p)
+        return out
+
+    with store.lock:
+        # Link projects made from chapters before the link existed, once, at startup.
+        for summary in books.list():
+            book_projects(books.get(summary['id']))
 
     @app.post('/api/attribution/draft')
     def role_draft(body: RoleDraftRequest):
@@ -568,8 +595,21 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             project = store.create(body.name, record['source_script'], record['language'], segments=segments, preset_model=default_preset())
             project['attribution'] = {'draft_id':body.draft_id,'model_sha256':record.get('model_sha256'),
                 'model_labels':record['labels'],'confirmed_labels':labels,'human_confirmed':True}
+            inherited = None
+            if body.book_id and body.chapter_index:
+                # A chapter of a book: remember which, and start from the settings
+                # of the chapter before it — the same characters, the same voices,
+                # the same lexicon — so a book is configured once, not per chapter.
+                book = books.get(body.book_id)
+                project['book'] = {'id': book['id'], 'title': book['title'], 'index': body.chapter_index, 'chapters': len(book['chapters'])}
+                siblings = [p for p in book_projects(book) if p['id'] != project['id'] and not p.get('archived')]
+                earlier = [p for p in siblings if (p.get('book') or {}).get('index', 0) < body.chapter_index]
+                source = max(earlier, key=lambda p: p['book']['index']) if earlier else (siblings[-1] if siblings else None)
+                if source:
+                    carried = inherit_settings(project, source, store.directory(source['id']), store.directory(project['id']))
+                    inherited = {'from': source['name'], **carried}
             store.write(project)
-            return store.public(project, engine, checker)
+            return {**store.public(project, engine, checker), 'inherited': inherited}
 
     @app.get('/api/projects')
     def projects(include_archived: bool = False):
@@ -643,8 +683,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                         # A line break inside a line is allowed: the slicer keeps
                         # paragraph breaks, the voice reads through them, the
                         # subtitles break there. A split is the way to get a pause.
-                        if field == 'spoken_as':
-                            readings.resolve(value)
+                        readings.resolve(value)      # a bad 字[拼音] in either field is refused by name
                         if len(value) > limit:
                             raise ValueError(f'一句最多 {limit} 个字符，当前 {len(value)} 个。请在「原稿编辑」里拆成两句。')
                         if field == 'text' and value != s['text']:
@@ -774,6 +813,18 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
     @app.post('/api/projects/{project_id}/duplicate')
     def duplicate_project(project_id: str, body: RevisionRequest):
         return store.public(store.duplicate(project_id,body.revision),engine,checker)
+
+    @app.post('/api/projects/{project_id}/inherit')
+    def inherit(project_id: str, body: InheritRequest):
+        """Carry another project's voices, fixed references, lexicon, model, pause and speed into this one."""
+        if body.source_id == project_id:
+            raise ValueError('请选择另一个工程。')
+        with store.lock:
+            source = store.read(body.source_id)
+        carried = {}
+        def apply(p):
+            carried.update(inherit_settings(p, source, store.directory(source['id']), store.directory(p['id'])))
+        return {**store.public(store.edit(project_id, body.revision, apply), engine, checker), 'inherited': {'from': source['name'], **carried}}
 
     @app.delete('/api/projects/{project_id}')
     def delete_project(project_id: str, revision: int):

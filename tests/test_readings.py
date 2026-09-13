@@ -15,6 +15,8 @@ def test_a_pinned_reading_becomes_a_character_that_reads_only_that_way():
 
 def test_brackets_that_are_not_pinyin_are_left_alone():
     assert resolve('[笑] 这句[原样]念。') == '[笑] 这句[原样]念。'
+    assert resolve('擦拭干净，[cao4]') == '擦拭干净，[cao4]'          # after punctuation: not a pinned character
+    assert resolve('[eng4]！干[gan4]活') == '[eng4]！赣活'             # a stray bracket does not block the real one
 
 
 def test_when_no_common_character_fits_the_original_stays_and_explain_says_so():

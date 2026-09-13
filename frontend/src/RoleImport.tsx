@@ -1,7 +1,7 @@
 import {useEffect,useState} from 'react';
 type Unit={id:string;text:string;kind:'narration'|'dialogue';speaker:string;blank?:boolean;suggested?:string};
 type Draft={draft_id:string;units:Unit[]};
-type Props={request:(path:string,method?:string,data?:unknown)=>Promise<any>;onCreated:(project:any)=>Promise<void>;onClose:()=>void;seed?:{name:string;language:'zh'|'en';text:string;knownNames?:string[]}|null};
+type Props={request:(path:string,method?:string,data?:unknown)=>Promise<any>;onCreated:(project:any)=>Promise<void>;onClose:()=>void;seed?:{name:string;language:'zh'|'en';text:string;knownNames?:string[];book?:{id:string;index:number}}|null};
 export function RoleImport({request,onCreated,onClose,seed}:Props){
  const [text,setText]=useState(seed?.text??'');const [name,setName]=useState(seed?.name??'新的故事');const [language,setLanguage]=useState<'zh'|'en'>(seed?.language??'zh');
  const [draft,setDraft]=useState<Draft|null>(null);const [waiting,setWaiting]=useState(false);const [error,setError]=useState('');
@@ -27,7 +27,7 @@ export function RoleImport({request,onCreated,onClose,seed}:Props){
     <p><small>片段 {i+1}</small><br/>{u.text}</p><div className="role-fields"><label>类型<select aria-label={`片段 ${i+1} 类型`} disabled={waiting} value={u.kind} onChange={e=>{const kind=e.target.value as Unit['kind'];change(u.id,{kind,speaker:kind==='narration'?'NARRATOR':u.speaker==='NARRATOR'?'UNKNOWN':u.speaker})}}><option value="narration">旁白</option><option value="dialogue">对白</option></select></label>
     {u.kind==='dialogue'?<label>说话人<input aria-label={`片段 ${i+1} 说话人`} disabled={waiting} value={u.speaker.trim().toUpperCase()==='UNKNOWN'?'':u.speaker} placeholder={turnTaking[u.id]?`一来一往，像是 ${turnTaking[u.id]}`:u.suggested?`模型写的是 ${u.suggested}，原文里没有这个名字，请填写`:"待指定，请填写"} maxLength={80} list="role-names" onChange={e=>change(u.id,{speaker:e.target.value||'UNKNOWN'})}/>{turnTaking[u.id]&&(!u.speaker.trim()||u.speaker.trim().toUpperCase()==='UNKNOWN')&&<button type="button" className="adopt" disabled={waiting} onClick={()=>change(u.id,{speaker:turnTaking[u.id]})}>用「{turnTaking[u.id]}」</button>}</label>:<span>旁白</span>}</div>
    </article>)}</div><datalist id="role-names">{names.filter(n=>n!=='UNKNOWN').map(n=><option key={n} value={n}/>)}</datalist>
-   <div className="buttons"><button disabled={waiting} onClick={()=>{setDraft(null);setError('')}}>返回原文</button><button className="primary" disabled={waiting||unknown>0} onClick={()=>void run(async()=>{const project=await request('/attribution/confirm','POST',{name,draft_id:draft.draft_id,labels:draft.units.map(({id,kind,speaker})=>({id,kind,speaker}))});await onCreated(project)})}>{waiting?'正在保存…':'已复核，创建工程'}</button></div>
+   <div className="buttons"><button disabled={waiting} onClick={()=>{setDraft(null);setError('')}}>返回原文</button><button className="primary" disabled={waiting||unknown>0} onClick={()=>void run(async()=>{const project=await request('/attribution/confirm','POST',{name,draft_id:draft.draft_id,labels:draft.units.map(({id,kind,speaker})=>({id,kind,speaker})),book_id:seed?.book?.id,chapter_index:seed?.book?.index});await onCreated(project)})}>{waiting?'正在保存…':'已复核，创建工程'}</button></div>
   </>}{error&&<p role="alert" className="line-error">{error}</p>}
  </section></div>
 }

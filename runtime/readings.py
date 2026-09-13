@@ -20,10 +20,11 @@ import re
 from pypinyin import pinyin_dict
 from pypinyin.contrib.tone_convert import to_tone
 
-# A character followed by a bracketed syllable: letters (tone marks allowed) and
-# an optional digit. Brackets holding anything else — [笑], [原样] — are not
-# notation and are left alone.
-NOTATION = re.compile(r'([^\s\[\]])\[([a-zA-ZüÜà-ǜ]{1,7}[0-9]?)\]')
+# A Chinese character followed by a bracketed syllable: letters (tone marks
+# allowed) and an optional digit. Brackets holding anything else — [笑], [原样] —
+# or standing after punctuation or on their own are not notation and are left
+# alone.
+NOTATION = re.compile(r'([\u3400-\u9fff])\[([a-zA-ZüÜ\u00e0-\u01dc]{1,7}[0-9]?)\]')
 
 _table = None
 
@@ -85,6 +86,13 @@ def resolve(text):
             raise ValueError(f'「{char}[{pinyin}]」缺声调；写成 {char}[{pinyin}4] 这样，轻声用 5。')
         found = stand_in(char, pinyin)
         if found is None:
+            rare = [c for c in (_reverse().get(_marked(pinyin) or '') or ([], [], []))[2] if c != char]
+            if rare:
+                # A reading only rare or polyphonic characters have — cào is 肏 —
+                # is not pinned by the program; the person can type such a
+                # character into the reading themselves and listen.
+                raise ValueError(f'「{char}[{pinyin}]」：没有常用字只读 {pinyin}；有这个音的字有 {"、".join(rare[:5])}'
+                                 f'（生僻或多音），可以直接写进朗读文本试听。')
             raise ValueError(f'「{char}[{pinyin}]」：没有读 {pinyin} 的字，请检查拼音。')
         return found
     return NOTATION.sub(swap, text)
