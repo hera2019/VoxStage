@@ -1,8 +1,10 @@
 # VoxStage
 
-A local script-to-voice workspace for Apple Silicon Macs. Turn a labelled
-script into per-sentence audio you can audition, redo and export — with the
-source text guaranteed intact.
+A local script-to-voice workstation for Apple Silicon Macs. Paste prose as
+it is written — a chapter, no speaker labels — and get a multi-character
+reading you can audition line by line, correct, redo and export, with every
+line transcribed back and checked against its text, and the source text
+guaranteed intact.
 
 > **Development preview.** The workflow runs end to end. It is not a released
 > product, and one quality criterion has explicitly **not** passed — see
@@ -14,20 +16,25 @@ source text guaranteed intact.
 
 ## What it does
 
-Give it a script where each line is `Speaker: sentence`:
+Give it prose as it is written:
 
 ```
-Narrator: Mr. Bennet made no answer.
-Mrs. Bennet: Do not you want to know who has taken it?
-Mr. Bennet: You want to tell me, and I have no objection to hearing it.
+Mr. Bennet made no answer.
+“Do not you want to know who has taken it?” cried his wife, impatiently.
+“_You_ want to tell me, and I have no objection to hearing it.”
 ```
 
-Assign a voice per speaker, generate, then work sentence by sentence — listen,
-redo the ones you dislike, adjust timing, export. Chinese and English are both
-supported today.
+A local model labels each unit narration or dialogue and names the speaker,
+and hands you the draft to correct — in the evaluation below most scenes
+needed a correction, so the review is the product, not a formality. A script
+already written as `Speaker: line` skips the draft. Then assign a voice per
+character, generate, and work line by line — listen, redo, split, merge, set
+the pauses — and export. Chinese and English are both supported today; a text
+longer than a chapter is kept as a book and taken one chapter at a time.
 
-Output: a WAV, an SRT built from the actual audio samples, and a content-check
-report.
+Output: the full audio; subtitles (SRT and VTT) cut where the voice pauses and
+timed from the actual samples; a timeline; a delivery package of one file per
+line for an editor, with an FCP7 XML timeline; and the content-check report.
 
 ## Why not just use a TTS tool
 
@@ -167,7 +174,7 @@ Two design rules follow directly, and both are in the product:
 
 Full record: [AI-Lab / voice cloning verification](https://github.com/hera2019/AI-Lab/blob/main/qwen3-tts-0.6b-voice-clone-mlx/results/phase-1-iphone-repeat-verification.md)
 
-## Speaker attribution: measured, not shipped
+## Speaker attribution: measured, then shipped as a draft
 
 For unlabelled prose, a local model can propose who says what. Measured on 20
 self-written bilingual scenes with two local models, using a pipeline where the
@@ -188,13 +195,17 @@ the program's doing, not the model's.
 Reference answers were drafted by the assistant before the models ran and have
 not been independently reviewed; 16 of the 20 scenes had been seen in an
 earlier baseline. This is engineering evidence for a selection decision, not a
-generalisation claim. Corpus, prompts and scoring:
+generalisation claim. The draft has since been wired into the app, with four
+program-side rules on top of the model that are measured in the table above;
+the model's own numbers have not been re-measured. Corpus, prompts and scoring:
 [`evals/speaker_attribution/`](evals/speaker_attribution/) · results:
 [`results/speaker-attribution-summary.md`](results/speaker-attribution-summary.md)
 
 ## Limits
 
-- Speakers come from you. Attribution is not wired into the app yet.
+- The speaker draft is a draft. Most scenes in the evaluation needed at least
+  one correction, so the review step cannot be skipped; the draft takes at
+  most 3,000 characters at a time, and a longer text is cut into chapters first.
 - Nine preset voices, two of them English and both male. A voice library lifts
   that ceiling: keep a take you liked under a name, or supply your own recording
   after confirming you may. Either way the reference stays on the machine and
@@ -211,9 +222,12 @@ generalisation claim. Corpus, prompts and scoring:
 
 ## Ethics
 
-- No human reference-audio upload path exists. Fixed character voices are built
-  from the model's own synthetic output, stored with checksums and the text
-  that produced them.
+- Fixed character voices are built from the model's own synthetic output,
+  stored with checksums and the text that produced them. A recording you
+  supply is accepted only after you confirm you have the right to use it — the
+  gate is in the library code, not only a checkbox on the screen — and is
+  stored as `synthetic_audio: false`, `consent_confirmed: true`, on this
+  machine and outside version control.
 - Generated audio is never presented as a real person.
 - Scripts you supply remain your responsibility with respect to content rights.
 
