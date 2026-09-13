@@ -65,7 +65,10 @@ are downloaded; a corrupt weight file asks for a fresh download. The 0.6B
 preset model is about 2.5 GB, the 1.7B and the voice-design models about
 4.2 GB each; everything is about 15 GB, so leave room for the download and
 its cache. Measured (2026-09-13, M2 Max, 32 GB): 1.7B generates about 15%
-slower than 0.6B, with peak memory around 8 GB. Every model is Apache-2.0.
+slower than 0.6B, with peak memory around 8 GB — with one model resident.
+A full 93-line run the same day with all four models resident (presets,
+cloning and voice design used in one session) measured 1.7B at a real-time
+factor of 0.61 and 17.7 GB peak. Every model is Apache-2.0.
 
 To check integrity without downloading or changing anything:
 
