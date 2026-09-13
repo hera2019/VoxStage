@@ -2,7 +2,10 @@
 paragraph breaks when there are none.
 
 The role draft takes at most 3,000 characters and 80 quoted units at a time —
-the model's context, not a limit worth raising. A novel arrives as one file.
+the model's context, not a limit worth raising. Both caps bind: measured on
+the texts on this machine, dialogue-heavy prose runs 100–220 units per 3,000
+characters (阿Q正传 105, 王朔 185, 红楼梦 219), so a chapter cut by length alone
+would be handed out and then refused. A novel arrives as one file.
 The chapter headings a Chinese novel already carries are the natural unit, and
 the rule for finding them is the one from the user's own TextToApp converter.
 Each chapter then goes through the ordinary one-click flow as its own project;
@@ -13,6 +16,8 @@ import re
 import uuid
 from pathlib import Path
 
+from evals.speaker_attribution.source_units import source_units, PAIRS
+
 # From hera2019/TextToApp main.py:156 — 第三章, 第12回, 第一百零八回, 第二卷 …
 # and the English equivalents: Chapter 1, CHAPTER XII, Chapter One, Book II.
 HEADING = re.compile(r'^\s*(?:第[零一二三四五六七八九十百千万0-9０-９]+[章回节卷集部]|'
@@ -20,7 +25,18 @@ HEADING = re.compile(r'^\s*(?:第[零一二三四五六七八九十百千万0-9�
 
 CHAPTER_LIMIT = 3000          # the draft's own limit; a chapter over it is cut like headingless text
 PARAGRAPH_TARGET = 2600       # leave headroom under the limit when cutting at paragraphs
+UNIT_LIMIT = 80               # the draft's other limit: quoted units (attribution.annotate)
+UNIT_TARGET = 70              # the same headroom, in units
 MIN_TAIL = 300                # a final piece shorter than this joins the piece before it
+PARAGRAPH_END = re.compile(r'(\n\s*\n|(?<=[。！？!?”』」…])\n)')
+
+
+def _units(text):
+    return len(source_units(text))
+
+
+def _fits(text):
+    return len(text) <= CHAPTER_LIMIT and _units(text) <= UNIT_LIMIT
 
 
 def split_chapters(text):
@@ -47,31 +63,35 @@ def split_chapters(text):
 
 
 def _fit(title, body):
-    """One chapter, or several pieces of it when it is longer than the draft can take."""
-    if len(body) <= CHAPTER_LIMIT:
+    """One chapter, or several pieces of it when it is more than the draft can take."""
+    if _fits(body):
         return [{'title': title, 'text': body}]
-    # Paragraphs are runs separated by a blank line; the separator stays with
-    # the paragraph before it so the pieces concatenate back to the original.
+    # A paragraph ends at a blank line, or at a line break that follows a
+    # sentence end — Chinese web novels separate paragraphs with a single
+    # newline, and a hard-wrapped line ending mid-sentence is not a boundary.
+    # The separator stays with the paragraph before it so the pieces
+    # concatenate back to the original.
     merged = []
-    for chunk in re.split(r'(\n\s*\n)', body):
-        if merged and re.fullmatch(r'\n\s*\n', chunk):
+    for i, chunk in enumerate(re.split(PARAGRAPH_END, body)):
+        if merged and i % 2:
             merged[-1] += chunk
         else:
             merged.append(chunk)
-    pieces, current = [], ''
+    pieces, current, count = [], '', 0
     for para in merged:
-        if len(current) + len(para) > PARAGRAPH_TARGET and current:
-            pieces.append(current); current = para
+        units = _units(para)          # summed per paragraph; the exact check comes below
+        if current and (len(current) + len(para) > PARAGRAPH_TARGET or count + units > UNIT_TARGET):
+            pieces.append(current); current, count = para, units
         else:
-            current += para
+            current += para; count += units
     if current:
-        if pieces and len(current) < MIN_TAIL and len(pieces[-1]) + len(current) <= CHAPTER_LIMIT:
+        if pieces and len(current) < MIN_TAIL and _fits(pieces[-1] + current):
             pieces[-1] += current
         else:
             pieces.append(current)
     out = []
     for n, piece in enumerate(pieces, 1):
-        if len(piece) > CHAPTER_LIMIT:
+        if not _fits(piece):
             out += _cut_sentences(title, piece, n)
         else:
             out.append({'title': f'{title} · {n}' if title and len(pieces) > 1 else (title or f'第 {n} 段'), 'text': piece})
@@ -79,16 +99,35 @@ def _fit(title, body):
 
 
 def _cut_sentences(title, piece, n):
-    """A single paragraph longer than the limit: cut after sentence ends only."""
+    """A single paragraph that is more than the draft can take: cut after
+    sentence ends only, never inside a quotation, and within both caps."""
     out, start = [], 0
     while start < len(piece):
         end = min(start + PARAGRAPH_TARGET, len(piece))
-        if end < len(piece):
-            stops = [i + 1 for i in range(start, end) if piece[i] in '。！？!?\n']
-            end = stops[-1] if stops else end
+        if end < len(piece) or _units(piece[start:end]) > UNIT_TARGET:
+            stops = [x for x in _stops(piece, start, end) if _units(piece[start:x]) <= UNIT_TARGET]
+            end = stops[-1] if stops else (_stops(piece, start, len(piece)) or [end])[0]
         out.append({'title': f'{title or "第 %d 段" % n} · {len(out) + 1}', 'text': piece[start:end]})
         start = end
     return out
+
+
+def _stops(piece, start, end):
+    """Positions in (start, end] where a cut lands after a sentence end and
+    outside any quotation; a sentence end just before a closing quote yields
+    the position after the quote, so 。” stays together."""
+    stops, close = [], None
+    for i in range(start, end):
+        char = piece[i]
+        if close is None and char in PAIRS:
+            close = PAIRS[char]
+        elif close is not None and char == close:
+            close = None
+            if i > start and piece[i - 1] in '。！？!?':
+                stops.append(i + 1)
+        elif close is None and char in '。！？!?\n':
+            stops.append(i + 1)
+    return [x for x in stops if start < x <= end]
 
 
 def _reassemble_exact(text, chapters):

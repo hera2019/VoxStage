@@ -62,3 +62,43 @@ def test_english_chapter_headings_are_found_too():
     assert ''.join(c['text'] for c in chapters) == book
     # A sentence that merely contains the word is not a heading.
     assert len(split_chapters('He read the chapter twice.\n')) == 1
+
+
+def test_a_dialogue_heavy_chapter_is_cut_so_the_draft_can_take_each_piece():
+    from runtime.books import UNIT_LIMIT
+    from evals.speaker_attribution.source_units import source_units
+    # 2,400 characters, but 200 quoted units: under the character cap, far over the unit cap.
+    line = '宝玉道：“你来了。”黛玉笑道：“来了。”\n'
+    text = '第三回 相见\n' + line * 100
+    chapters = split_chapters(text)
+    assert len(chapters) > 1
+    assert all(len(source_units(c['text'])) <= UNIT_LIMIT for c in chapters)
+    assert all(c['text'].endswith('\n') for c in chapters)                     # cut at paragraph ends
+    assert [c['title'] for c in chapters][:2] == ['第三回 相见 · 1', '第三回 相见 · 2']
+    assert ''.join(c['text'] for c in chapters) == text
+
+
+def test_a_single_paragraph_of_dialogue_is_never_cut_inside_a_quotation():
+    from runtime.books import UNIT_LIMIT
+    from evals.speaker_attribution.source_units import source_units
+    text = '宝玉道：“你来了。我等了很久。”黛玉笑道：“来了。”' * 120 + '\n'    # no paragraph breaks at all
+    chapters = split_chapters(text)
+    assert len(chapters) > 1
+    for c in chapters:
+        assert len(source_units(c['text'])) <= UNIT_LIMIT
+        assert c['text'].count('“') == c['text'].count('”')                    # every quotation closed
+        assert c['text'].rstrip('\n').endswith(('。', '”'))
+    assert ''.join(c['text'] for c in chapters) == text
+
+
+def test_single_newline_paragraphs_are_paragraphs_but_hard_wrapped_lines_are_not():
+    # Web-novel style: one newline between paragraphs. Cut at those, not mid-sentence.
+    text = ('雨点敲着窗。她抬头看了看，' * 6 + '然后继续写。\n') * 120
+    chapters = split_chapters(text)
+    assert all(len(c['text']) <= CHAPTER_LIMIT and c['text'].endswith('。\n') for c in chapters)
+    assert ''.join(c['text'] for c in chapters) == text
+    # Hard-wrapped: a line break mid-sentence is not a paragraph end, so no piece ends there.
+    wrapped = ('雨点敲着窗，她抬头看了看\n然后继续写。\n') * 150
+    chapters = split_chapters(wrapped)
+    assert all(c['text'].endswith('。\n') for c in chapters)
+    assert ''.join(c['text'] for c in chapters) == wrapped

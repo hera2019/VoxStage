@@ -16,8 +16,10 @@ were made with the flow below. New material still needs listening to.
      ([format](script-format.md)).
    - **More than 3,000 characters** (a whole novel) is filed as a *book* and
      cut at its chapter headings — 第X章 or `Chapter 3` — or at paragraph
-     breaks when there are none. Start from any chapter; names confirmed in
-     earlier chapters are offered as candidates in later ones.
+     breaks when there are none. A chapter with more dialogue than the draft
+     can take at once (80 quoted units) is cut further at paragraph ends.
+     Start from any chapter; names confirmed in earlier chapters are offered
+     as candidates in later ones.
 3. **Review the draft.** Matching speakers to lines is all that is needed
    here. Lines the model could not place are left blank; when two people are
    taking turns it suggests who speaks next, and a button adopts the
