@@ -1,0 +1,104 @@
+{
+  "input": "Mira told Leo, \"The guard said, 'Come back tomorrow,' and closed the gate.\" Leo sighed. \"Then tomorrow it is,\" he said.",
+  "response": {
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"labels\":[{\"id\":\"u0\",\"kind\":\"narration\",\"speaker\":\"NARRATOR\",\"certain\":true},{\"id\":\"u1\",\"kind\":\"dialogue\",\"speaker\":\"MIRA\",\"certain\":true},{\"id\":\"u2\",\"kind\":\"narration\",\"speaker\":\"NARRATOR\",\"certain\":true},{\"id\":\"u3\",\"kind\":\"dialogue\",\"speaker\":\"LEO\",\"certain\":true},{\"id\":\"u4\",\"kind\":\"dialogue\",\"speaker\":\"LEO\",\"certain\":true}]}"
+        }
+      }
+    ],
+    "created": 1789378277,
+    "model": "qwen3-4b-abliterated-q8-anchored-guess",
+    "system_fingerprint": "b10700-bebc9350e",
+    "object": "chat.completion",
+    "usage": {
+      "completion_tokens": 109,
+      "prompt_tokens": 363,
+      "total_tokens": 472,
+      "prompt_tokens_details": {
+        "cached_tokens": 277
+      }
+    },
+    "id": "chatcmpl-U42PrIO6DhWTuBr2lbLCFq31qgd5dgy8",
+    "timings": {
+      "cache_n": 277,
+      "prompt_n": 86,
+      "prompt_ms": 111.478,
+      "prompt_per_token_ms": 1.2962558139534883,
+      "prompt_per_second": 771.4526633057644,
+      "predicted_n": 109,
+      "predicted_ms": 1627.787,
+      "predicted_per_token_ms": 15.072101851851853,
+      "predicted_per_second": 66.34774697180896
+    }
+  },
+  "score": {
+    "case": "en04",
+    "language": "en",
+    "split": "heldout",
+    "tags": [
+      "nested_quote"
+    ],
+    "schema_valid": true,
+    "text_preserved": true,
+    "units": [
+      {
+        "text": "Mira told Leo, ",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [
+          "NARRATOR"
+        ],
+        "kind_correct": true,
+        "speaker_correct": true
+      },
+      {
+        "text": "\"The guard said, 'Come back tomorrow,' and closed the gate.\"",
+        "kind": "dialogue",
+        "expected": "Mira",
+        "observed": [
+          "MIRA"
+        ],
+        "kind_correct": true,
+        "speaker_correct": false
+      },
+      {
+        "text": " Leo sighed. ",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [
+          "NARRATOR"
+        ],
+        "kind_correct": true,
+        "speaker_correct": true
+      },
+      {
+        "text": "\"Then tomorrow it is,\"",
+        "kind": "dialogue",
+        "expected": "Leo",
+        "observed": [
+          "LEO"
+        ],
+        "kind_correct": true,
+        "speaker_correct": false
+      },
+      {
+        "text": " he said.",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [
+          "LEO"
+        ],
+        "kind_correct": false,
+        "speaker_correct": false
+      }
+    ],
+    "seconds": 1.763216707855463,
+    "error": null,
+    "finish_reason": "stop"
+  }
+}

@@ -163,6 +163,18 @@ class Books:
             raise ValueError('找不到这本书。')
         path.unlink()
 
+    def remember_aliases(self, book_id, aliases):
+        """老板娘 → 陈小雪, learned when a reviewer renamed one and carried the rest along.
+        Kept with the book; applied to every later draft of it."""
+        book = self.get(book_id)
+        table = book.setdefault('aliases', {})
+        for alias, name in aliases.items():
+            alias, name = alias.strip(), name.strip()
+            if alias and name and alias != name and len(alias) <= 40 and len(name) <= 40:
+                table[alias] = name
+        (self.root / (book_id + '.json')).write_text(json.dumps(book, ensure_ascii=False), encoding='utf-8')
+        return table
+
     def list(self):
         out = []
         for path in sorted(self.root.glob('*.json')):

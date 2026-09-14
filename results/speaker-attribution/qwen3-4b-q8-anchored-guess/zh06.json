@@ -1,0 +1,86 @@
+{
+  "input": "门上写着“今天休息”。林岚心想：难道白跑一趟？她没有开口。\n“我们等五分钟吧。”周明说。",
+  "response": {
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"labels\":[{\"id\":\"u0\",\"kind\":\"narration\",\"speaker\":\"NARRATOR\",\"certain\":true},{\"id\":\"u1\",\"kind\":\"dialogue\",\"speaker\":\"SIGN\",\"certain\":false},{\"id\":\"u2\",\"kind\":\"narration\",\"speaker\":\"NARRATOR\",\"certain\":true},{\"id\":\"u3\",\"kind\":\"dialogue\",\"speaker\":\"周明\",\"certain\":true},{\"id\":\"u4\",\"kind\":\"narration\",\"speaker\":\"NARRATOR\",\"certain\":true}]}"
+        }
+      }
+    ],
+    "created": 1789378307,
+    "model": "qwen3-4b-q8-anchored-guess",
+    "system_fingerprint": "b10700-bebc9350e",
+    "object": "chat.completion",
+    "usage": {
+      "completion_tokens": 110,
+      "prompt_tokens": 364,
+      "total_tokens": 474,
+      "prompt_tokens_details": {
+        "cached_tokens": 277
+      }
+    },
+    "id": "chatcmpl-xhJhA9DUQyz0qjqwbS8AJSchCxcJV0Ym",
+    "timings": {
+      "cache_n": 277,
+      "prompt_n": 87,
+      "prompt_ms": 112.117,
+      "prompt_per_token_ms": 1.2887011494252874,
+      "prompt_per_second": 775.9750974428498,
+      "predicted_n": 110,
+      "predicted_ms": 1640.381,
+      "predicted_per_token_ms": 15.049366972477065,
+      "predicted_per_second": 66.44797763446418
+    }
+  },
+  "score": {
+    "case": "zh06",
+    "language": "zh",
+    "split": "heldout",
+    "tags": [
+      "written_quote",
+      "thought"
+    ],
+    "schema_valid": true,
+    "text_preserved": true,
+    "units": [
+      {
+        "text": "门上写着“今天休息”。林岚心想：难道白跑一趟？她没有开口。\n",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [
+          "NARRATOR",
+          "SIGN"
+        ],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": "“我们等五分钟吧。”",
+        "kind": "dialogue",
+        "expected": "周明",
+        "observed": [
+          "周明"
+        ],
+        "kind_correct": true,
+        "speaker_correct": true
+      },
+      {
+        "text": "周明说。",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [
+          "NARRATOR"
+        ],
+        "kind_correct": true,
+        "speaker_correct": true
+      }
+    ],
+    "seconds": 1.7584842077922076,
+    "error": null,
+    "finish_reason": "stop"
+  }
+}

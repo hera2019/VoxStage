@@ -203,9 +203,15 @@ the program's doing, not the model's.
 Reference answers were drafted by the assistant before the models ran and have
 not been independently reviewed; 16 of the 20 scenes had been seen in an
 earlier baseline. This is engineering evidence for a selection decision, not a
-generalisation claim. The draft has since been wired into the app, with four
-program-side rules on top of the model that are measured in the table above;
-the model's own numbers have not been re-measured. Corpus, prompts and scoring:
+generalisation claim. The draft has since been wired into the app, with
+program-side rules on top of the model that are measured in the table above.
+The prompt now asks the model for its best judgement of every speaker plus
+whether the passage settles it; an unsettled name reaches the reviewer as a
+yellow pre-filled suggestion, and a line the model cannot place at all may be
+filled from the way that character talked in chapters already confirmed. On
+the same 20 scenes the best-judgement prompt names 33–34 of 40 explicit
+speakers; its extra kind errors are all unquoted units, which the quote rule
+repairs. Corpus, prompts and scoring:
 [`evals/speaker_attribution/`](evals/speaker_attribution/) · results:
 [`results/speaker-attribution-summary.md`](results/speaker-attribution-summary.md)
 

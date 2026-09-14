@@ -1,0 +1,104 @@
+{
+  "input": "Iris handed the red umbrella to Ben. \"Thanks. I will return it tomorrow,\" Ben said.\nIris walked a few steps, then turned back. \"There is no hurry. Friday is fine,\" she added.",
+  "response": {
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"labels\":[{\"id\":\"u0\",\"kind\":\"narration\",\"speaker\":\"NARRATOR\",\"certain\":true},{\"id\":\"u1\",\"kind\":\"dialogue\",\"speaker\":\"Ben\",\"certain\":true},{\"id\":\"u2\",\"kind\":\"narration\",\"speaker\":\"NARRATOR\",\"certain\":true},{\"id\":\"u3\",\"kind\":\"dialogue\",\"speaker\":\"Iris\",\"certain\":true},{\"id\":\"u4\",\"kind\":\"dialogue\",\"speaker\":\"Iris\",\"certain\":true}]}"
+        }
+      }
+    ],
+    "created": 1789378334,
+    "model": "qwen3-4b-q8-anchored-guess",
+    "system_fingerprint": "b10700-bebc9350e",
+    "object": "chat.completion",
+    "usage": {
+      "completion_tokens": 108,
+      "prompt_tokens": 377,
+      "total_tokens": 485,
+      "prompt_tokens_details": {
+        "cached_tokens": 277
+      }
+    },
+    "id": "chatcmpl-3vzfLB8vbRBdv0bdiLcZdlDHcCprtsJu",
+    "timings": {
+      "cache_n": 277,
+      "prompt_n": 100,
+      "prompt_ms": 137.992,
+      "prompt_per_token_ms": 1.3799199999999998,
+      "prompt_per_second": 724.6796915763233,
+      "predicted_n": 108,
+      "predicted_ms": 1602.411,
+      "predicted_per_token_ms": 14.975803738317758,
+      "predicted_per_second": 66.77437935710626
+    }
+  },
+  "score": {
+    "case": "en09",
+    "language": "en",
+    "split": "fresh_holdout",
+    "tags": [
+      "fresh_probe"
+    ],
+    "schema_valid": true,
+    "text_preserved": true,
+    "units": [
+      {
+        "text": "Iris handed the red umbrella to Ben. ",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [
+          "NARRATOR"
+        ],
+        "kind_correct": true,
+        "speaker_correct": true
+      },
+      {
+        "text": "\"Thanks. I will return it tomorrow,\"",
+        "kind": "dialogue",
+        "expected": "Ben",
+        "observed": [
+          "Ben"
+        ],
+        "kind_correct": true,
+        "speaker_correct": true
+      },
+      {
+        "text": " Ben said.\nIris walked a few steps, then turned back. ",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [
+          "NARRATOR"
+        ],
+        "kind_correct": true,
+        "speaker_correct": true
+      },
+      {
+        "text": "\"There is no hurry. Friday is fine,\"",
+        "kind": "dialogue",
+        "expected": "Iris",
+        "observed": [
+          "Iris"
+        ],
+        "kind_correct": true,
+        "speaker_correct": true
+      },
+      {
+        "text": " she added.",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [
+          "Iris"
+        ],
+        "kind_correct": false,
+        "speaker_correct": false
+      }
+    ],
+    "seconds": 1.7459667909424752,
+    "error": null,
+    "finish_reason": "stop"
+  }
+}

@@ -9,7 +9,7 @@ check tolerates the difference because it compares pinyin with tone.
 
 The stand-in is a common character (GB2312 level one, the 3,755 most used)
 with exactly one reading; failing that, a common character whose first reading
-matches; failing that, a rare character with the reading — 操[cao4] → 肏 — which
+matches; failing that, a rare character with the reading — 说[shua4] → 誜 — which
 the voice may not know, so the panel says so and the ear decides; never the
 annotated character itself while another exists. When no character at all has
 the reading, saving is refused. The choice is deterministic for a pinned

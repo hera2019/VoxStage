@@ -1,0 +1,84 @@
+{
+  "input": "陈露和王悦都躲在门后，屋里没有灯。\n“别出声。”黑暗中有人轻声说。\n两个人都没有动。",
+  "response": {
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"labels\":[{\"id\":\"u0\",\"kind\":\"narration\",\"speaker\":\"NARRATOR\",\"certain\":true},{\"id\":\"u1\",\"kind\":\"dialogue\",\"speaker\":\"UNKNOWN\",\"certain\":false},{\"id\":\"u2\",\"kind\":\"narration\",\"speaker\":\"NARRATOR\",\"certain\":true}]}"
+        }
+      }
+    ],
+    "created": 1789378262,
+    "model": "qwen3-4b-abliterated-q8-anchored-guess",
+    "system_fingerprint": "b10700-bebc9350e",
+    "object": "chat.completion",
+    "usage": {
+      "completion_tokens": 68,
+      "prompt_tokens": 340,
+      "total_tokens": 408,
+      "prompt_tokens_details": {
+        "cached_tokens": 277
+      }
+    },
+    "id": "chatcmpl-aj1YRgsvhswfQYqhi79LXKPsTwIvUl0n",
+    "timings": {
+      "cache_n": 277,
+      "prompt_n": 63,
+      "prompt_ms": 78.789,
+      "prompt_per_token_ms": 1.2506190476190477,
+      "prompt_per_second": 799.6040056353045,
+      "predicted_n": 68,
+      "predicted_ms": 1026.883,
+      "predicted_per_token_ms": 15.326611940298507,
+      "predicted_per_second": 65.24599199714086
+    }
+  },
+  "score": {
+    "case": "zh05",
+    "language": "zh",
+    "split": "heldout",
+    "tags": [
+      "ambiguous"
+    ],
+    "schema_valid": true,
+    "text_preserved": true,
+    "units": [
+      {
+        "text": "陈露和王悦都躲在门后，屋里没有灯。\n",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [
+          "NARRATOR"
+        ],
+        "kind_correct": true,
+        "speaker_correct": true
+      },
+      {
+        "text": "“别出声。”",
+        "kind": "dialogue",
+        "expected": "UNKNOWN",
+        "observed": [
+          "UNKNOWN"
+        ],
+        "kind_correct": true,
+        "speaker_correct": true
+      },
+      {
+        "text": "黑暗中有人轻声说。\n两个人都没有动。",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [
+          "NARRATOR"
+        ],
+        "kind_correct": true,
+        "speaker_correct": true
+      }
+    ],
+    "seconds": 1.113118665991351,
+    "error": null,
+    "finish_reason": "stop"
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "input": "Tess found a note that read \"Do not open the door.\" She put it away without reading it aloud.\nA voice outside called, \"Is anyone in there?\" Tess could not recognize the speaker.",
+  "response": {
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"labels\":[{\"id\":\"u0\",\"kind\":\"narration\",\"speaker\":\"NARRATOR\",\"certain\":true},{\"id\":\"u1\",\"kind\":\"dialogue\",\"speaker\":\"NARRATOR\",\"certain\":false},{\"id\":\"u2\",\"kind\":\"narration\",\"speaker\":\"NARRATOR\",\"certain\":true},{\"id\":\"u3\",\"kind\":\"dialogue\",\"speaker\":\"UNKNOWN\",\"certain\":true},{\"id\":\"u4\",\"kind\":\"narration\",\"speaker\":\"NARRATOR\",\"certain\":true}]}"
+        }
+      }
+    ],
+    "created": 1789378293,
+    "model": "qwen3-4b-abliterated-q8-anchored-guess",
+    "system_fingerprint": "b10700-bebc9350e",
+    "object": "chat.completion",
+    "usage": {
+      "completion_tokens": 111,
+      "prompt_tokens": 374,
+      "total_tokens": 485,
+      "prompt_tokens_details": {
+        "cached_tokens": 277
+      }
+    },
+    "id": "chatcmpl-Yi4gnhrKBGwiDsrAVofrZ2Is6MyKOPTb",
+    "timings": {
+      "cache_n": 277,
+      "prompt_n": 97,
+      "prompt_ms": 137.761,
+      "prompt_per_token_ms": 1.4202164948453608,
+      "prompt_per_second": 704.1180014663076,
+      "predicted_n": 111,
+      "predicted_ms": 1653.933,
+      "predicted_per_token_ms": 15.035754545454546,
+      "predicted_per_second": 66.50813545651486
+    }
+  },
+  "score": {
+    "case": "en10",
+    "language": "en",
+    "split": "fresh_holdout",
+    "tags": [
+      "fresh_probe"
+    ],
+    "schema_valid": true,
+    "text_preserved": true,
+    "units": [
+      {
+        "text": "Tess found a note that read \"Do not open the door.\" She put it away without reading it aloud.\nA voice outside called, ",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [
+          "NARRATOR"
+        ],
+        "kind_correct": false,
+        "speaker_correct": false
+      },
+      {
+        "text": "\"Is anyone in there?\"",
+        "kind": "dialogue",
+        "expected": "UNKNOWN",
+        "observed": [
+          "UNKNOWN"
+        ],
+        "kind_correct": true,
+        "speaker_correct": true
+      },
+      {
+        "text": " Tess could not recognize the speaker.",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [
+          "NARRATOR"
+        ],
+        "kind_correct": true,
+        "speaker_correct": true
+      }
+    ],
+    "seconds": 1.7997329160571098,
+    "error": null,
+    "finish_reason": "stop"
+  }
+}

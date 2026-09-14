@@ -44,7 +44,7 @@ def summarize(rows):
 
 def run(args):
     corpus_bytes=(HERE/'corpus.json').read_bytes();digest=hashlib.sha256(corpus_bytes).hexdigest();assert digest==(HERE/'corpus.sha256').read_text().split()[0]
-    corpus=json.loads(corpus_bytes);prompt=(HERE/('prompt-anchored.txt' if args.anchored else 'prompt.txt')).read_text();
+    corpus=json.loads(corpus_bytes);prompt=(HERE/(args.prompt or ('prompt-anchored.txt' if args.anchored else 'prompt.txt'))).read_text();
     if args.anchored:corpus['cases']+=json.loads((HERE/'fresh-holdout.json').read_text())['cases']
     out=ROOT/'results/speaker-attribution'/args.label;out.mkdir(parents=True,exist_ok=True)
     if (out/'summary.json').exists():raise ValueError('Run already exists; use a new label rather than overwrite evidence')
@@ -71,7 +71,8 @@ def run(args):
             schema=SCHEMA;user_text=case['text']
             if args.anchored:
                 units=source_units(case['text']);user_text=json.dumps([{'id':u['id'],'text':u['text']} for u in units],ensure_ascii=False)
-                schema={'type':'object','properties':{'labels':{'type':'array','minItems':len(units),'maxItems':len(units),'items':{'type':'object','properties':{'id':{'type':'string','enum':[u['id'] for u in units]},'kind':{'type':'string','enum':['narration','dialogue']},'speaker':{'type':'string'}},'required':['id','kind','speaker'],'additionalProperties':False}}},'required':['labels'],'additionalProperties':False}
+                certain=bool(args.prompt and 'guess' in args.prompt)   # the best-judgement prompt adds a certainty flag
+                schema={'type':'object','properties':{'labels':{'type':'array','minItems':len(units),'maxItems':len(units),'items':{'type':'object','properties':{**{'id':{'type':'string','enum':[u['id'] for u in units]},'kind':{'type':'string','enum':['narration','dialogue']},'speaker':{'type':'string'}},**({'certain':{'type':'boolean'}} if certain else {})},'required':['id','kind','speaker']+(['certain'] if certain else []),'additionalProperties':False}}},'required':['labels'],'additionalProperties':False}
             payload={**settings,'model':args.label,'messages':[{'role':'system','content':prompt},{'role':'user','content':user_text}],'response_format':{'type':'json_schema','json_schema':{'name':'speaker_segments','schema':schema}}}
             start=time.monotonic();response={};error=None;content=''
             try:
@@ -95,5 +96,5 @@ def run(args):
     (out/'summary.json').write_text(json.dumps(result,ensure_ascii=False,indent=2));print(json.dumps({k:result[k] for k in ('label','all','request_seconds_measured')},ensure_ascii=False),flush=True)
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('--anchored',action='store_true');p.add_argument('--model',required=True);p.add_argument('--server',required=True);p.add_argument('--label',required=True);p.add_argument('--build-commit',required=True);run(p.parse_args())
+    p=argparse.ArgumentParser();p.add_argument('--anchored',action='store_true');p.add_argument('--prompt',default=None,help='prompt file name under evals/speaker_attribution (default: prompt-anchored.txt / prompt.txt)');p.add_argument('--model',required=True);p.add_argument('--server',required=True);p.add_argument('--label',required=True);p.add_argument('--build-commit',required=True);run(p.parse_args())
 # 最后更新：2026-09-09 · Astra

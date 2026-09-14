@@ -26,7 +26,7 @@ from .clips import clip_plan, validate_clips
 from .fcp7 import timeline_xml, IMPORT_GUIDE
 from .rhythm import analyze_file, analyze, duration_marker, VERSION as RHYTHM_VERSION
 from . import readings
-from .core import reads_aloud, Store, fingerprint, spoken_text, inherit_settings
+from .core import reads_aloud, Store, fingerprint, spoken_text, inherit_settings, voice_of
 from .voices import VoiceLibrary, is_custom, custom_id, PREFIX as CUSTOM_PREFIX
 from .script_check import inspect as inspect_script, apply_fix
 from .attribution import RoleDraftEngine, project_segments, source_units, carry_locks
@@ -53,6 +53,18 @@ class BookRequest(BaseModel):
 class RoleDraftRequest(BaseModel):
     script: str = Field(min_length=1, max_length=3000)
     language: Literal['zh','en']
+    book_id: str | None = Field(default=None, pattern=r'^[a-f0-9]{32}$')   # lines confirmed in the book's other chapters teach the habits
+
+class SuggestUnit(BaseModel):
+    id: str = Field(max_length=16)
+    text: str = Field(max_length=3000)
+    kind: Literal['narration','dialogue']
+    speaker: str = Field(default='', max_length=80)
+    fixed: bool = False            # named by the model with certainty, or typed by the person: teaches, is not re-suggested
+
+class SuggestRequest(BaseModel):
+    book_id: str | None = Field(default=None, pattern=r'^[a-f0-9]{32}$')
+    units: list[SuggestUnit] = Field(max_length=200)
 
 class RoleConfirmRequest(BaseModel):
     draft_id: str = Field(pattern=r'^[a-f0-9]{32}$')
@@ -60,6 +72,7 @@ class RoleConfirmRequest(BaseModel):
     labels: list[RoleLabel] = Field(min_length=1,max_length=80)
     book_id: str | None = Field(default=None, pattern=r'^[a-f0-9]{32}$')   # the chapter this came from, if any
     chapter_index: int | None = Field(default=None, ge=1)
+    aliases: dict[str, str] = Field(default_factory=dict)                   # 老板娘 → 陈小雪, learned while reviewing
 
 class InheritRequest(BaseModel):
     revision: int = Field(ge=0)
@@ -99,6 +112,13 @@ class VoiceRenameRequest(BaseModel):
 class SettingsRequest(BaseModel):
     favourite_voices: list[str] | None = Field(default=None, max_length=40)
     role_model: str | None = Field(default=None, max_length=80)
+    voice_tags: dict[str, list[str]] | None = None      # voice id -> tags such as 老人、男性、威严
+
+class CrowdRequest(BaseModel):
+    revision: int = Field(ge=0)
+    speaker: str = Field(min_length=1, max_length=80)
+    pool: list[str] = Field(min_length=1, max_length=40)
+    seed: int = Field(default=260909, ge=0)
 
 class ScriptRequest(BaseModel):
     revision: int = Field(ge=0)
@@ -289,13 +309,22 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
     def read_settings():
         stored = settings_file()
         return {'favourite_voices': [v for v in stored.get('favourite_voices', []) if v in VOICES],
-                'role_model': getattr(role_engine, 'model_id', None)}
+                'role_model': getattr(role_engine, 'model_id', None), 'voice_tags': stored.get('voice_tags', {})}
 
     @app.post('/api/settings')
     def write_settings(body: SettingsRequest):
         stored = settings_file()
         if body.favourite_voices is not None:
             stored['favourite_voices'] = list(dict.fromkeys(v for v in body.favourite_voices if v in VOICES))
+        if body.voice_tags is not None:
+            # Tags describe a voice for choosing — 老人、男性、威严 — and for
+            # drawing a crowd's voices from a pool. Free text, a few per voice.
+            tags = {}
+            for voice, words in body.voice_tags.items():
+                clean = [w.strip()[:20] for w in words if w and w.strip()][:12]
+                if clean and (voice in VOICES or is_custom(voice)):
+                    tags[voice] = list(dict.fromkeys(clean))
+            stored['voice_tags'] = tags
         if body.role_model is not None:
             # Switching the role-draft model: only to one that is installed and
             # hash-checked on first use; the draft record says which one answered.
@@ -309,7 +338,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 role_engine.select(body.role_model)
             stored['role_model'] = body.role_model
         (workspace/'settings.json').write_text(json.dumps(stored, ensure_ascii=False, indent=1))
-        return {'favourite_voices': stored.get('favourite_voices', []), 'role_model': getattr(role_engine, 'model_id', None)}
+        return {'favourite_voices': stored.get('favourite_voices', []), 'role_model': getattr(role_engine, 'model_id', None), 'voice_tags': stored.get('voice_tags', {})}
 
     @app.get('/api/voices/custom')
     def list_custom_voices():
@@ -532,6 +561,31 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
         return {**chapter, 'book_id': book['id'], 'book_title': book['title'], 'language': book['language'], 'chapters': len(book['chapters']),
                 'project_name': f"{book['title']} · {chapter['title']}".strip(' ·'), 'known_names': names, 'existing_project_id': existing}
 
+    def voice_sex(voice):
+        """'f', 'm' or '' from a voice's own description: preset labels say 女声/male; a designed
+        or kept voice's library entry says what it was made from."""
+        label = VOICES.get(voice, '')
+        if is_custom(voice):
+            try:
+                entry = library.get(custom_id(voice)); origin = entry.get('derived_from') or ''
+                label = VOICES.get(origin.split(' · ')[0], '') + ' ' + origin
+            except ValueError:
+                label = ''
+        low = label.lower()
+        if any(k in low for k in ('女', 'female', 'girl', 'woman')): return 'f'
+        if any(k in low for k in ('男', 'male', 'boy')): return 'm'
+        return ''
+
+    def confirmed_dialogue(p):
+        """(unit, label) for every dialogue line a person confirmed in a project."""
+        record = p.get('attribution') or {}
+        labels = {l['id']: l for l in record.get('confirmed_labels', [])}
+        if not labels or not p.get('source_script'):
+            return []
+        return [(u, labels[u['id']]) for u in source_units(p['source_script'])
+                if u['id'] in labels and labels[u['id']]['kind'] == 'dialogue'
+                and labels[u['id']]['speaker'].strip().upper() not in ('', 'UNKNOWN', 'NARRATOR')]
+
     def book_projects(book):
         """Projects made from this book's chapters — linked by id, or, for projects
         made before the link existed, by the name the chapter flow gave them."""
@@ -565,7 +619,22 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
         try:
             if hasattr(engine, 'unload'):
                 engine.unload()
-            result = role_engine.annotate(body.script, drafts/(draft_id+'.log'))
+            names_for_model = []
+            if body.book_id:
+                with store.lock:
+                    for sibling in book_projects(books.get(body.book_id)):
+                        for sp, voice in sibling['voices'].items():
+                            if sp in ('旁白', 'Narrator', 'NARRATOR') or any(n.startswith(sp) for n in names_for_model):
+                                continue
+                            # The cast with the sex of each voice: a chapter's
+                            # speakers told apart by who could have said what.
+                            sex = voice_sex(voice)
+                            also = [a for a, n in (books.get(body.book_id).get('aliases') or {}).items() if n == sp]
+                            notes = [x for x in ({'f': '女', 'm': '男'}.get(sex, ''), '又称 ' + '、'.join(also) if also else '') if x]
+                            names_for_model.append(sp + ('（' + '；'.join(notes) + '）' if notes else ''))
+            # Test doubles may not take the cast; the real engine does.
+            result = (role_engine.annotate(body.script, drafts/(draft_id+'.log'), known_names=names_for_model) if names_for_model and 'known_names' in role_engine.annotate.__code__.co_varnames
+                      else role_engine.annotate(body.script, drafts/(draft_id+'.log')))
             # Validate even injected engines; no unbound model text reaches a project.
             from evals.speaker_attribution.source_units import bind_labels
             bind_labels(body.script,json.dumps({'labels':result['labels']}))
@@ -580,6 +649,15 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             # four reviewed projects it did so 27 times and the reviewer disagreed
             # 27 times. Texts with no quotation marks at all are left alone.
             quoted = any(c in body.script for c in '“"「『')
+            # Names the story uses: in this passage, or confirmed in the book's
+            # other chapters — a chapter that never spells a name still has it.
+            known_names = set(); aliases = {}
+            if body.book_id:
+                with store.lock:
+                    book_record = books.get(body.book_id)
+                    aliases = dict(book_record.get('aliases') or {})
+                    for sibling in book_projects(book_record):
+                        known_names.update(sp for sp in sibling['voices'] if sp not in ('旁白', 'Narrator', 'NARRATOR'))
             def cites_rather_than_speaks(unit):
                 # Chinese puts the full stop inside the quotation marks. A short
                 # quoted unit with nothing spoken about it -- “君子固穷”, “雪” -- is a
@@ -602,13 +680,20 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                     return False
                 return len(inner) <= 10
             def vetted(label, unit):
-                speaker = label['speaker'].strip()
+                speaker = aliases.get(label['speaker'].strip(), label['speaker'].strip())   # 老板娘 → 陈小雪, as the book learned
                 if quoted and label['kind'] == 'dialogue' and not unit['text'].lstrip().startswith(('“', '"', '「', '『')):
                     return {'kind': 'narration', 'speaker': 'NARRATOR', 'suggested': speaker}
                 if body.language == 'zh' and label['kind'] == 'dialogue' and cites_rather_than_speaks(unit):
                     return {'kind': 'narration', 'speaker': 'NARRATOR', 'suggested': speaker}
-                if label['kind'] == 'dialogue' and speaker.upper() not in ('', 'UNKNOWN', 'NARRATOR') and speaker not in body.script:
-                    return {'kind': 'dialogue', 'speaker': 'UNKNOWN', 'suggested': speaker}
+                if label['kind'] == 'dialogue' and speaker.upper() not in ('', 'UNKNOWN', 'NARRATOR') and (
+                        (speaker not in body.script and speaker not in known_names) or len(speaker) > 12 or any(c in speaker for c in '，。！？～“”"：')):
+                    # Not a name the story uses — invented, translated, or the
+                    # line itself pasted into the speaker field.
+                    return {'kind': 'dialogue', 'speaker': 'UNKNOWN', 'suggested': speaker[:20]}
+                if label['kind'] == 'dialogue' and speaker.upper() not in ('', 'UNKNOWN', 'NARRATOR') and not label.get('certain', True):
+                    # The model's best judgement, not settled by the passage: filled
+                    # in yellow for the reviewer, adopted unless changed.
+                    return {'kind': 'dialogue', 'speaker': speaker, 'tier': 'suggested', 'basis': '模型按上下文推断的'}
                 return {'kind': label['kind'], 'speaker': speaker}
             units = source_units(body.script)
             # A degenerate draft: the model called every quoted unit narration.
@@ -630,9 +715,100 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             # Whitespace between two quoted lines is a unit like any other and
             # still needs a label, but showing the reviewer an empty row to
             # assign a character to is noise. Mark it; the UI leaves it out.
-            return {'draft_id':draft_id, 'notice': notice,
-                    'units':[{**unit, **vetted(labels[unit['id']], unit), 'blank': not unit['text'].strip()}
-                             for unit in units]}
+            out = [{**unit, **vetted(labels[unit['id']], unit), 'blank': not unit['text'].strip()} for unit in units]
+            # Lines still unplaced: who talks like this? Taught by the lines a
+            # person confirmed in the same book's other chapters (runtime/habits).
+            from . import habits
+            profile = {}; taught = []
+            if body.book_id:
+                with store.lock:
+                    taught = [(u['text'], l['speaker']) for p in book_projects(books.get(body.book_id))
+                              for u, l in confirmed_dialogue(p)]
+                profile = habits.profiles(taught)
+                if profile:
+                    for u in out:
+                        if u['kind'] == 'dialogue' and not u['blank'] and u['speaker'].strip().upper() in ('', 'UNKNOWN'):
+                            best, margin = habits.suggest(u['text'], profile)
+                            if best and margin >= habits.MARGIN:
+                                u.update({'speaker': best, 'tier': 'suggested', 'basis': '按说话习惯，像是'})
+                            elif best:
+                                u['hint'] = best
+            # Three rules a person applies without thinking, which the model
+            # skips (本人 2026-09-15), in the order of their strength:
+            #   1. the narration beside a line names its speaker — 小雪笑道：
+            #      before it, or ”小雪说。 after it;
+            #   2. a line that names characters is said to them, not by them —
+            #      阿宁，你去问老板娘 is neither 阿宁's nor the 老板娘's, and with
+            #      a cast of three that leaves the third;
+            #   3. two lines in a row without narration between are seldom the
+            #      same person's.
+            # Rule 1 overrides the model's answer (plain); 2 and 3 fill or demote
+            # to yellow. Aliases count as the name: 老板娘 is 陈小雪.
+            cast = list(dict.fromkeys(list(known_names) + [u['speaker'].strip() for u in out if u['kind'] == 'dialogue' and u['speaker'].strip().upper() not in ('', 'UNKNOWN', 'NARRATOR')]
+                                      + habits.names_from_tags(u['text'] for u in out if u['kind'] == 'narration' and not u['blank'])))
+            cast = [aliases.get(c, c) for c in cast]; cast = list(dict.fromkeys(cast))
+            # The sex of each cast member, from the voice the book gave them; and
+            # what a female or male line looks like in this book, from confirmed lines.
+            sex_of = {}
+            if body.book_id:
+                with store.lock:
+                    for sibling in book_projects(books.get(body.book_id)):
+                        for sp, voice in sibling['voices'].items():
+                            sex_of.setdefault(sp, voice_sex(voice))
+            sex_prof = habits.sex_profiles((t, sex_of.get(sp, '')) for t, sp in taught) if body.book_id and taught else None
+            mentions = {name: [name] + [a for a, n in aliases.items() if n == name] for name in cast}
+            spoken = [i for i, u in enumerate(out) if not u['blank']]
+            for k, i in enumerate(spoken):
+                u = out[i]
+                if u['kind'] != 'dialogue':
+                    continue
+                before = out[spoken[k - 1]] if k > 0 else None
+                after = out[spoken[k + 1]] if k + 1 < len(spoken) else None
+                tagged = habits.speech_tag(before['text'] if before and before['kind'] == 'narration' else '',
+                                           after['text'] if after and after['kind'] == 'narration' else '', mentions)
+                if tagged:
+                    if u['speaker'].strip() != tagged:
+                        u.update({'speaker': tagged, 'basis': '旁边的叙述点了这个名字'}); u.pop('tier', None); u.pop('hint', None)
+                    continue
+                sp = u['speaker'].strip()
+                named_in_line = [name for name, forms in mentions.items() if any(habits.mentioned(u['text'], f) for f in forms)]
+                if sp.upper() not in ('', 'UNKNOWN', 'NARRATOR') and sp in named_in_line:
+                    rest = [c for c in cast if c not in named_in_line]
+                    if len(rest) == 1:
+                        u.update({'speaker': rest[0], 'tier': 'suggested', 'basis': '句里叫到了别人，剩下的只有'})
+                    else:
+                        u.update({'tier': 'suggested', 'basis': '句里提到了这个名字，多半不是本人说的；像是'})
+                        if profile:
+                            best, margin = habits.suggest(u['text'], profile)
+                            if best and best not in named_in_line and margin >= habits.MARGIN:
+                                u['speaker'] = best
+                # Rule 4 (本人 2026-09-15: 分清男女，至少能猜对一半): a line that reads
+                # like the other sex's lines in this book is not this speaker's.
+                # Measured chapter one → two: 27 of 28 decided lines right.
+                line_sex, _ = habits.sex_of_line(u['text'], sex_prof) if sex_prof else (None, 0.0)
+                sp = u['speaker'].strip()
+                if line_sex and sp in sex_of and sex_of[sp] and sex_of[sp] != line_sex and not tagged:
+                    same_sex = [c for c in cast if sex_of.get(c) == line_sex and c not in named_in_line]
+                    pick = None
+                    if profile:
+                        pick = next((c for c, _ in habits.rank(u['text'], profile) if c in same_sex), None)
+                    pick = pick or (same_sex[0] if len(same_sex) == 1 else None)
+                    if pick:
+                        u.update({'speaker': pick, 'tier': 'suggested', 'basis': ('这句像女生说的' if line_sex == 'f' else '这句像男生说的') + '，像是'})
+                    else:
+                        u.update({'tier': 'suggested', 'basis': ('这句像女生说的' if line_sex == 'f' else '这句像男生说的') + '，但没有别的人选；像是'})
+                # Rule 3: the same speaker twice running, no narration between.
+                if before and before['kind'] == 'dialogue' and before['speaker'].strip() == u['speaker'].strip() and u['speaker'].strip().upper() not in ('', 'UNKNOWN') \
+                        and (u.get('tier') == 'suggested' or not labels[u['id']].get('certain', True)):
+                    alternatives = [c for c in cast if c != u['speaker'].strip() and c not in named_in_line]
+                    pick = None
+                    if profile:
+                        ranked = habits.rank(u['text'], profile)
+                        pick = next((c for c, _ in ranked if c in alternatives), None)
+                    pick = pick or (alternatives[0] if len(alternatives) == 1 else None)
+                    if pick:
+                        u.update({'speaker': pick, 'tier': 'suggested', 'basis': '上一句已经是这个人，一来一往像是'})
+            return {'draft_id':draft_id, 'notice': notice, 'units': out}
         except ValueError as exc:
             # bind_labels rejects a malformed model response. Its wording names
             # internal structures, which tells the reader nothing they can act on.
@@ -644,6 +820,28 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
         finally:
             with store.lock:
                 active['project_id'] = None
+
+    @app.post('/api/attribution/suggest')
+    def resuggest(body: SuggestRequest):
+        """Learn as the reviewer works: the lines already settled on the page —
+        by the model with certainty or by the person — teach the habits, together
+        with the book's confirmed chapters, and every unsettled line is scored
+        again. Returns a suggestion per unsettled line; the page decides how to show it."""
+        from . import habits
+        taught = []
+        if body.book_id:
+            with store.lock:
+                taught += [(u['text'], l['speaker']) for p in book_projects(books.get(body.book_id)) for u, l in confirmed_dialogue(p)]
+        taught += [(u.text, u.speaker.strip()) for u in body.units if u.kind == 'dialogue' and u.fixed and u.speaker.strip().upper() not in ('', 'UNKNOWN', 'NARRATOR')]
+        profile = habits.profiles(taught)
+        out = {}
+        for u in body.units:
+            if u.kind != 'dialogue' or u.fixed or not u.text.strip():
+                continue
+            best, margin = habits.suggest(u.text, profile) if profile else (None, 0.0)
+            if best:
+                out[u.id] = {'speaker': best, 'margin': round(margin, 3), 'fill': margin >= habits.MARGIN}
+        return {'suggestions': out, 'taught': len(taught)}
 
     @app.post('/api/attribution/confirm')
     def confirm_roles(body: RoleConfirmRequest):
@@ -660,6 +858,8 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 # of the chapter before it — the same characters, the same voices,
                 # the same lexicon — so a book is configured once, not per chapter.
                 book = books.get(body.book_id)
+                if body.aliases:
+                    books.remember_aliases(book['id'], body.aliases)
                 project['book'] = {'id': book['id'], 'title': book['title'], 'index': body.chapter_index, 'chapters': len(book['chapters'])}
                 siblings = [p for p in book_projects(book) if p['id'] != project['id'] and not p.get('archived')]
                 earlier = [p for p in siblings if (p.get('book') or {}).get('index', 0) < body.chapter_index]
@@ -753,11 +953,32 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                         s[field] = value
                 if body.speaker is not None:
                     if body.speaker not in p['voices']:
-                        raise ValueError('Select an existing speaker')
+                        # A character who first appears after the project was made
+                        # (本人 2026-09-15): named on a line, born with a preset voice
+                        # not yet used by anyone, to be changed under 角色音色.
+                        name = body.speaker.strip()
+                        if not name or len(name) > 80 or any(c in name for c in '：:\n'):
+                            raise ValueError('角色名需为 1–80 个字符，且不含冒号。')
+                        presets = ['Vivian', 'Uncle_Fu', 'Serena', 'Dylan', 'Eric'] if p['language'] == 'zh' else ['Ryan', 'Aiden']
+                        used = set(p['voices'].values())
+                        p['voices'][name] = next((v for v in presets if v not in used), presets[len(p['voices']) % len(presets)])
+                        body.speaker = name
                     s['speaker'] = body.speaker
                 if any(getattr(body, field) is not None for field in ('text', 'spoken_as', 'speaker')):
                     s['error'] = None
-            if body.voice is not None:
+            if body.voice is not None and body.segment_id and body.speaker is None:
+                # One line read in a voice of its own — 'auto' returns it to its character's.
+                s = next((x for x in p['segments'] if x['id'] == body.segment_id), None)
+                if s is None:
+                    raise ValueError('Unknown segment')
+                if body.voice == 'auto':
+                    s.pop('voice', None)
+                elif body.voice in VOICES or (is_custom(body.voice) and library.label(body.voice)):
+                    s['voice'] = body.voice
+                else:
+                    raise ValueError('Unknown voice')
+                s['error'] = None
+            elif body.voice is not None:
                 if (body.voice not in VOICES and not (is_custom(body.voice) and library.label(body.voice))) or body.speaker not in p['voices']:
                     raise ValueError('Unknown voice or speaker')
                 if p['voices'][body.speaker] != body.voice:
@@ -886,6 +1107,30 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
     def duplicate_project(project_id: str, body: RevisionRequest):
         return store.public(store.duplicate(project_id,body.revision),engine,checker)
 
+    @app.post('/api/projects/{project_id}/crowd')
+    def crowd(project_id: str, body: CrowdRequest):
+        """A crowd — 众人, 路人 — is one character in the script and many voices in
+        the recording: every line of the speaker draws a voice from the pool, never
+        the same voice on two lines in a row. Seeded, so the draw is reproducible;
+        change the seed for another draw. Undoable like any edit."""
+        pool = list(dict.fromkeys(body.pool))
+        for v in pool:
+            if v not in VOICES and not (is_custom(v) and library.label(v)):
+                raise ValueError(f'没有这个音色：{v}')
+        def apply(p):
+            if body.speaker not in p['voices']:
+                raise ValueError('Select an existing speaker')
+            draw = random.Random(body.seed); last = None; n = 0
+            for s in p['segments']:
+                if s['speaker'] != body.speaker:
+                    continue
+                choices = [v for v in pool if v != last] or pool
+                s['voice'] = draw.choice(choices); s['error'] = None; last = s['voice']; n += 1
+            p.setdefault('crowds', {})[body.speaker] = {'pool': pool, 'seed': body.seed}
+            if not n:
+                raise ValueError('这个角色没有句子。')
+        return store.public(store.edit(project_id, body.revision, apply), engine, checker)
+
     @app.post('/api/projects/{project_id}/inherit')
     def inherit(project_id: str, body: InheritRequest):
         """Carry another project's — or a template's — voices, fixed references (projects only),
@@ -1004,14 +1249,14 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                             pcm,rate,metrics=engine.synthesize_reference(spoken_text(p,s),p['language'],
                                 store.directory(project_id)/'references'/(digest_ref+'.wav'),profile['text'],
                                 260909+s.get('take',0),consent_confirmed=True,expected_sha256=digest_ref)
-                        elif is_custom(p['voices'][s['speaker']]):
-                            entry = library.get(custom_id(p['voices'][s['speaker']]))
+                        elif is_custom(voice_of(p, s)):
+                            entry = library.get(custom_id(voice_of(p, s)))
                             pcm,rate,metrics=engine.synthesize_reference(spoken_text(p,s),p['language'],
                                 library.audio_path(entry['id']),entry['reference_text'],
                                 260909+s.get('take',0),consent_confirmed=True,expected_sha256=entry['sha256'])
                         else:
                             pcm, rate, metrics = engine.synthesize(spoken_text(p,s),
-                                p['voices'][s['speaker']], p['language'], 260909+s.get('take',0),
+                                voice_of(p, s), p['language'], 260909+s.get('take',0),
                                 **({'size': p.get('preset_model','0.6B')} if hasattr(engine,'identity_for') else {}))
                         pcm, meta = process_audio(pcm, rate)
                         # A run-away take: the engine read the line and kept going -- a
@@ -1021,7 +1266,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                         # duration marker still reports if the second is bad too.
                         spoken_seconds = (meta['speech_end_sample'] - meta['speech_start_sample']) / rate
                         runaway = duration_marker(spoken_text(p,s), spoken_seconds, p['language'])
-                        if runaway and not metrics.get('auto_retake') and sid not in retake_ids and not p.get('voice_profiles',{}).get(s['speaker']) and not is_custom(p['voices'][s['speaker']]):
+                        if runaway and not metrics.get('auto_retake') and sid not in retake_ids and not p.get('voice_profiles',{}).get(s['speaker']) and not is_custom(voice_of(p, s)):
                             logging.warning('Run-away take on %s (%.1fs for %d chars); retrying with the next seed', sid, spoken_seconds, len(spoken_text(p,s)))
                             with store.lock:
                                 p = store.read(project_id)
@@ -1031,7 +1276,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                                 path = folder/(digest+'.wav'); meta_path = folder/(digest+'.json')
                                 store.write(p)
                             pcm, rate, metrics = engine.synthesize(spoken_text(p,s),
-                                p['voices'][s['speaker']], p['language'], 260909+s.get('take',0),
+                                voice_of(p, s), p['language'], 260909+s.get('take',0),
                                 **({'size': p.get('preset_model','0.6B')} if hasattr(engine,'identity_for') else {}))
                             pcm, meta = process_audio(pcm, rate)
                             metrics = {**metrics, 'auto_retake': True, 'first_take_seconds': round(spoken_seconds, 2)}

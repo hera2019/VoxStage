@@ -168,15 +168,21 @@ def spoken_text(project, segment):
         return text                       # saving refuses bad notation; anything older is read as written
 
 
+def voice_of(project, segment):
+    """The voice a line is read in: its own, when a line carries one — a crowd
+    line drawn from a pool — else its character's."""
+    return segment.get('voice') or project['voices'][segment['speaker']]
+
+
 def fingerprint(project, segment, engine, library=None):
-    data = {'text':spoken_text(project, segment), 'voice':project['voices'][segment['speaker']],
+    data = {'text':spoken_text(project, segment), 'voice':voice_of(project, segment),
             'language':project['language'], 'engine':(engine.identity_for(project.get('preset_model','0.6B')) if hasattr(engine,'identity_for') else engine.identity), 'seed':260909+segment.get('take',0),
             **generation_parameters(project['language']),
             'runtime':'mlx-audio-0.5.1', 'processing':PROCESSING_VERSION}
     # A library voice is a reference like a fixed profile is, so its identity has
     # to reach the fingerprint: renaming may not invalidate audio, but pointing a
     # character at different reference audio must.
-    voice_ref = custom_id(project['voices'][segment['speaker']])
+    voice_ref = custom_id(voice_of(project, segment))
     if voice_ref and library:
         entry = library.get(voice_ref)
         data.update(reference_parameters())
@@ -276,7 +282,7 @@ class Templates:
 
 
 def edit_state(project):
-    return copy.deepcopy({**{k:project[k] for k in ('name','language','voices','segments','pause_ms')},'lexicon':project.get('lexicon',{}),'preset_model':project.get('preset_model','0.6B'),'voice_profiles':project.get('voice_profiles',{}), 'archived':project.get('archived',False), 'speech_rate':project.get('speech_rate',1.0), 'colors':project.get('colors',{}), 'color_scope':project.get('color_scope','name')})
+    return copy.deepcopy({**{k:project[k] for k in ('name','language','voices','segments','pause_ms')},'lexicon':project.get('lexicon',{}),'preset_model':project.get('preset_model','0.6B'),'voice_profiles':project.get('voice_profiles',{}), 'archived':project.get('archived',False), 'speech_rate':project.get('speech_rate',1.0), 'colors':project.get('colors',{}), 'color_scope':project.get('color_scope','name'), 'crowds':project.get('crowds',{})})
 
 class Store:
     def __init__(self, root):
