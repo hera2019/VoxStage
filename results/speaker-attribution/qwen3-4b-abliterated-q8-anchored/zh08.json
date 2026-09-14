@@ -1,0 +1,165 @@
+{
+  "input": "列车停下时，苏禾叫醒了赵远。\n“到了，”苏禾压低声音，“把蓝色箱子拿上。”\n赵远伸手去够行李架。“这个吗？”他问。\n“不是，靠窗的那个。”苏禾指了指另一边。\n过了一会儿，赵远把箱子放到地上。“现在齐了。”赵远说。",
+  "response": {
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"labels\":[{\"id\":\"u0\",\"kind\":\"narration\",\"speaker\":\"NARRATOR\"},{\"id\":\"u1\",\"kind\":\"dialogue\",\"speaker\":\"苏禾\"},{\"id\":\"u2\",\"kind\":\"narration\",\"speaker\":\"NARRATOR\"},{\"id\":\"u3\",\"kind\":\"dialogue\",\"speaker\":\"苏禾\"},{\"id\":\"u4\",\"kind\":\"narration\",\"speaker\":\"NARRATOR\"},{\"id\":\"u5\",\"kind\":\"dialogue\",\"speaker\":\"赵远\"},{\"id\":\"u6\",\"kind\":\"narration\",\"speaker\":\"NARRATOR\"},{\"id\":\"u7\",\"kind\":\"dialogue\",\"speaker\":\"苏禾\"},{\"id\":\"u8\",\"kind\":\"narration\",\"speaker\":\"NARRATOR\"},{\"id\":\"u9\",\"kind\":\"dialogue\",\"speaker\":\"赵远\"},{\"id\":\"u10\",\"kind\":\"narration\",\"speaker\":\"NARRATOR\"}]}"
+        }
+      }
+    ],
+    "created": 1789373596,
+    "model": "qwen3-4b-abliterated-q8-anchored",
+    "system_fingerprint": "b10700-bebc9350e",
+    "object": "chat.completion",
+    "usage": {
+      "completion_tokens": 183,
+      "prompt_tokens": 390,
+      "total_tokens": 573,
+      "prompt_tokens_details": {
+        "cached_tokens": 182
+      }
+    },
+    "id": "chatcmpl-k9ofKrMrn4vThQge7DLQkYTDtIc4r7aY",
+    "timings": {
+      "cache_n": 182,
+      "prompt_n": 208,
+      "prompt_ms": 233.797,
+      "prompt_per_token_ms": 1.1240240384615385,
+      "prompt_per_second": 889.6606885460463,
+      "predicted_n": 183,
+      "predicted_ms": 2752.883,
+      "predicted_per_token_ms": 15.125730769230769,
+      "predicted_per_second": 66.11250823227867
+    }
+  },
+  "score": {
+    "case": "zh08",
+    "language": "zh",
+    "split": "heldout",
+    "tags": [
+      "interrupted_dialogue",
+      "cross_paragraph"
+    ],
+    "schema_valid": true,
+    "text_preserved": true,
+    "units": [
+      {
+        "text": "列车停下时，苏禾叫醒了赵远。\n",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [
+          "NARRATOR"
+        ],
+        "kind_correct": true,
+        "speaker_correct": true
+      },
+      {
+        "text": "“到了，”",
+        "kind": "dialogue",
+        "expected": "苏禾",
+        "observed": [
+          "苏禾"
+        ],
+        "kind_correct": true,
+        "speaker_correct": true
+      },
+      {
+        "text": "苏禾压低声音，",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [
+          "NARRATOR"
+        ],
+        "kind_correct": true,
+        "speaker_correct": true
+      },
+      {
+        "text": "“把蓝色箱子拿上。”",
+        "kind": "dialogue",
+        "expected": "苏禾",
+        "observed": [
+          "苏禾"
+        ],
+        "kind_correct": true,
+        "speaker_correct": true
+      },
+      {
+        "text": "\n赵远伸手去够行李架。",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [
+          "NARRATOR"
+        ],
+        "kind_correct": true,
+        "speaker_correct": true
+      },
+      {
+        "text": "“这个吗？”",
+        "kind": "dialogue",
+        "expected": "赵远",
+        "observed": [
+          "赵远"
+        ],
+        "kind_correct": true,
+        "speaker_correct": true
+      },
+      {
+        "text": "他问。\n",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [
+          "NARRATOR"
+        ],
+        "kind_correct": true,
+        "speaker_correct": true
+      },
+      {
+        "text": "“不是，靠窗的那个。”",
+        "kind": "dialogue",
+        "expected": "苏禾",
+        "observed": [
+          "苏禾"
+        ],
+        "kind_correct": true,
+        "speaker_correct": true
+      },
+      {
+        "text": "苏禾指了指另一边。\n过了一会儿，赵远把箱子放到地上。",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [
+          "NARRATOR"
+        ],
+        "kind_correct": true,
+        "speaker_correct": true
+      },
+      {
+        "text": "“现在齐了。”",
+        "kind": "dialogue",
+        "expected": "赵远",
+        "observed": [
+          "赵远"
+        ],
+        "kind_correct": true,
+        "speaker_correct": true
+      },
+      {
+        "text": "赵远说。",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [
+          "NARRATOR"
+        ],
+        "kind_correct": true,
+        "speaker_correct": true
+      }
+    ],
+    "seconds": 2.993194457842037,
+    "error": null,
+    "finish_reason": "stop"
+  }
+}

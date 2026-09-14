@@ -120,6 +120,7 @@ class EditRequest(BaseModel):
     lexicon: dict[str, str] | None = None
     preset_model: Literal['0.6B', '1.7B'] | None = None
     color: str | None = Field(default=None, pattern=r'^(#[0-9a-fA-F]{6}|auto)$')   # with speaker: this character's colour on screen
+    color_scope: Literal['name', 'text', 'both'] | None = None                       # where the colours show: the name, the words, or both
 
 class TempoRegion(BaseModel):
     start: float = Field(ge=0, allow_inf_nan=False)
@@ -758,6 +759,8 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 for s in p['segments']:
                     if s['speaker'] == body.speaker:
                         s['error'] = None
+            if body.color_scope is not None:
+                p['color_scope'] = body.color_scope
             if body.color is not None:
                 # A character's colour in the script list: a screen preference,
                 # kept with the project, nothing to do with the audio. 'auto'

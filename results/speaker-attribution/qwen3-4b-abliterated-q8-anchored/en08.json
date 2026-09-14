@@ -1,0 +1,165 @@
+{
+  "input": "As the train stopped, June woke Owen.\n\"We are here,\" June said softly, \"so please get the blue case.\"\nOwen reached up. \"This one?\" he asked.\n\"No, the one by the window,\" June replied.\nA moment later, Owen set the case on the floor. \"Now we have everything,\" he said.",
+  "response": {
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"labels\":[{\"id\":\"u0\",\"kind\":\"narration\",\"speaker\":\"NARRATOR\"},{\"id\":\"u1\",\"kind\":\"dialogue\",\"speaker\":\"June\"},{\"id\":\"u2\",\"kind\":\"narration\",\"speaker\":\"NARRATOR\"},{\"id\":\"u3\",\"kind\":\"dialogue\",\"speaker\":\"June\"},{\"id\":\"u4\",\"kind\":\"narration\",\"speaker\":\"NARRATOR\"},{\"id\":\"u5\",\"kind\":\"dialogue\",\"speaker\":\"Owen\"},{\"id\":\"u6\",\"kind\":\"narration\",\"speaker\":\"NARRATOR\"},{\"id\":\"u7\",\"kind\":\"dialogue\",\"speaker\":\"June\"},{\"id\":\"u8\",\"kind\":\"narration\",\"speaker\":\"NARRATOR\"},{\"id\":\"u9\",\"kind\":\"dialogue\",\"speaker\":\"Owen\"},{\"id\":\"u10\",\"kind\":\"narration\",\"speaker\":\"NARRATOR\"}]}"
+        }
+      }
+    ],
+    "created": 1789373609,
+    "model": "qwen3-4b-abliterated-q8-anchored",
+    "system_fingerprint": "b10700-bebc9350e",
+    "object": "chat.completion",
+    "usage": {
+      "completion_tokens": 180,
+      "prompt_tokens": 383,
+      "total_tokens": 563,
+      "prompt_tokens_details": {
+        "cached_tokens": 182
+      }
+    },
+    "id": "chatcmpl-Nx9CTyt2mT0tHYvhjUkgD9uCQPjVQC70",
+    "timings": {
+      "cache_n": 182,
+      "prompt_n": 201,
+      "prompt_ms": 233.3,
+      "prompt_per_token_ms": 1.1606965174129353,
+      "prompt_per_second": 861.5516502357478,
+      "predicted_n": 180,
+      "predicted_ms": 2745.581,
+      "predicted_per_token_ms": 15.338441340782124,
+      "predicted_per_second": 65.1956726099139
+    }
+  },
+  "score": {
+    "case": "en08",
+    "language": "en",
+    "split": "heldout",
+    "tags": [
+      "interrupted_dialogue",
+      "cross_paragraph"
+    ],
+    "schema_valid": true,
+    "text_preserved": true,
+    "units": [
+      {
+        "text": "As the train stopped, June woke Owen.\n",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [
+          "NARRATOR"
+        ],
+        "kind_correct": true,
+        "speaker_correct": true
+      },
+      {
+        "text": "\"We are here,\"",
+        "kind": "dialogue",
+        "expected": "June",
+        "observed": [
+          "June"
+        ],
+        "kind_correct": true,
+        "speaker_correct": true
+      },
+      {
+        "text": " June said softly, ",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [
+          "NARRATOR"
+        ],
+        "kind_correct": true,
+        "speaker_correct": true
+      },
+      {
+        "text": "\"so please get the blue case.\"",
+        "kind": "dialogue",
+        "expected": "June",
+        "observed": [
+          "June"
+        ],
+        "kind_correct": true,
+        "speaker_correct": true
+      },
+      {
+        "text": "\nOwen reached up. ",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [
+          "NARRATOR"
+        ],
+        "kind_correct": true,
+        "speaker_correct": true
+      },
+      {
+        "text": "\"This one?\"",
+        "kind": "dialogue",
+        "expected": "Owen",
+        "observed": [
+          "Owen"
+        ],
+        "kind_correct": true,
+        "speaker_correct": true
+      },
+      {
+        "text": " he asked.\n",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [
+          "NARRATOR"
+        ],
+        "kind_correct": true,
+        "speaker_correct": true
+      },
+      {
+        "text": "\"No, the one by the window,\"",
+        "kind": "dialogue",
+        "expected": "June",
+        "observed": [
+          "June"
+        ],
+        "kind_correct": true,
+        "speaker_correct": true
+      },
+      {
+        "text": " June replied.\nA moment later, Owen set the case on the floor. ",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [
+          "NARRATOR"
+        ],
+        "kind_correct": true,
+        "speaker_correct": true
+      },
+      {
+        "text": "\"Now we have everything,\"",
+        "kind": "dialogue",
+        "expected": "Owen",
+        "observed": [
+          "Owen"
+        ],
+        "kind_correct": true,
+        "speaker_correct": true
+      },
+      {
+        "text": " he said.",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [
+          "NARRATOR"
+        ],
+        "kind_correct": true,
+        "speaker_correct": true
+      }
+    ],
+    "seconds": 2.9859552909620106,
+    "error": null,
+    "finish_reason": "stop"
+  }
+}

@@ -1,0 +1,94 @@
+{
+  "input": "顾雨把红伞递给何川。“谢谢，我明天还你。”何川说。\n顾雨转身走了两步，又回头提醒：“不用着急，周五之前就好。”",
+  "response": {
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"labels\":[{\"id\":\"u0\",\"kind\":\"narration\",\"speaker\":\"NARRATOR\"},{\"id\":\"u1\",\"kind\":\"dialogue\",\"speaker\":\"何川\"},{\"id\":\"u2\",\"kind\":\"narration\",\"speaker\":\"NARRATOR\"},{\"id\":\"u3\",\"kind\":\"dialogue\",\"speaker\":\"顾雨\"}]}"
+        }
+      }
+    ],
+    "created": 1789373611,
+    "model": "qwen3-4b-abliterated-q8-anchored",
+    "system_fingerprint": "b10700-bebc9350e",
+    "object": "chat.completion",
+    "usage": {
+      "completion_tokens": 69,
+      "prompt_tokens": 266,
+      "total_tokens": 335,
+      "prompt_tokens_details": {
+        "cached_tokens": 182
+      }
+    },
+    "id": "chatcmpl-qejZNFFiLNNjUv00JIXrsQsQBA0FHTpn",
+    "timings": {
+      "cache_n": 182,
+      "prompt_n": 84,
+      "prompt_ms": 110.53,
+      "prompt_per_token_ms": 1.3158333333333334,
+      "prompt_per_second": 759.974667511083,
+      "predicted_n": 69,
+      "predicted_ms": 1020.559,
+      "predicted_per_token_ms": 15.008220588235293,
+      "predicted_per_second": 66.63015073111893
+    }
+  },
+  "score": {
+    "case": "zh09",
+    "language": "zh",
+    "split": "fresh_holdout",
+    "tags": [
+      "fresh_probe"
+    ],
+    "schema_valid": true,
+    "text_preserved": true,
+    "units": [
+      {
+        "text": "顾雨把红伞递给何川。",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [
+          "NARRATOR"
+        ],
+        "kind_correct": true,
+        "speaker_correct": true
+      },
+      {
+        "text": "“谢谢，我明天还你。”",
+        "kind": "dialogue",
+        "expected": "何川",
+        "observed": [
+          "何川"
+        ],
+        "kind_correct": true,
+        "speaker_correct": true
+      },
+      {
+        "text": "何川说。\n顾雨转身走了两步，又回头提醒：",
+        "kind": "narration",
+        "expected": "NARRATOR",
+        "observed": [
+          "NARRATOR"
+        ],
+        "kind_correct": true,
+        "speaker_correct": true
+      },
+      {
+        "text": "“不用着急，周五之前就好。”",
+        "kind": "dialogue",
+        "expected": "顾雨",
+        "observed": [
+          "顾雨"
+        ],
+        "kind_correct": true,
+        "speaker_correct": true
+      }
+    ],
+    "seconds": 1.150422666920349,
+    "error": null,
+    "finish_reason": "stop"
+  }
+}

@@ -205,7 +205,7 @@ def drop_waveforms(project):
     return removed
 
 
-SETTINGS = ('lexicon', 'preset_model', 'pause_ms', 'speech_rate')
+SETTINGS = ('lexicon', 'preset_model', 'pause_ms', 'speech_rate', 'color_scope')
 
 
 def inherit_settings(target, source, source_dir, target_dir):
@@ -236,7 +236,7 @@ def inherit_settings(target, source, source_dir, target_dir):
 
 
 def edit_state(project):
-    return copy.deepcopy({**{k:project[k] for k in ('name','language','voices','segments','pause_ms')},'lexicon':project.get('lexicon',{}),'preset_model':project.get('preset_model','0.6B'),'voice_profiles':project.get('voice_profiles',{}), 'archived':project.get('archived',False), 'speech_rate':project.get('speech_rate',1.0), 'colors':project.get('colors',{})})
+    return copy.deepcopy({**{k:project[k] for k in ('name','language','voices','segments','pause_ms')},'lexicon':project.get('lexicon',{}),'preset_model':project.get('preset_model','0.6B'),'voice_profiles':project.get('voice_profiles',{}), 'archived':project.get('archived',False), 'speech_rate':project.get('speech_rate',1.0), 'colors':project.get('colors',{}), 'color_scope':project.get('color_scope','name')})
 
 class Store:
     def __init__(self, root):
