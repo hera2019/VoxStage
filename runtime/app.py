@@ -870,16 +870,30 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                     else:
                         u.update({'tier': 'suggested', 'basis': ('这句像女生说的' if line_sex == 'f' else '这句像男生说的') + '，但没有别的人选；像是'})
                 # Rule 3: the same speaker twice running, no narration between.
-                if before and before['kind'] == 'dialogue' and before['speaker'].strip() == u['speaker'].strip() and u['speaker'].strip().upper() not in ('', 'UNKNOWN') \
-                        and (u.get('tier') == 'suggested' or not labels[u['id']].get('certain', True)):
-                    alternatives = [c for c in cast if c != u['speaker'].strip() and c not in named_in_line]
+                # In the labelled texts two quoted lines running were never one
+                # person's (0 of 36 pairs, 2026-09-16), so this applies even when
+                # the model was certain — as yellow, with the other of the last
+                # two people who spoke (Kong Yiji: the model gave a whole
+                # exchange between the shopkeeper and a drinker to the drinker).
+                sp = u['speaker'].strip()
+                if before and before['kind'] == 'dialogue' and before['speaker'].strip() == sp and sp.upper() not in ('', 'UNKNOWN'):
+                    alternatives = [c for c in cast if c != sp and c not in named_in_line]
+                    recent = []
+                    for prior in reversed(out[:i]):
+                        who = prior['speaker'].strip()
+                        if prior['kind'] == 'dialogue' and who.upper() not in ('', 'UNKNOWN', 'NARRATOR') and who not in recent:
+                            recent.append(who)
+                            if len(recent) == 2:
+                                break
                     pick = None
                     if profile:
                         ranked = habits.rank(u['text'], profile)
                         pick = next((c for c, _ in ranked if c in alternatives), None)
-                    pick = pick or (alternatives[0] if len(alternatives) == 1 else None)
+                    pick = pick or next((c for c in recent if c in alternatives), None) or (alternatives[0] if len(alternatives) == 1 else None)
                     if pick:
                         u.update({'speaker': pick, 'tier': 'suggested', 'basis': '上一句已经是这个人，一来一往像是'})
+                    elif labels[u['id']].get('certain', True) and u.get('tier') != 'suggested':
+                        u.update({'tier': 'suggested', 'basis': '上一句已经是这个人，很少连着两句；像是'})
             return {'draft_id':draft_id, 'notice': notice, 'units': out}
         except ValueError as exc:
             # bind_labels rejects a malformed model response. Its wording names

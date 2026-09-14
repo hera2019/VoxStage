@@ -240,3 +240,22 @@ def test_the_pages_turn_taking_guess_stands_and_habits_only_hint_beside_a_stand_
         # No stand-in: the same line is filled.
         r = c.post('/api/attribution/suggest', json={'units': taught + [{'id': 'x', 'text': '老板娘～，猫饿了～', 'kind': 'dialogue', 'speaker': '', 'fixed': False}]}).json()
         assert r['suggestions']['x']['fill'] is True
+
+
+def test_two_lines_running_go_to_the_other_of_the_last_two_speakers_even_when_the_model_was_sure(tmp_path):
+    """0 of 36 running pairs in the labelled texts were one person's (2026-09-16)."""
+    class Sure(Roles):
+        def annotate(self, text, log_path):
+            labels = []
+            for u in source_units(text):
+                if u['text'].startswith('“'):
+                    labels.append({'id': u['id'], 'kind': 'dialogue', 'speaker': '陈小雪' if '糖' in u['text'] else '阿宁', 'certain': True})
+                else:
+                    labels.append({'id': u['id'], 'kind': 'narration', 'speaker': 'NARRATOR', 'certain': True})
+            return {'labels': labels, 'model_sha256': 'fixture'}
+    with TestClient(create_app(tmp_path / 'p', FixtureEngine(), role_engine=Sure()), base_url='http://127.0.0.1', headers=HEADERS) as c:
+        text = '陈小雪说：“赏你一块糖～”阿宁说：“少了三块～”“数错了吧？”“没有～”“再数一遍。”\n'
+        d = c.post('/api/attribution/draft', json={'script': text, 'language': 'zh'}).json()
+        rows = [(u['speaker'], u.get('tier')) for u in d['units'] if u['kind'] == 'dialogue']
+        assert rows == [('陈小雪', None), ('阿宁', None), ('陈小雪', 'suggested'), ('阿宁', None), ('陈小雪', 'suggested')]   # the fourth now follows the third
+        assert '一来一往' in next(u['basis'] for u in d['units'] if u['text'].strip() == '“数错了吧？”')
