@@ -24,10 +24,15 @@ were made with the flow below. New material still needs listening to.
      lexicon, model, pause and speed — so a book is configured once. Names
      confirmed in earlier chapters are offered as candidates in later ones.
 3. **Review the draft.** Matching speakers to lines is all that is needed
-   here. Lines the model could not place are left blank; when two people are
-   taking turns it suggests who speaks next, and a button adopts the
-   suggestion. Splitting, merging, editing and silencing lines all wait in
-   the editor.
+   here. Each line of dialogue comes in one of three states: plain when the
+   model named the speaker; **yellow** when the program filled it — from the
+   model's own inference, from how that character talked in earlier chapters,
+   or from two people taking turns — which stands unless you change it;
+   **orange** when you must choose. The speaker is a list of the book's cast
+   plus 新人名. Settle one name and the remaining yellow and orange lines are
+   scored again; rename one line's 老板娘 to 陈小雪 and you are offered to carry
+   the rest along, after which the book remembers the alias for later drafts.
+   Splitting, merging, editing and silencing lines all wait in the editor.
 4. Once the project exists, start with **角色音色** (voices): one voice per
    character. If the presets are not enough, open 音色试听 → 设计一个新声线,
    describe the voice in a sentence — age, sex, timbre, manner — and listen.
@@ -64,6 +69,28 @@ were made with the flow below. New material still needs listening to.
 - Everything is undoable, and generated audio is never lost by editing a
   different line.
 
+## Shortcuts
+
+- **Continuous listening**: ▶▶ 从这句连续听 in the footer plays line after
+  line from the selected one, with the export's pauses between them.
+- **Colours**: character names (or their words) are coloured in the script —
+  automatically by the voice's sex (cool for male, warm for female, the
+  narrator in the interface's text colour), or as you choose from the colour
+  button beside each voice; two characters may share a colour.
+- **Templates and inheritance**: 存为模板 under 角色音色 keeps voices, colours,
+  lexicon, model, pause and speed under a name; 沿用设置 applies a template or
+  another project; a chapter's 下一章 → inherits the previous chapter by itself.
+- **Crowds**: an unnamed speaker such as 众人 can be a crowd — pick a pool of
+  voices and 抽签分配 draws one per line, never the same voice twice running.
+- **Tags** on every voice (老人、男性、威严…) in the settings dialog; the crowd
+  pool filters by them.
+- **Adding a character** after the project exists: ＋ 添加角色 under 角色音色, or
+  ＋ 新角色… in a line's speaker list.
+- **The role-draft model** can be switched between installed models on the
+  last page of settings; it takes effect from the next draft.
+- **Deleting a project**: archive it first; the archive notice offers deletion.
+  The voice library, books and other projects are untouched.
+
 Projects, books and voices live under `user-data/` inside the checkout — not
 uploaded, not committed. Stop the service with Ctrl+C in the terminal it
 started from.
@@ -83,4 +110,4 @@ or a recording **you have the right to use and have explicitly confirmed**.
 Everything generated is marked as synthetic speech and must not be passed off
 as a real person. A phone cannot reach the Mac by opening its own localhost.
 
-Last updated: 2026-09-13 · Claude Hera (English edition of quickstart-zh.md)
+Last updated: 2026-09-15 · Claude Hera (English edition of quickstart-zh.md)

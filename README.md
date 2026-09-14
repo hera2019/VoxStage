@@ -128,7 +128,10 @@ sentence after the author rejected every preset for the part.
 | Capability | State |
 |---|---|
 | Paste unlabelled prose → speaker draft → review → project, in one flow | Built all three samples; the draft's post-rules are measured on human-labelled projects (the citation rule: 0 spoken lines silenced in 376 quoted units across 14 projects, after its first form silenced 21) |
-| A long text kept as a book, one chapter at a time | 阿Q正传, 22,152 characters into ten chapters, checked in the browser |
+| A long text kept as a book, one chapter at a time; the next chapter inherits the last one's voices, lexicon and settings; names and aliases confirmed earlier are known later | 阿Q正传, 22,152 characters into ten chapters, checked in the browser |
+| Review page in three tiers — named, filled in yellow, orange to choose — with rules beside the model: a speech tag names its speaker, a character spoken to is not the speaker, two lines running are seldom one person's, a line that reads like the other sex's is not this speaker's; a settled name re-scores the rest | On a private two-chapter text of the author's, agreement with their own labels went from 25/32 to 31/33 |
+| One character, many voices: a crowd drawn from a tagged pool line by line | Automated checks pass; never the same voice twice running |
+| Colours per character, settings templates, tags on voices, continuous listening | In use by the author |
 | Import, edit, save, reload, undo/redo | Automated checks pass |
 | One audio asset per sentence; edit one → regenerate one | Automated checks pass |
 | Split a line where the cursor is; merge with a neighbour; leave a line out of the recording | Automated checks pass; used on the Chinese samples |
