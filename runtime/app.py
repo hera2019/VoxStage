@@ -63,7 +63,12 @@ class RoleConfirmRequest(BaseModel):
 
 class InheritRequest(BaseModel):
     revision: int = Field(ge=0)
-    source_id: str = Field(pattern=r'^[a-f0-9]{32}$')
+    source_id: str | None = Field(default=None, pattern=r'^[a-f0-9]{32}$')     # another project
+    template_id: str | None = Field(default=None, pattern=r'^[a-f0-9]{32}$')   # or a saved template
+
+class TemplateRequest(BaseModel):
+    name: str = Field(min_length=1, max_length=60)
+    project_id: str = Field(pattern=r'^[a-f0-9]{32}$')
 
 class AuditionRequest(BaseModel):
     voice: str = Field(max_length=40)
@@ -196,7 +201,9 @@ def _splice_source(project, segment, text):
 def create_app(data_root=None, engine=None, frontend=None, checker=None, role_engine=None):
     store = Store(data_root or ROOT/'user-data/projects')
     from .books import Books
+    from .core import Templates
     books = Books(store.root.parent/'books')
+    templates = Templates(store.root.parent/'templates')
     def default_preset():
         # New projects start on the larger preset model when it is installed;
         # existing projects keep whatever they were made with. 0.6B stays
@@ -881,15 +888,36 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
 
     @app.post('/api/projects/{project_id}/inherit')
     def inherit(project_id: str, body: InheritRequest):
-        """Carry another project's voices, fixed references, lexicon, model, pause and speed into this one."""
+        """Carry another project's — or a template's — voices, fixed references (projects only),
+        colours, lexicon, model, pause and speed into this one."""
+        if bool(body.source_id) == bool(body.template_id):
+            raise ValueError('请选择一个工程或一个模板。')
         if body.source_id == project_id:
             raise ValueError('请选择另一个工程。')
-        with store.lock:
-            source = store.read(body.source_id)
+        if body.source_id:
+            with store.lock:
+                source = store.read(body.source_id)
+            source_dir = store.directory(source['id'])
+        else:
+            source = templates.get(body.template_id); source_dir = None
         carried = {}
         def apply(p):
-            carried.update(inherit_settings(p, source, store.directory(source['id']), store.directory(p['id'])))
+            carried.update(inherit_settings(p, source, source_dir, store.directory(p['id'])))
         return {**store.public(store.edit(project_id, body.revision, apply), engine, checker), 'inherited': {'from': source['name'], **carried}}
+
+    @app.get('/api/templates')
+    def list_templates():
+        return templates.list()
+
+    @app.post('/api/templates')
+    def create_template(body: TemplateRequest):
+        with store.lock:
+            return templates.create(body.name, store.read(body.project_id))
+
+    @app.delete('/api/templates/{template_id}')
+    def delete_template(template_id: str):
+        templates.delete(template_id)
+        return {'deleted': template_id}
 
     @app.delete('/api/projects/{project_id}')
     def delete_project(project_id: str, revision: int):

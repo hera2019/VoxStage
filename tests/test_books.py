@@ -160,3 +160,25 @@ def test_a_project_made_before_the_link_existed_is_linked_by_its_name(tmp_path):
         assert ch['existing_project_id'] == old['id']
         assert c.get('/api/projects/' + old['id']).json()['book'] == {'id': book['id'], 'title': '孔乙己', 'index': 1, 'chapters': 2}
         assert c.get('/api/projects/' + old['id']).json()['revision'] == old['revision']
+
+
+def test_a_template_keeps_a_configuration_and_applies_it_to_another_project(client):
+    from tests.test_workflow import create
+    first = create(client, 'zh', script='掌柜：好。\n孔乙己：好。')
+    url = '/api/projects/' + first['id']
+    first = client.patch(url, json={'revision': first['revision'], 'speaker': '掌柜', 'voice': 'Uncle_Fu'}).json()
+    first = client.patch(url, json={'revision': first['revision'], 'speaker': '掌柜', 'color': '#000080'}).json()
+    first = client.patch(url, json={'revision': first['revision'], 'lexicon': {'偸': '偷'}, 'pause_ms': 500, 'color_scope': 'both'}).json()
+    t = client.post('/api/templates', json={'name': '鲁镇标准', 'project_id': first['id']}).json()
+    assert t['voices']['掌柜'] == 'Uncle_Fu' and t['colors'] == {'掌柜': '#000080'} and t['lexicon'] == {'偸': '偷'}
+    assert 'voice_profiles' not in t                                          # references stay with their project
+    assert [x['name'] for x in client.get('/api/templates').json()] == ['鲁镇标准']
+    other = create(client, 'zh', script='掌柜：来了。\n酒客：来了。')
+    r = client.post(f"/api/projects/{other['id']}/inherit", json={'revision': other['revision'], 'template_id': t['id']})
+    assert r.status_code == 200, r.text
+    applied = r.json()
+    assert applied['voices']['掌柜'] == 'Uncle_Fu' and applied['colors'] == {'掌柜': '#000080'} and applied['color_scope'] == 'both'
+    assert applied['lexicon'] == {'偸': '偷'} and applied['pause_ms'] == 500 and applied['inherited']['from'] == '鲁镇标准'
+    assert client.post(f"/api/projects/{other['id']}/inherit", json={'revision': applied['revision']}).status_code == 400
+    assert client.delete('/api/templates/' + t['id']).status_code == 200
+    assert client.get('/api/templates').json() == []

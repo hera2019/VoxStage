@@ -6,6 +6,7 @@ import os
 import re
 import shutil
 import threading
+import time
 import uuid
 from pathlib import Path
 from . import readings
@@ -219,7 +220,7 @@ def inherit_settings(target, source, source_dir, target_dir):
         if speaker in source.get('voices', {}):
             target['voices'][speaker] = source['voices'][speaker]; carried['voices'].append(speaker)
         profile = (source.get('voice_profiles') or {}).get(speaker)
-        if profile and speaker in source.get('voices', {}):
+        if profile and source_dir and speaker in source.get('voices', {}):
             reference = Path(source_dir)/'references'/(profile['sha256'] + '.wav')
             if reference.is_file():
                 folder = Path(target_dir)/'references'; folder.mkdir(exist_ok=True)
@@ -233,6 +234,45 @@ def inherit_settings(target, source, source_dir, target_dir):
         if speaker in target['voices']:
             target.setdefault('colors', {})[speaker] = color
     return carried
+
+
+TEMPLATE_KEYS = ('voices', 'colors', 'color_scope', 'lexicon', 'preset_model', 'pause_ms', 'speech_rate')
+
+
+class Templates:
+    """A project's configuration kept under a name, to apply to other projects:
+    the voice of each character by name, colours, the lexicon, the model, the
+    pause and the speed. Fixed-voice references belong to a project's own
+    files and are not part of a template. Stored beside projects and books."""
+    def __init__(self, root):
+        self.root = Path(root); self.root.mkdir(parents=True, exist_ok=True)
+
+    def create(self, name, project):
+        name = (name or '').strip()[:60]
+        if not name:
+            raise ValueError('给模板起个名字。')
+        template = {'id': uid(), 'name': name, 'created_at': time.time(), 'from_project': project['name'],
+                    **{k: copy.deepcopy(project.get(k)) for k in TEMPLATE_KEYS if project.get(k) is not None}}
+        (self.root/(template['id'] + '.json')).write_text(json.dumps(template, ensure_ascii=False, indent=1), encoding='utf-8')
+        return template
+
+    def get(self, template_id):
+        path = self.root/(template_id + '.json')
+        if not re.fullmatch(r'[0-9a-f]{32}', template_id) or not path.is_file():
+            raise ValueError('找不到这个模板。')
+        return json.loads(path.read_text(encoding='utf-8'))
+
+    def list(self):
+        out = []
+        for path in sorted(self.root.glob('*.json'), key=lambda x: x.stat().st_mtime):
+            t = json.loads(path.read_text(encoding='utf-8'))
+            out.append({'id': t['id'], 'name': t['name'], 'from_project': t.get('from_project'),
+                        'speakers': sorted(t.get('voices', {})), 'created_at': t.get('created_at')})
+        return out
+
+    def delete(self, template_id):
+        self.get(template_id)
+        (self.root/(template_id + '.json')).unlink()
 
 
 def edit_state(project):
