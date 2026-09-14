@@ -708,6 +708,14 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 return {'kind': label['kind'], 'speaker': speaker}
             units = source_units(body.script)
             spoken = [u for u in units if u['text'].strip() and u['text'].strip()[0] in '“"「『']   # '' is "in" any string
+            # No book yet: the names the speech tags themselves spell (孔乙己说：)
+            # are the cast the model is told about. Without any list, the
+            # abliterated fine-tune answered Kong Yiji in English — KONG YIJI,
+            # CHEF, A CUSTOMER — and every name was refused as not in the text.
+            if not names_for_model:
+                from . import habits
+                unquoted = [u['text'] for u in source_units(body.script) if u['text'].strip() and u['text'].strip()[0] not in '“"「『']
+                names_for_model = habits.names_from_tags(unquoted, body.script)
             # Test doubles may not take the cast; the real engine does.
             def annotate_with(engine_, log_name):
                 return (engine_.annotate(body.script, drafts/log_name, known_names=names_for_model) if names_for_model and 'known_names' in engine_.annotate.__code__.co_varnames
