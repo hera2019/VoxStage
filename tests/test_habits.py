@@ -185,3 +185,38 @@ def test_when_the_default_model_places_nobody_the_other_installed_model_is_asked
                                                   'model_sha256': 'fixture', 'model_id': 'a'}
         d = c.post('/api/attribution/draft', json={'script': '小雪说：“来。”\n“好。”\n“走吧。”\n', 'language': 'zh'}).json()
         assert d['notice'] is None and engine.model_id == 'a'
+
+
+def test_the_person_spoken_to_is_not_the_speaker_and_a_nameless_tag_gets_a_stand_in(tmp_path):
+    """有一回对我说道 / 见了我，又说道 name the person spoken to or seen, not the
+    speaker. A tag whose subject is nobody in particular — 有的叫道, 旁人问道,
+    一个喝酒的人说道 — gets a stand-in (众人 / 某人), yellow, that the reviewer
+    renames once (Kong Yiji, 2026-09-16)."""
+    from runtime.habits import speech_tag, anonymous_tag
+    m = {'我': ['我'], '阿宁': ['阿宁'], '陈小雪': ['陈小雪', '老板娘']}
+    assert speech_tag('有一回对我说道，', '', m) is None and speech_tag('见了我，又说道，', '', m) is None
+    assert speech_tag('阿宁有一回对我说道，', '', m) == '阿宁'                       # the subject still counts
+    assert speech_tag('阿宁望着老板娘说：', '', m) == '阿宁' and speech_tag('', '”阿宁对我说。', m) == '阿宁'
+    assert anonymous_tag('大家都看着他笑，有的叫道：') == '众人' and anonymous_tag('旁人便又问道，') == '众人'
+    assert anonymous_tag('一个买酒的人说道，') == '某人' and anonymous_tag('忽然听得一个声音，') == '某人' and anonymous_tag('', '”有人说。') == '某人'
+    assert anonymous_tag('阿宁对他们说道：') is None and anonymous_tag('阿宁说：') is None
+    class Guesses(Roles):
+        def annotate(self, text, log_path):
+            labels = []
+            for u in source_units(text):
+                if u['text'].startswith('“'):
+                    labels.append({'id': u['id'], 'kind': 'dialogue', 'speaker': '阿宁' if '赖账' in u['text'] else 'UNKNOWN', 'certain': True})
+                else:
+                    labels.append({'id': u['id'], 'kind': 'narration', 'speaker': 'NARRATOR', 'certain': True})
+            return {'labels': labels, 'model_sha256': 'fixture'}
+    with TestClient(create_app(tmp_path / 'p', FixtureEngine(), role_engine=Guesses()), base_url='http://127.0.0.1', headers=HEADERS) as c:
+        text = '阿宁一进门，柜边的人都笑了，有的叫道：“阿宁，你又来赖账？”\n一个买酒的人说道，“他上回就没给钱。”\n阿宁对我说道，“我这就给。”\n'
+        d = c.post('/api/attribution/draft', json={'script': text, 'language': 'zh'}).json()
+        by = {u['text'].strip(): u for u in d['units'] if not u['blank']}
+        crowd = by['“阿宁，你又来赖账？”']
+        assert crowd['speaker'] == '众人' and crowd['tier'] == 'suggested' and crowd['stand_in'] and crowd['hint'] == '阿宁'   # the model's 阿宁 kept as a hint
+        assert by['“他上回就没给钱。”']['speaker'] == '某人' and by['“他上回就没给钱。”']['tier'] == 'suggested'
+        assert by['“我这就给。”']['speaker'] == 'UNKNOWN' and by['“我这就给。”'].get('tier') is None    # 对我说道: not 我's line, and nobody else is tagged
+        # English narration is left alone.
+        d = c.post('/api/attribution/draft', json={'script': 'Someone said, “Not today.”\n', 'language': 'en'}).json()
+        assert all(not u.get('stand_in') for u in d['units'])

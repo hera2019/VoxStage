@@ -65,12 +65,19 @@ SPEECH_VERBS = ('说道', '笑道', '叫道', '喊道', '骂道', '问道', '答
                 '说', '道', '问', '答', '叫', '喊', '骂', '笑', '回', '嚷', '吼', '哼', '应', '继续', '接着', '开口', '插嘴', '补充')
 
 
+# A name right after one of these is the person spoken to, looked at or taken
+# hold of, not the speaker: 对我说道, 见了我，又说道, 望着小雪说. (Kong Yiji,
+# 2026-09-16: 有一回对我说道 gave the line to 我.)
+_OBJECT_MARKS = '对向跟朝冲同和与替给见问着住到把了望瞧盯找拉扶推指叫喊'
+
+
 def speech_tag(before, after, mentions):
     """The name a speech tag beside a line gives it, or None. `mentions` maps each
     character to the forms it is known by. Looks at the tail of the narration
     before the line (小雪笑道：) and the head of the narration after it
     (”小雪说。); exactly one character must fit."""
-    tail = STRIP.sub('', before or '')[-16:]
+    whole = STRIP.sub('', before or '')
+    tail = whole[-16:]
     after_clean = STRIP.sub('', after or '')
     # A narration that ends by introducing a quote (小雪说：) tags the line
     # after it, not the one before; only a closing tag (小雪说。) counts here.
@@ -80,11 +87,49 @@ def speech_tag(before, after, mentions):
         for f in forms:
             i = tail.rfind(f)
             if i >= 0 and any(v in tail[i + len(f):i + len(f) + 6] for v in SPEECH_VERBS):
-                found.add(name)
+                k = len(whole) - len(tail) + i          # the character before the name, in the whole narration
+                if not (k > 0 and whole[k - 1] in _OBJECT_MARKS):
+                    found.add(name)
             j = head.find(f)
             if 0 <= j <= 4 and any(v in head[j + len(f):j + len(f) + 6] for v in SPEECH_VERBS):
-                found.add(name)
+                if not (j > 0 and head[j - 1] in _OBJECT_MARKS):
+                    found.add(name)
     return next(iter(found)) if len(found) == 1 else None
+
+
+# A speech tag whose subject is nobody in particular. The story never names
+# these speakers, so no model can, and the reviewer was left to pick a name for
+# each line by hand (Kong Yiji, 2026-09-16: ten crowd lines — 有的叫道, 旁人便又
+#问道, 他们便接着说道, 一个喝酒的人说道 — all left orange). The line gets a
+# stand-in name instead, yellow: 众人 for a group, 某人 for one unnamed person.
+# Renaming the stand-in once on the review page carries every line along.
+_VERB_ALT = '|'.join(sorted(SPEECH_VERBS, key=len, reverse=True))
+_GROUP = (r'(?:有的人?|旁人|他们|她们|众人|人们|大家伙?儿?|别人|别的人|其他人|其余的人|旁边的人|周围的人|那些人|这些人|一些人|'
+          r'几个人|一群[^，。！？：；、]{0,4}?|大伙儿?|看客们?|人群|所有[^，。！？：；、]{0,6}?人|有几个人?)')
+_ONE = (r'(?:有人|有个人|有一个人|某人|那人|那个人|这人|一个人|一人|不知是?谁|有谁|一个声音|有个声音|'
+        r'一个[^，。！？：；、]{1,6}?(?:人|声音)|一位[^，。！？：；、]{1,4}?)')
+_ANON_TAG = re.compile(r'(?:^|[，。！？：；、])(?:(?P<group>' + _GROUP + r')|(?P<one>' + _ONE + r'))[^，。！？：；、]{0,8}?(?:' + _VERB_ALT + r')[：:，,]?$')
+_ANON_HEAD = re.compile(r'^(?:(?P<group>' + _GROUP + r')|(?P<one>' + _ONE + r'))[^，。！？：；、]{0,8}?(?:' + _VERB_ALT + ')')
+_VOICE = re.compile(r'(?:听得|听见|听到|传来|响起|飘来)[^，。！？：；、]{0,6}?(?:声音|声)[：:，,]?$')
+STAND_INS = {'group': '众人', 'one': '某人'}
+
+
+def anonymous_tag(before, after=''):
+    """The stand-in name for a line whose tag names nobody in particular —
+    '众人' (有的叫道, 旁人便又问道, 他们嚷道) or '某人' (有人说, 一个喝酒的人说道,
+    忽然听得一个声音) — or None."""
+    tail = STRIP.sub('', before or '')[-24:]
+    m = _ANON_TAG.search(tail)
+    if m:
+        return STAND_INS['group' if m.group('group') else 'one']
+    if _VOICE.search(tail):
+        return STAND_INS['one']
+    head = STRIP.sub('', after or '')
+    if head and not head.rstrip('。！？!?').endswith(('：', ':', '，', ',')):    # a closing tag, not one introducing the next line
+        m = _ANON_HEAD.match(head[:20])
+        if m:
+            return STAND_INS['group' if m.group('group') else 'one']
+    return None
 
 
 PRONOUNS = {'他', '她', '它', '我', '你', '您', '他们', '她们', '我们', '你们', '大家', '众人', '有人', '那人', '此人', '一人', '男人', '女人',

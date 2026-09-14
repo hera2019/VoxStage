@@ -755,7 +755,8 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             silenced = [u for u in spoken if labels[u['id']]['kind'] == 'narration']
             degenerate = len(spoken) >= 3 and (len(silenced) == len(spoken) or (len(spoken) >= 10 and len(silenced) >= 0.9 * len(spoken)))
             if fallback_used and not degenerate:
-                notice = f'默认模型这次没能分出说话人，已换用「{next((m["label"] for m in role_engine.installed() if m["id"] == fallback_used), fallback_used)}」重来一次；下面是它的草稿。'
+                labels_of = {m['id']: m['label'] for m in role_engine.installed()}
+                notice = f'「{labels_of.get(role_engine.model_id, role_engine.model_id)}」这次没能分出说话人，已换用「{labels_of.get(fallback_used, fallback_used)}」重来一次；下面是它的草稿。'
             if degenerate:
                 notice = (f'模型这次没有给出角色划分（{len(spoken)} 句引号里的话，{len(silenced)} 句被标成了旁白）。'
                           '已按引号先把对白分出来，说话人留空，请你填写。')
@@ -819,6 +820,18 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 if tagged:
                     if u['speaker'].strip() != tagged:
                         u.update({'speaker': tagged, 'basis': '旁边的叙述点了这个名字'}); u.pop('tier', None); u.pop('hint', None)
+                    continue
+                # A tag that names nobody in particular (有的叫道, 旁人便又问道,
+                # 一个喝酒的人说道): the story never names this speaker, so the
+                # line gets a stand-in — 众人 or 某人 — yellow, over whatever the
+                # model said. Renaming the stand-in once carries every line along.
+                stand_in = habits.anonymous_tag(before['text'] if before and before['kind'] == 'narration' else '',
+                                                after['text'] if after and after['kind'] == 'narration' else '') if body.language == 'zh' else None
+                if stand_in:
+                    was = u['speaker'].strip()
+                    u.update({'speaker': stand_in, 'tier': 'suggested', 'basis': '叙述里只说是没有名字的人，先记作', 'stand_in': True})
+                    if was.upper() not in ('', 'UNKNOWN', 'NARRATOR') and was != stand_in:
+                        u['hint'] = was
                     continue
                 sp = u['speaker'].strip()
                 named_in_line = [name for name, forms in mentions.items() if any(habits.mentioned(u['text'], f) for f in forms)]
