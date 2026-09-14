@@ -229,7 +229,9 @@ class RoleDraftEngine:
         with socket.socket() as sock:
             sock.bind(('127.0.0.1',0)); port = sock.getsockname()[1]
         key = uuid.uuid4().hex
-        settings = {'temperature':0,'seed':260909,'max_tokens':2048,'top_p':1,'frequency_penalty':0,'presence_penalty':0}
+        # 80 units × ~26 tokens each once the certain flag is in the answer:
+        # 2,048 cut Kong Yiji's 68-unit answer off mid-JSON (本人 2026-09-15).
+        settings = {'temperature':0,'seed':260909,'max_tokens':4096,'top_p':1,'frequency_penalty':0,'presence_penalty':0}
         def request(path, payload=None, timeout=180):
             req = urllib.request.Request(f'http://127.0.0.1:{port}'+path,
                 data=None if payload is None else json.dumps(payload,ensure_ascii=False).encode(),
@@ -239,7 +241,7 @@ class RoleDraftEngine:
         started = time.monotonic()
         with Path(log_path).open('w') as log:
             proc = subprocess.Popen([str(self.server),'-m',str(self.model),'--alias','role-draft','-ngl','all',
-                '-c','8192','-np','1','--jinja','--reasoning','off','--host','127.0.0.1','--port',str(port),
+                '-c','16384','-np','1','--jinja','--reasoning','off','--host','127.0.0.1','--port',str(port),
                 '--no-webui','--api-key',key],stdout=log,stderr=subprocess.STDOUT)
             try:
                 for _ in range(300):
@@ -256,6 +258,8 @@ class RoleDraftEngine:
                         [{'id':u['id'],'text':u['text']} for u in units],ensure_ascii=False)}],
                     'response_format':{'type':'json_schema','json_schema':{'name':'speaker_segments','schema':schema}}})
                 raw = response['choices'][0]['message']['content'] or ''
+                if response['choices'][0].get('finish_reason') == 'length':
+                    raise ValueError('模型的回答被截断了（超过输出上限）。请把原文分成两段再试。')
                 repaired = None
                 try:
                     bind_labels(text, raw)

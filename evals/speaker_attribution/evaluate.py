@@ -51,10 +51,10 @@ def run(args):
     with open(args.model,'rb') as f:model_sha=hashlib.file_digest(f,'sha256').hexdigest()
     key=uuid.uuid4().hex
     with socket.socket() as s:s.bind(('127.0.0.1',0));port=s.getsockname()[1]
-    settings={'temperature':0,'seed':260909,'max_tokens':2048,'top_p':1,'frequency_penalty':0,'presence_penalty':0}
+    settings={'temperature':0,'seed':260909,'max_tokens':4096,'top_p':1,'frequency_penalty':0,'presence_penalty':0}
     logdir=ROOT/'user-data/speaker-attribution';logdir.mkdir(parents=True,exist_ok=True)
     log=(logdir/(args.label+'.log')).open('w')
-    cmd=[args.server,'-m',args.model,'--alias',args.label,'-ngl','all','-c','8192','-np','1','--jinja','--reasoning','off','--host','127.0.0.1','--port',str(port),'--no-webui','--api-key',key]
+    cmd=[args.server,'-m',args.model,'--alias',args.label,'-ngl','all','-c','16384','-np','1','--jinja','--reasoning','off','--host','127.0.0.1','--port',str(port),'--no-webui','--api-key',key]
     started=time.monotonic();proc=subprocess.Popen(cmd,stdout=log,stderr=subprocess.STDOUT);rows=[];rss=[]
     def request(path,payload=None,timeout=180):
         req=urllib.request.Request(f'http://127.0.0.1:{port}'+path,data=None if payload is None else json.dumps(payload,ensure_ascii=False).encode(),headers={'Content-Type':'application/json','Authorization':'Bearer '+key})

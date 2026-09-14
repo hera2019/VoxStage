@@ -110,6 +110,8 @@ def test_a_chapter_project_remembers_its_book_and_inherits_the_previous_chapter(
     from fastapi.testclient import TestClient
     from runtime.app import create_app
     from runtime.engines import FixtureEngine
+    from fastapi.testclient import TestClient
+    from runtime.app import create_app
     from tests.test_attribution_import import Roles, HEADERS
     with TestClient(create_app(tmp_path/'projects', FixtureEngine(), role_engine=Roles()), base_url='http://127.0.0.1', headers=HEADERS) as c:
         text = '第一章 酒店\n掌柜看着他。“还欠十九个钱呢。”掌柜说。\n\n第二章 伙计\n“又来了？”掌柜说。“下回还清罢。”孔乙己说。\n'
@@ -151,6 +153,8 @@ def test_a_project_made_before_the_link_existed_is_linked_by_its_name(tmp_path):
     from fastapi.testclient import TestClient
     from runtime.app import create_app
     from runtime.engines import FixtureEngine
+    from fastapi.testclient import TestClient
+    from runtime.app import create_app
     from tests.test_attribution_import import Roles, HEADERS
     with TestClient(create_app(tmp_path/'projects', FixtureEngine(), role_engine=Roles()), base_url='http://127.0.0.1', headers=HEADERS) as c:
         book = c.post('/api/books', json={'title': '孔乙己', 'language': 'zh', 'script': '第一章 酒店\n掌柜看着他。\n\n第二章 伙计\n他走了。\n'}).json()
@@ -182,3 +186,25 @@ def test_a_template_keeps_a_configuration_and_applies_it_to_another_project(clie
     assert client.post(f"/api/projects/{other['id']}/inherit", json={'revision': applied['revision']}).status_code == 400
     assert client.delete('/api/templates/' + t['id']).status_code == 200
     assert client.get('/api/templates').json() == []
+
+
+def test_a_chapter_still_drafts_after_its_book_was_deleted(tmp_path):
+    """The chapter page keeps the book id it was opened with; the book may be
+    gone by the time the draft is asked for (2026-09-16)."""
+    from fastapi.testclient import TestClient
+    from runtime.app import create_app
+    from tests.test_attribution_import import Roles, HEADERS
+    from evals.speaker_attribution.source_units import source_units
+    from runtime.engines import FixtureEngine
+    class Plain(Roles):
+        def annotate(self, text, log_path):
+            return {'labels': [{'id': u['id'], 'kind': 'dialogue' if u['text'].startswith('“') else 'narration',
+                                'speaker': '阿宁' if u['text'].startswith('“') else 'NARRATOR', 'certain': True} for u in source_units(text)],
+                    'model_sha256': 'fixture'}
+    with TestClient(create_app(tmp_path / 'p', FixtureEngine(), role_engine=Plain()), base_url='http://127.0.0.1', headers=HEADERS) as c:
+        book = c.post('/api/books', json={'title': '书', 'language': 'zh', 'script': '第一章 一\n阿宁说：“来。”\n\n第二章 二\n阿宁又说：“来呀。”\n'}).json()
+        ch = c.get(f"/api/books/{book['id']}/chapters/2").json()
+        assert c.delete('/api/books/' + book['id']).status_code == 200
+        d = c.post('/api/attribution/draft', json={'script': ch['text'], 'language': 'zh', 'book_id': book['id']})
+        assert d.status_code == 200, d.text
+        assert [u['speaker'] for u in d.json()['units'] if u['kind'] == 'dialogue'] == ['阿宁']

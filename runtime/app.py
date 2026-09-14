@@ -639,6 +639,11 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 engine.unload()
             names_for_model = []
             if body.book_id:
+                try:
+                    books.get(body.book_id)
+                except ValueError:
+                    body.book_id = None          # the book was removed since; draft without it
+            if body.book_id:
                 with store.lock:
                     for sibling in book_projects(books.get(body.book_id)):
                         for sp, voice in sibling['voices'].items():
@@ -651,12 +656,39 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                             notes = [x for x in ({'f': '女', 'm': '男'}.get(sex, ''), '又称 ' + '、'.join(also) if also else '') if x]
                             names_for_model.append(sp + ('（' + '；'.join(notes) + '）' if notes else ''))
             # Test doubles may not take the cast; the real engine does.
-            result = (role_engine.annotate(body.script, drafts/(draft_id+'.log'), known_names=names_for_model) if names_for_model and 'known_names' in role_engine.annotate.__code__.co_varnames
-                      else role_engine.annotate(body.script, drafts/(draft_id+'.log')))
+            def annotate_with(engine_, log_name):
+                return (engine_.annotate(body.script, drafts/log_name, known_names=names_for_model) if names_for_model and 'known_names' in engine_.annotate.__code__.co_varnames
+                        else engine_.annotate(body.script, drafts/log_name))
+            result = annotate_with(role_engine, draft_id+'.log')
+            # The evaluated model reads ordinary prose best (Kong Yiji: 19 of 21 names
+            # right where the abliterated fine-tune names two lines), but answers a
+            # manuscript it balks at with a draft of nothing. When it does, and the
+            # other model is installed, ask that one instead of falling straight
+            # back on the structural draft. Both runs are kept in the record.
+            def names_given(labels):
+                return sum(1 for l in labels if l['kind'] == 'dialogue' and l['speaker'].strip().upper() not in ('', 'UNKNOWN', 'NARRATOR'))
+            def balked(labels):
+                quoted = [u for u in source_units(body.script) if u['text'].strip() and u['text'].strip()[0] in '“"「『']
+                by = {l['id']: l for l in labels}
+                silenced = [u for u in quoted if by.get(u['id'], {}).get('kind') == 'narration']
+                return len(quoted) >= 3 and (len(silenced) == len(quoted) or (len(quoted) >= 10 and len(silenced) >= 0.9 * len(quoted)))
+            fallback_used = None
+            if balked(result['labels']) and hasattr(role_engine, 'installed') and hasattr(role_engine, 'select'):
+                others = [m['id'] for m in role_engine.installed() if m['installed'] and m['id'] != role_engine.model_id]
+                if others:
+                    chosen = role_engine.model_id
+                    try:
+                        role_engine.select(others[0])
+                        second = annotate_with(role_engine, draft_id+'-fallback.log')
+                    finally:
+                        role_engine.select(chosen)
+                    if not balked(second['labels']) or names_given(second['labels']) > names_given(result['labels']):
+                        result = {**second, 'first_attempt': {'model_id': result.get('model_id'), 'labels': result['labels']}}
+                        fallback_used = others[0]
             # Validate even injected engines; no unbound model text reaches a project.
             from evals.speaker_attribution.source_units import bind_labels
             bind_labels(body.script,json.dumps({'labels':result['labels']}))
-            record = {**result,'draft_id':draft_id,'source_script':body.script,'language':body.language}
+            record = {**result,'draft_id':draft_id,'source_script':body.script,'language':body.language,'fallback_model':fallback_used}
             (drafts/(draft_id+'.json')).write_text(json.dumps(record,ensure_ascii=False,indent=2))
             labels = {x['id']:x for x in result['labels']}
             # A name the model invents -- ME for 我, WU DI for 吴迪 -- is not a
@@ -724,6 +756,8 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             spoken = [u for u in units if u['text'].strip() and u['text'].strip()[0] in '“"「『']   # '' is "in" any string
             silenced = [u for u in spoken if labels[u['id']]['kind'] == 'narration']
             degenerate = len(spoken) >= 3 and (len(silenced) == len(spoken) or (len(spoken) >= 10 and len(silenced) >= 0.9 * len(spoken)))
+            if fallback_used and not degenerate:
+                notice = f'默认模型这次没有给出角色划分，已换用「{next((m["label"] for m in role_engine.installed() if m["id"] == fallback_used), fallback_used)}」重来一次；下面是它的草稿。'
             if degenerate:
                 notice = (f'模型这次没有给出角色划分（{len(spoken)} 句引号里的话，{len(silenced)} 句被标成了旁白）。'
                           '已按引号先把对白分出来，说话人留空，请你填写。')
@@ -763,7 +797,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             # Rule 1 overrides the model's answer (plain); 2 and 3 fill or demote
             # to yellow. Aliases count as the name: 老板娘 is 陈小雪.
             cast = list(dict.fromkeys(list(known_names) + [u['speaker'].strip() for u in out if u['kind'] == 'dialogue' and u['speaker'].strip().upper() not in ('', 'UNKNOWN', 'NARRATOR')]
-                                      + habits.names_from_tags(u['text'] for u in out if u['kind'] == 'narration' and not u['blank'])))
+                                      + habits.names_from_tags((u['text'] for u in out if u['kind'] == 'narration' and not u['blank']), body.script)))
             cast = [aliases.get(c, c) for c in cast]; cast = list(dict.fromkeys(cast))
             # The sex of each cast member, from the voice the book gave them; and
             # what a female or male line looks like in this book, from confirmed lines.
@@ -830,10 +864,15 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
         except ValueError as exc:
             # bind_labels rejects a malformed model response. Its wording names
             # internal structures, which tells the reader nothing they can act on.
+            # The cause still goes to the server log (2026-09-16: a draft failed
+            # for a chapter of a book that had been deleted, and the message
+            # blamed the text).
+            logging.warning('Role draft %s failed: %s', draft_id, exc)
             raise ValueError('这段原文的角色划分没有成功，通常是角色太多或对话太密。\n\n'
                              '可以先分成两三段分别导入，之后在原稿编辑里合起来；'
                              '或者直接重试一次，每次的结果会略有不同。') from exc
         except (OSError, KeyError, TypeError) as exc:
+            logging.warning('Role draft %s failed: %r', draft_id, exc)
             raise ValueError('角色草稿生成失败，请保留原稿后重试。') from exc
         finally:
             with store.lock:

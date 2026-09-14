@@ -92,22 +92,32 @@ PRONOUNS = {'他', '她', '它', '我', '你', '您', '他们', '她们', '我�
 _TAG_TAIL = re.compile(r'(?:^|[，。！？：；、])([^，。！？：；、“”"\s]{1,4}?)(' + '|'.join(sorted(SPEECH_VERBS, key=len, reverse=True)) + r')[：:，,]?$')
 
 
-def names_from_tags(narrations):
+FUNCTION_STARTS = ('又', '便', '就', '才', '也', '都', '却', '忙', '正', '只', '还', '再', '一', '有的', '有人', '别人', '旁人', '对', '向', '朝', '跟', '和',
+                   '于是', '然后', '接着', '连忙', '点头', '摇头', '笑着', '哭着', '低声', '大声', '高声', '轻声', '冷冷', '慢慢')
+
+
+def names_from_tags(narrations, whole_text=''):
     """Names the speech tags themselves reveal — 小雪说： — so a text with no
-    earlier chapters still has a cast. Pronouns are not names."""
+    earlier chapters still has a cast. A candidate must look like a name:
+    two to four characters, not a pronoun or a manner word (又说, 点头说,
+    有的叫道 are not people), and — since a character recurs — found at
+    least three times in a long text (a short passage cannot be asked that)."""
     out = []
     for text in narrations:
         m = _TAG_TAIL.search(STRIP.sub('', text or ''))
-        if m:
-            name = m.group(1)
-            if name in SPEECH_VERBS or any(v in name for v in ('说', '道', '问', '答')):
-                name = ''
-            for pro in sorted(PRONOUNS, key=len, reverse=True):
-                if name.startswith(pro) and len(name) - len(pro) <= 1:
-                    name = ''
-                    break
-            if name and name not in out:
-                out.append(name)
+        if not m:
+            continue
+        name = m.group(1)
+        if len(name) < 2 or name in SPEECH_VERBS or any(v in name for v in ('说', '道', '问', '答')):
+            continue
+        if name in PRONOUNS or any(name.startswith(pro) and len(name) - len(pro) <= 1 for pro in PRONOUNS):
+            continue
+        if any(name.startswith(w) for w in FUNCTION_STARTS):
+            continue
+        if whole_text and len(whole_text) >= 1500 and whole_text.count(name) < 3:
+            continue
+        if name not in out:
+            out.append(name)
     return out
 
 
