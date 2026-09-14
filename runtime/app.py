@@ -92,7 +92,8 @@ class VoiceRenameRequest(BaseModel):
     name: str = Field(min_length=1, max_length=40)
 
 class SettingsRequest(BaseModel):
-    favourite_voices: list[str] = Field(default_factory=list, max_length=40)
+    favourite_voices: list[str] | None = Field(default=None, max_length=40)
+    role_model: str | None = Field(default=None, max_length=80)
 
 class ScriptRequest(BaseModel):
     revision: int = Field(ge=0)
@@ -118,6 +119,7 @@ class EditRequest(BaseModel):
     read_aloud: bool | None = None
     lexicon: dict[str, str] | None = None
     preset_model: Literal['0.6B', '1.7B'] | None = None
+    color: str | None = Field(default=None, pattern=r'^(#[0-9a-fA-F]{6}|auto)$')   # with speaker: this character's colour on screen
 
 class TempoRegion(BaseModel):
     start: float = Field(ge=0, allow_inf_nan=False)
@@ -207,6 +209,17 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
     engine = engine or MlxEngine(os.environ.get('VOXSTAGE_MODEL', ROOT/'user-data/models/qwen-customvoice'))
     checker = checker or WhisperChecker(ROOT/'user-data/asr-settings.json')
     role_engine = role_engine or RoleDraftEngine()
+    def settings_file():
+        path = workspace/'settings.json'
+        try:
+            return json.loads(path.read_text()) if path.is_file() else {}
+        except ValueError:
+            return {}
+    if hasattr(role_engine, 'select') and settings_file().get('role_model'):
+        try:
+            role_engine.select(settings_file()['role_model'])
+        except ValueError:
+            pass
     drafts = store.root.parent / (store.root.name + '-role-drafts')
     drafts.mkdir(exist_ok=True)
     executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix='voxstage-render')
@@ -262,20 +275,33 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
     @app.get('/api/config')
     def config():
         return {'engine':engine.label, 'engine_id':engine.identity, 'ready':engine.ready,
-                'attribution_ready':role_engine.ready, 'speed_ready':bool(ffmpeg_path()),'checker_ready':checker.ready, 'checker_id':checker.identity, 'voices':VOICES, 'fixed_voice_ready':getattr(engine,'reference_ready',False), 'preset_models':['0.6B']+(['1.7B'] if getattr(engine,'large_identity',None) else []), 'default_preset_model':('1.7B' if getattr(engine,'large_identity',None) else '0.6B'), 'design_ready':getattr(engine,'design_ready',False), 'local_only':True, 'synthetic_audio':True}
+                'attribution_ready':role_engine.ready, 'role_models':(role_engine.installed() if hasattr(role_engine,'installed') else []), 'role_model':getattr(role_engine,'model_id',None), 'speed_ready':bool(ffmpeg_path()),'checker_ready':checker.ready, 'checker_id':checker.identity, 'voices':VOICES, 'fixed_voice_ready':getattr(engine,'reference_ready',False), 'preset_models':['0.6B']+(['1.7B'] if getattr(engine,'large_identity',None) else []), 'default_preset_model':('1.7B' if getattr(engine,'large_identity',None) else '0.6B'), 'design_ready':getattr(engine,'design_ready',False), 'local_only':True, 'synthetic_audio':True}
 
     @app.get('/api/settings')
     def read_settings():
-        path = workspace/'settings.json'
-        stored = json.loads(path.read_text()) if path.is_file() else {}
-        return {'favourite_voices': [v for v in stored.get('favourite_voices', []) if v in VOICES]}
+        stored = settings_file()
+        return {'favourite_voices': [v for v in stored.get('favourite_voices', []) if v in VOICES],
+                'role_model': getattr(role_engine, 'model_id', None)}
 
     @app.post('/api/settings')
     def write_settings(body: SettingsRequest):
-        favourites = list(dict.fromkeys(v for v in body.favourite_voices if v in VOICES))
-        (workspace/'settings.json').write_text(
-            json.dumps({'favourite_voices': favourites}, ensure_ascii=False, indent=1))
-        return {'favourite_voices': favourites}
+        stored = settings_file()
+        if body.favourite_voices is not None:
+            stored['favourite_voices'] = list(dict.fromkeys(v for v in body.favourite_voices if v in VOICES))
+        if body.role_model is not None:
+            # Switching the role-draft model: only to one that is installed and
+            # hash-checked on first use; the draft record says which one answered.
+            if not hasattr(role_engine, 'select'):
+                raise ValueError('当前环境不能切换分角色模型。')
+            with store.lock:
+                if active['project_id']:
+                    raise RuntimeError('正在处理其他任务，请稍后再切换模型。')
+                if not any(m['id'] == body.role_model and m['installed'] for m in role_engine.installed()):
+                    raise ValueError('这个分角色模型还没有安装：运行 scripts/setup_model.py --model role-abliterated。')
+                role_engine.select(body.role_model)
+            stored['role_model'] = body.role_model
+        (workspace/'settings.json').write_text(json.dumps(stored, ensure_ascii=False, indent=1))
+        return {'favourite_voices': stored.get('favourite_voices', []), 'role_model': getattr(role_engine, 'model_id', None)}
 
     @app.get('/api/voices/custom')
     def list_custom_voices():
@@ -732,6 +758,17 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 for s in p['segments']:
                     if s['speaker'] == body.speaker:
                         s['error'] = None
+            if body.color is not None:
+                # A character's colour in the script list: a screen preference,
+                # kept with the project, nothing to do with the audio. 'auto'
+                # returns the character to the palette's own choice.
+                if body.speaker not in p['voices']:
+                    raise ValueError('Select an existing speaker')
+                colors = p.setdefault('colors', {})
+                if body.color == 'auto':
+                    colors.pop(body.speaker, None)
+                else:
+                    colors[body.speaker] = body.color.lower()
         return store.public(store.edit(project_id, body.revision, apply), engine, checker)
 
     class SplitRequest(RevisionRequest):

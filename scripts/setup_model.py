@@ -30,6 +30,14 @@ MODELS={
             'revision':'5ecdb67327fd37bb2e042aab12ff7391903235d3',
             'sha256':{'model.safetensors':'391e8db219f292c515297cdceeb43e4eae67cdde35fa57e79a6a8a532fca0522',
                       'speech_tokenizer/model.safetensors':TOKENIZER_SHA}},
+    # A second role-draft model: a community "abliterated" fine-tune of the
+    # same Qwen3-4B-Instruct-2507 base (huihui-ai; GGUF by mradermacher),
+    # Apache-2.0, for manuscripts the base model answers with a draft of
+    # nothing. One GGUF file, pinned by revision and SHA-256. Selected in
+    # settings; its evaluation result is recorded before it is recommended.
+    'role-abliterated':{'folder':'role-qwen3-4b-abliterated','repo':'mradermacher/Huihui-Qwen3-4B-Instruct-2507-abliterated-GGUF',
+            'revision':'c9e90669eeb205d5af35c28a3e9983fc9293c2ec','gguf':True,
+            'sha256':{'Huihui-Qwen3-4B-Instruct-2507-abliterated.Q8_0.gguf':'f3b6a790d226efadd863152415713d4d177a22e80eb37bc54537dab110062f31'}},
 }
 REQUIRED=['config.json','tokenizer_config.json','vocab.json','merges.txt',
           'speech_tokenizer/config.json','speech_tokenizer/configuration.json']
@@ -37,7 +45,7 @@ REQUIRED=['config.json','tokenizer_config.json','vocab.json','merges.txt',
 
 def verify_files(folder, spec):
     problems=[]
-    for name in REQUIRED:
+    for name in ([] if spec.get('gguf') else REQUIRED):
         if not (folder/name).is_file():problems.append('缺少文件：'+name)
     for name,expected in spec['sha256'].items():
         path=folder/name
@@ -85,6 +93,7 @@ def prepare(kind, root=ROOT, verify_only=False, downloader=None):
         print('正在准备 '+kind+' 固定版本模型，文件只下载到本机。',flush=True)
         downloader(spec['repo'],revision=spec['revision'],local_dir=folder,
                    ignore_patterns=['*.md','.gitattributes'],
+                   **({'allow_patterns':list(spec['sha256'])} if spec.get('gguf') else {}),
                    force_download=any(x.startswith('权重校验不一致') for x in problems))
         downloaded=True
         problems=verify_files(folder,spec)
@@ -97,7 +106,7 @@ def prepare(kind, root=ROOT, verify_only=False, downloader=None):
 
 def main():
     parser=argparse.ArgumentParser(description='准备预设/固定声线模型，或仅离线校验已有文件')
-    parser.add_argument('--model',choices=['preset','base','preset-large','design','all'],default='preset')
+    parser.add_argument('--model',choices=['preset','base','preset-large','design','role-abliterated','all'],default='preset')
     parser.add_argument('--verify-only',action='store_true',help='只检查，不下载或修改任何文件')
     args=parser.parse_args()
     failed=False

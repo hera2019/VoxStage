@@ -229,11 +229,14 @@ def inherit_settings(target, source, source_dir, target_dir):
     for key in SETTINGS:
         if key in source and source[key] != target.get(key):
             target[key] = copy.deepcopy(source[key]); carried['settings'].append(key)
+    for speaker, color in (source.get('colors') or {}).items():
+        if speaker in target['voices']:
+            target.setdefault('colors', {})[speaker] = color
     return carried
 
 
 def edit_state(project):
-    return copy.deepcopy({**{k:project[k] for k in ('name','language','voices','segments','pause_ms')},'lexicon':project.get('lexicon',{}),'preset_model':project.get('preset_model','0.6B'),'voice_profiles':project.get('voice_profiles',{}), 'archived':project.get('archived',False), 'speech_rate':project.get('speech_rate',1.0)})
+    return copy.deepcopy({**{k:project[k] for k in ('name','language','voices','segments','pause_ms')},'lexicon':project.get('lexicon',{}),'preset_model':project.get('preset_model','0.6B'),'voice_profiles':project.get('voice_profiles',{}), 'archived':project.get('archived',False), 'speech_rate':project.get('speech_rate',1.0), 'colors':project.get('colors',{})})
 
 class Store:
     def __init__(self, root):

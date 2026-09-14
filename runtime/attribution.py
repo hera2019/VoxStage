@@ -14,6 +14,27 @@ from evals.speaker_attribution.source_units import source_units, bind_labels, PA
 ROOT = Path(__file__).resolve().parents[1]
 MODEL_SHA = 'ae916ede1c010a26955ee8ae2e908bf8815a3f135ec860439ab924701c69d5f1'
 
+# The models the role draft may run on. Each is a llama.cpp GGUF, pinned by
+# SHA-256; the draft record says which one answered. The default is the one
+# the attribution evaluation was run on. The second is a community
+# "abliterated" fine-tune of the same base — its refusal behaviour removed,
+# Apache-2.0 like the base — for manuscripts the base model answers with a
+# draft of nothing (2026-09-14: 70 units, all NARRATOR). Its accuracy against
+# the 20-scene evaluation is measured separately and recorded before it is
+# recommended for anything.
+ROLE_MODELS = {
+    'qwen3-4b-instruct-2507-q8': {
+        'label': 'Qwen3-4B-Instruct-2507 · Q8（默认，评测过）',
+        'sha256': MODEL_SHA,
+        'paths': [ROOT/'user-data/models/role-qwen3-4b/qwen3-4b-instruct-2507-q8_0.gguf',
+                  ROOT.parent/'AI-Models/generators/qwen3-4b-instruct-2507/qwen3-4b-instruct-2507-q8_0.gguf']},
+    'qwen3-4b-instruct-2507-abliterated-q8': {
+        'label': 'Qwen3-4B-Instruct-2507 去审查版 · Q8（huihui-ai 微调）',
+        'sha256': 'f3b6a790d226efadd863152415713d4d177a22e80eb37bc54537dab110062f31',
+        'paths': [ROOT/'user-data/models/role-qwen3-4b-abliterated/Huihui-Qwen3-4B-Instruct-2507-abliterated.Q8_0.gguf']},
+}
+DEFAULT_ROLE_MODEL = 'qwen3-4b-instruct-2507-q8'
+
 
 def project_segments(source, labels, language, locks=()):
     # Validate IDs against preserved source, including duplicate/missing labels.
@@ -156,9 +177,29 @@ def tidy_speaker(name):
 
 
 class RoleDraftEngine:
-    def __init__(self):
-        self.model = Path(os.environ.get('VOXSTAGE_ROLE_MODEL', ROOT.parent/'AI-Models/generators/qwen3-4b-instruct-2507/qwen3-4b-instruct-2507-q8_0.gguf'))
+    def __init__(self, model_id=None):
         self.server = Path(os.environ.get('VOXSTAGE_ROLE_SERVER', ROOT.parent/'AI-Lab/qwen3-14b-llamacpp/worktrees/llama.cpp/build-release-metal/bin/llama-server'))
+        self.select(model_id or DEFAULT_ROLE_MODEL)
+
+    @staticmethod
+    def path_for(model_id):
+        """The installed file for a registered model, or None. VOXSTAGE_ROLE_MODEL
+        overrides the default model's location, as it always has."""
+        spec = ROLE_MODELS[model_id]
+        candidates = list(spec['paths'])
+        if model_id == DEFAULT_ROLE_MODEL and os.environ.get('VOXSTAGE_ROLE_MODEL'):
+            candidates.insert(0, Path(os.environ['VOXSTAGE_ROLE_MODEL']))
+        return next((p for p in candidates if p.is_file()), None)
+
+    def installed(self):
+        return [{'id': k, 'label': v['label'], 'installed': self.path_for(k) is not None} for k, v in ROLE_MODELS.items()]
+
+    def select(self, model_id):
+        if model_id not in ROLE_MODELS:
+            raise ValueError('没有这个分角色模型。')
+        self.model_id = model_id
+        self.model = self.path_for(model_id) or ROLE_MODELS[model_id]['paths'][0]
+        self.sha256 = ROLE_MODELS[model_id]['sha256']
         self.ready = self.model.is_file() and self.server.is_file()
 
     def annotate(self, text, log_path):
@@ -168,7 +209,7 @@ class RoleDraftEngine:
         if not text.strip() or len(units) > 80:
             raise ValueError('请选取更短的原稿（最多 80 个引号切片）。')
         with self.model.open('rb') as stream:
-            if hashlib.file_digest(stream, 'sha256').hexdigest() != MODEL_SHA:
+            if hashlib.file_digest(stream, 'sha256').hexdigest() != self.sha256:
                 raise ValueError('分角色模型校验不一致。')
         prompt = (ROOT/'evals/speaker_attribution/prompt-anchored.txt').read_text()
         schema = {'type':'object', 'properties': {'labels': {'type':'array', 'minItems':len(units), 'maxItems':len(units),
@@ -207,7 +248,7 @@ class RoleDraftEngine:
                 raw = response['choices'][0]['message']['content'] or ''
                 bind_labels(text, raw)
                 labels = [{**x, 'speaker': tidy_speaker(x['speaker'])} for x in json.loads(raw)['labels']]
-                return {'labels':labels, 'raw_response':response, 'model_sha256':MODEL_SHA,
+                return {'labels':labels, 'raw_response':response, 'model_sha256':self.sha256, 'model_id':self.model_id,
                         'settings':settings,'prompt_sha256':hashlib.sha256(prompt.encode()).hexdigest(),
                         'seconds_measured':time.monotonic()-started}
             finally:

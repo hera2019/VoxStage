@@ -1,10 +1,11 @@
 import {useEffect,useRef,useState} from 'react';
 type Custom={id:string;name:string;language:string;source:string;seconds:number;derived_from:string|null;consent_confirmed:boolean};
 type Props={request:(path:string,method?:string,data?:unknown)=>Promise<any>;voices:Record<string,string>;
- language:'zh'|'en';speedReady:boolean;designReady?:boolean;onClose:()=>void;onPick?:(voice:string)=>void;pickFor?:string};
+ language:'zh'|'en';speedReady:boolean;designReady?:boolean;roleModels?:{id:string;label:string;installed:boolean}[];roleModel?:string;onClose:()=>void;onPick?:(voice:string)=>void;pickFor?:string};
 const SAMPLES={zh:'雨点轻轻敲着窗，她回头看了一眼。',en:'Rain tapped against the window, and she looked back once.'};
 
-export function Settings({request,voices,language,speedReady,designReady,onClose,onPick,pickFor}:Props){
+export function Settings({request,voices,language,speedReady,designReady,roleModels,roleModel,onClose,onPick,pickFor}:Props){
+ const [role,setRole]=useState(roleModel??'');const [roleNote,setRoleNote]=useState('');
  const [tab,setTab]=useState<'voices'>('voices');
  const [text,setText]=useState(SAMPLES[language]);
  const [rate,setRate]=useState(1);
@@ -77,6 +78,15 @@ export function Settings({request,voices,language,speedReady,designReady,onClose
    {designs.length>0&&<ul className="design-versions" aria-label="已生成的版本">{designs.map((v,i)=><li key={v.file}><button className={designed?.file===v.file?'active':''} aria-pressed={designed?.file===v.file} onClick={()=>{setDesigned({file:v.file,seconds:v.seconds});setPlaying('');const audio=player.current;if(audio){audio.src=v.url;void audio.play().catch(()=>setError('请点击播放按钮试听。'))}}}>▶ 第 {designs.length-i} 版 · {v.seconds.toFixed(1)} 秒 <small>种子 {v.seed}</small></button></li>)}</ul>}
    {designs.length>0&&<p className="muted">同一段描述每点一次出一版不同的声音，最多留 8 版；点哪版就听哪版，保存的就是它。改了描述会重新开始。</p>}
   </div>
+
+  {roleModels&&roleModels.length>0&&<div className="keep-voice role-model">
+   <div className="section-label">分角色模型</div>
+   <p className="muted">新建工程时给原文分旁白/对白、点出说话人的本机模型。每个都按 SHA-256 校验；草稿记录里写着是哪个模型答的。</p>
+   <select aria-label="分角色模型" value={role} disabled={!!waiting} onChange={e=>{const id=e.target.value;setRole(id);setRoleNote('');void (async()=>{try{await request('/settings','POST',{role_model:id});setRoleNote('已切换，下一次生成角色草稿起生效。')}catch(err){setRoleNote((err as Error).message);setRole(roleModel??'')}})()}}>
+    {roleModels.map(m=><option key={m.id} value={m.id} disabled={!m.installed}>{m.label}{m.installed?'':'（未安装：scripts/setup_model.py --model role-abliterated）'}</option>)}
+   </select>
+   {roleNote&&<p className="muted">{roleNote}</p>}
+  </div>}
 
   <div className="keep-voice">
    <div className="section-label">留下这个声音</div>
