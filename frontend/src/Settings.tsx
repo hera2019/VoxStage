@@ -5,7 +5,7 @@ type Props={request:(path:string,method?:string,data?:unknown)=>Promise<any>;voi
 const SAMPLES={zh:'雨点轻轻敲着窗，她回头看了一眼。',en:'Rain tapped against the window, and she looked back once.'};
 
 export function Settings({request,voices,language,speedReady,designReady,roleModels,roleModel,onClose,onPick,pickFor}:Props){
- const [role,setRole]=useState(roleModel??'');const [roleNote,setRoleNote]=useState('');
+ const [role,setRole]=useState(roleModel??'');const [roleNote,setRoleNote]=useState('');const [autoplay,setAutoplay]=useState(()=>{try{return localStorage.getItem('voxstage-autoplay')!=='0'}catch{return true}});
  const [tab,setTab]=useState<'voices'|'design'|'library'|'models'>('voices');
  const [text,setText]=useState(SAMPLES[language]);
  const [rate,setRate]=useState(1);
@@ -48,7 +48,7 @@ export function Settings({request,voices,language,speedReady,designReady,roleMod
    <button role="tab" aria-selected={tab==='voices'} className={tab==='voices'?'active':''} onClick={()=>setTab('voices')}>自带音色</button>
    <button role="tab" aria-selected={tab==='design'} className={tab==='design'?'active':''} onClick={()=>setTab('design')}>声线设计</button>
    <button role="tab" aria-selected={tab==='library'} className={tab==='library'?'active':''} onClick={()=>setTab('library')}>已保存的音色{custom.length?` · ${custom.length}`:''}</button>
-   <button role="tab" aria-selected={tab==='models'} className={tab==='models'?'active':''} onClick={()=>setTab('models')}>模型</button>
+   <button role="tab" aria-selected={tab==='models'} className={tab==='models'?'active':''} onClick={()=>setTab('models')}>模型与选项</button>
   </div>
 
   {tab!=='models'&&<>  {pickFor&&<p className="hint">正在为「{pickFor}」挑选音色。选定后点「用于此角色」。</p>}
@@ -140,7 +140,9 @@ export function Settings({request,voices,language,speedReady,designReady,roleMod
   </div>}
    {custom.length===0&&<p className="muted">还没有保存的音色。在「自带音色」里试听后「留下这个声音」，或在「声线设计」里设计一个。</p>}
   </>}
-  {tab==='models'&&<>  {roleModels&&roleModels.length>0&&<div className="keep-voice role-model" id="role-model-setting">
+  {tab==='models'&&<><div className="keep-voice"><div className="section-label">选项</div>
+   <label className="consent"><input type="checkbox" checked={autoplay} onChange={e=>{setAutoplay(e.target.checked);try{localStorage.setItem('voxstage-autoplay',e.target.checked?'1':'0')}catch{}}}/>生成语音后自动播放新声音（单句重做播那一句；批量生成播第一句）</label>
+   <p className="muted">只是这台浏览器的偏好，不进工程。</p></div>  {roleModels&&roleModels.length>0&&<div className="keep-voice role-model" id="role-model-setting">
    <div className="section-label">分角色模型</div>
    <p className="muted">新建工程时给原文分旁白/对白、点出说话人的本机模型。每个都按 SHA-256 校验；草稿记录里写着是哪个模型答的。</p>
    <select aria-label="分角色模型" value={role} disabled={!!waiting} onChange={e=>{const id=e.target.value;setRole(id);setRoleNote('');void (async()=>{try{await request('/settings','POST',{role_model:id});setRoleNote('已切换，下一次生成角色草稿起生效。')}catch(err){setRoleNote((err as Error).message);setRole(roleModel??'')}})()}}>

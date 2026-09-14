@@ -281,3 +281,6 @@ main>footer{flex-shrink:0;margin:0 -36px -38px;border-top:1px solid #d5dccb}
 .line-voice{font-size:10px;color:#8a8f81;background:#f0f0e9;border-radius:4px;padding:1px 5px}
 .remove-character{padding:0 6px;font-size:10px;opacity:.5;border:0;background:none}
 .remove-character:hover{opacity:1;color:#8a3b2f}
+.inline-hint{display:block;margin-top:6px;font-size:11px;color:#a65040;line-height:1.7}
+.inline-hint.wait{color:#8a3b2f;font-weight:600}
+.wait-badge{margin-left:10px;font-size:10px;letter-spacing:.5px;color:#a65040;font-weight:600}
