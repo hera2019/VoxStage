@@ -279,3 +279,5 @@ main>footer{flex-shrink:0;margin:0 -36px -38px;border-top:1px solid #d5dccb}
 .pool-item input{width:auto;margin:0}
 .pool-item small{color:#8a8f81}
 .line-voice{font-size:10px;color:#8a8f81;background:#f0f0e9;border-radius:4px;padding:1px 5px}
+.remove-character{padding:0 6px;font-size:10px;opacity:.5;border:0;background:none}
+.remove-character:hover{opacity:1;color:#8a3b2f}

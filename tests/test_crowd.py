@@ -46,3 +46,19 @@ def test_a_new_character_can_be_named_on_a_line_after_the_project_exists(client)
     assert p['segments'][0]['speaker'] == '王伯' and '王伯' in p['voices']
     assert p['voices']['王伯'] not in {p['voices']['旁白'], p['voices']['小雪']}      # a preset nobody else uses
     assert client.patch(url, json={'revision': p['revision'], 'segment_id': p['segments'][0]['id'], 'speaker': '王伯：'}).status_code == 400
+
+
+def test_a_character_is_added_and_removed_as_its_own_edit(client):
+    p = create(client, 'zh', script='旁白：他走了进来。\n小雪：谁？')
+    url = '/api/projects/' + p['id']
+    r = client.post(url + '/characters', json={'revision': p['revision'], 'name': '王伯'})
+    assert r.status_code == 200, r.text
+    p = r.json()
+    assert '王伯' in p['voices'] and p['voices']['王伯'] not in {p['voices']['旁白'], p['voices']['小雪']}
+    assert client.post(url + '/characters', json={'revision': p['revision'], 'name': '王伯'}).status_code == 400   # twice
+    assert client.post(url + '/characters', json={'revision': p['revision'], 'name': '王：伯'}).status_code == 400
+    assert client.delete(url + '/characters/小雪?revision=' + str(p['revision'])).status_code == 400            # has lines
+    p = client.delete(url + '/characters/王伯?revision=' + str(p['revision'])).json()
+    assert '王伯' not in p['voices']
+    p = client.post(url + '/undo', json={'revision': p['revision']}).json()
+    assert '王伯' in p['voices']

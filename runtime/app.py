@@ -114,6 +114,10 @@ class SettingsRequest(BaseModel):
     role_model: str | None = Field(default=None, max_length=80)
     voice_tags: dict[str, list[str]] | None = None      # voice id -> tags such as 老人、男性、威严
 
+class CharacterRequest(BaseModel):
+    revision: int = Field(ge=0)
+    name: str = Field(min_length=1, max_length=80)
+
 class CrowdRequest(BaseModel):
     revision: int = Field(ge=0)
     speaker: str = Field(min_length=1, max_length=80)
@@ -1106,6 +1110,33 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
     @app.post('/api/projects/{project_id}/duplicate')
     def duplicate_project(project_id: str, body: RevisionRequest):
         return store.public(store.duplicate(project_id,body.revision),engine,checker)
+
+    @app.post('/api/projects/{project_id}/characters')
+    def add_character(project_id: str, body: CharacterRequest):
+        """A character who first appears after the project was made: born with an
+        unused preset voice, to be changed under 角色音色 and assigned on lines.
+        Undoable. Nothing else about the project changes."""
+        name = body.name.strip()
+        if not name or any(c in name for c in '：:\n'):
+            raise ValueError('角色名需为 1–80 个字符，且不含冒号。')
+        def apply(p):
+            if name in p['voices']:
+                raise ValueError('已经有这个角色了。')
+            presets = ['Vivian', 'Uncle_Fu', 'Serena', 'Dylan', 'Eric'] if p['language'] == 'zh' else ['Ryan', 'Aiden']
+            used = set(p['voices'].values())
+            p['voices'][name] = next((v for v in presets if v not in used), presets[len(p['voices']) % len(presets)])
+        return store.public(store.edit(project_id, body.revision, apply), engine, checker)
+
+    @app.delete('/api/projects/{project_id}/characters/{name}')
+    def remove_character(project_id: str, name: str, revision: int):
+        """Only a character with no lines can go; its colour and profile go with it."""
+        def apply(p):
+            if name not in p['voices']:
+                raise ValueError('没有这个角色。')
+            if any(s['speaker'] == name for s in p['segments']):
+                raise ValueError('这个角色还有句子，先把句子改给别人。')
+            p['voices'].pop(name); (p.get('colors') or {}).pop(name, None); (p.get('voice_profiles') or {}).pop(name, None); (p.get('crowds') or {}).pop(name, None)
+        return store.public(store.edit(project_id, revision, apply), engine, checker)
 
     @app.post('/api/projects/{project_id}/crowd')
     def crowd(project_id: str, body: CrowdRequest):
