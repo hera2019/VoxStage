@@ -2,6 +2,14 @@
 import argparse, hashlib, json, os, platform, socket, subprocess, time, urllib.request, uuid
 from pathlib import Path
 from source_units import source_units,bind_labels
+
+
+def speaker_pattern(text):
+    """Same rule as runtime/attribution.py: a name in the text's own script, or UNKNOWN / NARRATOR."""
+    import re
+    if re.search('[一-鿿]', text):
+        return '^([A-Za-z0-9·]{0,3}[一-鿿][一-鿿A-Za-z0-9·]{0,7}|UNKNOWN|NARRATOR)$'
+    return "^([A-Za-z][A-Za-z .'\\-]{0,30}|UNKNOWN|NARRATOR)$"
 ROOT=Path(__file__).resolve().parents[2]
 HERE=Path(__file__).resolve().parent
 SCHEMA={'type':'object','properties':{'segments':{'type':'array','minItems':1,'items':{'type':'object','properties':{'text':{'type':'string'},'kind':{'type':'string','enum':['narration','dialogue']},'speaker':{'type':'string'}},'required':['text','kind','speaker'],'additionalProperties':False}}},'required':['segments'],'additionalProperties':False}
@@ -72,7 +80,7 @@ def run(args):
             if args.anchored:
                 units=source_units(case['text']);user_text=json.dumps([{'id':u['id'],'text':u['text']} for u in units],ensure_ascii=False)
                 certain=bool(args.prompt and 'guess' in args.prompt)   # the best-judgement prompt adds a certainty flag
-                schema={'type':'object','properties':{'labels':{'type':'array','minItems':len(units),'maxItems':len(units),'items':{'type':'object','properties':{**{'id':{'type':'string','enum':[u['id'] for u in units]},'kind':{'type':'string','enum':['narration','dialogue']},'speaker':{'type':'string'}},**({'certain':{'type':'boolean'}} if certain else {})},'required':['id','kind','speaker']+(['certain'] if certain else []),'additionalProperties':False}}},'required':['labels'],'additionalProperties':False}
+                schema={'type':'object','properties':{'labels':{'type':'array','minItems':len(units),'maxItems':len(units),'items':{'type':'object','properties':{**{'id':{'type':'string','enum':[u['id'] for u in units]},'kind':{'type':'string','enum':['narration','dialogue']},'speaker':{'type':'string','pattern':speaker_pattern(case['text'])}},**({'certain':{'type':'boolean'}} if certain else {})},'required':['id','kind','speaker']+(['certain'] if certain else []),'additionalProperties':False}}},'required':['labels'],'additionalProperties':False}
             payload={**settings,'model':args.label,'messages':[{'role':'system','content':prompt},{'role':'user','content':user_text}],'response_format':{'type':'json_schema','json_schema':{'name':'speaker_segments','schema':schema}}}
             start=time.monotonic();response={};error=None;content=''
             try:

@@ -2,6 +2,7 @@
 import hashlib
 import json
 import os
+import re
 import socket
 import subprocess
 import time
@@ -176,6 +177,18 @@ def tidy_speaker(name):
     return name
 
 
+def speaker_pattern(text):
+    """What a speaker field may hold, enforced by the grammar llama-server builds
+    from the schema: a name in the text's own script, or UNKNOWN / NARRATOR.
+    Both models, told the cast in an English sentence, answered Kong Yiji in
+    English (KONG YIJI, CHEEPA, SHORT-CLOTHED CUSTOMERS) and every name was
+    refused; asking in the prompt did not hold, the grammar does. A Chinese
+    text's name must contain a Chinese character (阿Q keeps its Q)."""
+    if re.search('[一-鿿]', text):
+        return '^([A-Za-z0-9·]{0,3}[一-鿿][一-鿿A-Za-z0-9·]{0,7}|UNKNOWN|NARRATOR)$'
+    return "^([A-Za-z][A-Za-z .'\\-]{0,30}|UNKNOWN|NARRATOR)$"
+
+
 class RoleDraftEngine:
     def __init__(self, model_id=None):
         self.server = Path(os.environ.get('VOXSTAGE_ROLE_SERVER', ROOT.parent/'AI-Lab/qwen3-14b-llamacpp/worktrees/llama.cpp/build-release-metal/bin/llama-server'))
@@ -224,7 +237,7 @@ class RoleDraftEngine:
             prompt += '\nCharacters already known from earlier chapters of this book: ' + '、'.join(known_names) + '. When one of them is the speaker, use that exact name.'
         schema = {'type':'object', 'properties': {'labels': {'type':'array', 'minItems':len(units), 'maxItems':len(units),
             'items': {'type':'object','properties': {'id': {'type':'string','enum':[u['id'] for u in units]},
-                'kind': {'type':'string','enum':['narration','dialogue']}, 'speaker': {'type':'string'}, 'certain': {'type':'boolean'}},
+                'kind': {'type':'string','enum':['narration','dialogue']}, 'speaker': {'type':'string', 'pattern': speaker_pattern(text)}, 'certain': {'type':'boolean'}},
                 'required':['id','kind','speaker','certain'],'additionalProperties':False}}}, 'required':['labels'],'additionalProperties':False}
         with socket.socket() as sock:
             sock.bind(('127.0.0.1',0)); port = sock.getsockname()[1]

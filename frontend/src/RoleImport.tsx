@@ -25,7 +25,7 @@ export function RoleImport({request,onCreated,onClose,seed}:Props){
  const turnTaking:Record<string,string>={};{let recent:string[]=[];for(const u of draft?.units??[]){if(u.kind!=='dialogue'||u.blank)continue;if(!unresolved(u.speaker)){recent=[u.speaker.trim(),...recent.filter(n=>n!==u.speaker.trim())].slice(0,2);continue}if(recent.length===2){const s=recent[1];turnTaking[u.id]=s;recent=[s,recent[0]]}}}
  const effective=(u:Unit)=>u.edited?(unresolved(u.speaker)?'':u.speaker.trim()):unresolved(u.speaker)?(turnTaking[u.id]??''):u.speaker.trim();
  const tier=(u:Unit)=>u.kind!=='dialogue'?'':u.edited?(unresolved(u.speaker)?'unknown':'named'):unresolved(u.speaker)?(turnTaking[u.id]?'suggested':'unknown'):(u.tier==='suggested'?'suggested':'named');
- const basis=(u:Unit)=>u.tier==='suggested'&&!u.edited&&!unresolved(u.speaker)?(u.basis??'程序填的'):turnTaking[u.id]&&unresolved(u.speaker)?'按一来一往填的':'';
+ const basis=(u:Unit)=>u.tier==='suggested'&&!u.edited&&!unresolved(u.speaker)?(u.basis??'程序填的'):turnTaking[u.id]&&unresolved(u.speaker)?'按一来一往填的'+(u.hint&&u.hint!==turnTaking[u.id]?`（说话习惯倒像 ${u.hint}）`:''):'';
  const unknown=draft?.units.filter(u=>!u.blank&&tier(u)==='unknown').length??0;const suggestedCount=draft?.units.filter(u=>!u.blank&&tier(u)==='suggested').length??0;
  async function run(task:()=>Promise<void>){setWaiting(true);setError('');try{await task()}catch(e){setError((e as Error).message)}finally{setWaiting(false)}}
  function change(id:string,values:Partial<Unit>){setDraft(d=>d&&({...d,units:d.units.map(u=>u.id===id?{...u,...values}:u)}))}
@@ -59,13 +59,14 @@ export function RoleImport({request,onCreated,onClose,seed}:Props){
   if(resuggest.current)clearTimeout(resuggest.current);
   resuggest.current=setTimeout(()=>{
    const d=latest.current;if(!d)return;
-   const units=d.units.filter(u=>!u.blank&&u.kind==='dialogue').map(u=>({id:u.id,text:u.text,kind:u.kind,speaker:u.edited?u.speaker:(u.tier==='suggested'?'':u.speaker),fixed:u.edited?!unresolved(u.speaker):(u.tier!=='suggested'&&!unresolved(u.speaker))}));
-   request('/attribution/suggest','POST',{book_id:seed?.book?.id,units}).then((r:{suggestions:Record<string,{speaker:string;fill:boolean}>})=>{
+   const units=d.units.filter(u=>!u.blank&&u.kind==='dialogue').map(u=>({id:u.id,text:u.text,kind:u.kind,speaker:u.edited?u.speaker:(u.tier==='suggested'&&!u.stand_in?'':u.speaker),fixed:u.edited?!unresolved(u.speaker):(u.tier!=='suggested'&&!unresolved(u.speaker)),turn:(!u.edited&&unresolved(u.speaker)&&turnTaking[u.id])||''}));
+   request('/attribution/suggest','POST',{book_id:seed?.book?.id,units}).then((r:{suggestions:Record<string,{speaker:string;fill:boolean;basis?:string;hint?:string}>})=>{
     setDraft(d2=>d2&&({...d2,units:d2.units.map(u=>{
      if(u.edited||u.kind!=='dialogue'||u.blank||u.stand_in)return u;   // a stand-in (众人/某人) stays until renamed by hand
      const sg=r.suggestions[u.id];if(!sg)return u;
      if(u.tier==='suggested'||unresolved(u.speaker)){
-      if(sg.fill)return {...u,speaker:sg.speaker,tier:'suggested' as const,basis:'按已确认的说话习惯，像是',hint:undefined};
+      if(sg.fill&&sg.basis!=='按一来一往填的')return {...u,speaker:sg.speaker,tier:'suggested' as const,basis:sg.basis??'按已确认的说话习惯，像是',hint:undefined};
+      if(sg.basis==='按一来一往填的')return {...u,speaker:unresolved(u.speaker)?'UNKNOWN':u.speaker,hint:sg.hint};   // the page's own guess stands; habits only hint
       return {...u,speaker:unresolved(u.speaker)?'UNKNOWN':u.speaker,hint:sg.speaker};
      }
      return u;

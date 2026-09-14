@@ -220,3 +220,23 @@ def test_the_person_spoken_to_is_not_the_speaker_and_a_nameless_tag_gets_a_stand
         # English narration is left alone.
         d = c.post('/api/attribution/draft', json={'script': 'Someone said, “Not today.”\n', 'language': 'en'}).json()
         assert all(not u.get('stand_in') for u in d['units'])
+
+
+def test_the_pages_turn_taking_guess_stands_and_habits_only_hint_beside_a_stand_in(tmp_path):
+    """Kong Yiji, 2026-09-16: the reviewer settled the named lines, the live
+    re-suggest filled the drinker's lines with 孔乙己 (the nearest of the three
+    people it had profiles for; the drinker has none), and yellow was trusted."""
+    with TestClient(create_app(tmp_path / 'p', FixtureEngine(), role_engine=Roles()), base_url='http://127.0.0.1', headers=HEADERS) as c:
+        taught = [{'id': f't{i}', 'text': t, 'kind': 'dialogue', 'speaker': sp, 'fixed': True} for i, (t, sp) in enumerate(LINES)]
+        # The page's own turn-taking guess is kept as the fill; habits become the hint.
+        r = c.post('/api/attribution/suggest', json={'units': taught + [
+            {'id': 'x', 'text': '老板娘～，猫饿了～', 'kind': 'dialogue', 'speaker': '', 'fixed': False, 'turn': '王伯'}]}).json()
+        assert r['suggestions']['x'] == {'speaker': '王伯', 'margin': 0.0, 'fill': True, 'basis': '按一来一往填的', 'hint': '阿宁'}
+        # A stand-in on the page: someone nobody can profile is speaking, so habits hint and do not fill.
+        r = c.post('/api/attribution/suggest', json={'units': taught + [
+            {'id': 's', 'text': '老板娘～，来一斤～', 'kind': 'dialogue', 'speaker': '某人', 'fixed': False},
+            {'id': 'x', 'text': '老板娘～，猫饿了～', 'kind': 'dialogue', 'speaker': '', 'fixed': False}]}).json()
+        assert r['suggestions']['x']['speaker'] == '阿宁' and r['suggestions']['x']['fill'] is False
+        # No stand-in: the same line is filled.
+        r = c.post('/api/attribution/suggest', json={'units': taught + [{'id': 'x', 'text': '老板娘～，猫饿了～', 'kind': 'dialogue', 'speaker': '', 'fixed': False}]}).json()
+        assert r['suggestions']['x']['fill'] is True

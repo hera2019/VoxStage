@@ -65,6 +65,7 @@ class SuggestUnit(BaseModel):
     kind: Literal['narration','dialogue']
     speaker: str = Field(default='', max_length=80)
     fixed: bool = False            # named by the model with certainty, or typed by the person: teaches, is not re-suggested
+    turn: str = Field(default='', max_length=80)   # the page's own guess for an unsettled line: two people taking turns
 
 class SuggestRequest(BaseModel):
     book_id: str | None = Field(default=None, pattern=r'^[a-f0-9]{32}$')
@@ -910,13 +911,22 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 taught += [(u['text'], l['speaker']) for p in book_projects(books.get(body.book_id)) for u, l in confirmed_dialogue(p)]
         taught += [(u.text, u.speaker.strip()) for u in body.units if u.kind == 'dialogue' and u.fixed and u.speaker.strip().upper() not in ('', 'UNKNOWN', 'NARRATOR')]
         profile = habits.profiles(taught)
+        # Habits can only choose among the people they were taught. A page with a
+        # stand-in on it (众人, 某人) has speakers nobody can profile, so on such a
+        # page habits hint and never fill: Kong Yiji, 2026-09-16 — five of the
+        # drinker's lines were filled with 孔乙己, the nearest of the three
+        # profiled people, and the reviewer, trusting yellow, let them stand.
+        # The page's own turn-taking guess, when it has one, is kept as the fill.
+        unprofiled = any(u.speaker.strip() in habits.STAND_INS.values() for u in body.units if u.kind == 'dialogue')
         out = {}
         for u in body.units:
             if u.kind != 'dialogue' or u.fixed or not u.text.strip():
                 continue
             best, margin = habits.suggest(u.text, profile) if profile else (None, 0.0)
-            if best:
-                out[u.id] = {'speaker': best, 'margin': round(margin, 3), 'fill': margin >= habits.MARGIN}
+            if u.turn.strip():
+                out[u.id] = {'speaker': u.turn.strip(), 'margin': 0.0, 'fill': True, 'basis': '按一来一往填的', **({'hint': best} if best and best != u.turn.strip() else {})}
+            elif best:
+                out[u.id] = {'speaker': best, 'margin': round(margin, 3), 'fill': margin >= habits.MARGIN and not unprofiled, 'basis': '按已确认的说话习惯，像是'}
         return {'suggestions': out, 'taught': len(taught)}
 
     @app.post('/api/attribution/confirm')
