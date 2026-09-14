@@ -721,12 +721,12 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 return (engine_.annotate(body.script, drafts/log_name, known_names=names_for_model) if names_for_model and 'known_names' in engine_.annotate.__code__.co_varnames
                         else engine_.annotate(body.script, drafts/log_name))
             result = annotate_with(role_engine, draft_id+'.log')
-            # The evaluated model reads ordinary prose best (Kong Yiji: 19 of 21 names
-            # right where the abliterated fine-tune names two lines), but answers a
-            # manuscript it balks at with a draft of nothing: every quoted line
-            # narration, or every speaker a word the story never uses. When it
-            # does, and the other model is installed, ask that one before falling
-            # back on the structural draft. Both runs are kept in the record.
+            # Either model can answer a passage with a draft of nothing: every
+            # quoted line narration, or every speaker a word the story never uses
+            # (the evaluated model on an explicit chapter; the abliterated one,
+            # given no cast, answering Kong Yiji in English). When the chosen one
+            # does, and the other is installed, ask that one before falling back
+            # on the structural draft. Both runs are kept in the record.
             def placed(labels):
                 by = {l['id']: l for l in labels}
                 return [u for u in spoken if u['id'] in by and vetted(by[u['id']], u)['kind'] == 'dialogue'
