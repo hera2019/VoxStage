@@ -259,12 +259,13 @@ main>footer{flex-shrink:0;margin:0 -36px -38px;border-top:1px solid #d5dccb}
 .line{border-left:4px solid transparent}
 .line.selected{box-shadow:inset 0 0 0 2px #839477}
 .speaker b{font-weight:600}
-.swatches{display:flex;flex-wrap:wrap;gap:4px;align-items:center;width:100%;margin-top:4px}
-.swatch{width:16px;height:16px;padding:0;border:2px solid transparent;border-radius:4px;cursor:pointer}
-.swatch.on{border-color:#26302f;box-shadow:0 0 0 1px #fff inset}
-.swatch-any{width:22px;height:18px;padding:0;margin:0;border:1px solid #d9ddd5;border-radius:4px;background:none}
-.swatch-auto{font-size:10px;padding:2px 6px}
-.voice{flex-wrap:wrap}
+.color-cell{position:relative;display:inline-flex;align-items:center;margin-left:auto}
+.color-button{width:20px;height:20px;padding:0;border:1px solid #d9ddd5;border-radius:5px;cursor:pointer}
+.color-pop{position:absolute;right:0;top:26px;z-index:4;display:grid;grid-template-columns:repeat(7,20px);gap:6px;align-items:center;padding:10px;background:#fffefa;border:1px solid #d9ddd5;border-radius:10px;box-shadow:0 10px 30px #24352a22}
+.swatch{width:20px;height:20px;padding:0;border:0;border-radius:5px;cursor:pointer;outline:2px solid transparent;outline-offset:2px}
+.swatch.on{outline-color:#26302f}
+.swatch-any{width:20px;height:20px;padding:0;margin:0;border:1px solid #d9ddd5;border-radius:5px;background:none}
+.swatch-auto{grid-column:span 2;font-size:11px;padding:2px 6px}
 .template-list{list-style:none;margin:6px 0 0;padding:0;font-size:12px}
 .template-list li{display:flex;justify-content:space-between;align-items:center;padding:3px 0}
 .template-list button{padding:1px 7px;font-size:11px;opacity:.6}

@@ -79,15 +79,6 @@ export function Settings({request,voices,language,speedReady,designReady,roleMod
    {designs.length>0&&<p className="muted">同一段描述每点一次出一版不同的声音，最多留 8 版；点哪版就听哪版，保存的就是它。改了描述会重新开始。</p>}
   </div>
 
-  {roleModels&&roleModels.length>0&&<div className="keep-voice role-model">
-   <div className="section-label">分角色模型</div>
-   <p className="muted">新建工程时给原文分旁白/对白、点出说话人的本机模型。每个都按 SHA-256 校验；草稿记录里写着是哪个模型答的。</p>
-   <select aria-label="分角色模型" value={role} disabled={!!waiting} onChange={e=>{const id=e.target.value;setRole(id);setRoleNote('');void (async()=>{try{await request('/settings','POST',{role_model:id});setRoleNote('已切换，下一次生成角色草稿起生效。')}catch(err){setRoleNote((err as Error).message);setRole(roleModel??'')}})()}}>
-    {roleModels.map(m=><option key={m.id} value={m.id} disabled={!m.installed}>{m.label}{m.installed?'':'（未安装：scripts/setup_model.py --model role-abliterated）'}</option>)}
-   </select>
-   {roleNote&&<p className="muted">{roleNote}</p>}
-  </div>}
-
   <div className="keep-voice">
    <div className="section-label">留下这个声音</div>
    <p className="muted">把刚才听到的那一版原样保存成一个具名音色——每点一次试听都是新的一版，存的就是最后听到的这版。
@@ -140,6 +131,15 @@ export function Settings({request,voices,language,speedReady,designReady,roleMod
   </label>
   <p className="muted">试听是本机即时合成的，不会写进任何工程；语速在合成之后处理。</p>
   {error&&<p role="alert" className="line-error">{error}</p>}
+
+  {roleModels&&roleModels.length>0&&<div className="keep-voice role-model" id="role-model-setting">
+   <div className="section-label">分角色模型</div>
+   <p className="muted">新建工程时给原文分旁白/对白、点出说话人的本机模型。每个都按 SHA-256 校验；草稿记录里写着是哪个模型答的。</p>
+   <select aria-label="分角色模型" value={role} disabled={!!waiting} onChange={e=>{const id=e.target.value;setRole(id);setRoleNote('');void (async()=>{try{await request('/settings','POST',{role_model:id});setRoleNote('已切换，下一次生成角色草稿起生效。')}catch(err){setRoleNote((err as Error).message);setRole(roleModel??'')}})()}}>
+    {roleModels.map(m=><option key={m.id} value={m.id} disabled={!m.installed}>{m.label}{m.installed?'':'（未安装：scripts/setup_model.py --model role-abliterated）'}</option>)}
+   </select>
+   {roleNote&&<p className="muted">{roleNote}</p>}
+  </div>}
  </section></div>;
 }
 // 最后更新：2026-09-11 · Claude Hera
