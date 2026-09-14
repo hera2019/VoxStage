@@ -146,3 +146,42 @@ def test_mentions_calls_and_the_sex_of_a_line():
     m = {'阿宁': ['阿宁'], '陈小雪': ['陈小雪', '老板娘', '娘']}
     assert speech_tag('陈小雪笑道：', '', m) == '陈小雪' and speech_tag('', '”阿宁说。', m) == '阿宁'
     assert speech_tag('阿宁说：', '陈小雪说：', m) == '阿宁'          # the narration after introduces the next line
+
+
+def test_when_the_default_model_places_nobody_the_other_installed_model_is_asked(tmp_path):
+    """A draft of nothing — every quoted line narration, or every speaker a word
+    the story never uses — sends the passage to the other model; the run that
+    places more lines is kept, and the first stays in the record (2026-09-16)."""
+    import json
+    class TwoModels(Roles):
+        model_id = 'a'
+        asked = []
+        def installed(self):
+            return [{'id': 'a', 'label': 'A', 'installed': True}, {'id': 'b', 'label': 'B', 'installed': True}]
+        def select(self, model_id):
+            self.model_id = model_id
+        def annotate(self, text, log_path):
+            self.asked.append(self.model_id)
+            labels = []
+            for u in source_units(text):
+                if u['text'].startswith('“'):
+                    # a: a translated name the text never spells; b: the name as written
+                    labels.append({'id': u['id'], 'kind': 'dialogue', 'speaker': 'XUE' if self.model_id == 'a' else '小雪', 'certain': True})
+                else:
+                    labels.append({'id': u['id'], 'kind': 'narration', 'speaker': 'NARRATOR', 'certain': True})
+            return {'labels': labels, 'model_sha256': 'fixture', 'model_id': self.model_id}
+    engine = TwoModels()
+    with TestClient(create_app(tmp_path / 'p', FixtureEngine(), role_engine=engine), base_url='http://127.0.0.1', headers=HEADERS) as c:
+        d = c.post('/api/attribution/draft', json={'script': '小雪说：“来。”\n“好。”\n“走吧。”\n', 'language': 'zh'}).json()
+        assert engine.asked == ['a', 'b'] and engine.model_id == 'a'          # asked both, left on the default
+        assert [u['speaker'] for u in d['units'] if u['kind'] == 'dialogue'] == ['小雪', '小雪', '小雪']
+        assert '已换用「B」' in d['notice']
+        record = json.loads((tmp_path / 'p-role-drafts' / (d['draft_id'] + '.json')).read_text())
+        assert record['fallback_model'] == 'b' and record['first_attempt']['model_id'] == 'a' and record['model_id'] == 'b'
+        # A default that places the lines is not second-guessed.
+        engine.asked.clear()
+        engine.annotate = lambda text, log_path: {'labels': [{'id': u['id'], 'kind': 'dialogue' if u['text'].startswith('“') else 'narration',
+                                                             'speaker': '小雪' if u['text'].startswith('“') else 'NARRATOR', 'certain': True} for u in source_units(text)],
+                                                  'model_sha256': 'fixture', 'model_id': 'a'}
+        d = c.post('/api/attribution/draft', json={'script': '小雪说：“来。”\n“好。”\n“走吧。”\n', 'language': 'zh'}).json()
+        assert d['notice'] is None and engine.model_id == 'a'

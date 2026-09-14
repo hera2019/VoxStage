@@ -643,62 +643,6 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                     books.get(body.book_id)
                 except ValueError:
                     body.book_id = None          # the book was removed since; draft without it
-            if body.book_id:
-                with store.lock:
-                    for sibling in book_projects(books.get(body.book_id)):
-                        for sp, voice in sibling['voices'].items():
-                            if sp in ('旁白', 'Narrator', 'NARRATOR') or any(n.startswith(sp) for n in names_for_model):
-                                continue
-                            # The cast with the sex of each voice: a chapter's
-                            # speakers told apart by who could have said what.
-                            sex = voice_sex(voice)
-                            also = [a for a, n in (books.get(body.book_id).get('aliases') or {}).items() if n == sp]
-                            notes = [x for x in ({'f': '女', 'm': '男'}.get(sex, ''), '又称 ' + '、'.join(also) if also else '') if x]
-                            names_for_model.append(sp + ('（' + '；'.join(notes) + '）' if notes else ''))
-            # Test doubles may not take the cast; the real engine does.
-            def annotate_with(engine_, log_name):
-                return (engine_.annotate(body.script, drafts/log_name, known_names=names_for_model) if names_for_model and 'known_names' in engine_.annotate.__code__.co_varnames
-                        else engine_.annotate(body.script, drafts/log_name))
-            result = annotate_with(role_engine, draft_id+'.log')
-            # The evaluated model reads ordinary prose best (Kong Yiji: 19 of 21 names
-            # right where the abliterated fine-tune names two lines), but answers a
-            # manuscript it balks at with a draft of nothing. When it does, and the
-            # other model is installed, ask that one instead of falling straight
-            # back on the structural draft. Both runs are kept in the record.
-            def names_given(labels):
-                return sum(1 for l in labels if l['kind'] == 'dialogue' and l['speaker'].strip().upper() not in ('', 'UNKNOWN', 'NARRATOR'))
-            def balked(labels):
-                quoted = [u for u in source_units(body.script) if u['text'].strip() and u['text'].strip()[0] in '“"「『']
-                by = {l['id']: l for l in labels}
-                silenced = [u for u in quoted if by.get(u['id'], {}).get('kind') == 'narration']
-                return len(quoted) >= 3 and (len(silenced) == len(quoted) or (len(quoted) >= 10 and len(silenced) >= 0.9 * len(quoted)))
-            fallback_used = None
-            if balked(result['labels']) and hasattr(role_engine, 'installed') and hasattr(role_engine, 'select'):
-                others = [m['id'] for m in role_engine.installed() if m['installed'] and m['id'] != role_engine.model_id]
-                if others:
-                    chosen = role_engine.model_id
-                    try:
-                        role_engine.select(others[0])
-                        second = annotate_with(role_engine, draft_id+'-fallback.log')
-                    finally:
-                        role_engine.select(chosen)
-                    if not balked(second['labels']) or names_given(second['labels']) > names_given(result['labels']):
-                        result = {**second, 'first_attempt': {'model_id': result.get('model_id'), 'labels': result['labels']}}
-                        fallback_used = others[0]
-            # Validate even injected engines; no unbound model text reaches a project.
-            from evals.speaker_attribution.source_units import bind_labels
-            bind_labels(body.script,json.dumps({'labels':result['labels']}))
-            record = {**result,'draft_id':draft_id,'source_script':body.script,'language':body.language,'fallback_model':fallback_used}
-            (drafts/(draft_id+'.json')).write_text(json.dumps(record,ensure_ascii=False,indent=2))
-            labels = {x['id']:x for x in result['labels']}
-            # A name the model invents -- ME for 我, WU DI for 吴迪 -- is not a
-            # name the story uses. Anything not found in the text is handed to
-            # the reviewer as unresolved, with the model's guess kept as a hint.
-            # In a text that marks speech with quotation marks, an unquoted unit
-            # is prose. The model labels 掌柜说： as the shopkeeper speaking; across
-            # four reviewed projects it did so 27 times and the reviewer disagreed
-            # 27 times. Texts with no quotation marks at all are left alone.
-            quoted = any(c in body.script for c in '“"「『')
             # Names the story uses: in this passage, or confirmed in the book's
             # other chapters — a chapter that never spells a name still has it.
             known_names = set(); aliases = {}
@@ -708,6 +652,23 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                     aliases = dict(book_record.get('aliases') or {})
                     for sibling in book_projects(book_record):
                         known_names.update(sp for sp in sibling['voices'] if sp not in ('旁白', 'Narrator', 'NARRATOR'))
+                        for sp, voice in sibling['voices'].items():
+                            if sp in ('旁白', 'Narrator', 'NARRATOR') or any(n.startswith(sp) for n in names_for_model):
+                                continue
+                            # The cast with the sex of each voice: a chapter's
+                            # speakers told apart by who could have said what.
+                            sex = voice_sex(voice)
+                            also = [a for a, n in aliases.items() if n == sp]
+                            notes = [x for x in ({'f': '女', 'm': '男'}.get(sex, ''), '又称 ' + '、'.join(also) if also else '') if x]
+                            names_for_model.append(sp + ('（' + '；'.join(notes) + '）' if notes else ''))
+            # A name the model invents -- ME for 我, WU DI for 吴迪 -- is not a
+            # name the story uses. Anything not found in the text is handed to
+            # the reviewer as unresolved, with the model's guess kept as a hint.
+            # In a text that marks speech with quotation marks, an unquoted unit
+            # is prose. The model labels 掌柜说： as the shopkeeper speaking; across
+            # four reviewed projects it did so 27 times and the reviewer disagreed
+            # 27 times. Texts with no quotation marks at all are left alone.
+            quoted = any(c in body.script for c in '“"「『')
             def cites_rather_than_speaks(unit):
                 # Chinese puts the full stop inside the quotation marks. A short
                 # quoted unit with nothing spoken about it -- “君子固穷”, “雪” -- is a
@@ -746,6 +707,44 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                     return {'kind': 'dialogue', 'speaker': speaker, 'tier': 'suggested', 'basis': '模型按上下文推断的'}
                 return {'kind': label['kind'], 'speaker': speaker}
             units = source_units(body.script)
+            spoken = [u for u in units if u['text'].strip() and u['text'].strip()[0] in '“"「『']   # '' is "in" any string
+            # Test doubles may not take the cast; the real engine does.
+            def annotate_with(engine_, log_name):
+                return (engine_.annotate(body.script, drafts/log_name, known_names=names_for_model) if names_for_model and 'known_names' in engine_.annotate.__code__.co_varnames
+                        else engine_.annotate(body.script, drafts/log_name))
+            result = annotate_with(role_engine, draft_id+'.log')
+            # The evaluated model reads ordinary prose best (Kong Yiji: 19 of 21 names
+            # right where the abliterated fine-tune names two lines), but answers a
+            # manuscript it balks at with a draft of nothing: every quoted line
+            # narration, or every speaker a word the story never uses. When it
+            # does, and the other model is installed, ask that one before falling
+            # back on the structural draft. Both runs are kept in the record.
+            def placed(labels):
+                by = {l['id']: l for l in labels}
+                return [u for u in spoken if u['id'] in by and vetted(by[u['id']], u)['kind'] == 'dialogue'
+                        and vetted(by[u['id']], u)['speaker'].upper() not in ('', 'UNKNOWN')]
+            def balked(labels):
+                return len(spoken) >= 3 and (not placed(labels) or (len(spoken) >= 10 and len(placed(labels)) <= 0.1 * len(spoken)))
+            fallback_used = None
+            if balked(result['labels']) and hasattr(role_engine, 'installed') and hasattr(role_engine, 'select'):
+                others = [m['id'] for m in role_engine.installed() if m['installed'] and m['id'] != role_engine.model_id]
+                if others:
+                    chosen = role_engine.model_id
+                    try:
+                        role_engine.select(others[0])
+                        second = annotate_with(role_engine, draft_id+'-fallback.log')
+                    finally:
+                        role_engine.select(chosen)
+                    if len(placed(second['labels'])) > len(placed(result['labels'])):
+                        result = {**second, 'first_attempt': {'model_id': result.get('model_id'), 'labels': result['labels']}}
+                        fallback_used = others[0]
+            # Validate even injected engines; no unbound model text reaches a project.
+            from evals.speaker_attribution.source_units import bind_labels
+            bind_labels(body.script,json.dumps({'labels':result['labels']}))
+            record = {**result,'draft_id':draft_id,'source_script':body.script,'language':body.language,'fallback_model':fallback_used}
+            (drafts/(draft_id+'.json')).write_text(json.dumps(record,ensure_ascii=False,indent=2))
+            labels = {x['id']:x for x in result['labels']}
+            units = source_units(body.script)
             # A degenerate draft: the model called every quoted unit narration.
             # Seen 2026-09-14 on an explicit web-novel chapter — 60 quoted units,
             # 70 labels, all NARRATOR; the schema forces valid JSON, so a model
@@ -753,11 +752,10 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             # structural draft instead: quoted units are speech with the speaker
             # left blank (citations excepted), everything else narration.
             notice = None
-            spoken = [u for u in units if u['text'].strip() and u['text'].strip()[0] in '“"「『']   # '' is "in" any string
             silenced = [u for u in spoken if labels[u['id']]['kind'] == 'narration']
             degenerate = len(spoken) >= 3 and (len(silenced) == len(spoken) or (len(spoken) >= 10 and len(silenced) >= 0.9 * len(spoken)))
             if fallback_used and not degenerate:
-                notice = f'默认模型这次没有给出角色划分，已换用「{next((m["label"] for m in role_engine.installed() if m["id"] == fallback_used), fallback_used)}」重来一次；下面是它的草稿。'
+                notice = f'默认模型这次没能分出说话人，已换用「{next((m["label"] for m in role_engine.installed() if m["id"] == fallback_used), fallback_used)}」重来一次；下面是它的草稿。'
             if degenerate:
                 notice = (f'模型这次没有给出角色划分（{len(spoken)} 句引号里的话，{len(silenced)} 句被标成了旁白）。'
                           '已按引号先把对白分出来，说话人留空，请你填写。')
