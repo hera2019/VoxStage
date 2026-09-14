@@ -49,6 +49,10 @@ class BookRequest(BaseModel):
     title: str = Field(default='', max_length=120)
     script: str = Field(min_length=1, max_length=2_000_000)
     language: Literal['zh','en']
+    headings: list[int] | None = Field(default=None, max_length=5000)   # line numbers, from a Markdown import
+
+class MarkdownRequest(BaseModel):
+    text: str = Field(min_length=1, max_length=2_000_000)
 
 class RoleDraftRequest(BaseModel):
     script: str = Field(min_length=1, max_length=3000)
@@ -73,6 +77,7 @@ class RoleConfirmRequest(BaseModel):
     book_id: str | None = Field(default=None, pattern=r'^[a-f0-9]{32}$')   # the chapter this came from, if any
     chapter_index: int | None = Field(default=None, ge=1)
     aliases: dict[str, str] = Field(default_factory=dict)                   # 老板娘 → 陈小雪, learned while reviewing
+    review: dict | None = None                                              # how much the reviewer had to do; see RoleImport
 
 class InheritRequest(BaseModel):
     revision: int = Field(ge=0)
@@ -531,8 +536,17 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
     def create_book(body: BookRequest):
         """Keep a long text as a book cut into chapters; each becomes a project later."""
         with store.lock:
-            book = books.create(body.title, body.script, body.language)
+            book = books.create(body.title, body.script, body.language, body.headings)
         return books.public(book)
+
+    @app.post('/api/import/markdown')
+    def import_markdown(body: MarkdownRequest):
+        """Markdown to the prose a project stores, with its headings' line numbers."""
+        from . import markdown
+        text, headings = markdown.to_text(body.text)
+        if not text.strip():
+            raise ValueError('这个 Markdown 文件里没有正文。')
+        return {'text': text, 'headings': headings}
 
     @app.get('/api/books')
     def list_books():
@@ -854,8 +868,11 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
         segments = project_segments(record['source_script'], labels, record['language'])
         with store.lock:
             project = store.create(body.name, record['source_script'], record['language'], segments=segments, preset_model=default_preset())
-            project['attribution'] = {'draft_id':body.draft_id,'model_sha256':record.get('model_sha256'),
-                'model_labels':record['labels'],'confirmed_labels':labels,'human_confirmed':True}
+            project['attribution'] = {'draft_id':body.draft_id,'model_sha256':record.get('model_sha256'),'model_id':record.get('model_id'),
+                'model_labels':record['labels'],'confirmed_labels':labels,'human_confirmed':True,
+                # The automation measurement the author asked for (2026-09-15): what
+                # the page showed, what the person changed, how long it took.
+                'review':{k: body.review.get(k) for k in ('seconds','dialogue','orange','yellow','changed','named_changed','yellow_changed','orange_filled')} if body.review else None}
             inherited = None
             if body.book_id and body.chapter_index:
                 # A chapter of a book: remember which, and start from the settings

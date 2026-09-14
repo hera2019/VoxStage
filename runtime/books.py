@@ -39,16 +39,21 @@ def _fits(text):
     return len(text) <= CHAPTER_LIMIT and _units(text) <= UNIT_LIMIT
 
 
-def split_chapters(text):
+def split_chapters(text, headings=None):
     """Cut a text into chapters. Returns [{'title', 'text'}] covering the text
-    exactly (concatenating the pieces gives the input back).
+    exactly (concatenating the pieces gives the input back). `headings` may
+    name the heading lines outright (0-based line numbers — a Markdown import
+    knows its headings); otherwise they are found by their look.
 
     With headings, each heading line opens a chapter and stays in its text.
     Without any, the text is cut at blank-line paragraph breaks so no piece
     exceeds the draft limit; never inside a paragraph, never inside a sentence.
     """
     lines = text.split('\n')
-    heads = [i for i, line in enumerate(lines) if HEADING.match(line)]
+    if headings is not None:
+        heads = sorted({i for i in headings if 0 <= i < len(lines) and lines[i].strip()})
+    else:
+        heads = [i for i, line in enumerate(lines) if HEADING.match(line)]
     if heads:
         bounds = ([0] if heads[0] > 0 else []) + heads + [len(lines)]
         chapters = []
@@ -142,8 +147,8 @@ class Books:
     def __init__(self, root):
         self.root = Path(root); self.root.mkdir(parents=True, exist_ok=True)
 
-    def create(self, title, text, language):
-        chapters = split_chapters(text)
+    def create(self, title, text, language, headings=None):
+        chapters = split_chapters(text, headings)
         book = {'id': uuid.uuid4().hex, 'title': title.strip()[:120] or '未命名', 'language': language,
                 'chapters': [{'index': i + 1, 'title': c['title'], 'chars': len(c['text']), 'text': c['text']}
                              for i, c in enumerate(chapters)]}
