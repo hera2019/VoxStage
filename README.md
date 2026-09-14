@@ -38,7 +38,7 @@ line for an editor, with an FCP7 XML timeline; and the content-check report.
 
 ## Why not just use a TTS tool
 
-Four properties, each a deliberate design choice rather than a feature:
+Six properties, each a deliberate design choice rather than a feature:
 
 **Your text is never rewritten.** Analysis and checks may *annotate* text; only
 you change it. Reading adjustments (how a number or abbreviation is spoken)
@@ -59,6 +59,20 @@ Disagreements are flagged for your ear, never auto-corrected.
 **Nothing leaves the machine.** Models run locally on Apple Silicon. No account,
 no cloud generation, no per-character billing. Scripts and reference audio stay
 in your own files and never enter version control.
+
+**The work is done before you open the editor.** Cutting a text into lines,
+deciding who speaks, keeping a book's cast and aliases from chapter to
+chapter, carrying settings forward — these are the program's job, and the
+target is that reviewing a draft means confirming, not typing. Where the
+program is unsure it says so, in yellow; where it has no idea, in orange; and
+it learns from every correction you make on the page. A local model is not an
+excuse to hand the editing back to the person.
+
+**Models are parts, not the product.** The speaker-draft model, the speech
+engine and the recogniser are each behind an interface with an identity that
+reaches the generation fingerprint, pinned by hash and chosen in settings; the
+draft model is already switchable, and a second engine or recogniser is meant
+to plug in the same way rather than be built in.
 
 ## Quick start
 
