@@ -35,9 +35,13 @@ ROLE_MODELS = {
         'sha256': 'f3b6a790d226efadd863152415713d4d177a22e80eb37bc54537dab110062f31',
         'paths': [ROOT/'user-data/models/role-qwen3-4b-abliterated/Huihui-Qwen3-4B-Instruct-2507-abliterated.Q8_0.gguf']},
     'qwen3.5-9b-abliterated-q5km': {
-        'label': 'Qwen3.5-9B 去审查版 · Q5_K_M（huihui-ai；候选，未评测）',
+        'label': 'Qwen3.5-9B 去审查版 · Q5_K_M（huihui-ai；候选，慢 3 倍）',
         'sha256': '946072b16f5d672e60357410f900888f6522b3ae49f241b5bf2142cb89637fb6',
-        'paths': [ROOT/'user-data/models/role-qwen3.5-9b-abliterated/Huihui-Qwen3.5-9B-abliterated.Q5_K_M.gguf']},
+        'paths': [ROOT/'user-data/models/role-qwen3.5-9b-abliterated/Huihui-Qwen3.5-9B-abliterated.Q5_K_M.gguf'],
+        # A thinking model: with thinking off it labels every line NARRATOR;
+        # unrestricted it thinks past the answer budget and never answers.
+        # A budget of 1,500 thinking tokens, then the JSON (measured 2026-09-16).
+        'launch': ['--reasoning-budget', '1500']},
 }
 DEFAULT_ROLE_MODEL = 'qwen3-4b-instruct-2507-q8'
 
@@ -265,8 +269,9 @@ class RoleDraftEngine:
                 return json.load(response)
         started = time.monotonic()
         with Path(log_path).open('w') as log:
+            launch = ROLE_MODELS.get(self.model_id, {}).get('launch') or ['--reasoning', 'off']   # a plain instruct model answers at once
             proc = subprocess.Popen([str(self.server),'-m',str(self.model),'--alias','role-draft','-ngl','all',
-                '-c',str(limits['context']),'-np','1','--jinja','--reasoning','off','--host','127.0.0.1','--port',str(port),
+                '-c',str(limits['context']),'-np','1','--jinja',*launch,'--host','127.0.0.1','--port',str(port),
                 '--no-webui','--api-key',key],stdout=log,stderr=subprocess.STDOUT)
             try:
                 for _ in range(300):
