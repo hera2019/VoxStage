@@ -1032,14 +1032,18 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 # line gets a stand-in, yellow, over whatever the model said —
                 # 众人 for a crowd, 某人甲/乙/… for one person, lettered per
                 # exchange. Renaming the stand-in once carries its lines along.
-                stand_in = habits.anonymous_tag(before['text'] if before and before['kind'] == 'narration' else '',
-                                                after['text'] if after and after['kind'] == 'narration' else '') if body.language == 'zh' else None
+                found = habits.anonymous_tag(before['text'] if before and before['kind'] == 'narration' else '',
+                                             after['text'] if after and after['kind'] == 'narration' else '', with_phrase=True) if body.language == 'zh' else None
+                stand_in = found[0] if found else None
                 if stand_in:
                     if stand_in == habits.STAND_INS['one']:
-                        if blk not in anonymous:
+                        # One stranger per exchange and per way of naming him: 有人 and
+                        # 一个喝酒的人 in the same exchange are two (Astra 2026-09-16).
+                        key = (blk, found[1])
+                        if key not in anonymous:
                             n = len(anonymous)
-                            anonymous[blk] = stand_in + (LETTERS[n] if n < len(LETTERS) else str(n + 1))
-                        stand_in = anonymous[blk]
+                            anonymous[key] = stand_in + (LETTERS[n] if n < len(LETTERS) else str(n + 1))
+                        stand_in = anonymous[key]
                     was = u['speaker'].strip()
                     u.update({'speaker': stand_in, 'tier': 'suggested', 'basis': '叙述里只说是没有名字的人，先记作', 'stand_in': True, 'source': 'tag'})
                     if was.upper() not in ('', 'UNKNOWN', 'NARRATOR') and was != stand_in:

@@ -194,21 +194,26 @@ _VOICE = re.compile(r'(?:听得|听见|听到|传来|响起|飘来)[^，。！�
 STAND_INS = {'group': '众人', 'one': '某人'}
 
 
-def anonymous_tag(before, after=''):
+def anonymous_tag(before, after='', with_phrase=False):
     """The stand-in name for a line whose tag names nobody in particular —
     '众人' (有的叫道, 旁人便又问道, 他们嚷道) or '某人' (有人说, 一个喝酒的人说道,
-    忽然听得一个声音) — or None."""
+    忽然听得一个声音) — or None. With `with_phrase`, (name, phrase): the words
+    the narration used, so two strangers in one exchange (有人 and 一个喝酒的人)
+    are told apart (Astra 2026-09-16)."""
+    def answer(kind, phrase):
+        return (STAND_INS[kind], phrase) if with_phrase else STAND_INS[kind]
     tail = STRIP.sub('', before or '')[-24:]
     m = _ANON_TAG.search(tail)
     if m:
-        return STAND_INS['group' if m.group('group') else 'one']
-    if _VOICE.search(tail):
-        return STAND_INS['one']
+        return answer('group' if m.group('group') else 'one', m.group('group') or m.group('one'))
+    v = _VOICE.search(tail)
+    if v:
+        return answer('one', '声音')
     head = STRIP.sub('', after or '')
     if head and not head.rstrip('。！？!?').endswith(('：', ':', '，', ',')):    # a closing tag, not one introducing the next line
         m = _ANON_HEAD.match(head[:20])
         if m:
-            return STAND_INS['group' if m.group('group') else 'one']
+            return answer('group' if m.group('group') else 'one', m.group('group') or m.group('one'))
     return None
 
 

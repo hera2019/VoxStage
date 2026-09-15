@@ -216,6 +216,9 @@ def test_the_person_spoken_to_is_not_the_speaker_and_a_nameless_tag_gets_a_stand
         crowd = by['“阿宁，你又来赖账？”']
         assert crowd['speaker'] == '众人' and crowd['tier'] == 'suggested' and crowd['stand_in'] and crowd['hint'] == '阿宁'   # the model's 阿宁 kept as a hint
         assert by['“他上回就没给钱。”']['speaker'] == '某人甲' and by['“他上回就没给钱。”']['tier'] == 'suggested'   # lettered per exchange
+        # Two strangers named differently in one exchange are two people; the same words again are the same one.
+        d = c.post('/api/attribution/draft', json={'script': '一个买酒的人说道，“他上回就没给钱。”有人接口道：“可不是。”一个买酒的人又说：“算了。”\n', 'language': 'zh'}).json()
+        assert [u['speaker'] for u in d['units'] if u['kind'] == 'dialogue'] == ['某人甲', '某人乙', '某人甲']
         assert by['“我这就给。”']['speaker'] == 'UNKNOWN' and by['“我这就给。”'].get('tier') is None    # 对我说道: not 我's line, and nobody else is tagged
         # English narration is left alone.
         d = c.post('/api/attribution/draft', json={'script': 'Someone said, “Not today.”\n', 'language': 'en'}).json()
