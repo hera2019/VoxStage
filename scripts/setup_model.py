@@ -38,6 +38,13 @@ MODELS={
     'role-abliterated':{'folder':'role-qwen3-4b-abliterated','repo':'mradermacher/Huihui-Qwen3-4B-Instruct-2507-abliterated-GGUF',
             'revision':'c9e90669eeb205d5af35c28a3e9983fc9293c2ec','gguf':True,
             'sha256':{'Huihui-Qwen3-4B-Instruct-2507-abliterated.Q8_0.gguf':'f3b6a790d226efadd863152415713d4d177a22e80eb37bc54537dab110062f31'}},
+    # A larger candidate for the same job (Astra 2026-09-16, first to compare):
+    # huihui-ai's abliteration of Qwen3.5-9B, Q5_K_M (6.5 GB), Apache-2.0. Text
+    # only — the mmproj files are not fetched. Registered so it can be selected
+    # and compared on the same texts; not the default until measured.
+    'role-9b-abliterated':{'folder':'role-qwen3.5-9b-abliterated','repo':'mradermacher/Huihui-Qwen3.5-9B-abliterated-GGUF',
+            'revision':'9f646d7eda193ddf2348134f3bff3d49eed7a2c6','gguf':True,
+            'sha256':{'Huihui-Qwen3.5-9B-abliterated.Q5_K_M.gguf':'946072b16f5d672e60357410f900888f6522b3ae49f241b5bf2142cb89637fb6'}},
 }
 REQUIRED=['config.json','tokenizer_config.json','vocab.json','merges.txt',
           'speech_tokenizer/config.json','speech_tokenizer/configuration.json']
@@ -106,7 +113,7 @@ def prepare(kind, root=ROOT, verify_only=False, downloader=None):
 
 def main():
     parser=argparse.ArgumentParser(description='准备预设/固定声线模型，或仅离线校验已有文件')
-    parser.add_argument('--model',choices=['preset','base','preset-large','design','role-abliterated','all'],default='preset')
+    parser.add_argument('--model',choices=['preset','base','preset-large','design','role-abliterated','role-9b-abliterated','all'],default='preset')
     parser.add_argument('--verify-only',action='store_true',help='只检查，不下载或修改任何文件')
     args=parser.parse_args()
     failed=False

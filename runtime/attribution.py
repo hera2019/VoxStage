@@ -34,6 +34,10 @@ ROLE_MODELS = {
         'label': 'Qwen3-4B-Instruct-2507 去审查版 · Q8（huihui-ai 微调）',
         'sha256': 'f3b6a790d226efadd863152415713d4d177a22e80eb37bc54537dab110062f31',
         'paths': [ROOT/'user-data/models/role-qwen3-4b-abliterated/Huihui-Qwen3-4B-Instruct-2507-abliterated.Q8_0.gguf']},
+    'qwen3.5-9b-abliterated-q5km': {
+        'label': 'Qwen3.5-9B 去审查版 · Q5_K_M（huihui-ai；候选，未评测）',
+        'sha256': '946072b16f5d672e60357410f900888f6522b3ae49f241b5bf2142cb89637fb6',
+        'paths': [ROOT/'user-data/models/role-qwen3.5-9b-abliterated/Huihui-Qwen3.5-9B-abliterated.Q5_K_M.gguf']},
 }
 DEFAULT_ROLE_MODEL = 'qwen3-4b-instruct-2507-q8'
 
