@@ -211,14 +211,79 @@ def mentioned(text, name):
     return name in STRIP.sub('', text) if len(name) >= 2 else addressed(text, name)
 
 
+_SELF = r'(?:我|本人|在下|小人|小的|鄙人|老子|老娘|奴家|俺|吾|咱)'
+_COPULA = r'(?:叫|是|就是|便是|乃是|乃|名叫|姓|，?名)'
+
+
 def self_introduced(text, name):
-    """我叫陈小雪 / 我是陈小雪 / 我就是老板娘: the line's speaker names herself.
-    A mention, but the opposite evidence from a call (Astra 2026-09-15: a
-    name in the line is evidence, not a veto)."""
+    """我叫张三 / 我是张三 / 我张三又回来了: the line's speaker names himself —
+    the pronoun opens the clause and the name follows it directly or through
+    是/叫/就是. 我带张三一起去 does not (本人 2026-09-16: think of the many
+    forms; a verb between the two makes the name someone else). A mention,
+    but the opposite evidence from a call (Astra 2026-09-15)."""
     if not name:
         return False
     clean = STRIP.sub('', text)
-    return re.search(r'(?:^|[，。！？；：、])(?:我|本人|在下|老子|小的|奴家|俺)(?:叫|是|就是|便是|乃是|名叫|姓)' + re.escape(name), clean) is not None
+    return re.search(r'(?:^|[，。！？；：、])' + _SELF + _COPULA + '?' + re.escape(name) + r'(?!们)', clean) is not None
+
+
+def romanized(name):
+    """The pinyin readings a Chinese name can have, one set per character —
+    to match a name a model wrote in letters (ZHANG XIAO WEI) to the name in
+    the text (张小伟)."""
+    from pypinyin import pinyin, Style
+    return [{r.replace('ü', 'v') for r in readings} | {r.replace('ü', 'u') for r in readings}
+            for readings in pinyin(name, style=Style.NORMAL, heteronym=True)]
+
+
+def same_name_in_letters(latin, name):
+    """Does a name written in letters spell this Chinese name — in full, or its
+    given name (XIAO WEI for 张小伟)? Case, spaces, dots and hyphens ignored."""
+    letters = re.sub(r'[^a-z]', '', (latin or '').lower().replace('ü', 'v').replace('u:', 'v'))
+    if not letters or not name:
+        return False
+    for start in (0, 1) if len(name) >= 3 else (0,):
+        parts = romanized(name[start:])
+        def fits(i, rest):
+            if i == len(parts):
+                return rest == ''
+            return any(rest.startswith(r) and fits(i + 1, rest[len(r):]) for r in parts[i])
+        if fits(0, letters):
+            return True
+    return False
+
+
+def name_in_letters_for(latin, candidates, text=''):
+    """The one candidate the lettered name spells — or, failing the candidates,
+    the one run of two or more characters in the text that spells it (the
+    model names 张小伟 as ZHANG XIAO WEI though no tag ever says 张小伟说). None
+    when nothing or several things do."""
+    hits = [c for c in candidates if same_name_in_letters(latin, c)]
+    if len(hits) == 1:
+        return hits[0]
+    if hits or not text:
+        return None
+    letters = re.sub(r'[^a-z]', '', (latin or '').lower().replace('ü', 'v').replace('u:', 'v'))
+    if len(letters) < 2:
+        return None
+    from pypinyin import pinyin, Style
+    chars = [ch for ch in text if '一' <= ch <= '鿿']
+    readings = {}
+    for ch in set(chars):
+        rs = pinyin(ch, style=Style.NORMAL, heteronym=True)[0]
+        readings[ch] = {r.replace('ü', 'v') for r in rs} | {r.replace('ü', 'u') for r in rs}
+    found = set()
+    clean = STRIP.sub('', text)
+    for start in range(len(clean)):
+        i, rest = start, letters
+        while rest and i < len(clean) and clean[i] in readings:
+            r = next((r for r in readings[clean[i]] if rest.startswith(r)), None)
+            if r is None:
+                break
+            rest = rest[len(r):]; i += 1
+        if not rest and i - start >= 2:
+            found.add(clean[start:i])
+    return next(iter(found)) if len(found) == 1 else None
 
 
 # Where one exchange ends and another begins: narration long enough to carry

@@ -311,3 +311,62 @@ def test_naming_oneself_settles_the_line_and_a_bare_mention_only_asks_for_a_look
             {'id': 'b', 'text': '嗯～，赏你一块糖～', 'kind': 'dialogue', 'speaker': '陈小雪', 'fixed': True, 'source': 'person'},
             {'id': 'c', 'text': '老板娘～，猫跑了～', 'kind': 'dialogue', 'speaker': '', 'fixed': False}]}).json()
         assert r['taught'] == 1
+
+
+def test_naming_oneself_in_its_many_forms_and_a_name_in_letters_is_the_chinese_name_it_spells(tmp_path):
+    """本人 2026-09-16: 我叫张三 / 我是张三 / 我张三又回来了 name the speaker; 我带张三
+    一起去 does not. A model that writes ZHANG XIAO WEI for a Chinese text means
+    张小伟 — the equivalent name replaces it."""
+    from runtime.habits import self_introduced, same_name_in_letters
+    for line in ('我叫张三。', '我是张三。', '我张三又回来了。', '在下张三。', '小人张三，给大人请安。'):
+        assert self_introduced(line, '张三'), line
+    for line in ('我带张三一起去。', '你告诉我张三在哪。', '我们张三家的事。'):
+        assert not self_introduced(line, '张三'), line
+    assert same_name_in_letters('ZHANG XIAO WEI', '张小伟') and same_name_in_letters('Xiaowei', '张小伟') and same_name_in_letters('Lü Bu', '吕布')
+    assert not same_name_in_letters('CHEEPA', '掌柜')
+    class Letters(Roles):
+        def annotate(self, text, log_path):
+            labels = []
+            for u in source_units(text):
+                if u['text'].startswith('“'):
+                    labels.append({'id': u['id'], 'kind': 'dialogue', 'speaker': 'ZHANG XIAO WEI' if '账' in u['text'] else 'A NING', 'certain': True})
+                else:
+                    labels.append({'id': u['id'], 'kind': 'narration', 'speaker': 'NARRATOR', 'certain': True})
+            return {'labels': labels, 'model_sha256': 'fixture'}
+    with TestClient(create_app(tmp_path / 'p', FixtureEngine(), role_engine=Letters()), base_url='http://127.0.0.1', headers=HEADERS) as c:
+        d = c.post('/api/attribution/draft', json={'script': '张小伟走进来。“账本呢？”阿宁说：“在柜里。”\n“账本我拿走了。”\n', 'language': 'zh'}).json()
+        by = {u['text'].strip(): u for u in d['units'] if not u['blank']}
+        assert by['“账本呢？”']['speaker'] == '张小伟' and by['“账本呢？”'].get('tier') is None    # ZHANG XIAO WEI spells the tag-found name
+        assert by['“在柜里。”']['speaker'] == '阿宁'                                                 # the tag beside it
+        assert by['“账本我拿走了。”']['speaker'] == '张小伟'
+
+
+def test_an_alias_both_of_whose_names_the_reviewer_used_is_two_people_and_is_split(tmp_path):
+    """本人 2026-09-16: 两个被判为等价的人名都用上了 — 那是两个人，立刻拆开。"""
+    class Boss(Roles):
+        def annotate(self, text, log_path):
+            return {'labels': [{'id': u['id'], 'kind': 'dialogue' if u['text'].startswith('“') else 'narration',
+                                'speaker': '老板娘' if u['text'].startswith('“') else 'NARRATOR', 'certain': True} for u in source_units(text)],
+                    'model_sha256': 'fixture'}
+    with TestClient(create_app(tmp_path / 'p', FixtureEngine(), role_engine=Boss()), base_url='http://127.0.0.1', headers=HEADERS) as c:
+        book = c.post('/api/books', json={'title': '书', 'language': 'zh', 'script': '第一章 一\n老板娘说：“来。”\n\n第二章 二\n老板娘说：“来呀。”“到。”\n'}).json()
+        ch1 = c.get(f"/api/books/{book['id']}/chapters/1").json()
+        d1 = c.post('/api/attribution/draft', json={'script': ch1['text'], 'language': 'zh', 'book_id': book['id']}).json()
+        labels = [{'id': u['id'], 'kind': u['kind'], 'speaker': '陈小雪' if u['kind'] == 'dialogue' else u['speaker']} for u in d1['units']]
+        c.post('/api/attribution/confirm', json={'draft_id': d1['draft_id'], 'name': ch1['project_name'], 'labels': labels,
+                                                'book_id': book['id'], 'chapter_index': 1, 'aliases': {'老板娘': '陈小雪'}})
+        assert c.get('/api/books/' + book['id']).json()['aliases'] == {'老板娘': '陈小雪'}
+        ch2 = c.get(f"/api/books/{book['id']}/chapters/2").json()
+        d2 = c.post('/api/attribution/draft', json={'script': ch2['text'], 'language': 'zh', 'book_id': book['id']}).json()
+        # The reviewer gives one line to 陈小雪 and the other to 老板娘: two people.
+        labels = []
+        for u in d2['units']:
+            sp = u['speaker']
+            if u['kind'] == 'dialogue':
+                sp = '陈小雪' if '来呀' in u['text'] else '老板娘'
+            labels.append({'id': u['id'], 'kind': u['kind'], 'speaker': sp})
+        r = c.post('/api/attribution/confirm', json={'draft_id': d2['draft_id'], 'name': ch2['project_name'], 'labels': labels,
+                                                    'book_id': book['id'], 'chapter_index': 2, 'aliases': {'老板娘': '陈小雪'}})
+        assert r.status_code == 200, r.text
+        assert c.get('/api/books/' + book['id']).json()['aliases'] == {}
+        assert r.json()['attribution']['aliases_split'] == {'老板娘': '陈小雪'}

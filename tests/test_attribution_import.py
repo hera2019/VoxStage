@@ -99,7 +99,9 @@ def test_a_drafted_name_loses_a_trailing_speech_verb_but_keeps_short_names():
 
 
 def test_a_name_the_story_never_uses_is_handed_back_as_unresolved(tmp_path):
-    """The model wrote ME for 我 and WU DI for 吴迪. Neither is in the text."""
+    """The model wrote ME for 我 and WU DI for 吴迪. WU DI spells a name in the
+    text and becomes it (本人 2026-09-16: 等价人名); a name that spells nothing
+    there is handed back unresolved."""
     class Romanising(Roles):
         def annotate(self, text, log_path):
             units = source_units(text)
@@ -109,10 +111,14 @@ def test_a_name_the_story_never_uses_is_handed_back_as_unresolved(tmp_path):
     engine = Romanising()
     with TestClient(create_app(tmp_path / 'p', FixtureEngine(), role_engine=engine),
                     base_url='http://127.0.0.1', headers=HEADERS) as c:
+        engine.name = 'THE BOSS'
+        d = draft(c, '吴迪看着我。“别干了，好吗？”')
+        quoted = next(u for u in d['units'] if u['text'].startswith('“'))
+        assert quoted['speaker'] == 'UNKNOWN' and quoted['suggested'] == 'THE BOSS'
         engine.name = 'WU DI'
         d = draft(c, '吴迪看着我。“别干了，好吗？”')
         quoted = next(u for u in d['units'] if u['text'].startswith('“'))
-        assert quoted['speaker'] == 'UNKNOWN' and quoted['suggested'] == 'WU DI'
+        assert quoted['speaker'] == '吴迪' and 'suggested' not in quoted
         # A name that is in the text passes through untouched.
         engine.name = '吴迪'
         d = draft(c, '吴迪看着我。“别干了，好吗？”')

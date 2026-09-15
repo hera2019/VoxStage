@@ -701,8 +701,20 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 if inner[-1:] in '呀啊吗呢吧哦嗯啦哇嘛噢呗哩呐唉哎呦咯哟嘞呵':   # a spoken particle
                     return False
                 return len(inner) <= 10
-            def vetted(label, unit):
+            def chinese_names(labels):
+                """Names in the text's own script that anything has offered for this
+                passage: the book's, the tags', and the model's own Chinese answers."""
+                return set(known_names) | set(tag_names) | {l['speaker'].strip() for l in labels if l['kind'] == 'dialogue' and re.search('[一-鿿]', l['speaker'])}
+            def vetted(label, unit, candidates=()):
                 speaker = aliases.get(label['speaker'].strip(), label['speaker'].strip())   # 老板娘 → 陈小雪, as the book learned
+                if body.language == 'zh' and label['kind'] == 'dialogue' and speaker and not re.search('[一-鿿]', speaker) and speaker.upper() not in ('UNKNOWN', 'NARRATOR'):
+                    # A name written in letters for a Chinese text — ZHANG XIAO WEI
+                    # — is the name it spells, when exactly one name here does
+                    # (本人 2026-09-16: 等价人名). The grammar now keeps the model
+                    # from answering in letters; this is the net under it.
+                    same = habits.name_in_letters_for(speaker, candidates, body.script)
+                    if same:
+                        speaker = aliases.get(same, same)
                 if quoted and label['kind'] == 'dialogue' and not unit['text'].lstrip().startswith(('“', '"', '「', '『')):
                     return {'kind': 'narration', 'speaker': 'NARRATOR', 'suggested': speaker}
                 if body.language == 'zh' and label['kind'] == 'dialogue' and cites_rather_than_speaks(unit):
@@ -723,10 +735,11 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             # are the cast the model is told about. Without any list, the
             # abliterated fine-tune answered Kong Yiji in English — KONG YIJI,
             # CHEF, A CUSTOMER — and every name was refused as not in the text.
+            from . import habits
+            unquoted = [u['text'] for u in source_units(body.script) if u['text'].strip() and u['text'].strip()[0] not in '“"「『']
+            tag_names = habits.names_from_tags(unquoted, body.script)
             if not names_for_model:
-                from . import habits
-                unquoted = [u['text'] for u in source_units(body.script) if u['text'].strip() and u['text'].strip()[0] not in '“"「『']
-                names_for_model = habits.names_from_tags(unquoted, body.script)
+                names_for_model = list(tag_names)
             # Test doubles may not take the cast; the real engine does.
             def annotate_with(engine_, log_name):
                 return (engine_.annotate(body.script, drafts/log_name, known_names=names_for_model) if names_for_model and 'known_names' in engine_.annotate.__code__.co_varnames
@@ -739,9 +752,9 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             # does, and the other is installed, ask that one before falling back
             # on the structural draft. Both runs are kept in the record.
             def placed(labels):
-                by = {l['id']: l for l in labels}
-                return [u for u in spoken if u['id'] in by and vetted(by[u['id']], u)['kind'] == 'dialogue'
-                        and vetted(by[u['id']], u)['speaker'].upper() not in ('', 'UNKNOWN')]
+                by = {l['id']: l for l in labels}; pool = chinese_names(labels)
+                return [u for u in spoken if u['id'] in by and vetted(by[u['id']], u, pool)['kind'] == 'dialogue'
+                        and vetted(by[u['id']], u, pool)['speaker'].upper() not in ('', 'UNKNOWN')]
             def balked(labels):
                 # Fewer than half the quoted lines placed. With names held to the
                 # text's own script the evaluated model no longer hands in nothing
@@ -791,7 +804,8 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             # Whitespace between two quoted lines is a unit like any other and
             # still needs a label, but showing the reviewer an empty row to
             # assign a character to is noise. Mark it; the UI leaves it out.
-            out = [{**unit, **vetted(labels[unit['id']], unit), 'blank': not unit['text'].strip()} for unit in units]
+            pool = chinese_names(result['labels'])
+            out = [{**unit, **vetted(labels[unit['id']], unit, pool), 'blank': not unit['text'].strip()} for unit in units]
             # Lines still unplaced: who talks like this? Taught by the lines a
             # person confirmed in the same book's other chapters (runtime/habits).
             from . import habits
@@ -1050,8 +1064,11 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 # of the chapter before it — the same characters, the same voices,
                 # the same lexicon — so a book is configured once, not per chapter.
                 book = books.get(body.book_id)
-                if body.aliases:
-                    books.remember_aliases(book['id'], body.aliases)
+                speakers = {l['speaker'] for l in labels if l['kind'] == 'dialogue'}
+                if body.aliases or (book.get('aliases') and speakers):
+                    _, split = books.remember_aliases(book['id'], body.aliases, speakers)
+                    if split:
+                        project['attribution']['aliases_split'] = split
                 project['book'] = {'id': book['id'], 'title': book['title'], 'index': body.chapter_index, 'chapters': len(book['chapters'])}
                 siblings = [p for p in book_projects(book) if p['id'] != project['id'] and not p.get('archived')]
                 earlier = [p for p in siblings if (p.get('book') or {}).get('index', 0) < body.chapter_index]
