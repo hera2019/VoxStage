@@ -43,7 +43,10 @@ were made with the flow below. New material still needs listening to.
    stranger is not the next one's), in yellow; rename it once and every such
    line follows (Chinese narration only, so far). Yellow is a guess — glance at
    it before creating the project: the program relays only within one exchange
-   and learns only from lines you settled. The speaker is a list of the book's cast
+   and learns only from lines you settled. Above the lines is the **cast table** —
+   name (editable: the character's lines follow), aliases, first line, source.
+   Every decision is saved as you make it (the corner says 已保存); reload, or
+   open the same chapter another day, and you can resume the review. The speaker is a list of the book's cast
    plus 新人名. Settle one name and the remaining yellow and orange lines are
    scored again; rename one line's 老板娘 to 陈小雪 and you are offered to carry
    the rest along, after which the book remembers the alias for later drafts.
