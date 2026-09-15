@@ -87,6 +87,32 @@ class SuggestUnit(BaseModel):
 class SuggestRequest(BaseModel):
     book_id: str | None = Field(default=None, pattern=r'^[a-f0-9]{32}$')
     units: list[SuggestUnit] = Field(max_length=1000)
+    draft_id: str | None = Field(default=None, pattern=r'^[a-f0-9]{32}$')   # the draft's saved decisions are the final word on what is fixed
+    revision: int | None = Field(default=None, ge=1)
+
+class Decision(BaseModel):
+    unit_id: str = Field(max_length=16)
+    speaker: str | None = Field(default=None, max_length=80)      # None: the unit's speaker is not decided here (kind only)
+    kind: Literal['narration', 'dialogue'] | None = None
+    edited: bool = True                                          # the person changed it; False with confirmed: accepted as it was
+    confirmed: bool = True
+    clear: bool = False                                          # take the decision away: back to the program's suggestion
+
+class CastRename(BaseModel):
+    cast_id: str = Field(pattern=r'^[a-f0-9]{32}$')
+    name: str = Field(min_length=1, max_length=80)
+
+class CastAlias(BaseModel):
+    cast_id: str = Field(pattern=r'^[a-f0-9]{32}$')
+    alias: str = Field(min_length=1, max_length=80)
+
+class DraftPatch(BaseModel):
+    expected_revision: int = Field(ge=1)
+    decisions: list[Decision] = Field(default_factory=list, max_length=500)
+    rename: CastRename | None = None
+    alias: CastAlias | None = None                               # 老板娘 is 陈小雪 — the reviewer carried a rename along
+    split: str | None = Field(default=None, max_length=80)      # this alias is a character of its own after all
+    unsplit: str | None = Field(default=None, pattern=r'^[a-f0-9]{32}$')   # undo a split: the character made from an alias
 
 class RoleConfirmRequest(BaseModel):
     draft_id: str = Field(pattern=r'^[a-f0-9]{32}$')
@@ -97,6 +123,7 @@ class RoleConfirmRequest(BaseModel):
     aliases: dict[str, str] = Field(default_factory=dict)                   # 老板娘 → 陈小雪, learned while reviewing
     silent: list[int] | None = Field(default=None, max_length=2000)         # line numbers whose segments are kept but not read aloud
     review: dict | None = None                                              # how much the reviewer had to do; see RoleImport
+    expected_revision: int | None = Field(default=None, ge=1)               # the draft revision the page confirmed from
 
 class InheritRequest(BaseModel):
     revision: int = Field(ge=0)
@@ -278,6 +305,36 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
         except ValueError:
             pass
     drafts = store.root.parent / (store.root.name + '-role-drafts')
+
+    def write_draft(record):
+        """Atomic: the record is whole or unchanged, never half-written."""
+        path = drafts / (record['draft_id'] + '.json'); tmp = path.with_suffix('.json.tmp')
+        tmp.write_text(json.dumps(record, ensure_ascii=False, indent=2), encoding='utf-8')
+        os.replace(tmp, path)
+
+    def read_draft(draft_id):
+        path = drafts / (draft_id + '.json')
+        if not path.is_file():
+            raise ValueError('找不到这份草稿。')
+        return json.loads(path.read_text(encoding='utf-8'))
+
+    def draft_cast(record):
+        """The cast a draft works with: its book's, else its own."""
+        if record.get('book_id'):
+            try:
+                book_record = books.get(record['book_id'])
+                return books.cast_of(book_record), book_record
+            except ValueError:
+                pass
+        record.setdefault('cast', [])
+        return record['cast'], None
+
+    def save_cast(record, cast, book_record):
+        from . import cast as C
+        if book_record is not None:
+            book_record['cast'] = cast; book_record['aliases'] = C.alias_table(cast); books.save(book_record)
+        else:
+            record['cast'] = cast
     drafts.mkdir(exist_ok=True)
     executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix='voxstage-render')
     cancel = threading.Event()
@@ -877,7 +934,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             from evals.speaker_attribution.source_units import bind_labels
             bind_labels(body.script,json.dumps({'labels':result['labels']}))
             record = {**result,'draft_id':draft_id,'source_script':body.script,'language':body.language,'fallback_model':fallback_used}
-            (drafts/(draft_id+'.json')).write_text(json.dumps(record,ensure_ascii=False,indent=2))
+            write_draft(record)                       # the model's answer is kept even if the rules below fail
             labels = {x['id']:x for x in result['labels']}
             units = source_units(body.script)
             # A degenerate draft: the model called every quoted unit narration.
@@ -1202,7 +1259,31 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                     settled(sp, blk)
             for u in out:
                 u.pop('habit', None)
-            return {'draft_id':draft_id, 'notice': notice, 'units': out}
+            # The cast: every name the draft gave a line, with how it came to be
+            # (Astra 2026-09-16: 角色编号独立于名字). A chapter's cast is the
+            # book's; a draft made outside a book keeps its own until confirmed.
+            from . import cast as C
+            with store.lock:
+                if body.book_id:
+                    book_record = books.get(body.book_id)
+                    cast = books.cast_of(book_record, names=sorted(known_names))    # the book's people, confirmed in its other chapters
+                else:
+                    cast = []
+                for u in out:
+                    if u['kind'] != 'dialogue' or u['blank']:
+                        continue
+                    name = u['speaker'].strip()
+                    if name.upper() in ('', 'UNKNOWN', 'NARRATOR'):
+                        continue
+                    source = {'mark': 'mark', 'tag': 'tag', 'model': 'model'}.get(u.get('source') or '', 'rule')
+                    entry, _ = C.ensure(cast, name, source, introduced={'draft_id': draft_id, 'unit_id': u['id']})
+                    u['cast_id'] = entry['id']
+                if body.book_id:
+                    book_record['aliases'] = C.alias_table(cast); books.save(book_record)
+                view = {'draft_id': draft_id, 'notice': notice, 'units': out, 'revision': 1, 'decisions': {}, 'cast': cast}
+                record.update({'units': out, 'revision': 1, 'decisions': {}, 'book_id': body.book_id, 'cast': None if body.book_id else cast})
+                write_draft(record)
+            return view
         except ValueError as exc:
             # bind_labels rejects a malformed model response. Its wording names
             # internal structures, which tells the reader nothing they can act on.
@@ -1220,6 +1301,102 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             with store.lock:
                 active['project_id'] = None
 
+    def apply_decisions(units, decisions):
+        """The page view with the reviewer's saved decisions laid over it: a decided
+        unit shows the reviewer's speaker and kind, plain, and says so."""
+        out = []
+        for u in units:
+            d = decisions.get(u['id'])
+            if not d:
+                out.append(u); continue
+            v = {k: x for k, x in u.items() if k not in ('tier', 'hint', 'suggested', 'basis')}
+            if d.get('kind'):
+                v['kind'] = d['kind']
+            if d.get('speaker') is not None:
+                v['speaker'] = d['speaker']
+            v['decided'] = {'edited': bool(d.get('edited')), 'confirmed': bool(d.get('confirmed')), 'source': d.get('source', 'person')}
+            out.append(v)
+        return out
+
+    @app.get('/api/attribution/draft/{draft_id}')
+    def get_draft(draft_id: str):
+        """A draft as the page shows it, with the reviewer's saved decisions and the
+        cast — so a review survives a refresh, a step back, or another day."""
+        if not re.fullmatch(r'[a-f0-9]{32}', draft_id):
+            raise ValueError('找不到这份草稿。')
+        with store.lock:
+            record = read_draft(draft_id)
+            if 'units' not in record:
+                raise ValueError('这份草稿是旧版本做的，没有保存页面；请重新生成一次。')
+            cast, _ = draft_cast(record)
+            return {'draft_id': draft_id, 'revision': record.get('revision', 1), 'decisions': record.get('decisions', {}),
+                    'units': apply_decisions(record['units'], record.get('decisions', {})), 'cast': cast,
+                    'language': record['language'], 'book_id': record.get('book_id'), 'notice': record.get('notice'),
+                    'confirmed_project_id': record.get('confirmed_project_id')}
+
+    @app.patch('/api/attribution/draft/{draft_id}')
+    def patch_draft(draft_id: str, body: DraftPatch):
+        """The reviewer's decisions, saved as they are made (Astra 2026-09-16:
+        人工决定保存，刷新与重算保护). Each save names the revision it saw; a
+        stale one is refused with the current state, and the page reconciles.
+        Also renames, aliases (a rename carried along) and splits in the cast."""
+        from . import cast as C
+        if not re.fullmatch(r'[a-f0-9]{32}', draft_id):
+            raise ValueError('找不到这份草稿。')
+        with store.lock:
+            record = read_draft(draft_id)
+            current = record.get('revision', 1)
+            if body.expected_revision != current:
+                raise HTTPException(status_code=409, detail={'message': '这份草稿在别处改过了，页面已按最新状态更新。', 'revision': current,
+                                                             'decisions': record.get('decisions', {})})
+            cast, book_record = draft_cast(record)
+            units = {u['id']: u for u in record.get('units', [])}
+            decisions = record.setdefault('decisions', {})
+            now = time.strftime('%Y-%m-%d %H:%M:%S')
+            events = []
+            if body.rename:
+                entry = C.rename(cast, body.rename.cast_id, body.rename.name)
+                for d in decisions.values():                     # decisions name the character by id; their name follows
+                    if d.get('cast_id') == entry['id']:
+                        d['speaker'] = entry['name']
+                for u in units.values():
+                    if u.get('cast_id') == entry['id']:
+                        u['speaker'] = entry['name']
+                events.append({'rename': entry['id'], 'name': entry['name']})
+            if body.alias:
+                entry = C.add_alias(cast, body.alias.cast_id, body.alias.alias, 'person')
+                events.append({'alias': body.alias.alias, 'of': entry['id'] if entry else None})
+            if body.split:
+                entry = C.split(cast, body.split)
+                events.append({'split': body.split, 'entry': entry['id'] if entry else None})
+            if body.unsplit:
+                holder = C.unsplit(cast, body.unsplit)
+                events.append({'unsplit': body.unsplit, 'back_to': holder['id'] if holder else None})
+            for d in body.decisions:
+                u = units.get(d.unit_id)
+                if u is None or not u['text'].strip():
+                    continue
+                if d.clear:
+                    decisions.pop(d.unit_id, None); continue
+                speaker = (d.speaker if d.speaker is not None else decisions.get(d.unit_id, {}).get('speaker', u['speaker'])).strip()
+                kind = d.kind or decisions.get(d.unit_id, {}).get('kind') or u['kind']
+                if kind == 'dialogue' and speaker.upper() not in ('', 'UNKNOWN'):
+                    entry, _ = C.ensure(cast, speaker, 'person', introduced={'draft_id': draft_id, 'unit_id': d.unit_id})
+                    cast_id = entry['id']; speaker = entry['name']
+                else:
+                    cast_id = None
+                previous = decisions.get(d.unit_id, {})
+                decisions[d.unit_id] = {'speaker': speaker if kind == 'dialogue' else 'NARRATOR', 'kind': kind, 'cast_id': cast_id,
+                                        'edited': bool(d.edited) or bool(previous.get('edited')), 'confirmed': bool(d.confirmed),
+                                        'source': 'person' if d.edited else (u.get('source') or ('rule' if u.get('tier') else 'model')),
+                                        'text_fingerprint': hashlib.sha256(u['text'].encode()).hexdigest()[:16], 'at': now}
+            record['revision'] = current + 1
+            record.setdefault('events', []).extend([{**e, 'revision': record['revision'], 'at': now} for e in events])
+            save_cast(record, cast, book_record)
+            write_draft(record)
+            return {'revision': record['revision'], 'decisions': decisions, 'cast': cast,
+                    'units': apply_decisions(record['units'], decisions), 'events': events}
+
     @app.post('/api/attribution/suggest')
     def resuggest(body: SuggestRequest):
         """Learn as the reviewer works: the lines already settled on the page —
@@ -1228,6 +1405,23 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
         again. Returns a suggestion per unsettled line; the page decides how to show it."""
         from . import habits
         taught = []
+        revision = None
+        if body.draft_id:
+            # The draft's saved decisions are the final word on what is fixed —
+            # protection in the backend, not only in the page's own state.
+            with store.lock:
+                try:
+                    record = read_draft(body.draft_id)
+                except ValueError:
+                    record = {}
+            revision = record.get('revision')
+            saved = record.get('decisions', {})
+            for u in body.units:
+                d = saved.get(u.id)
+                if d and (d.get('edited') or d.get('confirmed')):
+                    u.fixed = True; u.speaker = d['speaker'] if d.get('kind', 'dialogue') == 'dialogue' else ''; u.source = 'person' if d.get('edited') else (d.get('source') or 'model')
+                    if d.get('kind') == 'narration':
+                        u.kind = 'narration'
         if body.book_id:
             with store.lock:
                 taught += [(u['text'], l['speaker']) for p in book_projects(books.get(body.book_id)) for u, l in confirmed_dialogue(p)]
@@ -1255,12 +1449,30 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 out[u.id] = {'speaker': u.turn.strip(), 'margin': 0.0, 'fill': True, 'basis': '按一来一往填的', **({'hint': best} if best and best != u.turn.strip() else {})}
             elif best:
                 out[u.id] = {'speaker': best, 'margin': round(margin, 3), 'fill': margin >= habits.MARGIN and not unprofiled, 'basis': '按已确认的说话习惯，像是'}
-        return {'suggestions': out, 'taught': len(taught)}
+        return {'suggestions': out, 'taught': len(taught), 'revision': revision}
 
     @app.post('/api/attribution/confirm')
     def confirm_roles(body: RoleConfirmRequest):
-        record = json.loads((drafts/(body.draft_id+'.json')).read_text())
+        from . import cast as C
+        with store.lock:
+            record = read_draft(body.draft_id)
+            if body.expected_revision is not None and body.expected_revision != record.get('revision', 1):
+                raise HTTPException(status_code=409, detail={'message': '这份草稿在别处改过了，请刷新后再确认。', 'revision': record.get('revision', 1)})
+            cast, book_record = draft_cast(record)
         labels = [label.model_dump() for label in body.labels]
+        # The reviewer's saved decisions are the final word (Astra 2026-09-16):
+        # a label the page sends for a decided unit yields to the decision.
+        decisions = record.get('decisions', {})
+        units_by_id = {u['id']: u for u in record.get('units', [])}
+        for label in labels:
+            d = decisions.get(label['id'])
+            u = units_by_id.get(label['id'], {})
+            if d:
+                label['kind'] = d.get('kind', label['kind'])
+                label['speaker'] = d['speaker'] if label['kind'] == 'dialogue' else 'NARRATOR'
+                label['source'] = 'person' if d.get('edited') else d.get('source', 'model'); label['edited'] = bool(d.get('edited')); label['confirmed'] = True
+            else:
+                label['source'] = u.get('source') or ('rule' if u.get('tier') else 'model'); label['edited'] = False; label['confirmed'] = True
         # Headings and other lines the import keeps but does not read: cut as
         # their own segments (a lock at each end keeps the merger off them) and
         # kept silent from the start (Astra 2026-09-16: keep the text, do not
@@ -1285,9 +1497,16 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             if any(a <= seg['source_start'] and seg['source_end'] <= b for a, b in spans):
                 seg['read_aloud'] = False
         with store.lock:
+            for label in labels:
+                if label['kind'] == 'dialogue' and label['speaker'].strip().upper() not in ('', 'UNKNOWN'):
+                    entry, _ = C.ensure(cast, label['speaker'].strip(), 'person')
+                    label['cast_id'] = entry['id']
+            save_cast(record, cast, book_record)
             project = store.create(body.name, record['source_script'], record['language'], segments=segments, preset_model=default_preset())
+            project['cast_ids'] = {e['name']: e['id'] for e in cast if e['name'] in project['voices']}
             project['attribution'] = {'draft_id':body.draft_id,'model_sha256':record.get('model_sha256'),'model_id':record.get('model_id'),
-                'model_labels':record['labels'],'confirmed_labels':labels,'human_confirmed':True,
+                'model_labels':record['labels'],'confirmed_labels':labels,'human_confirmed':True,'decisions':decisions,'draft_revision':record.get('revision', 1),
+                'cast':[{k: e[k] for k in ('id', 'name', 'aliases', 'colours', 'sex', 'source')} for e in cast],
                 # The automation measurement the author asked for (2026-09-15): what
                 # the page showed, what the person changed, how long it took.
                 'review':{k: body.review.get(k) for k in ('seconds','dialogue','orange','yellow','changed','named_changed','yellow_changed','orange_filled')} if body.review else None}
@@ -1310,6 +1529,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                     carried = inherit_settings(project, source, store.directory(source['id']), store.directory(project['id']))
                     inherited = {'from': source['name'], **carried}
             store.write(project)
+            record['confirmed_project_id'] = project['id']; write_draft(record)
             return {**store.public(project, engine, checker), 'inherited': inherited}
 
     @app.get('/api/projects')

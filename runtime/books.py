@@ -181,6 +181,34 @@ class Books:
             raise ValueError('找不到这本书。')
         path.unlink()
 
+    def save(self, book):
+        (self.root / (book['id'] + '.json')).write_text(json.dumps(book, ensure_ascii=False), encoding='utf-8')
+
+    def cast_of(self, book, names=()):
+        """The book's cast, made on first use from what it already knew — its
+        alias table and the names of its chapters' projects (source person: a
+        reviewer confirmed them) — and kept in step with the alias table the
+        draft rules read. `names` are extra names to make sure of."""
+        from . import cast as C
+        changed = False
+        if 'cast' not in book:
+            book['cast'] = []
+            for name in names:
+                C.ensure(book['cast'], name, 'person')
+            for alias, name in (book.get('aliases') or {}).items():
+                entry, _ = C.ensure(book['cast'], name, 'person')
+                C.add_alias(book['cast'], entry['id'], alias, 'person')
+            changed = True
+        for name in names:
+            _, created = C.ensure(book['cast'], name, 'person')
+            changed = changed or created
+        table = C.alias_table(book['cast'])
+        if table != (book.get('aliases') or {}):
+            book['aliases'] = table; changed = True
+        if changed:
+            self.save(book)
+        return book['cast']
+
     def remember_aliases(self, book_id, aliases, speakers=()):
         """老板娘 → 陈小雪, learned when a reviewer renamed one and carried the rest along.
         Kept with the book; applied to every later draft of it. `speakers` are the
@@ -188,8 +216,10 @@ class Books:
         in use is two people, and the pair is dropped at once (本人 2026-09-16),
         from the table and from what is being remembered. Returns the table and
         the pairs split."""
+        from . import cast as C
         book = self.get(book_id)
-        table = book.setdefault('aliases', {})
+        cast = self.cast_of(book)
+        table = dict(book.get('aliases') or {})
         used = {sp.strip() for sp in speakers}
         split = {a: n for a, n in table.items() if a in used and n in used}
         for alias, name in aliases.items():
@@ -199,11 +229,13 @@ class Books:
             if alias in used and name in used:
                 split[alias] = name
                 continue
-            table[alias] = name
+            entry, _ = C.ensure(cast, name, 'person')
+            C.add_alias(cast, entry['id'], alias, 'person')
         for alias in split:
-            table.pop(alias, None)
-        (self.root / (book_id + '.json')).write_text(json.dumps(book, ensure_ascii=False), encoding='utf-8')
-        return table, split
+            C.split(cast, alias)
+        book['aliases'] = C.alias_table(cast)
+        self.save(book)
+        return book['aliases'], split
 
     def list(self):
         out = []

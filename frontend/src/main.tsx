@@ -18,7 +18,7 @@ type Config={draft_limits?:{chars:number;units:number;context:number;memory_gb:n
 const samples={zh:'旁白：雨点轻轻敲着窗。\n小林：你听见了吗？\n阿宁：别担心，那只是风。\n旁白：两个人相视一笑。',en:'Narrator: Rain tapped against the window.\nMira: Did you hear that?\nLeo: Just the wind. We are safe here.\nNarrator: They smiled and went back to their books.'};
 async function api(path:string,method='GET',data?:unknown){
  const r=await fetch('/api'+path,{method,headers:{'Content-Type':'application/json','X-VoxStage':'1'},body:data===undefined?undefined:JSON.stringify(data)});
- const value=await r.json(); if(!r.ok)throw new Error(typeof value.detail==='string'?value.detail:'请求未完成，请检查输入并重试');return value;
+ const value=await r.json(); if(!r.ok){const err=new Error(typeof value.detail==='string'?value.detail:(value.detail&&typeof value.detail.message==='string')?value.detail.message:'请求未完成，请检查输入并重试') as Error&{status?:number;detail?:unknown};err.status=r.status;err.detail=value.detail;throw err}return value;
 }
 // A colour per character on screen: the author's choice when made, else a
 // palette split by the voice's sex as its label describes it — cool colours for
