@@ -42,6 +42,22 @@ ROLE_MODELS = {
         # unrestricted it thinks past the answer budget and never answers.
         # A budget of 1,500 thinking tokens, then the JSON (measured 2026-09-16).
         'launch': ['--reasoning-budget', '1500']},
+    # The plain models behind the abliterations, same quantisation each, so a
+    # comparison changes one thing at a time. Launch flags are what the first
+    # measurement finds works; recorded in the ai-lab notes when run.
+    'qwen3.5-9b-q5km': {
+        'label': 'Qwen3.5-9B 普通版 · Q5_K_M（unsloth 转换；候选）',
+        'sha256': 'dc2a39aef291f91a9116ad214058da0d86eb648743a124bd8c333787c4b9c91c',
+        'paths': [ROOT/'user-data/models/role-qwen3.5-9b/Qwen3.5-9B-Q5_K_M.gguf'],
+        'launch': ['--reasoning-budget', '1500']},
+    'qwen3-14b-q4km': {
+        'label': 'Qwen3-14B 普通版 · Q4_K_M（Qwen 官方 GGUF；候选）',
+        'sha256': '500a8806e85ee9c83f3ae08420295592451379b4f8cf2d0f41c15dffeb6b81f0',
+        'paths': [ROOT/'user-data/models/role-qwen3-14b/Qwen3-14B-Q4_K_M.gguf']},
+    'qwen3-14b-abliterated-v2-q4km': {
+        'label': 'Qwen3-14B 去审查版 v2 · Q4_K_M（huihui-ai；候选）',
+        'sha256': '66effa781874858e2d2efefa8d6d1d5b7c16f808fe018fe67c57f9014c18668f',
+        'paths': [ROOT/'user-data/models/role-qwen3-14b-abliterated/Huihui-Qwen3-14B-abliterated-v2.Q4_K_M.gguf']},
 }
 DEFAULT_ROLE_MODEL = 'qwen3-4b-instruct-2507-q8'
 

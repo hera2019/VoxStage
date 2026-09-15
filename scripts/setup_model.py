@@ -45,6 +45,19 @@ MODELS={
     'role-9b-abliterated':{'folder':'role-qwen3.5-9b-abliterated','repo':'mradermacher/Huihui-Qwen3.5-9B-abliterated-GGUF',
             'revision':'9f646d7eda193ddf2348134f3bff3d49eed7a2c6','gguf':True,
             'sha256':{'Huihui-Qwen3.5-9B-abliterated.Q5_K_M.gguf':'946072b16f5d672e60357410f900888f6522b3ae49f241b5bf2142cb89637fb6'}},
+    # The plain models the abliterations were made from, at the same
+    # quantisation, so a comparison changes one thing at a time (本人 2026-09-16:
+    # 普通版也升级试试). Qwen3.5-9B has no official GGUF; unsloth's conversion,
+    # Apache-2.0. Qwen3-14B is Qwen's own GGUF.
+    'role-9b':{'folder':'role-qwen3.5-9b','repo':'unsloth/Qwen3.5-9B-GGUF',
+            'revision':'3885219b6810b007914f3a7950a8d1b469d598a5','gguf':True,
+            'sha256':{'Qwen3.5-9B-Q5_K_M.gguf':'dc2a39aef291f91a9116ad214058da0d86eb648743a124bd8c333787c4b9c91c'}},
+    'role-14b':{'folder':'role-qwen3-14b','repo':'Qwen/Qwen3-14B-GGUF',
+            'revision':'530227a7d994db8eca5ab5ced2fb692b614357fd','gguf':True,
+            'sha256':{'Qwen3-14B-Q4_K_M.gguf':'500a8806e85ee9c83f3ae08420295592451379b4f8cf2d0f41c15dffeb6b81f0'}},
+    'role-14b-abliterated':{'folder':'role-qwen3-14b-abliterated','repo':'mradermacher/Huihui-Qwen3-14B-abliterated-v2-GGUF',
+            'revision':'daac977bbc287a398b4e46e190149142bb46c184','gguf':True,
+            'sha256':{'Huihui-Qwen3-14B-abliterated-v2.Q4_K_M.gguf':'66effa781874858e2d2efefa8d6d1d5b7c16f808fe018fe67c57f9014c18668f'}},
 }
 REQUIRED=['config.json','tokenizer_config.json','vocab.json','merges.txt',
           'speech_tokenizer/config.json','speech_tokenizer/configuration.json']
@@ -113,7 +126,7 @@ def prepare(kind, root=ROOT, verify_only=False, downloader=None):
 
 def main():
     parser=argparse.ArgumentParser(description='准备预设/固定声线模型，或仅离线校验已有文件')
-    parser.add_argument('--model',choices=['preset','base','preset-large','design','role-abliterated','role-9b-abliterated','all'],default='preset')
+    parser.add_argument('--model',choices=['preset','base','preset-large','design','role-abliterated','role-9b-abliterated','role-9b','role-14b','role-14b-abliterated','all'],default='preset')
     parser.add_argument('--verify-only',action='store_true',help='只检查，不下载或修改任何文件')
     args=parser.parse_args()
     failed=False
