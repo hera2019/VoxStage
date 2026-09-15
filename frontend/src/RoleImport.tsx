@@ -1,5 +1,5 @@
 import {useEffect,useRef,useState} from 'react';
-type Unit={id:string;text:string;kind:'narration'|'dialogue';speaker:string;blank?:boolean;suggested?:string;tier?:'suggested';basis?:string;hint?:string;edited?:boolean;certain?:boolean;typing?:boolean;stand_in?:boolean};
+type Unit={id:string;text:string;kind:'narration'|'dialogue';speaker:string;blank?:boolean;suggested?:string;tier?:'suggested';basis?:string;hint?:string;edited?:boolean;certain?:boolean;typing?:boolean;stand_in?:boolean;block?:number;source?:'tag'|'model'};
 type Draft={draft_id:string;units:Unit[];notice?:string|null};
 type Props={request:(path:string,method?:string,data?:unknown)=>Promise<any>;onCreated:(project:any)=>Promise<void>;onClose:()=>void;seed?:{name:string;language:'zh'|'en';text:string;knownNames?:string[];book?:{id:string;index:number}}|null};
 export function RoleImport({request,onCreated,onClose,seed}:Props){
@@ -22,7 +22,11 @@ export function RoleImport({request,onCreated,onClose,seed}:Props){
  // judgement when it said the passage did not settle it, the way the character
  // talks in chapters a person confirmed (both filled by the server), and two
  // people taking turns (filled here). Anything the person types is plain.
- const turnTaking:Record<string,string>={};{let recent:string[]=[];for(const u of draft?.units??[]){if(u.kind!=='dialogue'||u.blank)continue;if(!unresolved(u.speaker)){recent=[u.speaker.trim(),...recent.filter(n=>n!==u.speaker.trim())].slice(0,2);continue}if(recent.length===2){const s=recent[1];turnTaking[u.id]=s;recent=[s,recent[0]]}}}
+ // Turn-taking stays inside one exchange (the server numbers them; a long
+ // stretch of narration or a change of time or place starts a new one) and
+ // anchors only on lines that are settled — by the person, the model with
+ // certainty, a tag or a stand-in — never on another guess (Astra 2026-09-15).
+ const turnTaking:Record<string,string>={};{let recent:string[]=[];let block:number|undefined;for(const u of draft?.units??[]){if(u.kind!=='dialogue'||u.blank)continue;if(u.block!==block){recent=[];block=u.block}if(!unresolved(u.speaker)){const anchor=u.edited||u.tier!=='suggested'||u.stand_in;if(anchor)recent=[u.speaker.trim(),...recent.filter(n=>n!==u.speaker.trim())].slice(0,2);continue}if(recent.length===2){const s=recent[1];turnTaking[u.id]=s;recent=[s,recent[0]]}}}
  const effective=(u:Unit)=>u.edited?(unresolved(u.speaker)?'':u.speaker.trim()):unresolved(u.speaker)?(turnTaking[u.id]??''):u.speaker.trim();
  const tier=(u:Unit)=>u.kind!=='dialogue'?'':u.edited?(unresolved(u.speaker)?'unknown':'named'):unresolved(u.speaker)?(turnTaking[u.id]?'suggested':'unknown'):(u.tier==='suggested'?'suggested':'named');
  const basis=(u:Unit)=>u.tier==='suggested'&&!u.edited&&!unresolved(u.speaker)?(u.basis??'程序填的'):turnTaking[u.id]&&unresolved(u.speaker)?'按一来一往填的'+(u.hint&&u.hint!==turnTaking[u.id]?`（说话习惯倒像 ${u.hint}）`:''):'';
@@ -59,7 +63,7 @@ export function RoleImport({request,onCreated,onClose,seed}:Props){
   if(resuggest.current)clearTimeout(resuggest.current);
   resuggest.current=setTimeout(()=>{
    const d=latest.current;if(!d)return;
-   const units=d.units.filter(u=>!u.blank&&u.kind==='dialogue').map(u=>({id:u.id,text:u.text,kind:u.kind,speaker:u.edited?u.speaker:(u.tier==='suggested'&&!u.stand_in?'':u.speaker),fixed:u.edited?!unresolved(u.speaker):(u.tier!=='suggested'&&!unresolved(u.speaker)),turn:(!u.edited&&unresolved(u.speaker)&&turnTaking[u.id])||''}));
+   const units=d.units.filter(u=>!u.blank&&u.kind==='dialogue').map(u=>({id:u.id,text:u.text,kind:u.kind,speaker:u.edited?u.speaker:(u.tier==='suggested'&&!u.stand_in?'':u.speaker),fixed:u.edited?!unresolved(u.speaker):(u.tier!=='suggested'&&!unresolved(u.speaker)),turn:(!u.edited&&unresolved(u.speaker)&&turnTaking[u.id])||'',source:u.edited?'person':(u.source==='tag'?'tag':(u.tier!=='suggested'&&!unresolved(u.speaker)?'model':'guess'))}));
    request('/attribution/suggest','POST',{book_id:seed?.book?.id,units}).then((r:{suggestions:Record<string,{speaker:string;fill:boolean;basis?:string;hint?:string}>})=>{
     setDraft(d2=>d2&&({...d2,units:d2.units.map(u=>{
      if(u.edited||u.kind!=='dialogue'||u.blank||u.stand_in)return u;   // a stand-in (众人/某人) stays until renamed by hand

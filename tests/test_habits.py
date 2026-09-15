@@ -215,7 +215,7 @@ def test_the_person_spoken_to_is_not_the_speaker_and_a_nameless_tag_gets_a_stand
         by = {u['text'].strip(): u for u in d['units'] if not u['blank']}
         crowd = by['“阿宁，你又来赖账？”']
         assert crowd['speaker'] == '众人' and crowd['tier'] == 'suggested' and crowd['stand_in'] and crowd['hint'] == '阿宁'   # the model's 阿宁 kept as a hint
-        assert by['“他上回就没给钱。”']['speaker'] == '某人' and by['“他上回就没给钱。”']['tier'] == 'suggested'
+        assert by['“他上回就没给钱。”']['speaker'] == '某人甲' and by['“他上回就没给钱。”']['tier'] == 'suggested'   # lettered per exchange
         assert by['“我这就给。”']['speaker'] == 'UNKNOWN' and by['“我这就给。”'].get('tier') is None    # 对我说道: not 我's line, and nobody else is tagged
         # English narration is left alone.
         d = c.post('/api/attribution/draft', json={'script': 'Someone said, “Not today.”\n', 'language': 'en'}).json()
@@ -234,7 +234,7 @@ def test_the_pages_turn_taking_guess_stands_and_habits_only_hint_beside_a_stand_
         assert r['suggestions']['x'] == {'speaker': '王伯', 'margin': 0.0, 'fill': True, 'basis': '按一来一往填的', 'hint': '阿宁'}
         # A stand-in on the page: someone nobody can profile is speaking, so habits hint and do not fill.
         r = c.post('/api/attribution/suggest', json={'units': taught + [
-            {'id': 's', 'text': '老板娘～，来一斤～', 'kind': 'dialogue', 'speaker': '某人', 'fixed': False},
+            {'id': 's', 'text': '老板娘～，来一斤～', 'kind': 'dialogue', 'speaker': '某人甲', 'fixed': False},
             {'id': 'x', 'text': '老板娘～，猫饿了～', 'kind': 'dialogue', 'speaker': '', 'fixed': False}]}).json()
         assert r['suggestions']['x']['speaker'] == '阿宁' and r['suggestions']['x']['fill'] is False
         # No stand-in: the same line is filled.
@@ -259,3 +259,55 @@ def test_two_lines_running_go_to_the_other_of_the_last_two_speakers_even_when_th
         rows = [(u['speaker'], u.get('tier')) for u in d['units'] if u['kind'] == 'dialogue']
         assert rows == [('陈小雪', None), ('阿宁', None), ('陈小雪', 'suggested'), ('阿宁', None), ('陈小雪', 'suggested')]   # the fourth now follows the third
         assert '一来一往' in next(u['basis'] for u in d['units'] if u['text'].strip() == '“数错了吧？”')
+
+
+def test_exchanges_end_at_a_scene_cut_and_a_lone_second_line_is_flagged_not_filled(tmp_path):
+    """Astra 2026-09-15: turn-taking must not relay across scenes, and a guess
+    must not be built on another guess. Units carry their exchange number; the
+    second of two running lines is filled only from people settled in the same
+    exchange, else flagged."""
+    class Same(Roles):
+        def annotate(self, text, log_path):
+            labels = []
+            for u in source_units(text):
+                if u['text'].startswith('“'):
+                    labels.append({'id': u['id'], 'kind': 'dialogue', 'speaker': '阿宁', 'certain': True})
+                else:
+                    labels.append({'id': u['id'], 'kind': 'narration', 'speaker': 'NARRATOR', 'certain': True})
+            return {'labels': labels, 'model_sha256': 'fixture'}
+    with TestClient(create_app(tmp_path / 'p', FixtureEngine(), role_engine=Same()), base_url='http://127.0.0.1', headers=HEADERS) as c:
+        text = '陈小雪说：“来了？”阿宁说：“来了。”“坐吧。”\n第二天，王伯独自走进空屋。“有人吗？”“没有。”\n'
+        d = c.post('/api/attribution/draft', json={'script': text, 'language': 'zh'}).json()
+        by = {u['text'].strip(): u for u in d['units'] if not u['blank']}
+        assert by['“坐吧。”']['block'] == 0 and by['“有人吗？”']['block'] == 1 and by['“没有。”']['block'] == 1
+        assert by['“坐吧。”']['speaker'] == '陈小雪' and by['“坐吧。”']['tier'] == 'suggested'          # the other of the two settled here
+        assert by['“有人吗？”']['speaker'] == '阿宁' and by['“有人吗？”'].get('tier') is None            # the model's own answer, first in its exchange
+        second = by['“没有。”']
+        assert second['speaker'] == '阿宁' and second['tier'] == 'suggested' and '很少连着两句' in second['basis']   # nobody else settled here: flagged, not filled
+        assert by['陈小雪说：']['block'] == 0
+
+
+def test_naming_oneself_settles_the_line_and_a_bare_mention_only_asks_for_a_look(tmp_path):
+    """Astra 2026-09-15: a name in the line is evidence, not a veto."""
+    class Guess(Roles):
+        def annotate(self, text, log_path):
+            labels = []
+            for u in source_units(text):
+                if u['text'].startswith('“'):
+                    labels.append({'id': u['id'], 'kind': 'dialogue', 'speaker': 'UNKNOWN' if '我叫' in u['text'] else '陈小雪', 'certain': True})
+                else:
+                    labels.append({'id': u['id'], 'kind': 'narration', 'speaker': 'NARRATOR', 'certain': True})
+            return {'labels': labels, 'model_sha256': 'fixture'}
+    with TestClient(create_app(tmp_path / 'p', FixtureEngine(), role_engine=Guess()), base_url='http://127.0.0.1', headers=HEADERS) as c:
+        text = '阿宁说：“你是谁？”“我叫陈小雪。”阿宁又说：“哦。”“陈小雪的账本在我这里。”\n'
+        d = c.post('/api/attribution/draft', json={'script': text, 'language': 'zh'}).json()
+        by = {u['text'].strip(): u for u in d['units'] if not u['blank']}
+        assert by['“我叫陈小雪。”']['speaker'] == '陈小雪' and '自报家门' in by['“我叫陈小雪。”']['basis']
+        book = by['“陈小雪的账本在我这里。”']
+        assert book['speaker'] == '陈小雪' and book['tier'] == 'suggested' and '请看一眼' in book['basis']    # kept, but yellow
+        # Teaching: the model's certainty does not teach; the person's words and tags do.
+        r = c.post('/api/attribution/suggest', json={'units': [
+            {'id': 'a', 'text': '老板娘～，帮帮忙～', 'kind': 'dialogue', 'speaker': '阿宁', 'fixed': True, 'source': 'model'},
+            {'id': 'b', 'text': '嗯～，赏你一块糖～', 'kind': 'dialogue', 'speaker': '陈小雪', 'fixed': True, 'source': 'person'},
+            {'id': 'c', 'text': '老板娘～，猫跑了～', 'kind': 'dialogue', 'speaker': '', 'fixed': False}]}).json()
+        assert r['taught'] == 1

@@ -66,6 +66,7 @@ class SuggestUnit(BaseModel):
     speaker: str = Field(default='', max_length=80)
     fixed: bool = False            # named by the model with certainty, or typed by the person: teaches, is not re-suggested
     turn: str = Field(default='', max_length=80)   # the page's own guess for an unsettled line: two people taking turns
+    source: Literal['person', 'tag', 'model', 'guess', ''] = ''   # who settled the speaker: the person, the narration's tag, the model, a rule
 
 class SuggestRequest(BaseModel):
     book_id: str | None = Field(default=None, pattern=r'^[a-f0-9]{32}$')
@@ -156,6 +157,7 @@ class EditRequest(BaseModel):
     preset_model: Literal['0.6B', '1.7B'] | None = None
     color: str | None = Field(default=None, pattern=r'^(#[0-9a-fA-F]{6}|auto)$')   # with speaker: this character's colour on screen
     color_scope: Literal['name', 'text', 'both'] | None = None                       # where the colours show: the name, the words, or both
+    sex: Literal['m', 'f', 'auto'] | None = None                                     # with speaker: the character's sex for the speaker rules; 'auto' = as the voice suggests
 
 class TempoRegion(BaseModel):
     start: float = Field(ge=0, allow_inf_nan=False)
@@ -580,6 +582,12 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
         return {**chapter, 'book_id': book['id'], 'book_title': book['title'], 'language': book['language'], 'chapters': len(book['chapters']),
                 'project_name': f"{book['title']} · {chapter['title']}".strip(' ·'), 'known_names': names, 'existing_project_id': existing}
 
+    def character_sex(project, speaker):
+        """'f', 'm' or '': what the project says of the character, else what
+        their voice suggests. The voice is a production choice — a boy may be
+        read by a woman — so it is only the default (Astra 2026-09-15)."""
+        return (project.get('sexes') or {}).get(speaker) or voice_sex(project['voices'].get(speaker, ''))
+
     def voice_sex(voice):
         """'f', 'm' or '' from a voice's own description: preset labels say 女声/male; a designed
         or kept voice's library entry says what it was made from."""
@@ -656,9 +664,11 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                         for sp, voice in sibling['voices'].items():
                             if sp in ('旁白', 'Narrator', 'NARRATOR') or any(n.startswith(sp) for n in names_for_model):
                                 continue
-                            # The cast with the sex of each voice: a chapter's
-                            # speakers told apart by who could have said what.
-                            sex = voice_sex(voice)
+                            # The cast with the sex of each character — as the
+                            # book says (settings), else as the voice suggests:
+                            # a chapter's speakers told apart by who could have
+                            # said what.
+                            sex = character_sex(sibling, sp)
                             also = [a for a, n in aliases.items() if n == sp]
                             notes = [x for x in ({'f': '女', 'm': '男'}.get(sex, ''), '又称 ' + '、'.join(also) if also else '') if x]
                             names_for_model.append(sp + ('（' + '；'.join(notes) + '）' if notes else ''))
@@ -733,7 +743,13 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 return [u for u in spoken if u['id'] in by and vetted(by[u['id']], u)['kind'] == 'dialogue'
                         and vetted(by[u['id']], u)['speaker'].upper() not in ('', 'UNKNOWN')]
             def balked(labels):
-                return len(spoken) >= 3 and (not placed(labels) or (len(spoken) >= 10 and len(placed(labels)) <= 0.1 * len(spoken)))
+                # Fewer than half the quoted lines placed. With names held to the
+                # text's own script the evaluated model no longer hands in nothing
+                # on the author's chapter — it names 11 of 33 lines, all right, and
+                # leaves 22 blank where the other model names 28. An interim rule:
+                # the second model should answer only the blocks left blank, not
+                # the whole text again (Astra 2026-09-15, step 3).
+                return len(spoken) >= 3 and len(placed(labels)) < 0.5 * len(spoken)
             fallback_used = None
             if balked(result['labels']) and hasattr(role_engine, 'installed') and hasattr(role_engine, 'select'):
                 others = [m['id'] for m in role_engine.installed() if m['installed'] and m['id'] != role_engine.model_id]
@@ -813,15 +829,55 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             if body.book_id:
                 with store.lock:
                     for sibling in book_projects(books.get(body.book_id)):
-                        for sp, voice in sibling['voices'].items():
-                            sex_of.setdefault(sp, voice_sex(voice))
+                        for sp in sibling['voices']:
+                            sex_of.setdefault(sp, character_sex(sibling, sp))
             sex_prof = habits.sex_profiles((t, sex_of.get(sp, '')) for t, sp in taught) if body.book_id and taught else None
             mentions = {name: [name] + [a for a, n in aliases.items() if n == name] for name in cast}
             spoken = [i for i, u in enumerate(out) if not u['blank']]
+            # Exchanges: a run of lines with only short beats between them. A
+            # long stretch of narration, or one that opens with a change of
+            # time or place, ends the exchange (Astra 2026-09-15: turn-taking
+            # must not relay across scenes; an unnamed person in one exchange
+            # is not the unnamed person of the next). Every unit carries its
+            # exchange number; the page resets its own turn-taking on it.
+            block = 0; since_line = None
+            for i in spoken:
+                u = out[i]
+                if u['kind'] == 'dialogue':
+                    if since_line is not None and habits.scene_cut(since_line):
+                        block += 1
+                    since_line = ''
+                elif since_line is not None:
+                    since_line += u['text']
+                u['block'] = block
+            for u in out:
+                u.setdefault('block', 0)
+            LETTERS = '甲乙丙丁戊己庚辛壬癸'
+            anonymous = {}          # block -> the stand-in name of its unnamed single speaker
+            participants = {}       # block -> names settled in it by the model with certainty, a tag or a stand-in, in order
+            def settled(name, blk):
+                participants.setdefault(blk, [])
+                if name not in participants[blk]:
+                    participants[blk].append(name)
+            def settled_recent(i, blk):
+                """The last two distinct speakers before out[i] in the same exchange — lines
+                the model was sure of, tagged, stand-ins or filled by this rule; not other guesses."""
+                recent = []
+                for prior in reversed(out[:i]):
+                    if prior.get('block') != blk:
+                        break
+                    who = prior['speaker'].strip()
+                    if prior['kind'] == 'dialogue' and who.upper() not in ('', 'UNKNOWN', 'NARRATOR') and who not in recent \
+                            and (prior.get('tier') != 'suggested' or prior.get('stand_in') or prior.get('basis', '').startswith('上一句已经是这个人，一来一往')):
+                        recent.append(who)
+                        if len(recent) == 2:
+                            break
+                return recent
             for k, i in enumerate(spoken):
                 u = out[i]
                 if u['kind'] != 'dialogue':
                     continue
+                blk = u['block']
                 before = out[spoken[k - 1]] if k > 0 else None
                 after = out[spoken[k + 1]] if k + 1 < len(spoken) else None
                 tagged = habits.speech_tag(before['text'] if before and before['kind'] == 'narration' else '',
@@ -829,38 +885,67 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 if tagged:
                     if u['speaker'].strip() != tagged:
                         u.update({'speaker': tagged, 'basis': '旁边的叙述点了这个名字'}); u.pop('tier', None); u.pop('hint', None)
+                    u['source'] = 'tag'; settled(tagged, blk)
                     continue
                 # A tag that names nobody in particular (有的叫道, 旁人便又问道,
                 # 一个喝酒的人说道): the story never names this speaker, so the
-                # line gets a stand-in — 众人 or 某人 — yellow, over whatever the
-                # model said. Renaming the stand-in once carries every line along.
+                # line gets a stand-in, yellow, over whatever the model said —
+                # 众人 for a crowd, 某人甲/乙/… for one person, lettered per
+                # exchange. Renaming the stand-in once carries its lines along.
                 stand_in = habits.anonymous_tag(before['text'] if before and before['kind'] == 'narration' else '',
                                                 after['text'] if after and after['kind'] == 'narration' else '') if body.language == 'zh' else None
                 if stand_in:
+                    if stand_in == habits.STAND_INS['one']:
+                        if blk not in anonymous:
+                            n = len(anonymous)
+                            anonymous[blk] = stand_in + (LETTERS[n] if n < len(LETTERS) else str(n + 1))
+                        stand_in = anonymous[blk]
                     was = u['speaker'].strip()
-                    u.update({'speaker': stand_in, 'tier': 'suggested', 'basis': '叙述里只说是没有名字的人，先记作', 'stand_in': True})
+                    u.update({'speaker': stand_in, 'tier': 'suggested', 'basis': '叙述里只说是没有名字的人，先记作', 'stand_in': True, 'source': 'tag'})
                     if was.upper() not in ('', 'UNKNOWN', 'NARRATOR') and was != stand_in:
                         u['hint'] = was
+                    settled(stand_in, blk)
                     continue
                 sp = u['speaker'].strip()
-                named_in_line = [name for name, forms in mentions.items() if any(habits.mentioned(u['text'], f) for f in forms)]
-                if sp.upper() not in ('', 'UNKNOWN', 'NARRATOR') and sp in named_in_line:
-                    rest = [c for c in cast if c not in named_in_line]
-                    if len(rest) == 1:
-                        u.update({'speaker': rest[0], 'tier': 'suggested', 'basis': '句里叫到了别人，剩下的只有'})
+                named = sp.upper() not in ('', 'UNKNOWN', 'NARRATOR')
+                # Rule 2, graded by evidence (Astra 2026-09-15: a name in the line
+                # is evidence, not a veto). Naming oneself — 我叫陈小雪 — is the
+                # opposite evidence and settles the line; a call — 老板娘～ — is not
+                # the called person's line; a bare mention only asks for a look.
+                introduced = next((name for name, forms in mentions.items() if any(habits.self_introduced(u['text'], f) for f in forms)), None)
+                called = [name for name, forms in mentions.items() if any(habits.addressed(u['text'], f) for f in forms)]
+                spoken_of = [name for name, forms in mentions.items() if name not in called and any(habits.mentioned(u['text'], f) for f in forms)]
+                # Who else is in this exchange: settled so far here, else the cast.
+                local = [c for c in participants.get(blk, [])]
+                if introduced:
+                    if sp != introduced:
+                        u.update({'speaker': introduced, 'tier': 'suggested', 'basis': '句里自报家门，像是'})
+                    settled(introduced, blk)
+                    continue
+                if named and sp in called:
+                    others = [c for c in (local or cast) if c not in called]
+                    if len(others) == 1:
+                        u.update({'speaker': others[0], 'tier': 'suggested', 'basis': '句里叫到了别人，剩下的只有'})
                     else:
-                        u.update({'tier': 'suggested', 'basis': '句里提到了这个名字，多半不是本人说的；像是'})
+                        u.update({'tier': 'suggested', 'basis': '句里叫到了这个名字，不像是本人说的；像是'})
                         if profile:
                             best, margin = habits.suggest(u['text'], profile)
-                            if best and best not in named_in_line and margin >= habits.MARGIN:
+                            if best and best not in called and margin >= habits.MARGIN:
                                 u['speaker'] = best
+                elif named and sp in spoken_of and not labels[u['id']].get('certain', True):
+                    u.update({'tier': 'suggested', 'basis': '句里提到了这个名字，请看一眼；像是'})
+                elif named and sp in spoken_of:
+                    u.update({'tier': 'suggested', 'basis': '句里提到了自己的名字，请看一眼；模型说是'})
                 # Rule 4 (本人 2026-09-15: 分清男女，至少能猜对一半): a line that reads
                 # like the other sex's lines in this book is not this speaker's.
-                # Measured chapter one → two: 27 of 28 decided lines right.
+                # Measured chapter one → two: 27 of 28 decided lines right. The sex
+                # of a character is what the book says of them (settings), else
+                # what their voice suggests; a weak clue, never plain.
                 line_sex, _ = habits.sex_of_line(u['text'], sex_prof) if sex_prof else (None, 0.0)
                 sp = u['speaker'].strip()
-                if line_sex and sp in sex_of and sex_of[sp] and sex_of[sp] != line_sex and not tagged:
-                    same_sex = [c for c in cast if sex_of.get(c) == line_sex and c not in named_in_line]
+                excluded = set(called)
+                if line_sex and sp in sex_of and sex_of[sp] and sex_of[sp] != line_sex:
+                    same_sex = [c for c in (local or cast) if sex_of.get(c) == line_sex and c not in excluded]
                     pick = None
                     if profile:
                         pick = next((c for c, _ in habits.rank(u['text'], profile) if c in same_sex), None)
@@ -873,27 +958,25 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 # In the labelled texts two quoted lines running were never one
                 # person's (0 of 36 pairs, 2026-09-16), so this applies even when
                 # the model was certain — as yellow, with the other of the last
-                # two people who spoke (Kong Yiji: the model gave a whole
-                # exchange between the shopkeeper and a drinker to the drinker).
+                # two people who spoke in this exchange. Nobody else settled in
+                # the exchange: the line is flagged, not filled.
                 sp = u['speaker'].strip()
                 if before and before['kind'] == 'dialogue' and before['speaker'].strip() == sp and sp.upper() not in ('', 'UNKNOWN'):
-                    alternatives = [c for c in cast if c != sp and c not in named_in_line]
-                    recent = []
-                    for prior in reversed(out[:i]):
-                        who = prior['speaker'].strip()
-                        if prior['kind'] == 'dialogue' and who.upper() not in ('', 'UNKNOWN', 'NARRATOR') and who not in recent:
-                            recent.append(who)
-                            if len(recent) == 2:
-                                break
+                    recent = settled_recent(i, blk)
+                    alternatives = [c for c in (local or []) if c != sp and c not in excluded]
                     pick = None
-                    if profile:
-                        ranked = habits.rank(u['text'], profile)
-                        pick = next((c for c, _ in ranked if c in alternatives), None)
+                    if profile and alternatives:
+                        pick = next((c for c, _ in habits.rank(u['text'], profile) if c in alternatives), None)
                     pick = pick or next((c for c in recent if c in alternatives), None) or (alternatives[0] if len(alternatives) == 1 else None)
                     if pick:
                         u.update({'speaker': pick, 'tier': 'suggested', 'basis': '上一句已经是这个人，一来一往像是'})
-                    elif labels[u['id']].get('certain', True) and u.get('tier') != 'suggested':
+                    elif u.get('tier') != 'suggested':
                         u.update({'tier': 'suggested', 'basis': '上一句已经是这个人，很少连着两句；像是'})
+                sp = u['speaker'].strip()
+                if sp.upper() not in ('', 'UNKNOWN', 'NARRATOR') and u.get('tier') != 'suggested':
+                    u['source'] = 'model'; settled(sp, blk)
+                elif u.get('basis', '').startswith('上一句已经是这个人，一来一往'):
+                    settled(sp, blk)
             return {'draft_id':draft_id, 'notice': notice, 'units': out}
         except ValueError as exc:
             # bind_labels rejects a malformed model response. Its wording names
@@ -923,7 +1006,13 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
         if body.book_id:
             with store.lock:
                 taught += [(u['text'], l['speaker']) for p in book_projects(books.get(body.book_id)) for u, l in confirmed_dialogue(p)]
-        taught += [(u.text, u.speaker.strip()) for u in body.units if u.kind == 'dialogue' and u.fixed and u.speaker.strip().upper() not in ('', 'UNKNOWN', 'NARRATOR')]
+        # What teaches: lines the person settled and lines the narration tags
+        # (the text's own evidence). A line the model was merely sure of does
+        # not (Astra 2026-09-15): an unconfirmed answer must not become the
+        # reference the other lines are judged by. Pages that do not say the
+        # source (older builds) fall back to `fixed`.
+        taught += [(u.text, u.speaker.strip()) for u in body.units if u.kind == 'dialogue' and u.speaker.strip().upper() not in ('', 'UNKNOWN', 'NARRATOR')
+                   and (u.source in ('person', 'tag') if u.source else u.fixed)]
         profile = habits.profiles(taught)
         # Habits can only choose among the people they were taught. A page with a
         # stand-in on it (众人, 某人) has speakers nobody can profile, so on such a
@@ -931,7 +1020,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
         # drinker's lines were filled with 孔乙己, the nearest of the three
         # profiled people, and the reviewer, trusting yellow, let them stand.
         # The page's own turn-taking guess, when it has one, is kept as the fill.
-        unprofiled = any(u.speaker.strip() in habits.STAND_INS.values() for u in body.units if u.kind == 'dialogue')
+        unprofiled = any(u.speaker.strip().startswith(tuple(habits.STAND_INS.values())) for u in body.units if u.kind == 'dialogue')
         out = {}
         for u in body.units:
             if u.kind != 'dialogue' or u.fixed or not u.text.strip():
@@ -1092,6 +1181,18 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                         s['error'] = None
             if body.color_scope is not None:
                 p['color_scope'] = body.color_scope
+            if body.sex is not None:
+                # Who a character is, apart from which voice reads them (Astra
+                # 2026-09-15: the voice chosen must not decide whose line it
+                # is). Set here, it is what the speaker rules go by; 'auto'
+                # returns to what the voice suggests.
+                if body.speaker not in p['voices']:
+                    raise ValueError('Select an existing speaker')
+                sexes = p.setdefault('sexes', {})
+                if body.sex == 'auto':
+                    sexes.pop(body.speaker, None)
+                else:
+                    sexes[body.speaker] = body.sex
             if body.color is not None:
                 # A character's colour in the script list: a screen preference,
                 # kept with the project, nothing to do with the audio. 'auto'
@@ -1234,7 +1335,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 raise ValueError('没有这个角色。')
             if any(s['speaker'] == name for s in p['segments']):
                 raise ValueError('这个角色还有句子，先把句子改给别人。')
-            p['voices'].pop(name); (p.get('colors') or {}).pop(name, None); (p.get('voice_profiles') or {}).pop(name, None); (p.get('crowds') or {}).pop(name, None)
+            p['voices'].pop(name); (p.get('colors') or {}).pop(name, None); (p.get('sexes') or {}).pop(name, None); (p.get('voice_profiles') or {}).pop(name, None); (p.get('crowds') or {}).pop(name, None)
         return store.public(store.edit(project_id, revision, apply), engine, checker)
 
     @app.post('/api/projects/{project_id}/crowd')

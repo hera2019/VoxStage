@@ -153,6 +153,9 @@ def names_from_tags(narrations, whole_text=''):
         if not m:
             continue
         name = m.group(1)
+        # 阿宁又说 / 陈小雪便道: the adverb between the name and the verb is not part of the name.
+        while len(name) >= 3 and name[-1] in '又便就也都才却忙再还正只先':
+            name = name[:-1]
         if len(name) < 2 or name in SPEECH_VERBS or any(v in name for v in ('说', '道', '问', '答')):
             continue
         if name in PRONOUNS or any(name.startswith(pro) and len(name) - len(pro) <= 1 for pro in PRONOUNS):
@@ -208,10 +211,37 @@ def mentioned(text, name):
     return name in STRIP.sub('', text) if len(name) >= 2 else addressed(text, name)
 
 
+def self_introduced(text, name):
+    """我叫陈小雪 / 我是陈小雪 / 我就是老板娘: the line's speaker names herself.
+    A mention, but the opposite evidence from a call (Astra 2026-09-15: a
+    name in the line is evidence, not a veto)."""
+    if not name:
+        return False
+    clean = STRIP.sub('', text)
+    return re.search(r'(?:^|[，。！？；：、])(?:我|本人|在下|老子|小的|奴家|俺)(?:叫|是|就是|便是|乃是|名叫|姓)' + re.escape(name), clean) is not None
+
+
+# Where one exchange ends and another begins: narration long enough to carry
+# the reader elsewhere, or that opens with a change of time or place. A short
+# beat between two lines (他笑了笑。/ 阿宁说：) keeps the exchange going.
+# Astra 2026-09-15: turn-taking must not relay across scenes.
+SCENE_CUT_LENGTH = 30
+_SCENE_START = re.compile(r'(?:^|[。！？；\n])\s*(?:第二天|第三天|次日|翌日|隔天|这天|那天|那晚|当晚|夜里|深夜|半夜|清晨|早上|中午|下午|傍晚|晚上|后来|过了|从此|此后|自此|一个月|几天|几年|多年|回到|到了|来到|走进|出了|离开|另一|换了)')
+
+
+def scene_cut(narration):
+    """Does this stretch of narration between two lines end the exchange?"""
+    clean = STRIP.sub('', narration or '')
+    if len(clean) >= SCENE_CUT_LENGTH:
+        return True
+    return _SCENE_START.search(narration or '') is not None
+
+
 def suggest(text, profile):
     """(best speaker, margin) for a line, or (None, 0) when there is nothing to
-    compare with. Characters the line addresses by name are excluded."""
-    candidates = {sp: _cos(grams(text), pr) for sp, pr in profile.items() if not mentioned(text, sp)}
+    compare with. Characters the line calls by name are excluded (老板娘～ is
+    not the 老板娘's line); a bare mention is not (我叫陈小雪 is 陈小雪's)."""
+    candidates = {sp: _cos(grams(text), pr) for sp, pr in profile.items() if not addressed(text, sp)}
     if not candidates:
         return None, 0.0
     ranked = sorted(candidates.items(), key=lambda kv: -kv[1])
@@ -220,4 +250,4 @@ def suggest(text, profile):
     return best, score - second
 
 
-# 最后更新：2026-09-14 · Claude Hera（按说话习惯建议说话人；本人 2026-09-14 提出）
+# 最后更新：2026-09-16 · Claude Hera（对话块、自报家门、称呼与提及分开——按 Astra 2026-09-15 审阅）

@@ -208,3 +208,17 @@ def test_a_chapter_still_drafts_after_its_book_was_deleted(tmp_path):
         d = c.post('/api/attribution/draft', json={'script': ch['text'], 'language': 'zh', 'book_id': book['id']})
         assert d.status_code == 200, d.text
         assert [u['speaker'] for u in d.json()['units'] if u['kind'] == 'dialogue'] == ['阿宁']
+
+
+def test_a_character_has_a_sex_apart_from_the_voice_and_it_is_inherited(client):
+    """Astra 2026-09-15: the voice chosen must not decide whose line it is. The
+    sex the speaker rules go by is set on the character; the voice only suggests."""
+    p = create(client, 'zh', '旁白：一。\n阿宁：二。\n')
+    r = client.patch('/api/projects/' + p['id'], json={'revision': p['revision'], 'speaker': '阿宁', 'sex': 'f'})
+    assert r.status_code == 200 and r.json()['sexes'] == {'阿宁': 'f'}
+    p = r.json()
+    q = create(client, 'zh', '旁白：三。\n阿宁：四。\n')
+    q = client.post(f"/api/projects/{q['id']}/inherit", json={'revision': q['revision'], 'source_id': p['id']}).json()
+    assert q['sexes'] == {'阿宁': 'f'}
+    p = client.patch('/api/projects/' + p['id'], json={'revision': p['revision'], 'speaker': '阿宁', 'sex': 'auto'}).json()
+    assert p['sexes'] == {}
