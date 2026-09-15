@@ -1,8 +1,8 @@
 import {useEffect,useRef,useState} from 'react';
 type Unit={id:string;text:string;kind:'narration'|'dialogue';speaker:string;blank?:boolean;suggested?:string;tier?:'suggested';basis?:string;hint?:string;edited?:boolean;certain?:boolean;typing?:boolean;stand_in?:boolean;block?:number;para?:number;source?:'tag'|'model'};
 type Draft={draft_id:string;units:Unit[];notice?:string|null};
-type Props={request:(path:string,method?:string,data?:unknown)=>Promise<any>;onCreated:(project:any)=>Promise<void>;onClose:()=>void;seed?:{name:string;language:'zh'|'en';text:string;knownNames?:string[];book?:{id:string;index:number}}|null};
-export function RoleImport({request,onCreated,onClose,seed}:Props){
+type Props={request:(path:string,method?:string,data?:unknown)=>Promise<any>;onCreated:(project:any)=>Promise<void>;onClose:()=>void;limit?:number;seed?:{name:string;language:'zh'|'en';text:string;knownNames?:string[];book?:{id:string;index:number}}|null};
+export function RoleImport({request,onCreated,onClose,seed,limit=3000}:Props){
  const [text,setText]=useState(seed?.text??'');const [name,setName]=useState(seed?.name??'新的故事');const [language,setLanguage]=useState<'zh'|'en'>(seed?.language??'zh');
  const [draft,setDraft]=useState<Draft|null>(null);const [aliases,setAliases]=useState<Record<string,string>>({});
  const [pending,setPending]=useState<{old:string;speaker:string;ids:string[]}|null>(null);
@@ -84,8 +84,8 @@ export function RoleImport({request,onCreated,onClose,seed}:Props){
   <div className="dialog-title"><h2 id="role-import-title">{draft?'复核角色草稿':'从原文生成角色草稿'}</h2><button disabled={waiting} aria-label="关闭角色草稿" onClick={onClose}>✕</button></div>
   <label>工程名称<input value={name} maxLength={120} disabled={waiting} onChange={e=>setName(e.target.value)}/></label>
   {!draft?<><label>稿件语言<select value={language} disabled={waiting} onChange={e=>setLanguage(e.target.value as 'zh'|'en')}><option value="zh">中文</option><option value="en">English</option></select></label>
-   <label>未标注角色的原文<textarea aria-label="未标注角色的原文" rows={10} maxLength={3000} disabled={waiting} value={text} onChange={e=>setText(e.target.value)}/></label>
-   <p className="muted">每次最多 3000 字符。本机模型只填写标签，原文由程序保留。草稿需要人工复核。</p>
+   <label>未标注角色的原文<textarea aria-label="未标注角色的原文" rows={10} maxLength={limit} disabled={waiting} value={text} onChange={e=>setText(e.target.value)}/></label>
+   <p className="muted">每次最多 {limit} 字符（按这台机器的内存定）。本机模型只填写标签，原文由程序保留。草稿需要人工复核。</p>
    <button className="primary wide" disabled={waiting||!text.trim()} onClick={()=>void run(async()=>setDraft(await request('/attribution/draft','POST',{script:text,language,book_id:seed?.book?.id})))}>{waiting?'正在本机分角色，请稍候…':'生成角色草稿'}</button>
   </>:<>{(()=>{if(!started.current){const ds=draft.units.filter(u=>!u.blank&&u.kind==='dialogue');started.current={at:Date.now(),dialogue:ds.length,orange:ds.filter(u=>tier(u)==='unknown').length,yellow:ds.filter(u=>tier(u)==='suggested').length,initial:Object.fromEntries(draft.units.map(u=>[u.id,{tier:tier(u),speaker:effective(u)}]))}}return null})()}<p>逐段核对旁白 / 对白和角色姓名。<span className="tier-orange">橙色 {unknown} 处</span>要你选人；<span className="tier-yellow">黄色 {suggestedCount} 处</span>是程序按一来一往填的，不改就照它。</p>{draft.notice&&<p role="alert" className="line-error">{draft.notice}</p>}<div className="hint"><strong>这只是初步草稿，把说话人对上就够了。</strong>拆分、合并、改字、不朗读，进了工程之后在编辑页里都能做。<br/>人物称呼：{names.join('、')||'暂无对白角色'}。同一人物的不同称呼，请统一填写同一名字。</div>
    <div className="role-units">{draft.units.filter(u=>!u.blank).map((u,i,list)=><article className={'role-unit '+(tier(u)==='unknown'?'role-unknown':tier(u)==='suggested'?'role-suggested':'')+(pending?.ids.includes(u.id)?' role-carry':'')+(i>0&&list[i-1].para===u.para?' same-para':' para-first')} key={u.id}>

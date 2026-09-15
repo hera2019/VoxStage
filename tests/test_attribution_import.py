@@ -70,7 +70,8 @@ def test_long_unit_is_split_without_losing_source(client):
     assert all(len(s['text'])<=60 for s in p['segments'])
 
 def test_rejects_cross_origin_and_over_limit(client):
-    assert client.post('/api/attribution/draft',json={'script':'a'*3001,'language':'en'}).status_code==422
+    assert client.post('/api/attribution/draft',json={'script':'a'*3001,'language':'en'}).status_code==400   # over this machine's tier (capacity.py); tests pin it at 3,000
+    assert client.post('/api/attribution/draft',json={'script':'a'*12001,'language':'en'}).status_code==422  # over any tier
     assert client.post('/api/attribution/draft',headers={'Origin':'https://example.com'},json={'script':'Hi','language':'en'}).status_code==403
 
 def test_invalid_model_labels_release_queue(tmp_path):

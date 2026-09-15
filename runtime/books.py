@@ -23,9 +23,11 @@ from evals.speaker_attribution.source_units import source_units, PAIRS
 HEADING = re.compile(r'^\s*(?:第[零一二三四五六七八九十百千万0-9０-９]+[章回节卷集部]|'
                      r'(?:CHAPTER|Chapter|BOOK|Book|PART|Part)\s+(?:[IVXLC]+|\d+|[A-Z][a-z]+)\b).*$')
 
-CHAPTER_LIMIT = 3000          # the draft's own limit; a chapter over it is cut like headingless text
-PARAGRAPH_TARGET = 2600       # leave headroom under the limit when cutting at paragraphs
-UNIT_LIMIT = 80               # the draft's other limit: quoted units (attribution.annotate)
+from .capacity import draft_limits
+_LIMITS = draft_limits()
+CHAPTER_LIMIT = _LIMITS['chars']            # the draft's own limit, by this machine's memory (capacity.py); a chapter over it is cut like headingless text
+PARAGRAPH_TARGET = CHAPTER_LIMIT - 400      # leave headroom under the limit when cutting at paragraphs
+UNIT_LIMIT = _LIMITS['units']               # the draft's other limit: quoted units (attribution.annotate)
 UNIT_TARGET = 70              # the same headroom, in units
 MIN_TAIL = 300                # a final piece shorter than this joins the piece before it
 PARAGRAPH_END = re.compile(r'(\n\s*\n|(?<=[。！？!?”』」…])\n)')

@@ -3,6 +3,7 @@ import hashlib
 import json
 import os
 import re
+from .capacity import draft_limits
 import socket
 import subprocess
 import time
@@ -72,7 +73,7 @@ def project_segments(source, labels, language, locks=()):
     segments = merge_adjacent(_tidy(source, pieces, locks), limit * 2 // 3, locks)
     for s in segments:
         s['lock_before'] = s['source_start'] in locks
-    if not 1 <= len(segments) <= 500:
+    if not 1 <= len(segments) <= draft_limits()['segments']:
         raise ValueError('原稿切片数量超出范围。')
     return segments
 
@@ -219,8 +220,9 @@ class RoleDraftEngine:
         if not self.ready:
             raise ValueError('本地分角色模型未就绪；仍可使用已标注剧本导入。')
         units = source_units(text)
-        if not text.strip() or len(units) > 80:
-            raise ValueError('请选取更短的原稿（最多 80 个引号切片）。')
+        limits = draft_limits()
+        if not text.strip() or len(units) > limits['units']:
+            raise ValueError(f"请选取更短的原稿（最多 {limits['units']} 个引号切片）。")
         with self.model.open('rb') as stream:
             if hashlib.file_digest(stream, 'sha256').hexdigest() != self.sha256:
                 raise ValueError('分角色模型校验不一致。')
@@ -244,7 +246,7 @@ class RoleDraftEngine:
         key = uuid.uuid4().hex
         # 80 units × ~26 tokens each once the certain flag is in the answer:
         # 2,048 cut Kong Yiji's 68-unit answer off mid-JSON (本人 2026-09-15).
-        settings = {'temperature':0,'seed':260909,'max_tokens':4096,'top_p':1,'frequency_penalty':0,'presence_penalty':0}
+        settings = {'temperature':0,'seed':260909,'max_tokens':limits['max_tokens'],'top_p':1,'frequency_penalty':0,'presence_penalty':0}
         def request(path, payload=None, timeout=180):
             req = urllib.request.Request(f'http://127.0.0.1:{port}'+path,
                 data=None if payload is None else json.dumps(payload,ensure_ascii=False).encode(),
@@ -254,7 +256,7 @@ class RoleDraftEngine:
         started = time.monotonic()
         with Path(log_path).open('w') as log:
             proc = subprocess.Popen([str(self.server),'-m',str(self.model),'--alias','role-draft','-ngl','all',
-                '-c','16384','-np','1','--jinja','--reasoning','off','--host','127.0.0.1','--port',str(port),
+                '-c',str(limits['context']),'-np','1','--jinja','--reasoning','off','--host','127.0.0.1','--port',str(port),
                 '--no-webui','--api-key',key],stdout=log,stderr=subprocess.STDOUT)
             try:
                 for _ in range(300):

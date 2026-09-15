@@ -3,11 +3,11 @@ type Finding={kind:string;level:'error'|'warning';index:number;excerpt:string;me
 type Report={findings:Finding[];units:number;characters:number;blocking:boolean};
 type Unit={id:string;text:string;kind:'narration'|'dialogue';speaker:string};
 type Preview={preview:true;labels:{id:string;kind:string;speaker:string}[];unresolved:Unit[];report:Report;segments:number;kept:number;kept_audio:number;fresh:number};
-type Props={project:{id:string;revision:number;source_script:string;language:'zh'|'en';voices:Record<string,string>;segments:{text:string}[]};request:(path:string,method?:string,data?:unknown)=>Promise<any>;onUpdated:(project:any)=>void;onClose:()=>void};
+type Props={project:{id:string;revision:number;source_script:string;language:'zh'|'en';voices:Record<string,string>;segments:{text:string}[]};request:(path:string,method?:string,data?:unknown)=>Promise<any>;onUpdated:(project:any)=>void;onClose:()=>void;limit?:number};
 
 const fixable:Record<string,string>={ellipsis_dots:'改为 ……',dash_ascii:'改为 ——',ideographic_space:'删除全角空格',repeated_space:'合并空格',trailing_space:'删除行尾空白',decoration:'删除装饰符号'};
 
-export function ScriptEditor({project,request,onUpdated,onClose}:Props){
+export function ScriptEditor({project,request,onUpdated,onClose,limit=3000}:Props){
  const [text,setText]=useState(project.source_script??'');
  const [report,setReport]=useState<Report|null>(null);
  const [preview,setPreview]=useState<Preview|null>(null);
@@ -33,7 +33,7 @@ export function ScriptEditor({project,request,onUpdated,onClose}:Props){
  function close(){if(edited&&!confirm('原稿改动尚未应用，关闭后会丢失。仍要关闭吗？'))return;onClose()}
  return <div className="overlay"><section className="dialog role-import" role="dialog" aria-modal="true" aria-labelledby="script-title">
   <div className="dialog-title"><h2 id="script-title">原稿编辑</h2><button disabled={waiting} aria-label="关闭原稿编辑" onClick={close}>✕</button></div>
-  <label>剧本原文<textarea aria-label="剧本原文" rows={12} maxLength={3000} disabled={waiting} value={text} onChange={e=>edit(e.target.value)}/></label>
+  <label>剧本原文<textarea aria-label="剧本原文" rows={12} maxLength={limit} disabled={waiting} value={text} onChange={e=>edit(e.target.value)}/></label>
   {stale&&<p className="line-error">这份原稿与当前句子不一致（可能是较早版本留下的）。直接应用会覆盖你后来的逐句修改。
    <button disabled={waiting} onClick={()=>edit(joined)}>改用当前句子的文字</button></p>}
   <p className="muted">改完先看改动影响，再决定是否应用。没有变化的句子会保留已生成的声音。</p>

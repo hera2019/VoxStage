@@ -10,6 +10,7 @@ import time
 import uuid
 from pathlib import Path
 from . import readings
+from .capacity import draft_limits
 from .audio import PROCESSING_VERSION
 from .content_check import check_status, file_sha
 from .listening import listening_status
@@ -46,8 +47,9 @@ def parse_script(script, language):
             raise ValueError(f'第 {number} 行太长（{len(text)} 字，上限 {limit} 字）。'
                              '请拆成几行，每行仍写成「角色：台词」。')
         segments.append({'id':uid(), 'speaker':speaker, 'text':text, 'spoken_as':'', 'audio':None, 'error':None})
-    if not 1 <= len(segments) <= 500:
-        raise ValueError(f'一个工程需要 1–500 行，当前 {len(segments)} 行。')
+    cap = draft_limits()['segments']
+    if not 1 <= len(segments) <= cap:
+        raise ValueError(f'一个工程需要 1–{cap} 行，当前 {len(segments)} 行。')
     return segments
 
 def reads_aloud(segment):

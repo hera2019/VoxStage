@@ -55,13 +55,13 @@ class MarkdownRequest(BaseModel):
     text: str = Field(min_length=1, max_length=2_000_000)
 
 class RoleDraftRequest(BaseModel):
-    script: str = Field(min_length=1, max_length=3000)
+    script: str = Field(min_length=1, max_length=12000)     # the machine's own limit is checked in the handler (capacity.py)
     language: Literal['zh','en']
     book_id: str | None = Field(default=None, pattern=r'^[a-f0-9]{32}$')   # lines confirmed in the book's other chapters teach the habits
 
 class SuggestUnit(BaseModel):
     id: str = Field(max_length=16)
-    text: str = Field(max_length=3000)
+    text: str = Field(max_length=12000)
     kind: Literal['narration','dialogue']
     speaker: str = Field(default='', max_length=80)
     fixed: bool = False            # named by the model with certainty, or typed by the person: teaches, is not re-suggested
@@ -133,11 +133,11 @@ class CrowdRequest(BaseModel):
 
 class ScriptRequest(BaseModel):
     revision: int = Field(ge=0)
-    source_script: str = Field(min_length=1, max_length=3000)
+    source_script: str = Field(min_length=1, max_length=12000)
     labels: list[RoleLabel] | None = Field(default=None, max_length=200)
 
 class ScriptFixRequest(BaseModel):
-    source_script: str = Field(min_length=1, max_length=3000)
+    source_script: str = Field(min_length=1, max_length=12000)
     kind: str = Field(max_length=40)
 
 class EditRequest(BaseModel):
@@ -315,7 +315,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
     @app.get('/api/config')
     def config():
         return {'engine':engine.label, 'engine_id':engine.identity, 'ready':engine.ready,
-                'attribution_ready':role_engine.ready, 'role_models':(role_engine.installed() if hasattr(role_engine,'installed') else []), 'role_model':getattr(role_engine,'model_id',None), 'speed_ready':bool(ffmpeg_path()),'checker_ready':checker.ready, 'checker_id':checker.identity, 'voices':VOICES, 'fixed_voice_ready':getattr(engine,'reference_ready',False), 'preset_models':['0.6B']+(['1.7B'] if getattr(engine,'large_identity',None) else []), 'default_preset_model':('1.7B' if getattr(engine,'large_identity',None) else '0.6B'), 'design_ready':getattr(engine,'design_ready',False), 'local_only':True, 'synthetic_audio':True}
+                'attribution_ready':role_engine.ready, 'role_models':(role_engine.installed() if hasattr(role_engine,'installed') else []), 'role_model':getattr(role_engine,'model_id',None), 'speed_ready':bool(ffmpeg_path()),'checker_ready':checker.ready, 'checker_id':checker.identity, 'voices':VOICES, 'fixed_voice_ready':getattr(engine,'reference_ready',False), 'preset_models':['0.6B']+(['1.7B'] if getattr(engine,'large_identity',None) else []), 'default_preset_model':('1.7B' if getattr(engine,'large_identity',None) else '0.6B'), 'design_ready':getattr(engine,'design_ready',False), 'local_only':True, 'synthetic_audio':True, 'draft_limits':__import__('runtime.capacity',fromlist=['draft_limits']).draft_limits()}
 
     @app.get('/api/settings')
     def read_settings():
@@ -638,6 +638,10 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
     @app.post('/api/attribution/draft')
     def role_draft(body: RoleDraftRequest):
         from .core import uid
+        from .capacity import draft_limits
+        limits = draft_limits()
+        if len(body.script) > limits['chars']:
+            raise ValueError(f"这段原文有 {len(body.script)} 字，这台机器一次最多处理 {limits['chars']} 字（按内存 {limits['memory_gb']} GB 定）。请分成几段。")
         draft_id = uid()
         with store.lock:
             if active['project_id']:
