@@ -929,13 +929,15 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                               for u, l in confirmed_dialogue(p)]
                 profile = habits.profiles(taught)
                 if profile:
+                    # Filled later, inside the rules loop, where the exchange is
+                    # known: a habit only fills with someone present in the
+                    # exchange (阿Q chapter 4, 2026-09-16: his thoughts were filled
+                    # with 赵太爷 and 老头子, the nearest profiles in the book).
                     for u in out:
                         if u['kind'] == 'dialogue' and not u['blank'] and u['speaker'].strip().upper() in ('', 'UNKNOWN'):
                             best, margin = habits.suggest(u['text'], profile)
-                            if best and margin >= habits.MARGIN:
-                                u.update({'speaker': best, 'tier': 'suggested', 'basis': '按说话习惯，像是'})
-                            elif best:
-                                u['hint'] = best
+                            if best:
+                                u['habit'] = (best, margin)
             # Three rules a person applies without thinking, which the model
             # skips (本人 2026-09-15), in the order of their strength:
             #   1. the narration beside a line names its speaker — 小雪笑道：
@@ -991,6 +993,38 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             participants = {}       # block -> names settled in it by the model with certainty, a tag or a stand-in, in order
             def called_names(text, mentions_):
                 return [name for name, forms in mentions_.items() if any(habits.addressed(text, f) for f in forms)]
+            def recent_names(i, blk, beyond=False):
+                """Characters of this exchange before out[i], most recent first: settled
+                speakers and names its narration mentions (aliases count as the name).
+                With `beyond`, earlier exchanges too — for a pronoun whose exchange
+                names nobody (阿Q's thoughts open a scene on their own)."""
+                seen = []
+                for prior in reversed(out[:i]):
+                    if prior.get('block') != blk and not beyond:
+                        break
+                    found = []
+                    if prior['kind'] == 'dialogue':
+                        who = prior['speaker'].strip()
+                        if who.upper() not in ('', 'UNKNOWN', 'NARRATOR') and (prior.get('tier') != 'suggested' or prior.get('stand_in')):
+                            found.append(who)
+                    else:
+                        # In narration, a name opening a clause (the subject: 阿Q便…)
+                        # counts before one inside a clause (an object: 看着桩家…).
+                        clean = habits.STRIP.sub('', prior['text'])
+                        subjects, objects = [], []
+                        for name, forms in mentions.items():
+                            for f in forms:
+                                k = clean.rfind(f)
+                                if k < 0:
+                                    continue
+                                (subjects if k == 0 or clean[k - 1] in '，。！？；：、' else objects).append((k, name))
+                        found = [name for _, name in sorted(subjects, reverse=True)] + [name for _, name in sorted(objects, reverse=True)]
+                    for name in found:
+                        if name not in seen:
+                            seen.append(name)
+                return seen
+            def in_exchange(i, blk):
+                return set(recent_names(i, blk)) | set(participants.get(blk, []))
             def settled(name, blk):
                 participants.setdefault(blk, [])
                 if name not in participants[blk]:
@@ -1052,6 +1086,33 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                     continue
                 sp = u['speaker'].strip()
                 named = sp.upper() not in ('', 'UNKNOWN', 'NARRATOR')
+                # 他想：/ 她说： — the narration names the speaker by a pronoun.
+                # Who that is falls to the exchange: the most recent character
+                # of that sex named in it (settled as a speaker, or mentioned in
+                # its narration). Yellow: a reader's reading, not the text's word.
+                pronoun = (habits.pronoun_tag(before['text'] if before and before['kind'] == 'narration' else '')
+                           or habits.pronoun_closing(after['text'] if after and after['kind'] == 'narration' else ''))
+                if pronoun:
+                    referent = None
+                    wanted = 'm' if pronoun == '他' else 'f'
+                    for name in recent_names(i, blk) or recent_names(i, blk, beyond=True):
+                        if name in ('我', '你', '您', '咱', '俺'):          # 他 is never the narrator's own I
+                            continue
+                        if sex_of.get(name) in ('', None) or sex_of.get(name) == wanted:
+                            referent = name; break
+                    if referent and referent not in called_names(u['text'], mentions):
+                        if sp != referent:
+                            u.update({'speaker': referent, 'tier': 'suggested', 'basis': f'叙述说「{pronoun}」，这一段最近提到的是', **({'hint': sp} if named else {})})
+                        settled(referent, blk)
+                        continue
+                if u.get('habit') and not named:
+                    best, margin = u.pop('habit')
+                    if margin >= habits.MARGIN and best in in_exchange(i, blk) and best not in called_names(u['text'], mentions):
+                        u.update({'speaker': best, 'tier': 'suggested', 'basis': '按说话习惯，像是'})
+                    else:
+                        u['hint'] = best
+                    sp = u['speaker'].strip(); named = sp.upper() not in ('', 'UNKNOWN', 'NARRATOR')
+                u.pop('habit', None)
                 # “那么，明天拿来就是”，赵太爷却不甚热心了。“阿Q，你以后……” — the beat
                 # joined to a quote by a comma is about its speaker, and the quote
                 # that follows in the same paragraph is usually his too (本人
@@ -1139,6 +1200,8 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                     u['source'] = 'model'; settled(sp, blk)
                 elif u.get('basis', '').startswith('上一句已经是这个人，一来一往'):
                     settled(sp, blk)
+            for u in out:
+                u.pop('habit', None)
             return {'draft_id':draft_id, 'notice': notice, 'units': out}
         except ValueError as exc:
             # bind_labels rejects a malformed model response. Its wording names

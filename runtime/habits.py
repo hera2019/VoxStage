@@ -62,7 +62,11 @@ def addressed(text, name):
 
 
 SPEECH_VERBS = ('说道', '笑道', '叫道', '喊道', '骂道', '问道', '答道', '回道', '低声道', '轻声道', '嚷道', '吼道', '哼道',
+                '想道', '心想', '暗想', '心里想', '寻思', '念道', '自言自语',          # a thought in quotation marks is read in its thinker's voice (阿Q 想：)
                 '说', '道', '问', '答', '叫', '喊', '骂', '回', '嚷', '吼', '哼', '应', '继续', '接着', '开口', '插嘴', '补充')
+# Bare 想 counts only right before the quote (阿Q想：), never as 想要 / 想了想.
+# 道 inside 知道 / 难道 / 味道 / 街道 is not "said"; bare 想 counts only right before the quote.
+_VERB_ALT_ALL = '|'.join('(?<![知难味街大])道' if v == '道' else re.escape(v) for v in sorted(SPEECH_VERBS, key=len, reverse=True)) + '|想(?=[：:，,]|$)'
 
 
 # A name right after one of these is the person spoken to, looked at or taken
@@ -71,7 +75,7 @@ SPEECH_VERBS = ('说道', '笑道', '叫道', '喊道', '骂道', '问道', '答
 _OBJECT_MARKS = '对向跟朝冲同和与替给见问着住到把了望瞧盯找拉扶推指叫喊'
 
 
-_VERB_RE = re.compile('|'.join(sorted(SPEECH_VERBS, key=len, reverse=True)))
+_VERB_RE = re.compile(_VERB_ALT_ALL)
 _CLAUSE_MARKS = '，、；：,;:'
 _OTHER_SUBJECTS = ('他', '她', '它', '我', '你', '您', '大家', '众人', '有的', '有人', '旁人', '别人', '那人', '此人', '一人', '一个', '几个', '那个', '这个', '对方')
 
@@ -114,6 +118,38 @@ def _subject_with_verb(sentence, mentions):
                 break
     found = list(dict.fromkeys(found))
     return found[0] if len(found) == 1 else None
+
+
+_PRONOUN_SUBJECT = re.compile(r'(?:^|[，。！？；：、,])(他|她)(?:又|便|就|也|才|却|忙|正|只|还|再|先|于是|然后|接着|连忙)?[^，。！？；：、]{0,8}?(?:' + _VERB_ALT_ALL + r')[：:，,]?$')
+
+
+def pronoun_tag(before):
+    """'他' or '她' when the narration before a line introduces it with a pronoun
+    as the subject — 他想：, 她笑着说： — else None. Who the pronoun is falls to
+    the exchange: the most recent character of that sex named in it."""
+    raw = before or ''
+    clean = STRIP.sub('', raw)
+    if not clean:
+        return None
+    if clean[-1] in '。！？!?':
+        last_mark = max(raw.rfind(c) for c in '。！？!?')
+        if '\n' in raw[last_mark + 1:]:
+            return None
+    sentence = re.split(r'[。！？!?]', clean.rstrip('。！？!?'))[-1]
+    m = _PRONOUN_SUBJECT.search(sentence[-30:])
+    return m.group(1) if m else None
+
+
+_PRONOUN_CLOSING = re.compile(r'^[，,]?(他|她)(?:又|便|就|也|才|却|忙|正|只|还|再|先|于是|然后|接着|连忙)?[^，。！？；：、]{0,8}?(?:' + _VERB_ALT_ALL + r')')
+
+
+def pronoun_closing(after):
+    """'他' or '她' when the narration right after a line closes it with a pronoun
+    as the subject — ”他想：, ”她笑着说。 — else None. Between two quotes such a
+    tag serves both: “A”他说：“B” are one person's."""
+    clean = STRIP.sub('', after or '')
+    m = _PRONOUN_CLOSING.match(clean[:24])
+    return m.group(1) if m else None
 
 
 def opening_tag(before, mentions):
@@ -183,7 +219,7 @@ def speech_tag(before, after, mentions):
 #问道, 他们便接着说道, 一个喝酒的人说道 — all left orange). The line gets a
 # stand-in name instead, yellow: 众人 for a group, 某人 for one unnamed person.
 # Renaming the stand-in once on the review page carries every line along.
-_VERB_ALT = '|'.join(sorted(SPEECH_VERBS, key=len, reverse=True))
+_VERB_ALT = _VERB_ALT_ALL
 _GROUP = (r'(?:有的人?|旁人|他们|她们|众人|人们|大家伙?儿?|别人|别的人|其他人|其余的人|旁边的人|周围的人|那些人|这些人|一些人|'
           r'几个人|一群[^，。！？：；、]{0,4}?|大伙儿?|看客们?|人群|所有[^，。！？：；、]{0,6}?人|有几个人?)')
 _ONE = (r'(?:有人|有个人|有一个人|某人|那人|那个人|这人|一个人|一人|不知是?谁|有谁|一个声音|有个声音|'
@@ -219,7 +255,7 @@ def anonymous_tag(before, after='', with_phrase=False):
 
 PRONOUNS = {'他', '她', '它', '我', '你', '您', '他们', '她们', '我们', '你们', '大家', '众人', '有人', '那人', '此人', '一人', '男人', '女人',
             '那个', '这个', '对方', '那位', '这位', '两人', '几人', '一个'}
-_TAG_TAIL = re.compile(r'(?:^|[，。！？：；、])([^，。！？：；、“”"\s]{1,4}?)(' + '|'.join(sorted(SPEECH_VERBS, key=len, reverse=True)) + r')[：:，,]?$')
+_TAG_TAIL = re.compile(r'(?:^|[，。！？：；、])([^，。！？：；、“”"\s]{1,4}?)(' + _VERB_ALT_ALL + r')[：:，,]?$')
 
 
 FUNCTION_STARTS = ('又', '便', '就', '才', '也', '都', '却', '忙', '正', '只', '还', '再', '一', '有的', '有人', '别人', '旁人', '对', '向', '朝', '跟', '和',

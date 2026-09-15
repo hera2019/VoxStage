@@ -411,3 +411,23 @@ def test_tags_read_by_clause_and_the_comma_beat_after_a_quote(tmp_path):
         assert second['speaker'] == '王伯' and second['tier'] == 'suggested' and '同一段' in second['basis']
         assert first['para'] == second['para'] and by['“价钱不会少！”']['para'] > second['para']
         assert by['“价钱不会少！”']['speaker'] == '陈小雪' and by['“价钱不会少！”'].get('tier') is None
+
+
+def test_a_pronoun_tag_is_read_as_the_most_recent_person_of_that_sex_in_the_exchange(tmp_path):
+    """阿Q chapter 4 (本人 2026-09-16): his thoughts — “女人，女人！……”他想：“……”
+    — were filled with whoever's habits were nearest. A thought verb is a speech
+    verb; 他/她 as the tag's subject is the exchange's most recent character of
+    that sex, and a tag between two quotes serves both."""
+    from runtime.habits import pronoun_tag, pronoun_closing
+    assert pronoun_tag('阿宁的耳朵里又听到这句话。他想：') == '他' and pronoun_tag('她笑着说：') == '她' and pronoun_tag('阿宁想：') is None
+    assert pronoun_closing('他想：') == '他' and pronoun_closing('，她答道。') == '她' and pronoun_closing('阿宁说。') is None
+    class Blank(Roles):
+        def annotate(self, text, log_path):
+            return {'labels': [{'id': u['id'], 'kind': 'dialogue' if u['text'].startswith('“') else 'narration',
+                                'speaker': 'UNKNOWN' if u['text'].startswith('“') else 'NARRATOR', 'certain': False} for u in source_units(text)],
+                    'model_sha256': 'fixture'}
+    with TestClient(create_app(tmp_path / 'p', FixtureEngine(), role_engine=Blank()), base_url='http://127.0.0.1', headers=HEADERS) as c:
+        text = '阿宁说：“店里真冷。”他回到里屋，坐了很久。\n“猫，猫！……”他想：“……老板娘的猫……猫！”他又想：\n\n这一晚阿宁没有睡好。“猫……”他想：\n\n陈小雪第二天才回来。\n'
+        d = c.post('/api/attribution/draft', json={'script': text, 'language': 'zh'}).json()
+        rows = [(u['speaker'], u.get('tier'), u.get('basis', '')[:6]) for u in d['units'] if u['kind'] == 'dialogue']
+        assert rows == [('阿宁', None, '旁边的叙述点'), ('阿宁', 'suggested', '叙述说「他」'), ('阿宁', 'suggested', '叙述说「他」'), ('阿宁', 'suggested', '叙述说「他」')]
