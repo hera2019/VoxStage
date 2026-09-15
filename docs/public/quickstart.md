@@ -30,8 +30,11 @@ were made with the flow below. New material still needs listening to.
    or from two people taking turns — which stands unless you change it;
    **orange** when you must choose. A speaker the story never names — 有的叫道,
    旁人问道, "one of the drinkers said" — is filled with a stand-in, 众人 (a
-   group) or 某人 (one person), in yellow; rename it once and every such line
-   follows (Chinese narration only, so far). The speaker is a list of the book's cast
+   group) or 某人甲 / 某人乙 (one person, lettered per exchange: this scene's
+   stranger is not the next one's), in yellow; rename it once and every such
+   line follows (Chinese narration only, so far). Yellow is a guess — glance at
+   it before creating the project: the program relays only within one exchange
+   and learns only from lines you settled. The speaker is a list of the book's cast
    plus 新人名. Settle one name and the remaining yellow and orange lines are
    scored again; rename one line's 老板娘 to 陈小雪 and you are offered to carry
    the rest along, after which the book remembers the alias for later drafts.
