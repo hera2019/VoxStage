@@ -45,17 +45,33 @@ class RoleLabel(BaseModel):
     kind: Literal['narration','dialogue']
     speaker: str = Field(max_length=80)
 
+class Hint(BaseModel):
+    start: int = Field(ge=0)
+    end: int = Field(ge=0)
+    speaker: str = Field(default='', max_length=80)     # '' = the author marked it as speech but named nobody
+
 class BookRequest(BaseModel):
     title: str = Field(default='', max_length=120)
     script: str = Field(min_length=1, max_length=2_000_000)
     language: Literal['zh','en']
-    headings: list[int] | None = Field(default=None, max_length=5000)   # line numbers, from a Markdown import
+    headings: list[int] | None = Field(default=None, max_length=5000)   # line numbers, from a Markdown or Word import
+    hints: list[Hint] | None = Field(default=None, max_length=20000)     # spans whose speaker the manuscript's colours settle
+    silent: list[int] | None = Field(default=None, max_length=5000)     # line numbers kept but not read aloud (headings)
+
+class DocxImportRequest(BaseModel):
+    name: str = Field(default='', max_length=200)
+    data: str = Field(min_length=1, max_length=28_000_000)              # base64 of the .docx (≤ 20 MB)
+
+class DocxApplyRequest(BaseModel):
+    choices: dict[str, dict] = Field(default_factory=dict)              # colour -> {'as': character|narration|drop|ignore, 'name'}
 
 class MarkdownRequest(BaseModel):
     text: str = Field(min_length=1, max_length=2_000_000)
 
 class RoleDraftRequest(BaseModel):
     script: str = Field(min_length=1, max_length=12000)     # the machine's own limit is checked in the handler (capacity.py)
+    hints: list[Hint] | None = Field(default=None, max_length=5000)     # from a coloured or marked manuscript: settled speakers
+    silent: list[int] | None = Field(default=None, max_length=2000)     # line numbers not read aloud (headings)
     language: Literal['zh','en']
     book_id: str | None = Field(default=None, pattern=r'^[a-f0-9]{32}$')   # lines confirmed in the book's other chapters teach the habits
 
@@ -70,15 +86,16 @@ class SuggestUnit(BaseModel):
 
 class SuggestRequest(BaseModel):
     book_id: str | None = Field(default=None, pattern=r'^[a-f0-9]{32}$')
-    units: list[SuggestUnit] = Field(max_length=200)
+    units: list[SuggestUnit] = Field(max_length=1000)
 
 class RoleConfirmRequest(BaseModel):
     draft_id: str = Field(pattern=r'^[a-f0-9]{32}$')
     name: str = Field(default='Untitled', max_length=120)
-    labels: list[RoleLabel] = Field(min_length=1,max_length=80)
+    labels: list[RoleLabel] = Field(min_length=1,max_length=2000)     # units incl. blanks: up to twice the largest tier
     book_id: str | None = Field(default=None, pattern=r'^[a-f0-9]{32}$')   # the chapter this came from, if any
     chapter_index: int | None = Field(default=None, ge=1)
     aliases: dict[str, str] = Field(default_factory=dict)                   # 老板娘 → 陈小雪, learned while reviewing
+    silent: list[int] | None = Field(default=None, max_length=2000)         # line numbers whose segments are kept but not read aloud
     review: dict | None = None                                              # how much the reviewer had to do; see RoleImport
 
 class InheritRequest(BaseModel):
@@ -539,8 +556,54 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
     def create_book(body: BookRequest):
         """Keep a long text as a book cut into chapters; each becomes a project later."""
         with store.lock:
-            book = books.create(body.title, body.script, body.language, body.headings)
+            book = books.create(body.title, body.script, body.language, body.headings,
+                                hints=[h.model_dump() for h in body.hints] if body.hints else None, silent=body.silent)
         return books.public(book)
+
+    imports = {}          # import_id -> parsed document, until its colours are answered (a handful at most)
+
+    @app.post('/api/import/docx')
+    def import_docx(body: DocxImportRequest):
+        """A Word document: its headings and every colour in it with samples, for the
+        reviewer to say who each colour is. Nothing is decided here (本人 2026-09-16: 逐色问)."""
+        import base64
+        from . import colored
+        from .core import uid
+        try:
+            data = base64.b64decode(body.data, validate=True)
+        except (ValueError, __import__('binascii').Error) as exc:
+            raise ValueError('文件内容无法解析。') from exc
+        if len(data) > 20_000_000:
+            raise ValueError('文件超过 20 MB。')
+        doc = colored.read_docx(data)
+        if not doc['paragraphs']:
+            raise ValueError('这个文档里没有正文。')
+        import_id = uid()
+        if len(imports) >= 8:
+            imports.pop(next(iter(imports)))
+        imports[import_id] = doc
+        return {'import_id': import_id, 'title': doc['title'] or body.name.rsplit('.', 1)[0], 'paragraphs': sum(1 for p in doc['paragraphs'] if not p['level']),
+                'headings': [{'level': p['level'], 'text': p['text']} for p in doc['paragraphs'] if p['level']],
+                'colours': colored.colour_groups(doc['paragraphs']), 'has_quotes': colored.has_quotes(doc['paragraphs'])}
+
+    @app.post('/api/import/docx/{import_id}/apply')
+    def apply_docx(import_id: str, body: DocxApplyRequest):
+        """The colour answers applied: the text a project stores, its headings, the
+        lines not read aloud, and the spans whose speaker the colours settle."""
+        from . import colored
+        doc = imports.get(import_id)
+        if doc is None:
+            raise ValueError('这次导入已经过期，请重新选择文件。')
+        for colour, choice in body.choices.items():
+            if choice.get('as') not in ('character', 'narration', 'drop', 'ignore'):
+                raise ValueError(f'颜色 {colour} 的选择无效。')
+            if choice.get('as') == 'character' and not str(choice.get('name', '')).strip():
+                raise ValueError(f'颜色 {colour} 还没有名字。')
+        result = colored.compose(doc['paragraphs'], body.choices)
+        if not result['text'].strip():
+            raise ValueError('按这些选择，文档里没有剩下正文。')
+        imports.pop(import_id, None)
+        return result
 
     @app.post('/api/import/markdown')
     def import_markdown(body: MarkdownRequest):
@@ -744,11 +807,41 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             tag_names = habits.names_from_tags(unquoted, body.script)
             if not names_for_model:
                 names_for_model = list(tag_names)
+            # What the manuscript itself settles: a unit inside a span the
+            # author coloured (or marked) has its speaker; a unit on a line
+            # not read aloud (a heading) is narration kept silent. When the
+            # colours settle every line that could be speech, the model is not
+            # asked at all — the text never reaches it (本人 2026-09-16).
+            hinted, silent_units = {}, set()
+            if body.hints:
+                for u in units:
+                    stripped = u['text'].strip()
+                    if not stripped:
+                        continue
+                    a = u['start'] + u['text'].index(stripped); b = a + len(stripped)
+                    for h in body.hints:
+                        if h.start <= a and b <= h.end:
+                            hinted[u['id']] = h.speaker.strip(); break
+            if body.silent:
+                lines = body.script.split('\n'); starts = []; pos = 0
+                for line in lines:
+                    starts.append(pos); pos += len(line) + 1
+                silent_spans = [(starts[n], starts[n] + len(lines[n])) for n in body.silent if 0 <= n < len(lines)]
+                for u in units:
+                    if u['text'].strip() and any(a <= u['start'] and u['end'] <= b + 1 for a, b in silent_spans):
+                        silent_units.add(u['id'])
+            speech_units = spoken if spoken else [u for u in units if u['text'].strip() and u['id'] not in silent_units]
+            settled_by_author = bool(hinted) and all(u['id'] in hinted or u['id'] in silent_units for u in speech_units)
             # Test doubles may not take the cast; the real engine does.
             def annotate_with(engine_, log_name):
                 return (engine_.annotate(body.script, drafts/log_name, known_names=names_for_model) if names_for_model and 'known_names' in engine_.annotate.__code__.co_varnames
                         else engine_.annotate(body.script, drafts/log_name))
-            result = annotate_with(role_engine, draft_id+'.log')
+            if settled_by_author:
+                result = {'labels': [{'id': u['id'], 'kind': 'dialogue' if hinted.get(u['id'], 'NARRATOR') != 'NARRATOR' else 'narration',
+                                      'speaker': (hinted[u['id']] or 'UNKNOWN') if hinted.get(u['id'], 'NARRATOR') != 'NARRATOR' else 'NARRATOR', 'certain': True} for u in units],
+                          'model_id': None, 'model_sha256': None, 'settled_by': 'manuscript'}
+            else:
+                result = annotate_with(role_engine, draft_id+'.log')
             # Either model can answer a passage with a draft of nothing: every
             # quoted line narration, or every speaker a word the story never uses
             # (the evaluated model on an explicit chapter; the abliterated one,
@@ -768,7 +861,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 # the whole text again (Astra 2026-09-15, step 3).
                 return len(spoken) >= 3 and len(placed(labels)) < 0.5 * len(spoken)
             fallback_used = None
-            if balked(result['labels']) and hasattr(role_engine, 'installed') and hasattr(role_engine, 'select'):
+            if not settled_by_author and balked(result['labels']) and hasattr(role_engine, 'installed') and hasattr(role_engine, 'select'):
                 others = [m['id'] for m in role_engine.installed() if m['installed'] and m['id'] != role_engine.model_id]
                 if others:
                     chosen = role_engine.model_id
@@ -810,6 +903,22 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             # assign a character to is noise. Mark it; the UI leaves it out.
             pool = chinese_names(result['labels'])
             out = [{**unit, **vetted(labels[unit['id']], unit, pool), 'blank': not unit['text'].strip()} for unit in units]
+            # The author's own marks stand as they are — a name the text never
+            # spells (女主, 老大) included — and no rule below touches them; a
+            # silent line is narration the project keeps but does not read.
+            for u in out:
+                if u['id'] in hinted:
+                    for key in ('tier', 'hint', 'suggested', 'basis'):
+                        u.pop(key, None)
+                    if hinted[u['id']] == 'NARRATOR':
+                        u.update({'kind': 'narration', 'speaker': 'NARRATOR', 'source': 'mark'})
+                    else:
+                        u.update({'kind': 'dialogue', 'speaker': hinted[u['id']] or 'UNKNOWN', 'source': 'mark', 'basis': '原稿里标的'})
+                if u['id'] in silent_units:
+                    for key in ('tier', 'hint', 'suggested', 'basis'):
+                        u.pop(key, None)
+                    u.update({'kind': 'narration', 'speaker': 'NARRATOR', 'silent': True})
+            known_names.update(name for name in hinted.values() if name and name != 'NARRATOR')
             # Lines still unplaced: who talks like this? Taught by the lines a
             # person confirmed in the same book's other chapters (runtime/habits).
             from . import habits
@@ -905,6 +1014,10 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 if u['kind'] != 'dialogue':
                     continue
                 blk = u['block']
+                if u.get('source') == 'mark':                 # the author said so; nothing to add
+                    if u['speaker'].upper() not in ('', 'UNKNOWN'):
+                        settled(u['speaker'], blk)
+                    continue
                 before = out[spoken[k - 1]] if k > 0 else None
                 after = out[spoken[k + 1]] if k + 1 < len(spoken) else None
                 tagged = habits.speech_tag(before['text'] if before and before['kind'] == 'narration' else '',
@@ -1081,7 +1194,29 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
     def confirm_roles(body: RoleConfirmRequest):
         record = json.loads((drafts/(body.draft_id+'.json')).read_text())
         labels = [label.model_dump() for label in body.labels]
-        segments = project_segments(record['source_script'], labels, record['language'])
+        # Headings and other lines the import keeps but does not read: cut as
+        # their own segments (a lock at each end keeps the merger off them) and
+        # kept silent from the start (Astra 2026-09-16: keep the text, do not
+        # read it, show it plainly).
+        spans = []
+        if body.silent:
+            lines = record['source_script'].split('\n'); starts, pos = [], 0
+            for line in lines:
+                starts.append(pos); pos += len(line) + 1
+            spans = [(starts[n], starts[n] + len(lines[n]) + 1) for n in body.silent if 0 <= n < len(lines) and lines[n].strip()]
+        locks = {x for a, b in spans for x in (a, b) if 0 < x < len(record['source_script'])}
+        if record.get('settled_by') == 'manuscript':
+            # The author wrote one utterance per line: every line stays its own
+            # segment, none merged with the next.
+            pos = 0
+            for line in record['source_script'].split('\n'):
+                pos += len(line) + 1
+                if 0 < pos < len(record['source_script']):
+                    locks.add(pos)
+        segments = project_segments(record['source_script'], labels, record['language'], locks=sorted(locks))
+        for seg in segments:
+            if any(a <= seg['source_start'] and seg['source_end'] <= b for a, b in spans):
+                seg['read_aloud'] = False
         with store.lock:
             project = store.create(body.name, record['source_script'], record['language'], segments=segments, preset_model=default_preset())
             project['attribution'] = {'draft_id':body.draft_id,'model_sha256':record.get('model_sha256'),'model_id':record.get('model_id'),

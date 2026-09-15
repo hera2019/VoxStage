@@ -10,9 +10,9 @@ under the output limit."""
 import os
 
 TIERS = (                # least memory first; (GB, chars, units, context, answer tokens, segments per project)
-    (0, 3000, 80, 16384, 4096, 500),
-    (32, 6000, 160, 32768, 8192, 1000),
-    (64, 12000, 320, 65536, 12288, 2000),
+    (0, 3000, 140, 16384, 4096, 500),        # 140 units × ~26 answer tokens fit the 4,096 answer; a no-quote text is one unit per line
+    (32, 6000, 280, 32768, 8192, 1000),
+    (64, 12000, 450, 65536, 12288, 2000),
 )
 
 
@@ -32,11 +32,10 @@ def draft_limits(gb=None):
     for tier in TIERS:
         if gb >= tier[0] - 0.5:          # 31.9 GB reported for a 32 GB machine still counts
             chosen = tier
-    _, chars, units, context, max_tokens, segments = chosen
     cap = os.environ.get('VOXSTAGE_DRAFT_CHARS')
-    if cap and cap.isdigit() and int(cap) < chars:
-        scale = int(cap) / chars
-        chars, units = int(cap), max(80, int(units * scale))
+    if cap and cap.isdigit():            # the largest tier that fits the cap, whatever the machine
+        chosen = max((t for t in TIERS if t[1] <= int(cap)), key=lambda t: t[1], default=TIERS[0])
+    _, chars, units, context, max_tokens, segments = chosen
     return {'chars': chars, 'units': units, 'context': context, 'max_tokens': max_tokens, 'segments': segments, 'memory_gb': round(gb, 1)}
 
 

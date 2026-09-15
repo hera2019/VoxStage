@@ -147,6 +147,8 @@ def _tidy(source, pieces, locks=()):
         if moved and kept and piece['start'] not in locks:
             kept[-1]['end'] = piece['start'] + moved
             piece = {**piece, 'start': piece['start'] + moved}
+        if piece['end'] <= piece['start']:
+            continue                                    # nothing left of it (a lock landed on a line break)
         if source[piece['start']:piece['end']].strip() or piece['start'] in locks:
             kept.append(dict(piece))
         elif kept:
@@ -220,9 +222,13 @@ class RoleDraftEngine:
         if not self.ready:
             raise ValueError('本地分角色模型未就绪；仍可使用已标注剧本导入。')
         units = source_units(text)
+        # Blank units — the line breaks between lines — are not the model's to
+        # label; they are narration and are filled in below. Only the rest are
+        # sent, counted against the limit, and required in the answer.
+        spoken = [u for u in units if u['text'].strip()]
         limits = draft_limits()
-        if not text.strip() or len(units) > limits['units']:
-            raise ValueError(f"请选取更短的原稿（最多 {limits['units']} 个引号切片）。")
+        if not spoken or len(spoken) > limits['units']:
+            raise ValueError(f"请选取更短的原稿（最多 {limits['units']} 个片段）。")
         with self.model.open('rb') as stream:
             if hashlib.file_digest(stream, 'sha256').hexdigest() != self.sha256:
                 raise ValueError('分角色模型校验不一致。')
@@ -237,8 +243,8 @@ class RoleDraftEngine:
             # earlier chapters; without this the model answers with descriptions
             # (姐姐, 男孩) instead of names.
             prompt += '\nCharacters already known from earlier chapters of this book: ' + '、'.join(known_names) + '. When one of them is the speaker, use that exact name.'
-        schema = {'type':'object', 'properties': {'labels': {'type':'array', 'minItems':len(units), 'maxItems':len(units),
-            'items': {'type':'object','properties': {'id': {'type':'string','enum':[u['id'] for u in units]},
+        schema = {'type':'object', 'properties': {'labels': {'type':'array', 'minItems':len(spoken), 'maxItems':len(spoken),
+            'items': {'type':'object','properties': {'id': {'type':'string','enum':[u['id'] for u in spoken]},
                 'kind': {'type':'string','enum':['narration','dialogue']}, 'speaker': {'type':'string', 'pattern': speaker_pattern(text)}, 'certain': {'type':'boolean'}},
                 'required':['id','kind','speaker','certain'],'additionalProperties':False}}}, 'required':['labels'],'additionalProperties':False}
         with socket.socket() as sock:
@@ -270,44 +276,40 @@ class RoleDraftEngine:
                     raise ValueError('本地分角色模型启动超时。')
                 response = request('/v1/chat/completions', {**settings,'model':'role-draft',
                     'messages':[{'role':'system','content':prompt},{'role':'user','content':json.dumps(
-                        [{'id':u['id'],'text':u['text']} for u in units],ensure_ascii=False)}],
+                        [{'id':u['id'],'text':u['text']} for u in spoken],ensure_ascii=False)}],
                     'response_format':{'type':'json_schema','json_schema':{'name':'speaker_segments','schema':schema}}})
                 raw = response['choices'][0]['message']['content'] or ''
                 if response['choices'][0].get('finish_reason') == 'length':
                     raise ValueError('模型的回答被截断了（超过输出上限）。请把原文分成两段再试。')
+                # The answer covers the units that were sent; blank units are
+                # narration. The schema fixes count and vocabulary but not
+                # uniqueness: a long list sometimes comes back with an id repeated
+                # and its neighbour skipped (seen 2026-09-14). The ids it wrote
+                # are right; keep the first label per id and give a skipped unit
+                # a label of its own — narration for an unquoted one, an unplaced
+                # line for a quoted one — and say the answer was mended.
+                parsed = json.loads(raw).get('labels') if raw else None
+                if not isinstance(parsed, list):
+                    raise ValueError('模型没有给出标签。')
+                first = {}
+                for x in parsed:
+                    if isinstance(x, dict):
+                        first.setdefault(x.get('id'), x)
                 repaired = None
-                try:
-                    bind_labels(text, raw)
-                except ValueError as exc:
-                    # The schema fixes the count and the id vocabulary but not
-                    # uniqueness: a long list sometimes comes back with an id
-                    # repeated and its neighbour skipped, the labels themselves in
-                    # input order. The ids are a sanity check on an ordered list;
-                    # when the count is right, bind by position and say so.
-                    # Seen 2026-09-14: the model labelled only the non-blank
-                    # units (u0, u2, u4 …), skipping the line-break units, then
-                    # padded the count with repeats. The ids it wrote are right;
-                    # keep the first label per id, and give the units it skipped
-                    # a label of their own — narration for a blank or unquoted
-                    # unit, an unplaced line for a quoted one.
-                    parsed = json.loads(raw).get('labels') if raw else None
-                    if 'Duplicate' in str(exc) and isinstance(parsed, list):
-                        first = {}
-                        for x in parsed:
-                            first.setdefault(x.get('id'), x)
-                        mended = []
-                        for u in units:
-                            if u['id'] in first:
-                                mended.append(first[u['id']])
-                            elif u['text'].strip() and u['text'].strip()[0] in '“"「『':
-                                mended.append({'id': u['id'], 'kind': 'dialogue', 'speaker': 'UNKNOWN', 'certain': False})
-                            else:
-                                mended.append({'id': u['id'], 'kind': 'narration', 'speaker': 'NARRATOR', 'certain': True})
-                        raw = json.dumps({'labels': mended}, ensure_ascii=False)
-                        bind_labels(text, raw)
-                        repaired = 'skipped_units_filled'
+                full = []
+                for u in units:
+                    if not u['text'].strip():
+                        full.append({'id': u['id'], 'kind': 'narration', 'speaker': 'NARRATOR', 'certain': True})
+                    elif u['id'] in first:
+                        full.append(first[u['id']])
+                    elif u['text'].strip()[0] in '“"「『':
+                        full.append({'id': u['id'], 'kind': 'dialogue', 'speaker': 'UNKNOWN', 'certain': False}); repaired = 'skipped_units_filled'
                     else:
-                        raise
+                        full.append({'id': u['id'], 'kind': 'narration', 'speaker': 'NARRATOR', 'certain': True}); repaired = 'skipped_units_filled'
+                if len(first) != len(parsed):
+                    repaired = 'skipped_units_filled'
+                raw = json.dumps({'labels': full}, ensure_ascii=False)
+                bind_labels(text, raw)
                 labels = [{**x, 'speaker': tidy_speaker(x['speaker']), 'certain': bool(x.get('certain', True))} for x in json.loads(raw)['labels']]
                 return {'labels':labels, 'raw_response':response, 'model_sha256':self.sha256, 'model_id':self.model_id,
                         'settings':settings,'prompt_sha256':hashlib.sha256(prompt.encode()).hexdigest(),

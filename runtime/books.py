@@ -1,7 +1,7 @@
 """A long text kept as a book: chapters found by their headings, or cut at
 paragraph breaks when there are none.
 
-The role draft takes at most 3,000 characters and 80 quoted units at a time —
+The role draft takes at most a memory-sized number of characters and units at a time (capacity.py) —
 the model's context, not a limit worth raising. Both caps bind: measured on
 the texts on this machine, dialogue-heavy prose runs 100–220 units per 3,000
 characters (阿Q正传 105, 王朔 185, 红楼梦 219), so a chapter cut by length alone
@@ -34,7 +34,8 @@ PARAGRAPH_END = re.compile(r'(\n\s*\n|(?<=[。！？!?”』」…])\n)')
 
 
 def _units(text):
-    return len(source_units(text))
+    """Units the model has to label: blank ones (line breaks) are filled in by the program."""
+    return sum(1 for u in source_units(text) if u['text'].strip())
 
 
 def _fits(text):
@@ -149,11 +150,21 @@ class Books:
     def __init__(self, root):
         self.root = Path(root); self.root.mkdir(parents=True, exist_ok=True)
 
-    def create(self, title, text, language, headings=None):
+    def create(self, title, text, language, headings=None, hints=None, silent=None):
+        """`hints` are spans of `text` whose speaker a coloured manuscript settles,
+        `silent` line numbers not read aloud; both are kept per chapter, rebased."""
         chapters = split_chapters(text, headings)
-        book = {'id': uuid.uuid4().hex, 'title': title.strip()[:120] or '未命名', 'language': language,
-                'chapters': [{'index': i + 1, 'title': c['title'], 'chars': len(c['text']), 'text': c['text']}
-                             for i, c in enumerate(chapters)]}
+        records, offset, line = [], 0, 0
+        for i, c in enumerate(chapters):
+            end = offset + len(c['text']); lines = c['text'].count('\n') + (0 if c['text'].endswith('\n') else 1)
+            record = {'index': i + 1, 'title': c['title'], 'chars': len(c['text']), 'text': c['text']}
+            if hints:
+                record['hints'] = [{'start': h['start'] - offset, 'end': h['end'] - offset, 'speaker': h['speaker']}
+                                   for h in hints if h['start'] >= offset and h['end'] <= end]
+            if silent:
+                record['silent'] = [n - line for n in silent if line <= n < line + lines]
+            records.append(record); offset = end; line += lines
+        book = {'id': uuid.uuid4().hex, 'title': title.strip()[:120] or '未命名', 'language': language, 'chapters': records}
         (self.root / (book['id'] + '.json')).write_text(json.dumps(book, ensure_ascii=False), encoding='utf-8')
         return book
 
