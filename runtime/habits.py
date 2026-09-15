@@ -62,7 +62,7 @@ def addressed(text, name):
 
 
 SPEECH_VERBS = ('说道', '笑道', '叫道', '喊道', '骂道', '问道', '答道', '回道', '低声道', '轻声道', '嚷道', '吼道', '哼道',
-                '说', '道', '问', '答', '叫', '喊', '骂', '笑', '回', '嚷', '吼', '哼', '应', '继续', '接着', '开口', '插嘴', '补充')
+                '说', '道', '问', '答', '叫', '喊', '骂', '回', '嚷', '吼', '哼', '应', '继续', '接着', '开口', '插嘴', '补充')
 
 
 # A name right after one of these is the person spoken to, looked at or taken
@@ -71,29 +71,109 @@ SPEECH_VERBS = ('说道', '笑道', '叫道', '喊道', '骂道', '问道', '答
 _OBJECT_MARKS = '对向跟朝冲同和与替给见问着住到把了望瞧盯找拉扶推指叫喊'
 
 
-def speech_tag(before, after, mentions):
-    """The name a speech tag beside a line gives it, or None. `mentions` maps each
-    character to the forms it is known by. Looks at the tail of the narration
-    before the line (小雪笑道：) and the head of the narration after it
-    (”小雪说。); exactly one character must fit."""
-    whole = STRIP.sub('', before or '')
-    tail = whole[-16:]
-    after_clean = STRIP.sub('', after or '')
-    # A narration that ends by introducing a quote (小雪说：) tags the line
-    # after it, not the one before; only a closing tag (小雪说。) counts here.
-    head = '' if after_clean.rstrip('。！？!?').endswith(('：', ':', '，', ',')) else after_clean[:16]
-    found = set()
+_VERB_RE = re.compile('|'.join(sorted(SPEECH_VERBS, key=len, reverse=True)))
+_CLAUSE_MARKS = '，、；：,;:'
+_OTHER_SUBJECTS = ('他', '她', '它', '我', '你', '您', '大家', '众人', '有的', '有人', '旁人', '别人', '那人', '此人', '一人', '一个', '几个', '那个', '这个', '对方')
+
+
+def _subject_with_verb(sentence, mentions):
+    """The one character who opens a clause of `sentence` and is followed, in
+    the sentence's last clause, by a speech verb — with no other character,
+    pronoun or 有的/旁人 opening a clause in between. None otherwise."""
+    sentence = sentence.rstrip(_CLAUSE_MARKS)
+    if not sentence or len(sentence) > 60:
+        return None
+    clauses = re.split('[' + re.escape(_CLAUSE_MARKS) + ']', sentence)
+    last = clauses[-1] if clauses else ''
+    verb = _VERB_RE.search(last)
+    if not verb:
+        return None
+    verb_at = len(sentence) - len(last) + verb.start()
+    if any(w in last[:verb.start()] for w in ('要', '想', '没', '不', '未', '才', '刚')):   # 刚要开口: did not get to
+        return None
+    found = []
     for name, forms in mentions.items():
         for f in forms:
-            i = tail.rfind(f)
-            if i >= 0 and any(v in tail[i + len(f):i + len(f) + 6] for v in SPEECH_VERBS):
-                k = len(whole) - len(tail) + i          # the character before the name, in the whole narration
-                if not (k > 0 and whole[k - 1] in _OBJECT_MARKS):
-                    found.add(name)
-            j = head.find(f)
-            if 0 <= j <= 4 and any(v in head[j + len(f):j + len(f) + 6] for v in SPEECH_VERBS):
-                if not (j > 0 and head[j - 1] in _OBJECT_MARKS):
-                    found.add(name)
+            for m in re.finditer(re.escape(f), sentence):
+                i = m.start()
+                if i > 0 and sentence[i - 1] not in _CLAUSE_MARKS:          # not at a clause start
+                    continue
+                if i > 0 and sentence[i - 1] in _OBJECT_MARKS:
+                    continue
+                if m.end() > verb_at:
+                    continue
+                between = sentence[m.end():verb_at]
+                # Another character between name and verb competes only as a
+                # subject (opening a clause); as an object (望着老板娘说) it does not.
+                if any(k == 0 or between[k - 1] in _CLAUSE_MARKS for n2, fs in mentions.items() if n2 != name
+                       for g in fs for k in [between.find(g)] if k >= 0):
+                    continue
+                if any(c.startswith(_OTHER_SUBJECTS) for c in re.split('[' + re.escape(_CLAUSE_MARKS) + ']', between)[1:]):
+                    continue
+                found.append(name)
+                break
+    found = list(dict.fromkeys(found))
+    return found[0] if len(found) == 1 else None
+
+
+def opening_tag(before, mentions):
+    """The name the narration before a line introduces it with — 小雪笑道：,
+    掌柜也伸出头去，一面说：, 孔乙己便涨红了脸，额上的青筋条条绽出，争辩道： —
+    or None. A narration whose last sentence is closed (吴迪嚷起来。) and then
+    breaks the paragraph closes the line before it and introduces nothing
+    (measured 2026-09-16: six of the old rule's wrong answers were closing
+    tags read as opening ones); closed but in the same paragraph — 一面说。“…”
+    — it still introduces the line."""
+    raw = (before or '')
+    clean = STRIP.sub('', raw)
+    if not clean:
+        return None
+    if clean[-1] in '。！？!?':
+        last_mark = max(raw.rfind(c) for c in '。！？!?')
+        if '\n' in raw[last_mark + 1:]:            # closed, then a paragraph break: it closed the line before
+            return None
+    return _subject_with_verb(re.split(r'[。！？!?]', clean.rstrip('。！？!?'))[-1], mentions)
+
+
+def closing_tag(after, mentions):
+    """The name the narration after a line closes it with — ”小雪说。, ”赵太爷
+    踱开去，眼睛打量着他的全身，一面说。 — or None. The name opens the first
+    sentence, which must not itself introduce the next line (小雪说：)."""
+    clean = STRIP.sub('', after or '')
+    if not clean or clean.rstrip('。！？!?').endswith(('：', ':', '，', ',')):
+        return None
+    first = re.split(r'[。！？!?]', clean)[0]
+    if len(first) > 40:
+        return None
+    head = re.split('[' + re.escape(_CLAUSE_MARKS) + ']', first)[0]
+    if not any(head.startswith(f) or (0 < head.find(f) <= 2) for forms in mentions.values() for f in forms):
+        return None
+    return _subject_with_verb(first, mentions)
+
+def comma_beat(after, mentions):
+    """The one character a beat joined to the quote by a comma is about —
+    ”，赵太爷却不甚热心了。 — without a speech verb (with one it is a closing
+    tag, handled by speech_tag). None otherwise."""
+    clean = STRIP.sub('', after or '')
+    if not clean.startswith(('，', ',')):
+        return None
+    first = re.split(r'[。！？!?\n]', clean[1:])[0]
+    if not first or len(first) > 30 or _VERB_RE.search(first):
+        return None
+    found = []
+    for name, forms in mentions.items():
+        for f in forms:
+            k = first.find(f)
+            if k >= 0 and not (k > 0 and first[k - 1] in _OBJECT_MARKS):
+                found.append(name); break
+    return found[0] if len(found) == 1 else None
+
+
+def speech_tag(before, after, mentions):
+    """The name a speech tag beside a line gives it, or None: an opening tag in
+    the narration before it, or a closing tag in the narration after it;
+    exactly one character must fit."""
+    found = {n for n in (opening_tag(before, mentions), closing_tag(after, mentions)) if n}
     return next(iter(found)) if len(found) == 1 else None
 
 

@@ -866,9 +866,18 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 u['block'] = block
             for u in out:
                 u.setdefault('block', 0)
+                # The paragraph a unit sits in, so the page can show units of one
+                # paragraph together (本人 2026-09-16: a line the model gave to the
+                # wrong person was obviously the previous speaker's once seen in
+                # its paragraph). A unit that opens with a line break belongs to
+                # the paragraph after it.
+                lead = len(u['text']) - len(u['text'].lstrip('\n'))
+                u['para'] = body.script[:u['start']].count('\n') + lead
             LETTERS = '甲乙丙丁戊己庚辛壬癸'
             anonymous = {}          # block -> the stand-in name of its unnamed single speaker
             participants = {}       # block -> names settled in it by the model with certainty, a tag or a stand-in, in order
+            def called_names(text, mentions_):
+                return [name for name, forms in mentions_.items() if any(habits.addressed(text, f) for f in forms)]
             def settled(name, blk):
                 participants.setdefault(blk, [])
                 if name not in participants[blk]:
@@ -920,6 +929,24 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                         u['hint'] = was
                     settled(stand_in, blk)
                     continue
+                sp = u['speaker'].strip()
+                named = sp.upper() not in ('', 'UNKNOWN', 'NARRATOR')
+                # “那么，明天拿来就是”，赵太爷却不甚热心了。“阿Q，你以后……” — the beat
+                # joined to a quote by a comma is about its speaker, and the quote
+                # that follows in the same paragraph is usually his too (本人
+                # 2026-09-16, 阿Q; one such case in the labelled texts, so yellow).
+                beat = habits.comma_beat(after['text'] if after and after['kind'] == 'narration' else '', mentions)
+                if beat and beat not in called_names(u['text'], mentions):
+                    if sp != beat:
+                        u.update({'speaker': beat, 'tier': 'suggested', 'basis': '紧跟着的叙述说的是这个人，像是'}); u.pop('hint', None)
+                    u['beat'] = beat
+                if before and before['kind'] == 'narration' and before.get('beat_of') and '\n' not in before['text'] \
+                        and before['beat_of'] not in called_names(u['text'], mentions) and sp != before['beat_of']:
+                    # A new speaker usually gets a new paragraph; the model's
+                    # answer is kept as the hint, the reviewer sees both.
+                    u.update({'speaker': before['beat_of'], 'tier': 'suggested', 'basis': '同一段里紧跟着这个人的动作，像是', **({'hint': sp} if named else {})})
+                if beat and after is not None:
+                    after['beat_of'] = beat
                 sp = u['speaker'].strip()
                 named = sp.upper() not in ('', 'UNKNOWN', 'NARRATOR')
                 # Rule 2, graded by evidence (Astra 2026-09-15: a name in the line

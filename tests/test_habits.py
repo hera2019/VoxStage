@@ -370,3 +370,41 @@ def test_an_alias_both_of_whose_names_the_reviewer_used_is_two_people_and_is_spl
         assert r.status_code == 200, r.text
         assert c.get('/api/books/' + book['id']).json()['aliases'] == {}
         assert r.json()['attribution']['aliases_split'] == {'老板娘': '陈小雪'}
+
+
+def test_tags_read_by_clause_and_the_comma_beat_after_a_quote(tmp_path):
+    """2026-09-16, measured on the labelled texts: opening tags read by clause
+    (掌柜也伸出头去，一面说：) and a sentence-final narration taken as a closing
+    tag of the line before it — 38 tags right, none wrong, against 18 right and
+    6 wrong before. The beat joined to a quote by a comma is about its speaker,
+    and the next quote in the paragraph likely continues (本人, 阿Q)."""
+    from runtime.habits import speech_tag, comma_beat
+    m = {'阿宁': ['阿宁'], '陈小雪': ['陈小雪', '老板娘'], '王伯': ['王伯']}
+    assert speech_tag('王伯也伸出头去，一面说：', '', m) == '王伯'
+    assert speech_tag('阿宁便涨红了脸，额上的青筋条条绽出，争辩道：', '', m) == '阿宁'
+    assert speech_tag('阿宁嚷起来。\n', '', m) is None                        # closed, then a new paragraph: it closed the line before
+    assert speech_tag('阿宁踱开去，眼睛打量着他，一面说。', '', m) == '阿宁'      # closed but the quote follows in the paragraph
+    assert speech_tag('阿宁一到店，柜边的人都笑，有的叫道：', '', m) is None   # 有的 opens the verb's clause
+    assert speech_tag('阿宁笑笑，没再说什么就走了，王伯很热情地邀他', '', m) is None
+    assert speech_tag('', '”阿宁笑笑，没再说什么。', m) is None and speech_tag('', '”阿宁刚要开口，被她拦住了。', m) is None
+    assert speech_tag('', '”阿宁说。', m) == '阿宁' and speech_tag('阿宁望着老板娘说：', '', m) == '阿宁'
+    assert comma_beat('，王伯却不甚热心了。', m) == '王伯' and comma_beat('，王伯说。', m) is None and comma_beat('王伯走了。', m) is None
+    class Wrong(Roles):
+        def annotate(self, text, log_path):
+            labels = []
+            for u in source_units(text):
+                if u['text'].startswith('“'):
+                    labels.append({'id': u['id'], 'kind': 'dialogue', 'speaker': '阿宁' if '明天' in u['text'] else '陈小雪', 'certain': True})
+                else:
+                    labels.append({'id': u['id'], 'kind': 'narration', 'speaker': 'NARRATOR', 'certain': True})
+            return {'labels': labels, 'model_sha256': 'fixture'}
+    with TestClient(create_app(tmp_path / 'p', FixtureEngine(), role_engine=Wrong()), base_url='http://127.0.0.1', headers=HEADERS) as c:
+        text = '陈小雪慌忙说。\n“那么，明天拿来就是”，王伯却不甚热心了。“阿宁，你以后有东西先送来给我们看。”\n\n“价钱不会少！”陈小雪说。\n王伯说：“就这样。”\n'
+        d = c.post('/api/attribution/draft', json={'script': text, 'language': 'zh'}).json()
+        by = {u['text'].strip(): u for u in d['units'] if not u['blank']}
+        first = by['“那么，明天拿来就是”']
+        assert first['speaker'] == '王伯' and first['tier'] == 'suggested' and '紧跟着的叙述' in first['basis']
+        second = by['“阿宁，你以后有东西先送来给我们看。”']
+        assert second['speaker'] == '王伯' and second['tier'] == 'suggested' and '同一段' in second['basis']
+        assert first['para'] == second['para'] and by['“价钱不会少！”']['para'] > second['para']
+        assert by['“价钱不会少！”']['speaker'] == '陈小雪' and by['“价钱不会少！”'].get('tier') is None

@@ -1,10 +1,13 @@
 import {useEffect,useRef,useState} from 'react';
-type Unit={id:string;text:string;kind:'narration'|'dialogue';speaker:string;blank?:boolean;suggested?:string;tier?:'suggested';basis?:string;hint?:string;edited?:boolean;certain?:boolean;typing?:boolean;stand_in?:boolean;block?:number;source?:'tag'|'model'};
+type Unit={id:string;text:string;kind:'narration'|'dialogue';speaker:string;blank?:boolean;suggested?:string;tier?:'suggested';basis?:string;hint?:string;edited?:boolean;certain?:boolean;typing?:boolean;stand_in?:boolean;block?:number;para?:number;source?:'tag'|'model'};
 type Draft={draft_id:string;units:Unit[];notice?:string|null};
 type Props={request:(path:string,method?:string,data?:unknown)=>Promise<any>;onCreated:(project:any)=>Promise<void>;onClose:()=>void;seed?:{name:string;language:'zh'|'en';text:string;knownNames?:string[];book?:{id:string;index:number}}|null};
 export function RoleImport({request,onCreated,onClose,seed}:Props){
  const [text,setText]=useState(seed?.text??'');const [name,setName]=useState(seed?.name??'新的故事');const [language,setLanguage]=useState<'zh'|'en'>(seed?.language??'zh');
  const [draft,setDraft]=useState<Draft|null>(null);const [aliases,setAliases]=useState<Record<string,string>>({});
+ const [pending,setPending]=useState<{old:string;speaker:string;ids:string[]}|null>(null);
+ function carryAll(){const pd=pending;if(!pd)return;setDraft(d2=>d2&&({...d2,units:d2.units.map(u=>pd.ids.includes(u.id)?{...u,speaker:pd.speaker,edited:true}:u)}));setAliases(a=>({...a,[pd.old]:pd.speaker}));setPending(null)}
+ function carryNone(){if(pending)declined.current.add(pending.old+'→'+pending.speaker);setPending(null)}
  // Review effort, recorded with the project: what the page showed when the draft arrived
  // and what the person changed, so the automation can be measured run by run.
  const started=useRef<{at:number;dialogue:number;orange:number;yellow:number;initial:Record<string,{tier:string;speaker:string}>}|null>(null);const [waiting,setWaiting]=useState(false);const [error,setError]=useState('');
@@ -53,12 +56,9 @@ export function RoleImport({request,onCreated,onClose,seed}:Props){
    const others=d.units.filter(u=>u.id!==id&&u.kind==='dialogue'&&!u.blank&&effective(u)===old);
    const shares=[...old].some(ch=>speaker.includes(ch));
    const aliasLike=!established.has(old)&&(old.length<=2||shares||(others.length>=3&&established.has(speaker)));
-   if(others.length&&aliasLike){
-    if(confirm(`其余 ${others.length} 处「${old}」也改成「${speaker}」吗？\n\n（以后这本书的草稿里，「${old}」会自动当作「${speaker}」。）`)){
-     setDraft(d2=>d2&&({...d2,units:d2.units.map(u=>others.some(o=>o.id===u.id)?{...u,speaker,edited:true}:u)}));
-     setAliases(a=>({...a,[old]:speaker}));
-    }else declined.current.add(old+'→'+speaker);
-   }
+   // Not a popup: the offer waits in a bar at the foot of the list, so the
+   // reviewer can scroll down and look at those lines first (本人 2026-09-16).
+   if(others.length&&aliasLike)setPending({old,speaker,ids:others.map(o=>o.id)});
   }
   if(resuggest.current)clearTimeout(resuggest.current);
   resuggest.current=setTimeout(()=>{
@@ -88,12 +88,13 @@ export function RoleImport({request,onCreated,onClose,seed}:Props){
    <p className="muted">每次最多 3000 字符。本机模型只填写标签，原文由程序保留。草稿需要人工复核。</p>
    <button className="primary wide" disabled={waiting||!text.trim()} onClick={()=>void run(async()=>setDraft(await request('/attribution/draft','POST',{script:text,language,book_id:seed?.book?.id})))}>{waiting?'正在本机分角色，请稍候…':'生成角色草稿'}</button>
   </>:<>{(()=>{if(!started.current){const ds=draft.units.filter(u=>!u.blank&&u.kind==='dialogue');started.current={at:Date.now(),dialogue:ds.length,orange:ds.filter(u=>tier(u)==='unknown').length,yellow:ds.filter(u=>tier(u)==='suggested').length,initial:Object.fromEntries(draft.units.map(u=>[u.id,{tier:tier(u),speaker:effective(u)}]))}}return null})()}<p>逐段核对旁白 / 对白和角色姓名。<span className="tier-orange">橙色 {unknown} 处</span>要你选人；<span className="tier-yellow">黄色 {suggestedCount} 处</span>是程序按一来一往填的，不改就照它。</p>{draft.notice&&<p role="alert" className="line-error">{draft.notice}</p>}<div className="hint"><strong>这只是初步草稿，把说话人对上就够了。</strong>拆分、合并、改字、不朗读，进了工程之后在编辑页里都能做。<br/>人物称呼：{names.join('、')||'暂无对白角色'}。同一人物的不同称呼，请统一填写同一名字。</div>
-   <div className="role-units">{draft.units.filter(u=>!u.blank).map((u,i)=><article className={'role-unit '+(tier(u)==='unknown'?'role-unknown':tier(u)==='suggested'?'role-suggested':'')} key={u.id}>
+   <div className="role-units">{draft.units.filter(u=>!u.blank).map((u,i,list)=><article className={'role-unit '+(tier(u)==='unknown'?'role-unknown':tier(u)==='suggested'?'role-suggested':'')+(pending?.ids.includes(u.id)?' role-carry':'')+(i>0&&list[i-1].para===u.para?' same-para':' para-first')} key={u.id}>
     <p><small>片段 {i+1}</small><br/>{u.text}</p><div className="role-fields"><label>类型<select aria-label={`片段 ${i+1} 类型`} disabled={waiting} value={u.kind} onChange={e=>{const kind=e.target.value as Unit['kind'];change(u.id,{kind,speaker:kind==='narration'?'NARRATOR':u.speaker==='NARRATOR'?'UNKNOWN':u.speaker})}}><option value="narration">旁白</option><option value="dialogue">对白</option></select></label>
     {u.kind==='dialogue'?<label>说话人{tier(u)==='suggested'&&<small>{basis(u)}，不确定也可以照它；改了就按你的</small>}{tier(u)==='unknown'&&<small>{u.hint?`像是 ${u.hint}，但把握不大——请选一个人物`:u.suggested?`模型写的是 ${u.suggested}，原文里没有这个名字——请选一个人物`:'待指定，请选一个人物'}</small>}
      {u.typing?<input autoFocus aria-label={`片段 ${i+1} 新人名`} disabled={waiting} placeholder="输入新人名，回车确定" maxLength={80} onKeyDown={e=>{if(e.key==='Enter'){const v=(e.target as HTMLInputElement).value.trim();change(u.id,{typing:false});if(v)settle(u.id,v)}if(e.key==='Escape')change(u.id,{typing:false})}} onBlur={e=>{const v=e.target.value.trim();change(u.id,{typing:false});if(v)settle(u.id,v)}}/>
      :<select aria-label={`片段 ${i+1} 说话人`} disabled={waiting} value={effective(u)} onChange={e=>{if(e.target.value==='__new__')change(u.id,{typing:true});else settle(u.id,e.target.value)}}><option value="">— 待指定 —</option>{[...new Set([...names,effective(u)].filter(Boolean))].map(n=><option key={n} value={n}>{n}</option>)}<option value="__new__">＋ 新人名…</option></select>}</label>:<span>旁白</span>}</div>
    </article>)}</div>
+   {pending&&<div className="carry-bar" role="status"><span>其余 {pending.ids.length} 处「{pending.old}」也改成「{pending.speaker}」吗？可以先翻下去看看那些句子。同意的话，以后这本书的草稿里「{pending.old}」会自动当作「{pending.speaker}」。</span><button type="button" className="primary" disabled={waiting} onClick={carryAll}>都改</button><button type="button" disabled={waiting} onClick={carryNone}>不改</button></div>}
    <div className="buttons"><button disabled={waiting} onClick={()=>{setDraft(null);setError('')}}>返回原文</button><button className="primary" disabled={waiting||unknown>0} onClick={()=>void run(async()=>{const st=started.current;const changed=draft.units.filter(u=>!u.blank&&st&&st.initial[u.id]&&(st.initial[u.id].speaker!==(u.kind==='dialogue'?effective(u):u.speaker)||(st.initial[u.id].tier===''?'narration':'dialogue')!==u.kind));const review=st?{seconds:Math.round((Date.now()-st.at)/1000),dialogue:st.dialogue,orange:st.orange,yellow:st.yellow,changed:changed.length,named_changed:changed.filter(u=>st.initial[u.id].tier==='named').length,yellow_changed:changed.filter(u=>st.initial[u.id].tier==='suggested').length,orange_filled:changed.filter(u=>st.initial[u.id].tier==='unknown').length}:undefined;const project=await request('/attribution/confirm','POST',{name,draft_id:draft.draft_id,labels:draft.units.map(u=>({id:u.id,kind:u.kind,speaker:u.kind==='dialogue'?(effective(u)||'UNKNOWN'):u.speaker})),book_id:seed?.book?.id,chapter_index:seed?.book?.index,aliases,review});await onCreated({...project,review})})}>{waiting?'正在保存…':'已复核，创建工程'}</button></div>
   </>}{error&&<p role="alert" className="line-error">{error}</p>}
  </section></div>
