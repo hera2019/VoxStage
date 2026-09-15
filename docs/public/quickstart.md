@@ -23,6 +23,15 @@ were made with the flow below. New material still needs listening to.
      settings — the voices of the characters they share, fixed voices, the
      lexicon, model, pause and speed — so a book is configured once. Names
      confirmed in earlier chapters are offered as candidates in later ones.
+2b. **A coloured Word manuscript** (.docx): give each character a colour in
+   Pages or Word, export .docx, choose the file in the new-project dialog.
+   The program lists every colour with counts and samples and asks, colour by
+   colour: a character (type the name), the narrator, emphasis (not a speaker),
+   or a note to leave out. When the colours settle every line the model is
+   never asked; headings are kept but not read aloud by default; a paragraph
+   with two people's colours becomes one line per person. Unanswered colours
+   wait for the review page.
+
 3. **Review the draft.** Matching speakers to lines is all that is needed
    here. Each line of dialogue comes in one of three states: plain when the
    model named the speaker; **yellow** when the program filled it — from the
