@@ -135,7 +135,7 @@ def _subject_with_verb(sentence, mentions):
 _PRONOUN_SUBJECT = re.compile(r'(?:^|[，。！？；：、,])(他|她)(?:又|便|就|也|才|却|忙|正|只|还|再|先|于是|然后|接着|连忙)?[^，。！？；：、]{0,8}?(?:' + _VERB_ALT_ALL + r')[：:，,]?$')
 
 
-def pronoun_tag(before):
+def pronoun_tag(before, mentions=None):
     """'他' or '她' when the narration before a line introduces it with a pronoun
     as the subject — 他想：, 她笑着说： — else None. Who the pronoun is falls to
     the exchange: the most recent character of that sex named in it."""
@@ -149,7 +149,25 @@ def pronoun_tag(before):
             return None
     sentence = re.split(r'[。！？!?]', clean.rstrip('。！？!?'))[-1]
     m = _PRONOUN_SUBJECT.search(sentence[-30:])
-    return m.group(1) if m else None
+    if m:
+        return m.group(1)
+    # The pronoun that opened the sentence carries to the verb in its last
+    # clause when nothing else takes the subject in between — 他脸上黑而且瘦，
+    # 已经不成样子；穿一件破夹袄，……见了我，又说道， (孔乙己, 2026-09-17).
+    clauses = re.split('[' + re.escape(_CLAUSE_MARKS) + ']', sentence.rstrip(_CLAUSE_MARKS))
+    if len(clauses) < 2 or len(clauses) > 8 or len(sentence) > 80:
+        return None
+    last = clauses[-1]
+    verb = _VERB_RE.search(last)
+    if not verb or any(w in last[:verb.start()] for w in ('要', '想', '没', '不', '未', '才', '刚')):
+        return None
+    for c in reversed(clauses[:-1]):
+        m = re.match(r'(?:但|而|可|却|于是|然后|接着|只|便)?(他|她)(?!们)', c)
+        if m:
+            return m.group(1)
+        if c.startswith(_OTHER_SUBJECTS) or any(f and c.startswith(f) for forms in (mentions or {}).values() for f in forms):
+            return None
+    return None
 
 
 _PRONOUN_CLOSING = re.compile(r'^[，,]?(他|她)(?:又|便|就|也|才|却|忙|正|只|还|再|先|于是|然后|接着|连忙)?[^，。！？；：、]{0,8}?(?:' + _VERB_ALT_ALL + r')')
@@ -194,6 +212,10 @@ def closing_tag(after, mentions):
         return None
     clean = STRIP.sub('', raw)
     if clean.rstrip('。！？!?').endswith(('：', ':', '，', ',')):
+        # “A”，阿Q想，“B” — a tag joined by commas to the quote before and the
+        # quote after is both lines' (阿Q chapter 7, 2026-09-17).
+        if clean.startswith(('，', ',')) and clean.endswith(('，', ',')) and len(clean) <= 20 and not re.search(r'[。！？!?：:]', clean):
+            return _subject_with_verb(clean.strip('，,'), mentions)
         return None
     end = re.search(r'[。！？!?]', clean)
     if not end:
@@ -207,6 +229,52 @@ def closing_tag(after, mentions):
     return _subject_with_verb(first, mentions)
 
 
+def colon_lead(before, mentions):
+    """The character (a name from `mentions`, or 他/她) whose clause ends the
+    narration with a colon and no verb of saying — 阿Q的思想也迸跳起来了：——,
+    他的意思是： — introducing the quote; None otherwise. Weaker than a tag
+    (no verb), so the caller keeps it yellow."""
+    clean = STRIP.sub('', before or '').rstrip('—-')
+    if clean.endswith(('，', ',')):
+        # A clause left open before the quote — 赵太爷却又没有话，“现在……
+        # 发财么？” — when it is the whole of the narration: its subject speaks.
+        if len(clean) > 30 or re.search(r'[。！？!?：:；;]', clean) or clean.startswith(('，', ',')):
+            return None
+        last = re.split('[' + re.escape(_CLAUSE_MARKS) + ']', clean.rstrip('，,'))[0]
+    elif clean.endswith(('：', ':')):
+        sentence = re.split(r'[。！？!?]', clean.rstrip('：:'))[-1]
+        if not sentence or len(sentence) > 40:
+            return None
+        last = re.split('[' + re.escape(_CLAUSE_MARKS) + ']', sentence)[-1]
+    else:
+        return None
+    for name, forms in mentions.items():
+        for f in forms:
+            if last.startswith(f) and not last.startswith(f + '们'):
+                return name
+    m = re.match(r'(他|她)(?!们)', last)
+    return m.group(1) if m else None
+
+
+def outer_speech(text):
+    """A line with its inner quotations cut out: in 阿Q's fantasy — 叫道：“阿Q！
+    同去同去！” — the name called is called by the people he imagines, not by
+    whoever hears his line (阿Q chapter 7, 2026-09-17). Only the outer line
+    says who it is addressed to."""
+    t = (text or '').strip()
+    if len(t) >= 2 and t[0] in '“"「『':
+        inner = t[1:-1] if t[-1] in '”"」』' else t[1:]
+        return t[0] + re.sub(r'[“「『][^“”「」『』]*[”」』]', '', inner) + (t[-1] if t[-1] in '”"」』' else '')
+    return t
+
+
+def run_on(text):
+    """A quoted unit opened but not closed — the first paragraph of a speech
+    that runs over several, each opened with “ and closed only at the last."""
+    t = (text or '').strip()
+    return len(t) >= 2 and t[0] in '“"「『' and t[-1] not in '”"」』'
+
+
 def quoted_citation(text, before='', after=''):
     """Chinese quoted words need a citation cue; brevity alone is not one.
 
@@ -217,6 +285,8 @@ def quoted_citation(text, before='', after=''):
     if len(text) < 2 or text[0] not in '“"「『' or text[-1] not in '”"」』':
         return False
     inner = text[1:-1]
+    # An ellipsis counts as a sentence: the reviewer read 他那“女……”的思想
+    # in 阿Q's voice (chapter 4) — a fragment of thought, not a term.
     if not inner or any(c in inner for c in '。！？…；!?～~，、—'):
         return False
     left = before.rstrip()[-60:]
@@ -233,7 +303,13 @@ def quoted_citation(text, before='', after=''):
     # 一个污点, 还是“手执钢鞭将你打”罢, “无师自通”的说出 — sits inside the
     # narrator's own clause: recited, not spoken (阿Q chapter 9, 2026-09-16).
     # Speech is followed by punctuation, a line break, or a tag (”他说).
-    if len(inner) <= 12 and re.match(r'(?:的|地|了|上|里|中|之|也|罢|吧|是|来|去|着|过|似的|一般|般|两字|二字|三字|四字)', right):
+    if len(inner) <= 12 and re.match(r'(?:的|地|了|上|里|中|之|也|罢|吧|是|来|去|着|过|似的|一般|般|两字|二字|三字|四字|话|者|字|词|之说|之类|云云|等等)', right):
+        return True
+    # ...and the clause that leads into it: 也就立刻是“小鬼见阎王”, 秀才听了这
+    # “庭训”, 村人对于阿Q的“敬而远之”者, 还记得“忘八蛋” (阿Q chapters 4 and
+    # 6, 2026-09-17; on the eleven reviewed texts these cues met no line a
+    # person called speech). A verb of saying before the quote is not here.
+    if len(inner) <= 12 and re.search(r'(?:是|这|那|的|记得|想起|记起|所谓|谓|即)$', left):
         return True
     return False
 
@@ -501,7 +577,31 @@ def suggest(text, profile):
 
 
 _EN_TITLE = r'(?:Mr|Mrs|Ms|Miss|Dr|Sir|Lady|Lord|Professor|Captain)'
-_EN_SPEECH = r'(?:said|asked|replied|answered|added|cried|remarked|continued|whispered|exclaimed)'
+_EN_SPEECH = r'(?:said|asked|replied|answered|added|cried|remarked|continued|whispered|exclaimed|observed|returned|repeated|interrupted|muttered|shouted|declared|inquired|demanded|insisted|protested|laughed|sighed|began|called)'
+
+
+def english_tag(before, after, mentions):
+    """The one character an English speech tag beside a line names — ” said
+    Darcy, / Elizabeth replied, “ — matched to the cast by a whole word of the
+    name (Darcy → Mr. Darcy; Elizabeth → Elizabeth Bennet), or None."""
+    tag = None
+    m = re.match(r'\s*[,;]?\s*' + _EN_SPEECH + r'\s+(?:(?:' + _EN_TITLE + r')\.?\s+)?([A-Z][\w\']+)', after or '')
+    if m:
+        tag = m.group(1)
+    else:
+        m = re.match(r'\s*[,;]?\s*(?:(?:' + _EN_TITLE + r')\.?\s+)?([A-Z][\w\']+)\s+' + _EN_SPEECH + r'\b', after or '')
+        if m:
+            tag = m.group(1)
+        else:
+            tail = (before or '').rstrip()[-60:]
+            m = re.search(r'(?:(?:' + _EN_TITLE + r')\.?\s+)?([A-Z][\w\']+)\s+' + _EN_SPEECH + r'[,:]?\s*$', tail)
+            if m:
+                tag = m.group(1)
+    if not tag:
+        return None
+    found = {name for name, forms in mentions.items()
+             if any(re.search(r'(?<!\w)' + re.escape(tag) + r'(?!\w)', f) for f in forms)}
+    return next(iter(found)) if len(found) == 1 else None
 
 
 def english_name_support(name, text):

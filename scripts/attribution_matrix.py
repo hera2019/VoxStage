@@ -70,7 +70,7 @@ def texts():
         stem = Path(path).stem
         # A case from the author's own text is named by a hash, not its title, so the
         # results file can be shown around; the public-domain samples keep their names.
-        label = stem[:10] if any(k in stem for k in ('孔乙己', '阿Q', '傲慢')) else '私稿·' + hashlib.sha256(stem.encode()).hexdigest()[:4]
+        label = stem[:10] if any(k in stem for k in ('孔乙己', '阿Q', '傲慢', '风波', 'pride', 'fengbo')) else '私稿·' + hashlib.sha256(stem.encode()).hexdigest()[:4]
         out.append((label, case['text'], case.get('language', 'zh'), case.get('book_id'), {l['id']: l for l in case['labels']}))
     seen, unique = set(), []                      # one entry per text: a case exported from a project repeats it
     for t in out:
@@ -82,6 +82,7 @@ def texts():
 def gold_from_segments(project):
     from evals.speaker_attribution.source_units import source_units
     segments = sorted(project['segments'], key=lambda x: x['source_start'])
+    quoted = any(c in project['source_script'] for c in '“"「『')
     gold = {}
     for u in source_units(project['source_script']):
         if not u['text'].strip():
@@ -91,7 +92,11 @@ def gold_from_segments(project):
         if seg is None:
             continue
         speaker = seg['speaker'].strip()
-        if speaker in ('旁白', 'Narrator', 'NARRATOR') or not seg.get('read_aloud', True):
+        # In a text that marks speech with quotation marks the pipeline calls
+        # every unquoted unit prose; a beat the reviewer left inside a character's
+        # segment (，阿Q想，) is not a line the draft could have given anyone.
+        unquoted_prose = quoted and u['text'].strip()[0] not in '“"「『'
+        if speaker in ('旁白', 'Narrator', 'NARRATOR') or not seg.get('read_aloud', True) or unquoted_prose:
             gold[u['id']] = {'id': u['id'], 'kind': 'narration', 'speaker': 'NARRATOR'}
         else:
             gold[u['id']] = {'id': u['id'], 'kind': 'dialogue', 'speaker': speaker}
@@ -201,4 +206,4 @@ if __name__ == '__main__':
         raise SystemExit('没有这个模型：' + ', '.join(unknown) + '\n可选：' + ', '.join(ORDER))
     main(wanted)
 
-# 最后更新：2026-09-16 · Claude Hera
+# 最后更新：2026-09-17 · Claude Hera

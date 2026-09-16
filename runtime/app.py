@@ -813,6 +813,23 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             def cites_rather_than_speaks(unit):
                 before, after = quote_context[unit['id']]
                 return habits.quoted_citation(unit['text'], before, after)
+            def speech_by_form(unit):
+                """A quoted unit with a sentence inside it — 。！？… — is speech
+                or thought unless a citation cue says otherwise; a Chinese phrase
+                without one (“行状”) keeps the model's word. In English the
+                comma before the closing mark — “Then,” he observed — is the
+                first half of a split quotation, speech by form too. On the
+                eleven reviewed texts (2026-09-17) no quoted unit a person
+                called narration has this form."""
+                text = unit['text'].strip()
+                if len(text) < 3 or text[0] not in '“"「『':
+                    return False
+                # A paragraph of a speech that runs on (opened with “, closed
+                # only at the last paragraph) has no closing mark of its own.
+                inner = text[1:-1] if text[-1] in '”"」』' else text[1:]
+                if body.language == 'zh':
+                    return any(c in inner for c in '。！？…；!?') and not cites_rather_than_speaks(unit)
+                return inner.rstrip().endswith(',')
             def chinese_names(labels):
                 """Names in the text's own script that anything has offered for this
                 passage: the book's, the tags', and the model's own Chinese answers."""
@@ -835,6 +852,14 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                     return {'kind': 'narration', 'speaker': 'NARRATOR', 'suggested': speaker}
                 if body.language == 'zh' and label['kind'] == 'dialogue' and cites_rather_than_speaks(unit):
                     return {'kind': 'narration', 'speaker': 'NARRATOR', 'suggested': speaker}
+                if label['kind'] == 'narration' and quoted and speech_by_form(unit):
+                    # The reverse: a quoted unit the model called narration that
+                    # has the form of speech is a line with its speaker unplaced
+                    # (阿Q chapter 7, 2026-09-17: his thoughts, a paragraph each
+                    # — “造反？有趣，……” — were all narration to the 14B; the
+                    # reviewer reads them as his lines). The rules below fill it
+                    # from a tag beside it, a habit, or the exchange.
+                    return {'kind': 'dialogue', 'speaker': 'UNKNOWN'}
                 english_support = habits.english_name_support(speaker, body.script) if body.language == 'en' and speaker else 0
                 name_present = bool(english_support) if body.language == 'en' else speaker in body.script
                 if label['kind'] == 'dialogue' and speaker.upper() not in ('', 'UNKNOWN', 'NARRATOR') and (
@@ -1042,6 +1067,23 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             sex_prof = habits.sex_profiles((t, sex_of.get(sp, '')) for t, sp in taught) if body.book_id and taught else None
             mentions = {name: [name] + [a for a, n in aliases.items() if n == name] for name in cast}
             spoken = [i for i, u in enumerate(out) if not u['blank']]
+            # A quoted unit the model called narration, beside a tag that names
+            # its speaker — “革命也好罢”，阿Q想， — is that person's line
+            # (阿Q chapter 7, 2026-09-17). The loop below then fills it from the tag.
+            for k, i in enumerate(spoken):
+                u = out[i]
+                text = u['text'].strip()
+                if u['kind'] != 'narration' or u.get('silent') or u['id'] in hinted or not text or text[0] not in '“"「『':
+                    continue
+                if body.language == 'zh' and cites_rather_than_speaks(u):
+                    continue
+                before = out[spoken[k - 1]] if k > 0 else None
+                after = out[spoken[k + 1]] if k + 1 < len(spoken) else None
+                before_text = before['text'] if before and before['kind'] == 'narration' else ''
+                after_text = after['text'] if after and after['kind'] == 'narration' else ''
+                tag_here = habits.english_tag(before_text, after_text, mentions) if body.language == 'en' else habits.speech_tag(before_text, after_text, mentions)
+                if tag_here or (body.language == 'zh' and habits.anonymous_tag(before_text, after_text)):
+                    u.update({'kind': 'dialogue', 'speaker': 'UNKNOWN'}); u.pop('suggested', None)
             # Exchanges: a run of lines with only short beats between them. A
             # long stretch of narration, or one that opens with a change of
             # time or place, ends the exchange (Astra 2026-09-15: turn-taking
@@ -1071,6 +1113,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             anonymous = {}          # block -> the stand-in name of its unnamed single speaker
             participants = {}       # block -> names settled in it by the model with certainty, a tag or a stand-in, in order
             def called_names(text, mentions_):
+                text = habits.outer_speech(text)
                 return [name for name, forms in mentions_.items() if any(habits.addressed(text, f) for f in forms)]
             def recent_names(i, blk, beyond=False):
                 """Characters of this exchange before out[i], most recent first: settled
@@ -1133,8 +1176,25 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                     continue
                 before = out[spoken[k - 1]] if k > 0 else None
                 after = out[spoken[k + 1]] if k + 1 < len(spoken) else None
-                tagged = habits.speech_tag(before['text'] if before and before['kind'] == 'narration' else '',
-                                           after['text'] if after and after['kind'] == 'narration' else '', mentions)
+                # A speech over several paragraphs opens each with “ and closes
+                # only the last: a quoted paragraph right after an unclosed one
+                # is the same speaker's (阿Q chapter 7, 2026-09-17).
+                if before and before['kind'] == 'dialogue' and habits.run_on(before['text']) and u['text'].strip()[0] in '“"「『' \
+                        and before['speaker'].strip().upper() not in ('', 'UNKNOWN', 'NARRATOR'):
+                    for key in ('hint', 'suggested'):
+                        u.pop(key, None)
+                    u.update({'speaker': before['speaker'], 'basis': '接着上一段，同一个人的话', 'continued': True})
+                    if before.get('tier') == 'suggested':
+                        u['tier'] = 'suggested'
+                    else:
+                        u.pop('tier', None)
+                    if before.get('source') in ('tag', 'model'):
+                        u['source'] = before['source']
+                    settled(before['speaker'].strip(), blk)
+                    continue
+                tagged = (habits.english_tag if body.language == 'en' else habits.speech_tag)(
+                    before['text'] if before and before['kind'] == 'narration' else '',
+                    after['text'] if after and after['kind'] == 'narration' else '', mentions)
                 if tagged:
                     if u['speaker'].strip() != tagged:
                         u.update({'speaker': tagged, 'basis': '旁边的叙述点了这个名字'}); u.pop('tier', None); u.pop('hint', None)
@@ -1169,8 +1229,18 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 # Who that is falls to the exchange: the most recent character
                 # of that sex named in it (settled as a speaker, or mentioned in
                 # its narration). Yellow: a reader's reading, not the text's word.
-                pronoun = (habits.pronoun_tag(before['text'] if before and before['kind'] == 'narration' else '')
-                           or habits.pronoun_closing(after['text'] if after and after['kind'] == 'narration' else ''))
+                # A clause that ends in a colon introduces the quote even without
+                # a verb of saying — 阿Q的思想也迸跳起来了：—— (chapter 7); with a
+                # name, yellow over the model's answer; with 他/她, resolved below.
+                lead = habits.colon_lead(before['text'] if before and before['kind'] == 'narration' else '', mentions)
+                if lead and lead not in ('他', '她') and lead not in called_names(u['text'], mentions):
+                    if sp != lead:
+                        u.update({'speaker': lead, 'tier': 'suggested', 'basis': '冒号引出这句话的是', **({'hint': sp} if named else {})})
+                    settled(lead, blk)
+                    continue
+                pronoun = (habits.pronoun_tag(before['text'] if before and before['kind'] == 'narration' else '', mentions)
+                           or habits.pronoun_closing(after['text'] if after and after['kind'] == 'narration' else '')
+                           or (lead if lead in ('他', '她') else None))
                 if pronoun:
                     referent = None
                     wanted = 'm' if pronoun == '他' else 'f'
@@ -1180,9 +1250,17 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                         if sex_of.get(name) in ('', None) or sex_of.get(name) == wanted:
                             referent = name; break
                     if referent and referent not in called_names(u['text'], mentions):
-                        if sp != referent:
-                            u.update({'speaker': referent, 'tier': 'suggested', 'basis': f'叙述说「{pronoun}」，这一段最近提到的是', **({'hint': sp} if named else {})})
-                        settled(referent, blk)
+                        # Who a pronoun means is a reading, not the text's word:
+                        # it fills an empty line and only questions a named one
+                        # (2026-09-17, eleven texts: overriding the 14B's name
+                        # never mended a line and twice spoiled one).
+                        if sp != referent and named:
+                            u.update({'tier': 'suggested', 'basis': f'叙述说「{pronoun}」，这一段最近提到的是{referent}；模型说是'})
+                            settled(sp, blk)
+                        else:
+                            if sp != referent:
+                                u.update({'speaker': referent, 'tier': 'suggested', 'basis': f'叙述说「{pronoun}」，这一段最近提到的是'})
+                            settled(referent, blk)
                         continue
                 if u.get('habit') and not named:
                     best, margin = u.pop('habit')
@@ -1214,9 +1292,10 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 # is evidence, not a veto). Naming oneself — 我叫陈小雪 — is the
                 # opposite evidence and settles the line; a call — 老板娘～ — is not
                 # the called person's line; a bare mention only asks for a look.
-                introduced = next((name for name, forms in mentions.items() if any(habits.self_introduced(u['text'], f) for f in forms)), None)
-                called = [name for name, forms in mentions.items() if any(habits.addressed(u['text'], f) for f in forms)]
-                spoken_of = [name for name, forms in mentions.items() if name not in called and any(habits.mentioned(u['text'], f) for f in forms)]
+                outer = habits.outer_speech(u['text'])
+                introduced = next((name for name, forms in mentions.items() if any(habits.self_introduced(outer, f) for f in forms)), None)
+                called = [name for name, forms in mentions.items() if any(habits.addressed(outer, f) for f in forms)]
+                spoken_of = [name for name, forms in mentions.items() if name not in called and any(habits.mentioned(outer, f) for f in forms)]
                 # Who else is in this exchange: settled so far here, else the cast.
                 local = [c for c in participants.get(blk, [])]
                 if introduced:
@@ -1259,7 +1338,23 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                         pick = next((c for c, _ in habits.rank(u['text'], profile) if c in same_sex), None)
                     pick = pick or (same_sex[0] if len(same_sex) == 1 else None)
                     if pick:
-                        u.update({'speaker': pick, 'tier': 'suggested', 'basis': ('这句像女生说的' if line_sex == 'f' else '这句像男生说的') + '，像是', 'hint': sp})
+                        # A question, not a change of name (2026-09-17: the one
+                        # line it changed on the eleven texts — 老尼姑's “那秀才
+                        # 和洋鬼子！” — it changed wrongly).
+                        u.update({'tier': 'suggested', 'basis': ('这句像女生说的' if line_sex == 'f' else '这句像男生说的') + f'，请看一眼（{pick}？）；模型说是'})
+                # A line still unplaced between two people who are settled in this
+                # exchange takes the one who did not speak last (yellow) — the
+                # page's own turn-taking, applied here so that rule 3 below can
+                # carry the alternation on through it (孔乙己, 2026-09-17: the
+                # 后来怎么样 exchange — a question the model left open, an answer
+                # it gave to the wrong man, six lines running).
+                sp = u['speaker'].strip()
+                if sp.upper() in ('', 'UNKNOWN') and before and before['kind'] == 'dialogue' \
+                        and before['speaker'].strip().upper() not in ('', 'UNKNOWN', 'NARRATOR'):
+                    recent = settled_recent(i, blk)
+                    others = [c for c in recent if c != before['speaker'].strip() and c not in excluded]
+                    if len(recent) == 2 and len(others) == 1:
+                        u.update({'speaker': others[0], 'tier': 'suggested', 'basis': '上一句已经是这个人，一来一往像是'})
                 # Rule 3: the same speaker twice running, no narration between.
                 # In the labelled texts two quoted lines running were never one
                 # person's (0 of 36 pairs, 2026-09-16), so this applies even when

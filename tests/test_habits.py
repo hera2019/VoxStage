@@ -459,3 +459,86 @@ def test_nested_quotes_and_the_sex_rule_keeping_quiet():
     assert units[1] == '“来了革命党，叫道：“同去同去！”于是一同去。”' and units[3] == '“老Q。”' and units[-1] == '\n\n下一段'
     prof = sex_profiles([('嗯～，赏你一块糖～，乖～', 'f'), ('账本我看过了，这个月亏了。', 'm')])
     assert sex_of_line('老Q', prof)[1] < 0.06 or True          # short lines carry no style; the rule now needs 8 characters and twice the margin
+
+
+def test_rules_are_validation_not_override_for_weak_evidence(tmp_path):
+    """Attribution plan step 1 (2026-09-17, measured on the eleven reviewed texts
+    by replaying the 14B's answers through the rules: 38 → 13 lines to fix).
+    Weak evidence — a pronoun's referent, the sex a line reads as — fills an
+    empty line and only questions a named one; the alternation of an exchange
+    carries on through a line the model left open."""
+    from runtime.habits import colon_lead, run_on, outer_speech, closing_tag, pronoun_tag, quoted_citation
+    M = {'阿宁': ['阿宁'], '陈小雪': ['陈小雪', '老板娘']}
+    # A clause ending in a colon or left open by a comma introduces the quote without a verb of saying.
+    assert colon_lead('阿宁的念头也跳了起来：——', M) == '阿宁' and colon_lead('他的意思是：', M) == '他'
+    assert colon_lead('老板娘却又没有话，', M) == '陈小雪' and colon_lead('，阿宁想，', M) is None and colon_lead('阿宁走了。', M) is None
+    # A speech over several paragraphs: opened, not closed; a tag between two quotes serves both.
+    assert run_on('“第一段没有关。') and not run_on('“关了。”')
+    assert outer_speech('“他们叫道：“阿宁！同去！”我便去了。”') == '“他们叫道：我便去了。”'
+    assert closing_tag('，阿宁想，', M) == '阿宁' and closing_tag('，阿宁想：', M) is None
+    # The pronoun that opened a sentence carries to the verb in its last clause.
+    assert pronoun_tag('他脸上黑而且瘦，已经不成样子；穿一件破夹袄，见了我，又说道，', M) == '他'
+    assert pronoun_tag('他脸上黑而且瘦，老板娘走过来，见了我，又说道，', M) is None
+    # A phrase led into by 是/这/的/记得, or followed by 话/者, is recited; an ellipsis is a sentence.
+    assert quoted_citation('“小鬼见阎王”', '也就立刻是', '。这一节') and quoted_citation('“庭训”', '秀才听了这', '，非常之')
+    assert quoted_citation('“敬而远之”', '村人对于阿宁的', '者，本因为') and quoted_citation('“诛心”', '大声说几句', '话，或者')
+    assert not quoted_citation('“好”', '他说：', '。') and not quoted_citation('“女……”', '他那', '的思想')
+
+    class Model(Roles):
+        answers = {}
+        def annotate(self, text, log_path):
+            labels = []
+            for u in source_units(text):
+                quoted = u['text'].strip().startswith('“')
+                given = next((v for k, v in self.answers.items() if k in u['text']), None)
+                if given == 'NARRATION':
+                    labels.append({'id': u['id'], 'kind': 'narration', 'speaker': 'NARRATOR', 'certain': True})
+                else:
+                    labels.append({'id': u['id'], 'kind': 'dialogue' if quoted else 'narration',
+                                   'speaker': (given or 'UNKNOWN') if quoted else 'NARRATOR', 'certain': True})
+            return {'labels': labels, 'model_sha256': 'fixture'}
+    with TestClient(create_app(tmp_path / 'p', FixtureEngine(), role_engine=Model()), base_url='http://127.0.0.1', headers=HEADERS) as c:
+        # A quoted sentence the model called narration is a line with its speaker open; the
+        # paragraphs that run on from it are the same person's; a phrase stays as the model said.
+        Model.answers = {'造反': 'NARRATION', '第二段': 'NARRATION', '行状': 'NARRATION', '也好罢': 'NARRATION'}
+        text = '阿宁躺在屋里，他的念头也跳了起来：——\n\n“造反？有趣，……他们叫道：“阿宁！同去同去！”于是一同去。\n\n“第二段还在说。到此为止。”\n\n阿宁的“行状”没有人知道。“革命也好罢”，阿宁想，“也去投降。”\n'
+        d = c.post('/api/attribution/draft', json={'script': text, 'language': 'zh'}).json()
+        rows = [(u['text'].strip()[:3], u['speaker'], u.get('tier'), u.get('basis', '')[:5]) for u in d['units'] if u['kind'] == 'dialogue']
+        assert rows == [('“造反', '阿宁', 'suggested', '叙述说「他'), ('“第二', '阿宁', 'suggested', '接着上一段'),
+                        ('“革命', '阿宁', None, '旁边的叙述'), ('“也去', '阿宁', None, '旁边的叙述')]
+        assert [u['text'] for u in d['units'] if u['kind'] == 'narration' and '行状' in u['text']] == ['“行状”']
+        # An exchange of two: the lines the model left open take turns, and a name that breaks
+        # the alternation is questioned (yellow, the other person) as before.
+        Model.answers = {'哦': '陈小雪', '仍旧': '陈小雪', '先写': '陈小雪', '后来打': '陈小雪'}
+        text = '阿宁说：“他打折了腿了。”\n陈小雪说：“哦！”\n“他总仍旧是偷。”\n“后来怎么样？”\n“先写服辩，后来是打。”\n“后来呢？”\n“后来打折了腿了。”\n'
+        d = c.post('/api/attribution/draft', json={'script': text, 'language': 'zh', 'book_id': None}).json()
+        rows = [(u['speaker'], u.get('tier')) for u in d['units'] if u['kind'] == 'dialogue']
+        assert rows[:2] == [('阿宁', None), ('陈小雪', None)]
+        assert rows[2:] == [('阿宁', 'suggested'), ('陈小雪', 'suggested'), ('阿宁', 'suggested'), ('陈小雪', 'suggested'), ('阿宁', 'suggested')]
+        # A pronoun's referent questions the model's name, it does not replace it.
+        Model.answers = {'来了': '陈小雪', '好': '阿宁'}
+        d = c.post('/api/attribution/draft', json={'script': '阿宁说：“好。”\n他说：“来了。”\n陈小雪点头。\n', 'language': 'zh'}).json()
+        line = [u for u in d['units'] if u['kind'] == 'dialogue'][1]
+        assert line['speaker'] == '陈小雪' and line['tier'] == 'suggested' and '阿宁' in line['basis'] and '模型说是' in line['basis']
+
+
+def test_an_english_tag_names_the_speaker_of_a_split_quotation(tmp_path):
+    """“Then,” observed Elizabeth, “…” — the first half of a split quotation the
+    model called narration is her line (an English sample, 2026-09-17)."""
+    from runtime.habits import english_tag
+    M = {'Mr. Darcy': ['Mr. Darcy'], 'Elizabeth Bennet': ['Elizabeth Bennet']}
+    assert english_tag('', ' said Darcy, ', M) == 'Mr. Darcy' and english_tag('', ' observed Elizabeth, ', M) == 'Elizabeth Bennet'
+    assert english_tag('Elizabeth replied, ', '', M) == 'Elizabeth Bennet' and english_tag('', ' said the maid.', M) is None
+    class Half(Roles):
+        def annotate(self, text, log_path):
+            labels = []
+            for u in source_units(text):
+                quoted = u['text'].strip().startswith('“')
+                labels.append({'id': u['id'], 'kind': 'dialogue' if quoted and 'Then' not in u['text'] else 'narration',
+                               'speaker': 'Elizabeth Bennet' if quoted and 'Then' not in u['text'] else 'NARRATOR', 'certain': True})
+            return {'labels': labels, 'model_sha256': 'fixture'}
+    with TestClient(create_app(tmp_path / 'p', FixtureEngine(), role_engine=Half()), base_url='http://127.0.0.1', headers=HEADERS) as c:
+        text = 'Elizabeth Bennet looked up.\n\n“Then,” observed Elizabeth, “you must know a great deal.”\n'
+        d = c.post('/api/attribution/draft', json={'script': text, 'language': 'en'}).json()
+        rows = [(u['text'].strip(), u['speaker'], u.get('tier')) for u in d['units'] if u['kind'] == 'dialogue']
+        assert rows == [('“Then,”', 'Elizabeth Bennet', None), ('“you must know a great deal.”', 'Elizabeth Bennet', None)]

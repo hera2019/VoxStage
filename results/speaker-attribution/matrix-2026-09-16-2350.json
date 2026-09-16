@@ -1,0 +1,163 @@
+{
+ "texts": [
+  "阿Q正传 第2章",
+  "阿Q正传 第7章",
+  "阿Q正传 第6章",
+  "阿Q正传 第4章",
+  "阿Q正传 第5章",
+  "私稿·c286",
+  "私稿·585f",
+  "孔乙己 标准测试 0",
+  "私稿·322d",
+  "私稿·69a3",
+  "阿Q-第九章-1-盲"
+ ],
+ "results": {
+  "qwen3-14b-q4km": {
+   "阿Q正传 第2章": {
+    "lines": 13,
+    "right": 13,
+    "named_right": 11,
+    "named_wrong": 0,
+    "yellow_right": 2,
+    "yellow_wrong": 0,
+    "orange": 0,
+    "kind_errors": 0,
+    "renames": 0,
+    "to_fix": 0,
+    "seconds": 90
+   },
+   "阿Q正传 第7章": {
+    "lines": 33,
+    "right": 20,
+    "named_right": 20,
+    "named_wrong": 2,
+    "yellow_right": 0,
+    "yellow_wrong": 1,
+    "orange": 0,
+    "kind_errors": 10,
+    "renames": 0,
+    "to_fix": 13,
+    "seconds": 86
+   },
+   "阿Q正传 第6章": {
+    "lines": 31,
+    "right": 23,
+    "named_right": 22,
+    "named_wrong": 0,
+    "yellow_right": 1,
+    "yellow_wrong": 0,
+    "orange": 1,
+    "kind_errors": 7,
+    "renames": 1,
+    "to_fix": 8,
+    "seconds": 86
+   },
+   "阿Q正传 第4章": {
+    "lines": 21,
+    "right": 19,
+    "named_right": 19,
+    "named_wrong": 0,
+    "yellow_right": 0,
+    "yellow_wrong": 0,
+    "orange": 0,
+    "kind_errors": 2,
+    "renames": 1,
+    "to_fix": 2,
+    "seconds": 81
+   },
+   "阿Q正传 第5章": {
+    "lines": 14,
+    "right": 13,
+    "named_right": 13,
+    "named_wrong": 0,
+    "yellow_right": 0,
+    "yellow_wrong": 0,
+    "orange": 0,
+    "kind_errors": 1,
+    "renames": 0,
+    "to_fix": 1,
+    "seconds": 64
+   },
+   "私稿·c286": {
+    "lines": 53,
+    "right": 52,
+    "named_right": 52,
+    "named_wrong": 0,
+    "yellow_right": 0,
+    "yellow_wrong": 1,
+    "orange": 0,
+    "kind_errors": 0,
+    "renames": 1,
+    "to_fix": 1,
+    "seconds": 120
+   },
+   "私稿·585f": {
+    "lines": 21,
+    "right": 19,
+    "named_right": 19,
+    "named_wrong": 0,
+    "yellow_right": 0,
+    "yellow_wrong": 0,
+    "orange": 0,
+    "kind_errors": 2,
+    "renames": 0,
+    "to_fix": 2,
+    "seconds": 39
+   },
+   "孔乙己 标准测试 0": {
+    "lines": 35,
+    "right": 27,
+    "named_right": 18,
+    "named_wrong": 5,
+    "yellow_right": 9,
+    "yellow_wrong": 3,
+    "orange": 0,
+    "kind_errors": 0,
+    "renames": 3,
+    "to_fix": 8,
+    "seconds": 78
+   },
+   "私稿·322d": {
+    "lines": 35,
+    "right": 33,
+    "named_right": 33,
+    "named_wrong": 1,
+    "yellow_right": 0,
+    "yellow_wrong": 0,
+    "orange": 1,
+    "kind_errors": 0,
+    "renames": 0,
+    "to_fix": 2,
+    "seconds": 51
+   },
+   "私稿·69a3": {
+    "lines": 86,
+    "right": 83,
+    "named_right": 82,
+    "named_wrong": 2,
+    "yellow_right": 1,
+    "yellow_wrong": 1,
+    "orange": 0,
+    "kind_errors": 0,
+    "renames": 0,
+    "to_fix": 3,
+    "seconds": 124
+   },
+   "阿Q-第九章-1-盲": {
+    "lines": 25,
+    "right": 23,
+    "named_right": 22,
+    "named_wrong": 1,
+    "yellow_right": 1,
+    "yellow_wrong": 0,
+    "orange": 0,
+    "kind_errors": 1,
+    "renames": 1,
+    "to_fix": 2,
+    "seconds": 83
+   }
+  }
+ },
+ "note": "counts only; private texts are named by their case file stem"
+}
