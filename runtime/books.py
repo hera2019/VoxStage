@@ -165,6 +165,9 @@ class Books:
                 record['silent'] = [n - line for n in silent if line <= n < line + lines]
             records.append(record); offset = end; line += lines
         book = {'id': uuid.uuid4().hex, 'title': title.strip()[:120] or '未命名', 'language': language, 'chapters': records}
+        narration = next((h.get('colour') for h in (hints or []) if h.get('speaker') == 'NARRATOR' and h.get('colour')), None)
+        if narration:
+            book['narration_colour'] = narration          # the author's colour for narration, for every chapter's narrator
         (self.root / (book['id'] + '.json')).write_text(json.dumps(book, ensure_ascii=False), encoding='utf-8')
         return book
 

@@ -849,7 +849,8 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 if body.language == 'zh' and label['kind'] == 'dialogue' and cites_rather_than_speaks(unit):
                     return {'kind': 'narration', 'speaker': 'NARRATOR', 'suggested': speaker}
                 if label['kind'] == 'dialogue' and speaker.upper() not in ('', 'UNKNOWN', 'NARRATOR') and (
-                        (speaker not in body.script and speaker not in known_names) or len(speaker) > 12 or any(c in speaker for c in '，。！？～“”"：')):
+                        (speaker not in body.script and speaker not in known_names) or len(speaker) > 12 or any(c in speaker for c in '，。！？～“”"：')
+                        or speaker in habits.NOT_NAMES):
                     # Not a name the story uses — invented, translated, or the
                     # line itself pasted into the speaker field.
                     return {'kind': 'dialogue', 'speaker': 'UNKNOWN', 'suggested': speaker[:20]}
@@ -885,7 +886,9 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                         if h.start <= a and b <= h.end:
                             hinted[u['id']] = h.speaker.strip()
                             if h.colour and h.speaker.strip():
-                                hint_colours.setdefault(h.speaker.strip(), []).append(h.colour) if h.colour not in hint_colours.get(h.speaker.strip(), []) else None
+                                who = h.speaker.strip()
+                                if h.colour not in hint_colours.get(who, []):
+                                    hint_colours.setdefault(who, []).append(h.colour)
                             break
             if body.silent:
                 lines = body.script.split('\n'); starts = []; pos = 0
@@ -1295,7 +1298,8 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                               (labels_of.get(result.get('model_id'), result.get('model_id') or '本机模型') + ('（默认模型交了白卷，换的）' if fallback_used else '')))
                 view = {'draft_id': draft_id, 'notice': notice, 'units': out, 'revision': 1, 'decisions': {}, 'cast': cast,
                         'model': {'id': result.get('model_id'), 'note': model_note}}
-                record.update({'units': out, 'revision': 1, 'decisions': {}, 'book_id': body.book_id, 'cast': None if body.book_id else cast, 'model_note': model_note})
+                record.update({'units': out, 'revision': 1, 'decisions': {}, 'book_id': body.book_id, 'cast': None if body.book_id else cast, 'model_note': model_note,
+                               'narration_colour': (hint_colours.get('NARRATOR') or [None])[0]})
                 write_draft(record)
             return view
         except ValueError as exc:
@@ -1524,6 +1528,11 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             for e in cast:
                 if e['name'] in project['voices'] and e.get('colours') and e['colours'][0] != 'none':
                     project.setdefault('colors', {})[e['name']] = e['colours'][0]
+            narration_colour = record.get('narration_colour') or (book_record or {}).get('narration_colour')
+            if narration_colour:
+                narrator = '旁白' if record['language'] == 'zh' else 'Narrator'
+                if narrator in project['voices']:
+                    project.setdefault('colors', {})[narrator] = narration_colour
             project['attribution'] = {'draft_id':body.draft_id,'model_sha256':record.get('model_sha256'),'model_id':record.get('model_id'),
                 'model_labels':record['labels'],'confirmed_labels':labels,'human_confirmed':True,'decisions':decisions,'draft_revision':record.get('revision', 1),
                 'cast':[{k: e[k] for k in ('id', 'name', 'aliases', 'colours', 'sex', 'source')} for e in cast],

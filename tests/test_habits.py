@@ -431,3 +431,19 @@ def test_a_pronoun_tag_is_read_as_the_most_recent_person_of_that_sex_in_the_exch
         d = c.post('/api/attribution/draft', json={'script': text, 'language': 'zh'}).json()
         rows = [(u['speaker'], u.get('tier'), u.get('basis', '')[:6]) for u in d['units'] if u['kind'] == 'dialogue']
         assert rows == [('阿宁', None, '旁边的叙述点'), ('阿宁', 'suggested', '叙述说「他」'), ('阿宁', 'suggested', '叙述说「他」'), ('阿宁', 'suggested', '叙述说「他」')]
+
+
+def test_a_function_word_before_the_verb_is_not_a_character(tmp_path):
+    """阿Q很以为奇，而且想：“……” — 而且 is not anybody, whether a tag finds it or the
+    model names it (本人 2026-09-16, 阿Q chapter 5 on the 14B)."""
+    from runtime.habits import names_from_tags
+    assert names_from_tags(['阿宁很以为奇，而且想：', '阿宁说：']) == ['阿宁']
+    class Conjunction(Roles):
+        def annotate(self, text, log_path):
+            return {'labels': [{'id': u['id'], 'kind': 'dialogue' if u['text'].startswith('“') else 'narration',
+                                'speaker': '而且' if u['text'].startswith('“') else 'NARRATOR', 'certain': True} for u in source_units(text)],
+                    'model_sha256': 'fixture'}
+    with TestClient(create_app(tmp_path / 'p', FixtureEngine(), role_engine=Conjunction()), base_url='http://127.0.0.1', headers=HEADERS) as c:
+        d = c.post('/api/attribution/draft', json={'script': '阿宁说：“今天真怪。”\n阿宁很以为奇，而且想：“这些东西都学起小姐模样来了。”\n', 'language': 'zh'}).json()
+        line = [u for u in d['units'] if u['kind'] == 'dialogue'][1]
+        assert line['speaker'] == '阿宁' and line.get('tier') is None            # the tag names 阿宁; 而且 is nobody

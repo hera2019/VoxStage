@@ -287,7 +287,7 @@ class Templates:
 
 
 def edit_state(project):
-    return copy.deepcopy({**{k:project[k] for k in ('name','language','voices','segments','pause_ms')},'lexicon':project.get('lexicon',{}),'preset_model':project.get('preset_model','0.6B'),'voice_profiles':project.get('voice_profiles',{}), 'archived':project.get('archived',False), 'speech_rate':project.get('speech_rate',1.0), 'colors':project.get('colors',{}), 'color_scope':project.get('color_scope','name'), 'crowds':project.get('crowds',{}), 'sexes':project.get('sexes',{})})
+    return copy.deepcopy({**{k:project[k] for k in ('name','language','voices','segments','pause_ms')},'lexicon':project.get('lexicon',{}),'preset_model':project.get('preset_model','0.6B'),'voice_profiles':project.get('voice_profiles',{}), 'archived':project.get('archived',False), 'speech_rate':project.get('speech_rate',1.0), 'colors':project.get('colors',{}), 'color_scope':project.get('color_scope','both'), 'crowds':project.get('crowds',{}), 'sexes':project.get('sexes',{})})
 
 class Store:
     def __init__(self, root):

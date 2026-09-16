@@ -104,7 +104,7 @@ def test_a_coloured_document_goes_through_import_book_draft_and_confirm_without_
         p = c.post('/api/attribution/confirm', json={'draft_id': d['draft_id'], 'name': ch2['project_name'], 'labels': labels,
                                                     'book_id': book['id'], 'chapter_index': 2, 'silent': ch2['silent']}).json()
         segs = {s['text'].strip(): s for s in p['segments']}
-        assert p['colors'] == {'阿宁': '#000080', '陈小雪': '#800080'}                    # the manuscript's colours are the characters' (本人 2026-09-16)
+        assert p['colors'] == {'阿宁': '#000080', '陈小雪': '#800080', '旁白': '#8064a2'}   # the manuscript's colours are the characters', the narrator's too (本人 2026-09-16)
         assert p['attribution']['model_id'] is None and d['model']['note'] == '作者标的，没有用模型'
         assert segs['第二章 账']['read_aloud'] is False and segs['[夜里]']['read_aloud'] is False
         assert segs['少了三块～']['speaker'] == '阿宁' and segs['少了三块～']['read_aloud'] is True and segs['数错了吧？']['speaker'] == '陈小雪'

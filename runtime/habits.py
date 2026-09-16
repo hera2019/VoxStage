@@ -260,6 +260,13 @@ _TAG_TAIL = re.compile(r'(?:^|[，。！？：；、])([^，。！？：；、�
 
 FUNCTION_STARTS = ('又', '便', '就', '才', '也', '都', '却', '忙', '正', '只', '还', '再', '一', '有的', '有人', '别人', '旁人', '对', '向', '朝', '跟', '和',
                    '于是', '然后', '接着', '连忙', '点头', '摇头', '笑着', '哭着', '低声', '大声', '高声', '轻声', '冷冷', '慢慢')
+# Words a speech tag may open with that are not anybody: 阿Q很以为奇，而且想：
+# gave the model a character called 而且 (本人 2026-09-16, 阿Q chapter 5).
+NOT_NAMES = frozenset('而且 并且 但是 可是 只是 不过 因此 所以 因为 虽然 然而 于是 后来 忽然 突然 随即 立刻 马上 终于 竟然 居然 果然 只好 只得 '
+                      '便是 就是 也是 还是 都是 正是 又是 却是 不是 这时 那时 此时 当时 一面 一边 一时 一会 不禁 不由 不觉 索性 仍旧 依旧 照例 仍然 依然 '
+                      '果真 大约 似乎 好像 仿佛 显然 当然 自然 甚至 更加 越发 格外 不免 未免 不妨 何况 接着 然后 于是 总是 老是 已经 曾经 刚才 方才 '
+                      '同时 顿时 登时 立时 随后 从此 此后 以后 以前 之后 之前 先是 起初 最后 结果 其实 反正 究竟 到底 简直 几乎 差点 险些 幸而 幸亏 '
+                      '或者 或是 要么 也许 大概 可能 恐怕 未必 一定 必定 务必 只要 只有 除非 无论 不管 尽管 即使 哪怕 假如 如果 倘若 要是 既然 由于'.split())
 
 
 def names_from_tags(narrations, whole_text=''):
@@ -281,7 +288,7 @@ def names_from_tags(narrations, whole_text=''):
             continue
         if name in PRONOUNS or any(name.startswith(pro) and len(name) - len(pro) <= 1 for pro in PRONOUNS):
             continue
-        if any(name.startswith(w) for w in FUNCTION_STARTS):
+        if name in NOT_NAMES or any(name.startswith(w) for w in FUNCTION_STARTS):
             continue
         if whole_text and len(whole_text) >= 1500 and whole_text.count(name) < 3:
             continue
