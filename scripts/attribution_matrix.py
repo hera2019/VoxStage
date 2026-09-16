@@ -84,7 +84,7 @@ def gold_from_segments(project):
     segments = sorted(project['segments'], key=lambda x: x['source_start'])
     quoted = any(c in project['source_script'] for c in '“"「『')
     gold = {}
-    for u in source_units(project['source_script']):
+    for u in source_units(project['source_script'], project.get('cut')):
         if not u['text'].strip():
             continue
         at = u['start'] + (len(u['text']) - len(u['text'].lstrip()))

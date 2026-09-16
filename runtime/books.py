@@ -33,16 +33,16 @@ MIN_TAIL = 300                # a final piece shorter than this joins the piece 
 PARAGRAPH_END = re.compile(r'(\n\s*\n|(?<=[。！？!?”』」…])\n)')
 
 
-def _units(text):
+def _units(text, cut=None):
     """Units the model has to label: blank ones (line breaks) are filled in by the program."""
-    return sum(1 for u in source_units(text) if u['text'].strip())
+    return sum(1 for u in source_units(text, cut) if u['text'].strip())
 
 
-def _fits(text):
-    return len(text) <= CHAPTER_LIMIT and _units(text) <= UNIT_LIMIT
+def _fits(text, cut=None):
+    return len(text) <= CHAPTER_LIMIT and _units(text, cut) <= UNIT_LIMIT
 
 
-def split_chapters(text, headings=None):
+def split_chapters(text, headings=None, cut=None):
     """Cut a text into chapters. Returns [{'title', 'text'}] covering the text
     exactly (concatenating the pieces gives the input back). `headings` may
     name the heading lines outright (0-based line numbers — a Markdown import
@@ -65,14 +65,14 @@ def split_chapters(text, headings=None):
             if not body.strip():
                 continue
             title = lines[a].strip() if a in heads else '（开头）'
-            chapters += _fit(title, body)
+            chapters += _fit(title, body, cut)
         return _reassemble_exact(text, chapters)
-    return _reassemble_exact(text, _fit('', text))
+    return _reassemble_exact(text, _fit('', text, cut))
 
 
-def _fit(title, body):
+def _fit(title, body, cut=None):
     """One chapter, or several pieces of it when it is more than the draft can take."""
-    if _fits(body):
+    if _fits(body, cut):
         return [{'title': title, 'text': body}]
     # A paragraph ends at a blank line, or at a line break that follows a
     # sentence end — Chinese web novels separate paragraphs with a single
@@ -87,32 +87,32 @@ def _fit(title, body):
             merged.append(chunk)
     pieces, current, count = [], '', 0
     for para in merged:
-        units = _units(para)          # summed per paragraph; the exact check comes below
+        units = _units(para, cut)     # summed per paragraph; the exact check comes below
         if current and (len(current) + len(para) > PARAGRAPH_TARGET or count + units > UNIT_TARGET):
             pieces.append(current); current, count = para, units
         else:
             current += para; count += units
     if current:
-        if pieces and len(current) < MIN_TAIL and _fits(pieces[-1] + current):
+        if pieces and len(current) < MIN_TAIL and _fits(pieces[-1] + current, cut):
             pieces[-1] += current
         else:
             pieces.append(current)
     out = []
     for n, piece in enumerate(pieces, 1):
-        if not _fits(piece):
-            out += _cut_sentences(title, piece, n)
+        if not _fits(piece, cut):
+            out += _cut_sentences(title, piece, n, cut)
         else:
             out.append({'title': f'{title} · {n}' if title and len(pieces) > 1 else (title or f'第 {n} 段'), 'text': piece})
     return out
 
 
-def _cut_sentences(title, piece, n):
+def _cut_sentences(title, piece, n, cut=None):
     """A single paragraph that is more than the draft can take: cut after
     sentence ends only, never inside a quotation, and within both caps."""
     out, start = [], 0
     while start < len(piece):
         end = min(start + PARAGRAPH_TARGET, len(piece))
-        if end < len(piece) or _units(piece[start:end]) > UNIT_TARGET:
+        if end < len(piece) or _units(piece[start:end], cut) > UNIT_TARGET:
             stops = [x for x in _stops(piece, start, end) if _units(piece[start:x]) <= UNIT_TARGET]
             end = stops[-1] if stops else (_stops(piece, start, len(piece)) or [end])[0]
         out.append({'title': f'{title or "第 %d 段" % n} · {len(out) + 1}', 'text': piece[start:end]})
@@ -150,10 +150,10 @@ class Books:
     def __init__(self, root):
         self.root = Path(root); self.root.mkdir(parents=True, exist_ok=True)
 
-    def create(self, title, text, language, headings=None, hints=None, silent=None):
+    def create(self, title, text, language, headings=None, hints=None, silent=None, cut=None):
         """`hints` are spans of `text` whose speaker a coloured manuscript settles,
         `silent` line numbers not read aloud; both are kept per chapter, rebased."""
-        chapters = split_chapters(text, headings)
+        chapters = split_chapters(text, headings, cut)
         records, offset, line = [], 0, 0
         for i, c in enumerate(chapters):
             end = offset + len(c['text']); lines = c['text'].count('\n') + (0 if c['text'].endswith('\n') else 1)
@@ -165,6 +165,8 @@ class Books:
                 record['silent'] = [n - line for n in silent if line <= n < line + lines]
             records.append(record); offset = end; line += lines
         book = {'id': uuid.uuid4().hex, 'title': title.strip()[:120] or '未命名', 'language': language, 'chapters': records}
+        if cut:
+            book['cut'] = cut              # 'lines': the manuscript's colours, not its quotation marks, cut the lines
         narration = next((h.get('colour') for h in (hints or []) if h.get('speaker') == 'NARRATOR' and h.get('colour')), None)
         if narration:
             book['narration_colour'] = narration          # the author's colour for narration, for every chapter's narrator

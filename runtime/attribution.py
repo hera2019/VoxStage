@@ -52,7 +52,7 @@ def book_examples(siblings, exclude_text, limit=2, max_chars=360):
         if len(out) >= limit or p.get('source_script') == exclude_text:
             continue
         labels = {l['id']: l for l in (p.get('attribution') or {}).get('confirmed_labels') or []}
-        units = [u for u in source_units(p['source_script']) if u['text'].strip()]
+        units = [u for u in source_units(p['source_script'], p.get('cut')) if u['text'].strip()]
         for start in range(len(units)):
             window, chars, speakers, dialogue = [], 0, set(), 0
             for u in units[start:]:
@@ -117,13 +117,13 @@ DEFAULT_ROLE_MODEL = 'qwen3-14b-q4km'
 FALLBACK_ROLE_MODEL = 'qwen3-4b-instruct-2507-abliterated-q8'
 
 
-def project_segments(source, labels, language, locks=()):
+def project_segments(source, labels, language, locks=(), cut=None):
     # Validate IDs against preserved source, including duplicate/missing labels.
-    bind_labels(source, json.dumps({'labels': labels}))
+    bind_labels(source, json.dumps({'labels': labels}), cut)
     by_id = {x['id']: x for x in labels}
     pieces = []
     limit = 60 if language == 'zh' else 240
-    for unit in source_units(source):
+    for unit in source_units(source, cut):
         label = by_id[unit['id']]
         speaker = label['speaker'].strip()
         if label['kind'] == 'narration':
@@ -301,10 +301,10 @@ class RoleDraftEngine:
         self.sha256 = ROLE_MODELS[model_id]['sha256']
         self.ready = self.model.is_file() and self.server.is_file()
 
-    def annotate(self, text, log_path, known_names=(), examples=()):
+    def annotate(self, text, log_path, known_names=(), examples=(), cut=None):
         if not self.ready:
             raise ValueError('本地分角色模型未就绪；仍可使用已标注剧本导入。')
-        units = source_units(text)
+        units = source_units(text, cut)
         # Blank units — the line breaks between lines — are not the model's to
         # label; they are narration and are filled in below. Only the rest are
         # sent, counted against the limit, and required in the answer.
@@ -402,7 +402,7 @@ class RoleDraftEngine:
                 if len(first) != len(parsed):
                     repaired = 'skipped_units_filled'
                 raw = json.dumps({'labels': full}, ensure_ascii=False)
-                bind_labels(text, raw)
+                bind_labels(text, raw, cut)
                 labels = [{**x, 'speaker': tidy_speaker(x['speaker']), 'certain': bool(x.get('certain', True))} for x in json.loads(raw)['labels']]
                 return {'labels':labels, 'raw_response':response, 'model_sha256':self.sha256, 'model_id':self.model_id,
                         'settings':settings,'prompt_sha256':hashlib.sha256(prompt.encode()).hexdigest(),
@@ -419,7 +419,7 @@ def narration_name(language):
     return '旁白' if language == 'zh' else 'Narrator'
 
 
-def carry_labels(segments, source, language):
+def carry_labels(segments, source, language, cut=None):
     """Infer each new unit's kind and speaker from the segments already reviewed.
 
     Old segment texts are slices of old units, so a segment whose text still sits
@@ -429,7 +429,7 @@ def carry_labels(segments, source, language):
     narrator = narration_name(language)
     known = [s for s in segments if s.get('text', '').strip()]
     labels = []
-    for unit in source_units(source):
+    for unit in source_units(source, cut):
         speaker, kind = '', ''
         for old in known:
             start,end=old.get('source_start'),old.get('source_end')

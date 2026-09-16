@@ -109,3 +109,48 @@ def test_a_coloured_document_goes_through_import_book_draft_and_confirm_without_
         assert segs['第二章 账']['read_aloud'] is False and segs['[夜里]']['read_aloud'] is False
         assert segs['少了三块～']['speaker'] == '阿宁' and segs['少了三块～']['read_aloud'] is True and segs['数错了吧？']['speaker'] == '陈小雪'
         assert p['attribution']['model_id'] is None
+
+
+def test_with_the_colours_cutting_the_lines_a_quoted_paragraph_does_not_swallow_its_neighbours(tmp_path):
+    """本人 2026-09-17: a coloured document with one quoted paragraph among
+    the coloured lines came back all narration — the text had quotation marks,
+    so the units were cut at them, and the stretches on either side of the
+    quote were each one unit no colour could reach into. Asked to cut by the
+    colours (cut='lines'), every line is a unit, the quote included, and the
+    colours settle them all; a rewrite of the project cuts the same way."""
+    import base64
+    from fastapi.testclient import TestClient
+    from runtime.app import create_app
+    from runtime.engines import FixtureEngine
+    from tests.test_attribution_import import Roles, HEADERS
+    class Never(Roles):
+        def annotate(self, text, log_path, **kw):
+            raise AssertionError('the model must not be asked')
+    body = [('Body', [('猫又跑出去啦～', NING)]), ('Body', [('陈小雪把账本合上。', PLUM)]), ('Body', [('“赏你一块糖～”她说，“去吧。”', XUE)]),
+            ('Body', [('老板娘～，帮帮忙～', NING)]), ('Body', [('王伯看着他们。', PLUM)])]
+    data = base64.b64encode(docx(body)).decode()
+    choices = {'#800080': {'as': 'character', 'name': '陈小雪'}, '#000080': {'as': 'character', 'name': '阿宁'}, '#8064a2': {'as': 'narration'}}
+    with TestClient(create_app(tmp_path / 'p', FixtureEngine(), role_engine=Never()), base_url='http://127.0.0.1', headers=HEADERS) as c:
+        r = c.post('/api/import/docx', json={'name': 'test.docx', 'data': data}).json()
+        assert r['has_quotes'] is True
+        a = c.post(f"/api/import/docx/{r['import_id']}/apply", json={'choices': choices}).json()
+        # Cut at the quotation marks (the old way): the lines before the quote are one unit, narration.
+        d = c.post('/api/attribution/draft', json={'script': a['text'], 'language': 'zh', 'hints': a['hints'], 'silent': a['silent']}).json()
+        assert d['units'][0]['text'].startswith('猫又跑出去啦～\n') and d['units'][0]['kind'] == 'narration'
+        # Cut by the colours: one unit per line, each with its author's name; the model is not asked.
+        d = c.post('/api/attribution/draft', json={'script': a['text'], 'language': 'zh', 'hints': a['hints'], 'silent': a['silent'], 'cut': 'lines'}).json()
+        rows = [(u['text'], u['kind'], u['speaker']) for u in d['units'] if not u['blank']]
+        assert rows == [('猫又跑出去啦～', 'dialogue', '阿宁'), ('陈小雪把账本合上。', 'narration', 'NARRATOR'), ('“赏你一块糖～”她说，“去吧。”', 'dialogue', '陈小雪'),
+                        ('老板娘～，帮帮忙～', 'dialogue', '阿宁'), ('王伯看着他们。', 'narration', 'NARRATOR')]
+        assert d['model']['note'] == '作者标的，没有用模型'
+        labels = [{'id': u['id'], 'kind': u['kind'], 'speaker': u['speaker']} for u in d['units']]
+        p = c.post('/api/attribution/confirm', json={'draft_id': d['draft_id'], 'name': '小店', 'labels': labels, 'silent': a['silent']}).json()
+        segs = {s['text'].strip(): s for s in p['segments'] if s['text'].strip()}
+        assert segs['“赏你一块糖～”她说，“去吧。”']['speaker'] == '陈小雪' and segs['老板娘～，帮帮忙～']['speaker'] == '阿宁' and p['cut'] == 'lines'
+        # A rewrite keeps cutting by lines: the edited quoted line stays one segment of hers.
+        script = a['text'].replace('去吧。', '去玩吧。')
+        r = c.post(f"/api/projects/{p['id']}/script", json={'revision': p['revision'], 'source_script': script}).json()
+        assert r['preview'] is True and [u['text'] for u in r['unresolved']] == ['“赏你一块糖～”她说，“去玩吧。”']   # the whole line, one unit, asked again
+        # A book made from the document remembers the cut and hands it to each chapter.
+        b = c.post('/api/books', json={'title': '小店', 'language': 'zh', 'script': a['text'], 'hints': a['hints'], 'silent': a['silent'], 'cut': 'lines'}).json()
+        assert c.get(f"/api/books/{b['id']}/chapters/1").json()['cut'] == 'lines'

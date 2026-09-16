@@ -58,6 +58,7 @@ class BookRequest(BaseModel):
     headings: list[int] | None = Field(default=None, max_length=5000)   # line numbers, from a Markdown or Word import
     hints: list[Hint] | None = Field(default=None, max_length=20000)     # spans whose speaker the manuscript's colours settle
     silent: list[int] | None = Field(default=None, max_length=5000)     # line numbers kept but not read aloud (headings)
+    cut: Literal['lines'] | None = None                                 # 'lines': the colours cut the lines, quotation marks do not
 
 class DocxImportRequest(BaseModel):
     name: str = Field(default='', max_length=200)
@@ -73,6 +74,7 @@ class RoleDraftRequest(BaseModel):
     script: str = Field(min_length=1, max_length=12000)     # the machine's own limit is checked in the handler (capacity.py)
     hints: list[Hint] | None = Field(default=None, max_length=5000)     # from a coloured or marked manuscript: settled speakers
     silent: list[int] | None = Field(default=None, max_length=2000)     # line numbers not read aloud (headings)
+    cut: Literal['lines'] | None = None                                 # 'lines': one unit per line, whatever quotation marks the text holds (本人 2026-09-17)
     language: Literal['zh','en']
     book_id: str | None = Field(default=None, pattern=r'^[a-f0-9]{32}$')   # lines confirmed in the book's other chapters teach the habits
 
@@ -616,7 +618,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
         """Keep a long text as a book cut into chapters; each becomes a project later."""
         with store.lock:
             book = books.create(body.title, body.script, body.language, body.headings,
-                                hints=[h.model_dump() for h in body.hints] if body.hints else None, silent=body.silent)
+                                hints=[h.model_dump() for h in body.hints] if body.hints else None, silent=body.silent, cut=body.cut)
         return books.public(book)
 
     imports = {}          # import_id -> parsed document, until its colours are answered (a handful at most)
@@ -701,7 +703,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 names += [s for s in p['voices'] if s not in ('旁白', 'Narrator') and s not in names]
                 if (p.get('book') or {}).get('index') == index and not p.get('archived'):
                     existing = p['id']
-        return {**chapter, 'book_id': book['id'], 'book_title': book['title'], 'language': book['language'], 'chapters': len(book['chapters']),
+        return {**chapter, 'book_id': book['id'], 'book_title': book['title'], 'language': book['language'], 'chapters': len(book['chapters']), 'cut': book.get('cut'),
                 'project_name': f"{book['title']} · {chapter['title']}".strip(' ·'), 'known_names': names, 'existing_project_id': existing}
 
     def clone_size(project):
@@ -735,7 +737,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
         labels = {l['id']: l for l in record.get('confirmed_labels', [])}
         if not labels or not p.get('source_script'):
             return []
-        return [(u, labels[u['id']]) for u in source_units(p['source_script'])
+        return [(u, labels[u['id']]) for u in source_units(p['source_script'], p.get('cut'))
                 if u['id'] in labels and labels[u['id']]['kind'] == 'dialogue'
                 and labels[u['id']]['speaker'].strip().upper() not in ('', 'UNKNOWN', 'NARRATOR')]
 
@@ -875,7 +877,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                     # in yellow for the reviewer, adopted unless changed.
                     return {'kind': 'dialogue', 'speaker': speaker, 'tier': 'suggested', 'basis': '模型按上下文推断的'}
                 return {'kind': label['kind'], 'speaker': speaker}
-            units = source_units(body.script)
+            units = source_units(body.script, body.cut)
             quote_context = {u['id']: (units[i - 1]['text'] if i else '',
                                        units[i + 1]['text'] if i + 1 < len(units) else '')
                              for i, u in enumerate(units)}
@@ -885,7 +887,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             # abliterated fine-tune answered Kong Yiji in English — KONG YIJI,
             # CHEF, A CUSTOMER — and every name was refused as not in the text.
             from . import habits
-            unquoted = [u['text'] for u in source_units(body.script) if u['text'].strip() and u['text'].strip()[0] not in '“"「『']
+            unquoted = [u['text'] for u in source_units(body.script, body.cut) if u['text'].strip() and u['text'].strip()[0] not in '“"「『']
             tag_names = habits.names_from_tags(unquoted, body.script)
             if not names_for_model:
                 names_for_model = list(tag_names)
@@ -937,6 +939,10 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                     kwargs['known_names'] = names_for_model
                 if examples and 'examples' in params:
                     kwargs['examples'] = examples
+                if body.cut and 'cut' in params:
+                    kwargs['cut'] = body.cut
+                elif body.cut:
+                    raise ValueError('这个分角色引擎不支持按颜色切句。')
                 return engine_.annotate(body.script, drafts/log_name, **kwargs)
             if settled_by_author:
                 result = {'labels': [{'id': u['id'], 'kind': 'dialogue' if hinted.get(u['id'], 'NARRATOR') != 'NARRATOR' else 'narration',
@@ -979,11 +985,11 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                         fallback_used = others[0]
             # Validate even injected engines; no unbound model text reaches a project.
             from evals.speaker_attribution.source_units import bind_labels
-            bind_labels(body.script,json.dumps({'labels':result['labels']}))
-            record = {**result,'draft_id':draft_id,'source_script':body.script,'language':body.language,'fallback_model':fallback_used}
+            bind_labels(body.script,json.dumps({'labels':result['labels']}),body.cut)
+            record = {**result,'draft_id':draft_id,'source_script':body.script,'language':body.language,'fallback_model':fallback_used,'cut':body.cut}
             write_draft(record)                       # the model's answer is kept even if the rules below fail
             labels = {x['id']:x for x in result['labels']}
-            units = source_units(body.script)
+            units = source_units(body.script, body.cut)
             # A degenerate draft: the model called every quoted unit narration.
             # Seen 2026-09-14 on an explicit web-novel chapter — 60 quoted units,
             # 70 labels, all NARRATOR; the schema forces valid JSON, so a model
@@ -1619,7 +1625,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 pos += len(line) + 1
                 if 0 < pos < len(record['source_script']):
                     locks.add(pos)
-        segments = project_segments(record['source_script'], labels, record['language'], locks=sorted(locks))
+        segments = project_segments(record['source_script'], labels, record['language'], locks=sorted(locks), cut=record.get('cut'))
         for seg in segments:
             if any(a <= seg['source_start'] and seg['source_end'] <= b for a, b in spans):
                 seg['read_aloud'] = False
@@ -1637,6 +1643,8 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                     label['cast_id'] = entry['id']
             save_cast(record, cast, book_record)
             project = store.create(body.name, record['source_script'], record['language'], segments=segments, preset_model=default_preset())
+            if record.get('cut'):
+                project['cut'] = record['cut']          # the lines were cut by the manuscript's colours; a rewrite cuts the same way
             project['cast_ids'] = {e['name']: e['id'] for e in cast if e['name'] in project['voices']}
             # A colour the author gave a character in the manuscript is the
             # character's colour in the project too (本人 2026-09-16).
@@ -1900,23 +1908,23 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             if report['blocking']:
                 raise ValueError(report['findings'][0]['message'])
             labels = ([label.model_dump() for label in body.labels] if body.labels
-                      else carry_labels(project['segments'], body.source_script, language))
+                      else carry_labels(project['segments'], body.source_script, language, project.get('cut')))
             # Boundaries cut by hand survive a reslice; the slicer cuts there and
             # never merges across them.
             locks = carry_locks(project['segments'], body.source_script)
             if body.labels is None:
                 unresolved = [{**unit, **{k: label[k] for k in ('kind', 'speaker')}}
-                              for unit, label in zip(source_units(body.source_script), labels)
+                              for unit, label in zip(source_units(body.source_script, project.get('cut')), labels)
                               if label['kind'] == 'dialogue'
                               and label['speaker'].strip().upper() in ('', 'UNKNOWN')]
                 # Slicing rejects UNKNOWN, so count with a placeholder that never persists.
                 probe = [{**l, 'speaker': ('待指定' if l['speaker'].strip().upper() in ('', 'UNKNOWN')
                                            else l['speaker'])} for l in labels]
-                sliced = project_segments(body.source_script, probe, language, locks)
+                sliced = project_segments(body.source_script, probe, language, locks, project.get('cut'))
                 _, stats = carry_state(project['segments'], [dict(s) for s in sliced])
                 return {'preview': True, 'labels': labels, 'unresolved': unresolved,
                         'report': report, 'segments': len(sliced), **stats}
-            segments = project_segments(body.source_script, labels, language, locks)
+            segments = project_segments(body.source_script, labels, language, locks, project.get('cut'))
             preview, stats = carry_state(project['segments'], [dict(s) for s in segments])
             presets = ['Vivian','Uncle_Fu','Serena','Dylan'] if language == 'zh' else ['Ryan','Aiden']
             def change(p):
