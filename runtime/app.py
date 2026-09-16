@@ -289,6 +289,12 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
         # existing projects keep whatever they were made with. 0.6B stays
         # available for machines with less memory.
         return '1.7B' if getattr(engine, 'large_identity', None) else '0.6B'
+    def default_clone():
+        # Cloned lines (fixed and designed voices) start on the 1.7B Base where
+        # it is installed (本人 2026-09-17, after the blind listening: 1.7B
+        # chosen for all three cloned lines, ai-lab 实测 21); existing projects
+        # keep what they were made with.
+        return '1.7B' if getattr(engine, 'large_reference_ready', False) else '0.6B'
     # Settings and auditions live beside the projects folder, never inside it:
     # Store scans its own root for project.json.
     workspace = store.root.parent
@@ -393,7 +399,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
     @app.get('/api/config')
     def config():
         return {'engine':engine.label, 'engine_id':engine.identity, 'ready':engine.ready,
-                'attribution_ready':role_engine.ready, 'role_models':(role_engine.installed() if hasattr(role_engine,'installed') else []), 'role_model':getattr(role_engine,'model_id',None), 'speed_ready':bool(ffmpeg_path()),'checker_ready':checker.ready, 'checker_id':checker.identity, 'voices':VOICES, 'fixed_voice_ready':getattr(engine,'reference_ready',False), 'preset_models':['0.6B']+(['1.7B'] if getattr(engine,'large_identity',None) else []), 'default_preset_model':('1.7B' if getattr(engine,'large_identity',None) else '0.6B'), 'design_ready':getattr(engine,'design_ready',False), 'local_only':True, 'synthetic_audio':True, 'draft_limits':__import__('runtime.capacity',fromlist=['draft_limits']).draft_limits(), 'clone_models':['0.6B']+(['1.7B'] if getattr(engine,'large_reference_ready',False) else [])}
+                'attribution_ready':role_engine.ready, 'role_models':(role_engine.installed() if hasattr(role_engine,'installed') else []), 'role_model':getattr(role_engine,'model_id',None), 'speed_ready':bool(ffmpeg_path()),'checker_ready':checker.ready, 'checker_id':checker.identity, 'voices':VOICES, 'fixed_voice_ready':getattr(engine,'reference_ready',False), 'preset_models':['0.6B']+(['1.7B'] if getattr(engine,'large_identity',None) else []), 'default_preset_model':('1.7B' if getattr(engine,'large_identity',None) else '0.6B'), 'design_ready':getattr(engine,'design_ready',False), 'local_only':True, 'synthetic_audio':True, 'draft_limits':__import__('runtime.capacity',fromlist=['draft_limits']).draft_limits(), 'clone_models':['0.6B']+(['1.7B'] if getattr(engine,'large_reference_ready',False) else []), 'default_clone_model':default_clone()}
 
     @app.get('/api/settings')
     def read_settings():
@@ -1659,7 +1665,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                     entry, _ = C.ensure(cast, label['speaker'].strip(), 'person')
                     label['cast_id'] = entry['id']
             save_cast(record, cast, book_record)
-            project = store.create(body.name, record['source_script'], record['language'], segments=segments, preset_model=default_preset())
+            project = store.create(body.name, record['source_script'], record['language'], segments=segments, preset_model=default_preset(), clone_model=default_clone())
             if record.get('cut'):
                 project['cut'] = record['cut']          # the lines were cut by the manuscript's colours; a rewrite cuts the same way
             project['cast_ids'] = {e['name']: e['id'] for e in cast if e['name'] in project['voices']}
@@ -1714,7 +1720,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
     @app.post('/api/projects')
     def import_project(body: ImportRequest):
         with store.lock:
-            return store.public(store.create(body.name, body.script, body.language, preset_model=default_preset()), engine, checker)
+            return store.public(store.create(body.name, body.script, body.language, preset_model=default_preset(), clone_model=default_clone()), engine, checker)
 
     @app.get('/api/projects/{project_id}')
     def get_project(project_id: str):

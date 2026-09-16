@@ -154,3 +154,36 @@ def test_an_audition_uses_the_model_a_new_project_would(tmp_path):
         r = c.post('/api/voices/audition', json={'voice': 'Vivian', 'text': '雨点敲着窗。', 'language': 'zh'})
         assert r.status_code == 200 and r.json()['preset_model'] == '1.7B'
         assert heard == ['1.7B']
+
+
+def test_a_new_project_clones_with_the_larger_base_where_it_is_installed(tmp_path):
+    """本人 2026-09-17, after the blind listening (ai-lab 实测 21): a project made
+    where the 1.7B Base is installed reads its fixed and designed voices with
+    it; without it, 0.6B; an older project without the entry stays on 0.6B."""
+    from fastapi.testclient import TestClient
+    from runtime.app import create_app
+    from runtime.core import Store
+    from tests.test_workflow import HEADERS
+    class Cloners:
+        ready = True; identity = 'small@1'; large_identity = None; reference_ready = True; large_reference_ready = True; label = 'cloners'
+        reference_identity = 'base@1'
+        def reference_identity_for(self, size='0.6B'): return 'large-base@1' if size == '1.7B' else 'base@1'
+        def synthesize(self, text, voice, language, seed=260909, size='0.6B'):
+            import numpy as np
+            return np.zeros(2400, dtype='float32') + .1, 24000, {'load_seconds': 0, 'generation_seconds': 0, 'mlx_peak_memory_bytes': 0, 'seed': seed, 'generation_parameters': {}}
+    with TestClient(create_app(tmp_path / 'p', Cloners()), base_url='http://127.0.0.1', headers=HEADERS) as c:
+        assert c.get('/api/config').json()['default_clone_model'] == '1.7B'
+        p = c.post('/api/projects', json={'name': 'x', 'language': 'zh', 'script': '旁白：你好。'}).json()
+        assert p['clone_model'] == '1.7B'
+        p = c.patch('/api/projects/' + p['id'], json={'revision': p['revision'], 'clone_model': '0.6B'}).json()
+        assert p['clone_model'] == '0.6B'
+    class Small(Cloners):
+        large_reference_ready = False
+    with TestClient(create_app(tmp_path / 'q', Small()), base_url='http://127.0.0.1', headers=HEADERS) as c:
+        assert c.get('/api/config').json()['default_clone_model'] == '0.6B'
+        p = c.post('/api/projects', json={'name': 'x', 'language': 'zh', 'script': '旁白：你好。'}).json()
+        assert p['clone_model'] == '0.6B'
+        r = c.patch('/api/projects/' + p['id'], json={'revision': p['revision'], 'clone_model': '1.7B'})
+        assert r.status_code == 400 and '未安装' in r.json()['detail']
+    old = Store(tmp_path / 'p').create('old', '旁白：你好。', 'zh')          # a project from before the setting existed
+    assert 'clone_model' not in old

@@ -325,7 +325,7 @@ class Store:
             os.fsync(stream.fileno())
         temporary.replace(path / 'project.json')
 
-    def create(self, name, script, language, *, segments=None, preset_model='0.6B'):
+    def create(self, name, script, language, *, segments=None, preset_model='0.6B', clone_model=None):
         if segments is None:
             segments = parse_script(script, language)
         presets = ['Vivian','Uncle_Fu','Serena','Dylan'] if language == 'zh' else ['Ryan','Aiden']
@@ -333,6 +333,11 @@ class Store:
         data = {'schema_version':1, 'id':uid(), 'name':name.strip() or 'Untitled', 'language':language,
                 'revision':0, 'source_script':script, 'voices':voices, 'segments':segments, 'pause_ms':250, 'preset_model':preset_model,
                 'history':[], 'future':[], 'job':{'status':'idle'}, 'synthetic_audio':True}
+        if clone_model:
+            # The cloning model is written down at birth: a project made where the
+            # 1.7B Base is installed keeps reading its cloned lines with it, and an
+            # older project (no entry) stays on 0.6B, its audio still valid.
+            data['clone_model'] = clone_model
         self.write(data)
         return data
 
