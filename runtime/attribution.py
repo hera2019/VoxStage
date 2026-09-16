@@ -51,15 +51,22 @@ ROLE_MODELS = {
         'paths': [ROOT/'user-data/models/role-qwen3.5-9b/Qwen3.5-9B-Q5_K_M.gguf'],
         'launch': ['--reasoning-budget', '1500']},
     'qwen3-14b-q4km': {
-        'label': 'Qwen3-14B 普通版 · Q4_K_M（Qwen 官方 GGUF；候选）',
+        # Best of six on the fixed set (2026-09-16, ai-lab 实测 17): 16 lines to
+        # fix across 215 against 28 for the next; twice the 4B's time. Recommended
+        # where the memory allows it (32 GB: 9 GB weights + 5 GB of context).
+        'label': 'Qwen3-14B 普通版 · Q4_K_M（Qwen 官方 GGUF）',
         'sha256': '500a8806e85ee9c83f3ae08420295592451379b4f8cf2d0f41c15dffeb6b81f0',
-        'paths': [ROOT/'user-data/models/role-qwen3-14b/Qwen3-14B-Q4_K_M.gguf']},
+        'paths': [ROOT/'user-data/models/role-qwen3-14b/Qwen3-14B-Q4_K_M.gguf'],
+        'recommended_gb': 32},
     'qwen3-14b-abliterated-v2-q4km': {
         'label': 'Qwen3-14B 去审查版 v2 · Q4_K_M（huihui-ai；候选）',
         'sha256': '66effa781874858e2d2efefa8d6d1d5b7c16f808fe018fe67c57f9014c18668f',
         'paths': [ROOT/'user-data/models/role-qwen3-14b-abliterated/Huihui-Qwen3-14B-abliterated-v2.Q4_K_M.gguf']},
 }
 DEFAULT_ROLE_MODEL = 'qwen3-4b-instruct-2507-q8'
+# When the chosen model hands in a draft of nothing, this one is asked (if
+# installed): the fastest model that never balked on the fixed set.
+FALLBACK_ROLE_MODEL = 'qwen3-4b-instruct-2507-abliterated-q8'
 
 
 def project_segments(source, labels, language, locks=()):
@@ -234,7 +241,9 @@ class RoleDraftEngine:
         return next((p for p in candidates if p.is_file()), None)
 
     def installed(self):
-        return [{'id': k, 'label': v['label'], 'installed': self.path_for(k) is not None} for k, v in ROLE_MODELS.items()]
+        gb = draft_limits()['memory_gb']
+        return [{'id': k, 'label': v['label'] + ('（本机推荐）' if v.get('recommended_gb') and gb >= v['recommended_gb'] - 0.5 else ''),
+                 'installed': self.path_for(k) is not None, 'recommended': bool(v.get('recommended_gb') and gb >= v['recommended_gb'] - 0.5)} for k, v in ROLE_MODELS.items()]
 
     def select(self, model_id):
         if model_id not in ROLE_MODELS:
