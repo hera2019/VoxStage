@@ -832,6 +832,10 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 return set(known_names) | set(tag_names) | {l['speaker'].strip() for l in labels if l['kind'] == 'dialogue' and re.search('[一-鿿]', l['speaker'])}
             def vetted(label, unit, candidates=()):
                 speaker = aliases.get(label['speaker'].strip(), label['speaker'].strip())   # 老板娘 → 陈小雪, as the book learned
+                if label['kind'] == 'dialogue' and speaker.upper() == 'NARRATOR':
+                    # A line of speech whose speaker is "the narrator" names nobody
+                    # (the 9B wrote it for eight of Kong Yiji's lines, 2026-09-16).
+                    speaker = 'UNKNOWN'
                 if body.language == 'zh' and label['kind'] == 'dialogue' and speaker and not re.search('[一-鿿]', speaker) and speaker.upper() not in ('UNKNOWN', 'NARRATOR'):
                     # A name written in letters for a Chinese text — ZHANG XIAO WEI
                     # — is the name it spells, when exactly one name here does

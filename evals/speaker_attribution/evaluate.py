@@ -8,7 +8,7 @@ def speaker_pattern(text):
     """Same rule as runtime/attribution.py: a name in the text's own script, or UNKNOWN / NARRATOR."""
     import re
     if re.search('[一-鿿]', text):
-        return '^([A-Za-z0-9·]{0,3}[一-鿿][一-鿿A-Za-z0-9·]{0,7}|UNKNOWN|NARRATOR)$'
+        return '^([A-Za-z0-9·]?[一-鿿][一-鿿A-Za-z0-9·]{0,7}|UNKNOWN|NARRATOR)$'
     return "^([A-Za-z][A-Za-z .'\\-]{0,30}|UNKNOWN|NARRATOR)$"
 ROOT=Path(__file__).resolve().parents[2]
 HERE=Path(__file__).resolve().parent

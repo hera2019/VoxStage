@@ -212,7 +212,9 @@ def speaker_pattern(text):
     refused; asking in the prompt did not hold, the grammar does. A Chinese
     text's name must contain a Chinese character (阿Q keeps its Q)."""
     if re.search('[一-鿿]', text):
-        return '^([A-Za-z0-9·]{0,3}[一-鿿][一-鿿A-Za-z0-9·]{0,7}|UNKNOWN|NARRATOR)$'
+        # At most one Latin character before the first Chinese one (A君, 阿Q
+        # keeps its Q after): three let a model write CRO众 for "crowd".
+        return '^([A-Za-z0-9·]?[一-鿿][一-鿿A-Za-z0-9·]{0,7}|UNKNOWN|NARRATOR)$'
     return "^([A-Za-z][A-Za-z .'\\-]{0,30}|UNKNOWN|NARRATOR)$"
 
 
