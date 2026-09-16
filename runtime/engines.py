@@ -19,6 +19,12 @@ def generation_parameters(language):
 BASE_ID = 'mlx-community/Qwen3-TTS-12Hz-0.6B-Base-bf16@1eccf1cb2519b5a4e8a95b5f0544f3303568164f'
 BASE_SHA = {'model.safetensors':'d7c7ed3e3464e3e59de0f955b3755891fa8319ff061c3f0307fe2e1343bc122d',
             'speech_tokenizer/model.safetensors':'836b7b357f5ea43e889936a3709af68dfe3751881acefe4ecf0dbd30ba571258'}
+# The larger cloning model (2026-09-16): every fixed or designed voice was read
+# by the 0.6B Base whatever the project chose; this one is chosen per project
+# (clone_model) so a switch is deliberate and its fingerprint is its own.
+LARGE_BASE_ID = 'mlx-community/Qwen3-TTS-12Hz-1.7B-Base-bf16@a6eb4f68e4b056f1215157bb696209bc82a6db48'
+LARGE_BASE_SHA = {'model.safetensors':'81fb76175ff74e69be25fef2cc3e54f016df3034f1514c8e1c89da06a3510cff',
+                  'speech_tokenizer/model.safetensors':BASE_SHA['speech_tokenizer/model.safetensors']}
 
 def reference_parameters():
     return {'max_tokens':2048,'temperature':0.6,'top_k':50,'top_p':1.0,'repetition_penalty':1.5}
@@ -59,6 +65,10 @@ class MlxEngine:
         self.base_path = Path(base_path or self.path.parent/'qwen-base')
         self.reference_ready = all((self.base_path/name).is_file() for name in BASE_SHA)
         self.base_verified = False
+        self.large_base_path = self.path.parent/'qwen-base-1.7b'
+        self.large_reference_ready = all((self.large_base_path/name).is_file() for name in LARGE_BASE_SHA)
+        self.large_base_verified = False
+        self.large_reference_model = None
         self.ready = (self.path/'model.safetensors').is_file() and (self.path/'voxstage-model.json').is_file()
         self.identity = 'qwen3-customvoice-unconfigured'
         if self.ready:
@@ -134,34 +144,47 @@ class MlxEngine:
                 'generation_parameters':parameters}
 
 
+    def reference_identity_for(self, size='0.6B'):
+        return LARGE_BASE_ID if size == '1.7B' else BASE_ID
+
     def synthesize_reference(self, text, language, reference_path, reference_text, seed,
-                             *, consent_confirmed=False, expected_sha256=None):
-        """Only server-selected, preserved synthetic references; D29. Astra 2026-09-09."""
+                             *, consent_confirmed=False, expected_sha256=None, size='0.6B'):
+        """Only server-selected, preserved synthetic references; D29. Astra 2026-09-09.
+        `size` picks the cloning model: 0.6B (the default) or the 1.7B Base."""
         if not consent_confirmed or not expected_sha256:
             raise ValueError('固定声线需要已确认的合成参考声音。')
         with Path(reference_path).open('rb') as f:
             if hashlib.file_digest(f,'sha256').hexdigest()!=expected_sha256:
                 raise ValueError('固定声线参考文件已改变，请恢复原文件或重新选择声线。')
-        if not self.reference_ready:
+        large = size == '1.7B'
+        if large and not self.large_reference_ready:
+            raise ValueError('1.7B 固定声线模型未安装（scripts/setup_model.py --model base-large）。')
+        if not large and not self.reference_ready:
             raise ValueError('固定声线模型未安装。')
-        if not self.base_verified:
-            for name,expected in BASE_SHA.items():
-                with (self.base_path/name).open('rb') as f:
+        path = self.large_base_path if large else self.base_path
+        if not (self.large_base_verified if large else self.base_verified):
+            for name,expected in (LARGE_BASE_SHA if large else BASE_SHA).items():
+                with (path/name).open('rb') as f:
                     if hashlib.file_digest(f,'sha256').hexdigest()!=expected:
                         raise ValueError('固定声线模型校验失败。')
-            self.base_verified=True
+            if large: self.large_base_verified=True
+            else: self.base_verified=True
         import mlx.core as mx
         from mlx_audio.tts.utils import load_model
         start=time.perf_counter()
-        if self.reference_model is None:
+        if large and self.large_reference_model is None:
             gc.collect(); mx.clear_cache()
-            self.reference_model=load_model(str(self.base_path))
+            self.large_reference_model=load_model(str(path))
+        if not large and self.reference_model is None:
+            gc.collect(); mx.clear_cache()
+            self.reference_model=load_model(str(path))
+        model = self.large_reference_model if large else self.reference_model
         loaded=time.perf_counter()
         # Bound reference-code cache; authoritative identity is the SHA-256 in the project.
-        self.reference_model._icl_cache.clear()
+        model._icl_cache.clear()
         mx.random.seed(seed);mx.reset_peak_memory()
         parameters=reference_parameters()
-        results=list(self.reference_model.generate(text=text,lang_code={'zh':'Chinese','en':'English'}[language],
+        results=list(model.generate(text=text,lang_code={'zh':'Chinese','en':'English'}[language],
             ref_audio=str(reference_path),ref_text=reference_text,stream=False,**parameters))
         if not results or len({int(x.sample_rate) for x in results})!=1:
             raise ValueError('固定声线生成结果无效。')
@@ -174,8 +197,8 @@ class MlxEngine:
 
     def unload(self):
         """Release synthesis models before the serial transcription job. Astra, 2026-09-09."""
-        if self.model is not None or self.reference_model is not None or self.large_model is not None or self.design_model is not None:
-            self.model=None;self.reference_model=None;self.large_model=None;self.design_model=None
+        if self.model is not None or self.reference_model is not None or self.large_model is not None or self.design_model is not None or self.large_reference_model is not None:
+            self.model=None;self.reference_model=None;self.large_model=None;self.design_model=None;self.large_reference_model=None
             gc.collect()
             import mlx.core as mx
             mx.clear_cache()

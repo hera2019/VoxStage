@@ -200,6 +200,7 @@ class EditRequest(BaseModel):
     read_aloud: bool | None = None
     lexicon: dict[str, str] | None = None
     preset_model: Literal['0.6B', '1.7B'] | None = None
+    clone_model: Literal['0.6B', '1.7B'] | None = None      # the model that reads fixed and designed voices (2026-09-16)
     color: str | None = Field(default=None, pattern=r'^(#[0-9a-fA-F]{6}|auto)$')   # with speaker: this character's colour on screen
     color_scope: Literal['name', 'text', 'both'] | None = None                       # where the colours show: the name, the words, or both
     sex: Literal['m', 'f', 'auto'] | None = None                                     # with speaker: the character's sex for the speaker rules; 'auto' = as the voice suggests
@@ -390,7 +391,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
     @app.get('/api/config')
     def config():
         return {'engine':engine.label, 'engine_id':engine.identity, 'ready':engine.ready,
-                'attribution_ready':role_engine.ready, 'role_models':(role_engine.installed() if hasattr(role_engine,'installed') else []), 'role_model':getattr(role_engine,'model_id',None), 'speed_ready':bool(ffmpeg_path()),'checker_ready':checker.ready, 'checker_id':checker.identity, 'voices':VOICES, 'fixed_voice_ready':getattr(engine,'reference_ready',False), 'preset_models':['0.6B']+(['1.7B'] if getattr(engine,'large_identity',None) else []), 'default_preset_model':('1.7B' if getattr(engine,'large_identity',None) else '0.6B'), 'design_ready':getattr(engine,'design_ready',False), 'local_only':True, 'synthetic_audio':True, 'draft_limits':__import__('runtime.capacity',fromlist=['draft_limits']).draft_limits()}
+                'attribution_ready':role_engine.ready, 'role_models':(role_engine.installed() if hasattr(role_engine,'installed') else []), 'role_model':getattr(role_engine,'model_id',None), 'speed_ready':bool(ffmpeg_path()),'checker_ready':checker.ready, 'checker_id':checker.identity, 'voices':VOICES, 'fixed_voice_ready':getattr(engine,'reference_ready',False), 'preset_models':['0.6B']+(['1.7B'] if getattr(engine,'large_identity',None) else []), 'default_preset_model':('1.7B' if getattr(engine,'large_identity',None) else '0.6B'), 'design_ready':getattr(engine,'design_ready',False), 'local_only':True, 'synthetic_audio':True, 'draft_limits':__import__('runtime.capacity',fromlist=['draft_limits']).draft_limits(), 'clone_models':['0.6B']+(['1.7B'] if getattr(engine,'large_reference_ready',False) else [])}
 
     @app.get('/api/settings')
     def read_settings():
@@ -702,6 +703,10 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                     existing = p['id']
         return {**chapter, 'book_id': book['id'], 'book_title': book['title'], 'language': book['language'], 'chapters': len(book['chapters']),
                 'project_name': f"{book['title']} · {chapter['title']}".strip(' ·'), 'known_names': names, 'existing_project_id': existing}
+
+    def clone_size(project):
+        """The cloning model the project chose, for engines that offer one."""
+        return {'size': project.get('clone_model', '0.6B')} if hasattr(engine, 'reference_identity_for') else {}
 
     def character_sex(project, speaker):
         """'f', 'm' or '': what the project says of the character, else what
@@ -1695,6 +1700,13 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                         s['error'] = None
             if body.color_scope is not None:
                 p['color_scope'] = body.color_scope
+            if body.clone_model is not None:
+                if body.clone_model == '1.7B' and not getattr(engine, 'large_reference_ready', False):
+                    raise ValueError('1.7B 固定声线模型未安装。')
+                p['clone_model'] = body.clone_model
+                for s in p['segments']:
+                    if s['speaker'] in (p.get('voice_profiles') or {}) or is_custom(voice_of(p, s)):
+                        s['error'] = None
             if body.sex is not None:
                 # Who a character is, apart from which voice reads them (Astra
                 # 2026-09-15: the voice chosen must not decide whose line it
@@ -1993,12 +2005,12 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                                 raise ValueError('固定声线标识无效。')
                             pcm,rate,metrics=engine.synthesize_reference(spoken_text(p,s),p['language'],
                                 store.directory(project_id)/'references'/(digest_ref+'.wav'),profile['text'],
-                                260909+s.get('take',0),consent_confirmed=True,expected_sha256=digest_ref)
+                                260909+s.get('take',0),consent_confirmed=True,expected_sha256=digest_ref,**clone_size(p))
                         elif is_custom(voice_of(p, s)):
                             entry = library.get(custom_id(voice_of(p, s)))
                             pcm,rate,metrics=engine.synthesize_reference(spoken_text(p,s),p['language'],
                                 library.audio_path(entry['id']),entry['reference_text'],
-                                260909+s.get('take',0),consent_confirmed=True,expected_sha256=entry['sha256'])
+                                260909+s.get('take',0),consent_confirmed=True,expected_sha256=entry['sha256'],**clone_size(p))
                         else:
                             pcm, rate, metrics = engine.synthesize(spoken_text(p,s),
                                 voice_of(p, s), p['language'], 260909+s.get('take',0),
@@ -2025,7 +2037,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                                 **({'size': p.get('preset_model','0.6B')} if hasattr(engine,'identity_for') else {}))
                             pcm, meta = process_audio(pcm, rate)
                             metrics = {**metrics, 'auto_retake': True, 'first_take_seconds': round(spoken_seconds, 2)}
-                        meta.update({'fingerprint':digest, 'engine':getattr(engine,'reference_identity',engine.identity) if p.get('voice_profiles',{}).get(s['speaker']) else engine.identity, **metrics})
+                        meta.update({'fingerprint':digest, 'engine':(engine.reference_identity_for(p.get('clone_model','0.6B')) if hasattr(engine,'reference_identity_for') else getattr(engine,'reference_identity',engine.identity)) if (p.get('voice_profiles',{}).get(s['speaker']) or is_custom(voice_of(p, s))) else engine.identity, **metrics})
                         temp = folder/(digest+'.tmp.wav')
                         sf.write(temp, pcm, rate, subtype='PCM_16')
                         temp.replace(path)

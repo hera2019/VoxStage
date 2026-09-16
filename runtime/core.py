@@ -188,13 +188,13 @@ def fingerprint(project, segment, engine, library=None):
     if voice_ref and library:
         entry = library.get(voice_ref)
         data.update(reference_parameters())
-        data.update({'engine':getattr(engine,'reference_identity','unavailable'),
+        data.update({'engine':(engine.reference_identity_for(project.get('clone_model','0.6B')) if hasattr(engine,'reference_identity_for') else getattr(engine,'reference_identity','unavailable')),
                      'reference_sha256':entry['sha256'],'reference_text':entry['reference_text'],
                      'mode':'library_reference-v1'})
     profile = project.get('voice_profiles',{}).get(segment['speaker'])
     if profile:
         data.update(reference_parameters())
-        data.update({'engine':getattr(engine,'reference_identity','unavailable'),
+        data.update({'engine':(engine.reference_identity_for(project.get('clone_model','0.6B')) if hasattr(engine,'reference_identity_for') else getattr(engine,'reference_identity','unavailable')),
                      'reference_sha256':profile['sha256'],'reference_text':profile['text'],
                      'mode':'fixed_synthetic_reference-v1'})
     return hashlib.sha256(json.dumps(data, ensure_ascii=False, sort_keys=True).encode()).hexdigest()
@@ -214,7 +214,7 @@ def drop_waveforms(project):
     return removed
 
 
-SETTINGS = ('lexicon', 'preset_model', 'pause_ms', 'speech_rate', 'color_scope')
+SETTINGS = ('lexicon', 'preset_model', 'clone_model', 'pause_ms', 'speech_rate', 'color_scope')
 
 
 def inherit_settings(target, source, source_dir, target_dir):
@@ -247,7 +247,7 @@ def inherit_settings(target, source, source_dir, target_dir):
     return carried
 
 
-TEMPLATE_KEYS = ('voices', 'colors', 'sexes', 'color_scope', 'lexicon', 'preset_model', 'pause_ms', 'speech_rate')
+TEMPLATE_KEYS = ('voices', 'colors', 'sexes', 'color_scope', 'lexicon', 'preset_model', 'clone_model', 'pause_ms', 'speech_rate')
 
 
 class Templates:
@@ -287,7 +287,7 @@ class Templates:
 
 
 def edit_state(project):
-    return copy.deepcopy({**{k:project[k] for k in ('name','language','voices','segments','pause_ms')},'lexicon':project.get('lexicon',{}),'preset_model':project.get('preset_model','0.6B'),'voice_profiles':project.get('voice_profiles',{}), 'archived':project.get('archived',False), 'speech_rate':project.get('speech_rate',1.0), 'colors':project.get('colors',{}), 'color_scope':project.get('color_scope','both'), 'crowds':project.get('crowds',{}), 'sexes':project.get('sexes',{})})
+    return copy.deepcopy({**{k:project[k] for k in ('name','language','voices','segments','pause_ms')},'lexicon':project.get('lexicon',{}),'preset_model':project.get('preset_model','0.6B'),'clone_model':project.get('clone_model','0.6B'),'voice_profiles':project.get('voice_profiles',{}), 'archived':project.get('archived',False), 'speech_rate':project.get('speech_rate',1.0), 'colors':project.get('colors',{}), 'color_scope':project.get('color_scope','both'), 'crowds':project.get('crowds',{}), 'sexes':project.get('sexes',{})})
 
 class Store:
     def __init__(self, root):

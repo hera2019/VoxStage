@@ -17,6 +17,14 @@ MODELS={
             'revision':'1eccf1cb2519b5a4e8a95b5f0544f3303568164f',
             'sha256':{'model.safetensors':'d7c7ed3e3464e3e59de0f955b3755891fa8319ff061c3f0307fe2e1343bc122d',
                       'speech_tokenizer/model.safetensors':TOKENIZER_SHA}},
+    # The larger cloning model: every line read in a fixed or designed voice
+    # goes through the Base model, and until 2026-09-16 that was always 0.6B
+    # whatever the project's preset choice (Sol's finding). Registered for the
+    # A/B the author listens to; the speech tokenizer is the same file. ~3.9 GB.
+    'base-large':{'folder':'qwen-base-1.7b','repo':'mlx-community/Qwen3-TTS-12Hz-1.7B-Base-bf16',
+            'revision':'a6eb4f68e4b056f1215157bb696209bc82a6db48',
+            'sha256':{'model.safetensors':'81fb76175ff74e69be25fef2cc3e54f016df3034f1514c8e1c89da06a3510cff',
+                      'speech_tokenizer/model.safetensors':TOKENIZER_SHA}},
     # Larger preset model: the default for new projects when installed. Measured
     # 2026-09-13: RTF 0.44 against 0.6B's 0.38, peak memory 7.9 GB; no run-away
     # takes in the comparison where 0.6B produced one. ~4.2 GB on disk.
@@ -126,7 +134,7 @@ def prepare(kind, root=ROOT, verify_only=False, downloader=None):
 
 def main():
     parser=argparse.ArgumentParser(description='准备预设/固定声线模型，或仅离线校验已有文件')
-    parser.add_argument('--model',choices=['preset','base','preset-large','design','role-abliterated','role-9b-abliterated','role-9b','role-14b','role-14b-abliterated','all'],default='preset')
+    parser.add_argument('--model',choices=['preset','base','base-large','preset-large','design','role-abliterated','role-9b-abliterated','role-9b','role-14b','role-14b-abliterated','all'],default='preset')
     parser.add_argument('--verify-only',action='store_true',help='只检查，不下载或修改任何文件')
     args=parser.parse_args()
     failed=False
