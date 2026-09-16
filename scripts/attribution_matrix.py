@@ -59,10 +59,11 @@ def texts():
         p = json.load(open(f, encoding='utf-8'))
         book = next((b for b in books if b['id'] == (p.get('book') or {}).get('id')), None)
         if book and not p.get('archived') and (p.get('attribution') or {}).get('confirmed_labels'):
-            # The project's own text, not the chapter's: the reviewer may have edited
-            # it (阿Q chapter 7's nested quotes), and the labels' ids follow the edit.
-            out.append((f"{book['title'][:6]} 第{p['book']['index']}章", p['source_script'], book['language'], book['id'],
-                        {l['id']: l for l in p['attribution']['confirmed_labels']}))
+            # The project's own text and its segments as the reviewer keeps them in
+            # the editor (splits, merges, text edits move the unit ids the confirmed
+            # labels were made with): each unit takes the speaker of the segment
+            # holding its first character; the narrator's, or a silent one, is narration.
+            out.append((f"{book['title'][:6]} 第{p['book']['index']}章", p['source_script'], book['language'], book['id'], gold_from_segments(p)))
     import hashlib
     for path in sorted(glob.glob(str(ROOT / 'user-data/attribution-cases/*.json'))):
         case = json.load(open(path, encoding='utf-8'))
@@ -76,6 +77,25 @@ def texts():
         if t[1] not in seen:
             seen.add(t[1]); unique.append(t)
     return unique
+
+
+def gold_from_segments(project):
+    from evals.speaker_attribution.source_units import source_units
+    segments = sorted(project['segments'], key=lambda x: x['source_start'])
+    gold = {}
+    for u in source_units(project['source_script']):
+        if not u['text'].strip():
+            continue
+        at = u['start'] + (len(u['text']) - len(u['text'].lstrip()))
+        seg = next((x for x in segments if x['source_start'] <= at < x['source_end']), None)
+        if seg is None:
+            continue
+        speaker = seg['speaker'].strip()
+        if speaker in ('旁白', 'Narrator', 'NARRATOR') or not seg.get('read_aloud', True):
+            gold[u['id']] = {'id': u['id'], 'kind': 'narration', 'speaker': 'NARRATOR'}
+        else:
+            gold[u['id']] = {'id': u['id'], 'kind': 'dialogue', 'speaker': speaker}
+    return gold
 
 
 def unresolved(s):
