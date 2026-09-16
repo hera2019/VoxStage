@@ -24,9 +24,57 @@ MODEL_SHA = 'ae916ede1c010a26955ee8ae2e908bf8815a3f135ec860439ab924701c69d5f1'
 # draft of nothing (2026-09-14: 70 units, all NARRATOR). Its accuracy against
 # the 20-scene evaluation is measured separately and recorded before it is
 # recommended for anything.
+# Two invented exchanges a person labelled, shown to the model as worked examples
+# when it has no confirmed chapter of the same book to learn the convention from.
+GENERIC_EXAMPLES = [
+    {'units': [{'id': 'u0', 'text': '阿宁一进门，柜边的人都笑了，有的叫道：'}, {'id': 'u1', 'text': '“阿宁，你又来赖账？”'},
+               {'id': 'u2', 'text': '阿宁涨红了脸，对柜里说：'}, {'id': 'u3', 'text': '“老板娘，我这就给。”'}, {'id': 'u4', 'text': '“给什么？上回的还没清。”'},
+               {'id': 'u5', 'text': '“今天一起清。”'}, {'id': 'u6', 'text': '陈小雪头也不抬。他想：'}, {'id': 'u7', 'text': '“这老板娘，记性真好。”'}],
+     'labels': [{'id': 'u0', 'kind': 'narration', 'speaker': 'NARRATOR', 'certain': True}, {'id': 'u1', 'kind': 'dialogue', 'speaker': 'UNKNOWN', 'certain': False},
+                {'id': 'u2', 'kind': 'narration', 'speaker': 'NARRATOR', 'certain': True}, {'id': 'u3', 'kind': 'dialogue', 'speaker': '阿宁', 'certain': True},
+                {'id': 'u4', 'kind': 'dialogue', 'speaker': '陈小雪', 'certain': True}, {'id': 'u5', 'kind': 'dialogue', 'speaker': '阿宁', 'certain': True},
+                {'id': 'u6', 'kind': 'narration', 'speaker': 'NARRATOR', 'certain': True}, {'id': 'u7', 'kind': 'dialogue', 'speaker': '阿宁', 'certain': True}]},
+    {'units': [{'id': 'u0', 'text': '王伯放下账本。'}, {'id': 'u1', 'text': '“小雪，这个月亏了。”'}, {'id': 'u2', 'text': '“亏多少？”'}, {'id': 'u3', 'text': '“三十块。”'},
+               {'id': 'u4', 'text': '阿宁在旁边插嘴：'}, {'id': 'u5', 'text': '“王伯，猫吃掉的也算？”'}, {'id': 'u6', 'text': '“算，猫也是店里的。”'}, {'id': 'u7', 'text': '王伯说完，两个人都笑了。'}],
+     'labels': [{'id': 'u0', 'kind': 'narration', 'speaker': 'NARRATOR', 'certain': True}, {'id': 'u1', 'kind': 'dialogue', 'speaker': '王伯', 'certain': True},
+                {'id': 'u2', 'kind': 'dialogue', 'speaker': '陈小雪', 'certain': True}, {'id': 'u3', 'kind': 'dialogue', 'speaker': '王伯', 'certain': True},
+                {'id': 'u4', 'kind': 'narration', 'speaker': 'NARRATOR', 'certain': True}, {'id': 'u5', 'kind': 'dialogue', 'speaker': '阿宁', 'certain': True},
+                {'id': 'u6', 'kind': 'dialogue', 'speaker': '王伯', 'certain': True}, {'id': 'u7', 'kind': 'narration', 'speaker': 'NARRATOR', 'certain': True}]},
+]
+
+
+def book_examples(siblings, exclude_text, limit=2, max_chars=360):
+    """Short confirmed exchanges from a book's other chapters — three or more
+    lines of speech, two or more speakers, narration between — as worked
+    examples. A sibling whose text is the passage being drafted is skipped."""
+    out = []
+    for p in siblings:
+        if len(out) >= limit or p.get('source_script') == exclude_text:
+            continue
+        labels = {l['id']: l for l in (p.get('attribution') or {}).get('confirmed_labels') or []}
+        units = [u for u in source_units(p['source_script']) if u['text'].strip()]
+        for start in range(len(units)):
+            window, chars, speakers, dialogue = [], 0, set(), 0
+            for u in units[start:]:
+                l = labels.get(u['id'])
+                if not l or chars + len(u['text']) > max_chars:
+                    break
+                window.append((u, l)); chars += len(u['text'])
+                if l['kind'] == 'dialogue' and l['speaker'].upper() not in ('', 'UNKNOWN'):
+                    speakers.add(l['speaker']); dialogue += 1
+                if dialogue >= 3 and len(speakers) >= 2 and any(x[1]['kind'] == 'narration' for x in window):
+                    break
+            if dialogue >= 3 and len(speakers) >= 2:
+                out.append({'units': [{'id': f'u{i}', 'text': u['text'].strip()} for i, (u, l) in enumerate(window)],
+                            'labels': [{'id': f'u{i}', 'kind': l['kind'], 'speaker': l['speaker'] if l['kind'] == 'dialogue' else 'NARRATOR', 'certain': True}
+                                       for i, (u, l) in enumerate(window)]})
+                break
+    return out
+
+
 ROLE_MODELS = {
     'qwen3-4b-instruct-2507-q8': {
-        'label': 'Qwen3-4B-Instruct-2507 · Q8（默认，评测过）',
+        'label': 'Qwen3-4B-Instruct-2507 · Q8（评测过）',
         'sha256': MODEL_SHA,
         'paths': [ROOT/'user-data/models/role-qwen3-4b/qwen3-4b-instruct-2507-q8_0.gguf',
                   ROOT.parent/'AI-Models/generators/qwen3-4b-instruct-2507/qwen3-4b-instruct-2507-q8_0.gguf']},
@@ -54,7 +102,7 @@ ROLE_MODELS = {
         # Best of six on the fixed set (2026-09-16, ai-lab 实测 17): 16 lines to
         # fix across 215 against 28 for the next; twice the 4B's time. Recommended
         # where the memory allows it (32 GB: 9 GB weights + 5 GB of context).
-        'label': 'Qwen3-14B 普通版 · Q4_K_M（Qwen 官方 GGUF）',
+        'label': 'Qwen3-14B 普通版 · Q4_K_M（默认，Qwen 官方 GGUF）',
         'sha256': '500a8806e85ee9c83f3ae08420295592451379b4f8cf2d0f41c15dffeb6b81f0',
         'paths': [ROOT/'user-data/models/role-qwen3-14b/Qwen3-14B-Q4_K_M.gguf'],
         'recommended_gb': 32},
@@ -63,7 +111,7 @@ ROLE_MODELS = {
         'sha256': '66effa781874858e2d2efefa8d6d1d5b7c16f808fe018fe67c57f9014c18668f',
         'paths': [ROOT/'user-data/models/role-qwen3-14b-abliterated/Huihui-Qwen3-14B-abliterated-v2.Q4_K_M.gguf']},
 }
-DEFAULT_ROLE_MODEL = 'qwen3-4b-instruct-2507-q8'
+DEFAULT_ROLE_MODEL = 'qwen3-14b-q4km'
 # When the chosen model hands in a draft of nothing, this one is asked (if
 # installed): the fastest model that never balked on the fixed set.
 FALLBACK_ROLE_MODEL = 'qwen3-4b-instruct-2507-abliterated-q8'
@@ -253,7 +301,7 @@ class RoleDraftEngine:
         self.sha256 = ROLE_MODELS[model_id]['sha256']
         self.ready = self.model.is_file() and self.server.is_file()
 
-    def annotate(self, text, log_path, known_names=()):
+    def annotate(self, text, log_path, known_names=(), examples=()):
         if not self.ready:
             raise ValueError('本地分角色模型未就绪；仍可使用已标注剧本导入。')
         units = source_units(text)
@@ -278,6 +326,15 @@ class RoleDraftEngine:
             # earlier chapters; without this the model answers with descriptions
             # (姐姐, 男孩) instead of names.
             prompt += '\nCharacters already known from earlier chapters of this book: ' + '、'.join(known_names) + '. When one of them is the speaker, use that exact name.'
+        if examples:
+            # Worked examples — a person's own labels — show the convention better
+            # than any rule in words: a tag names its speaker, an exchange
+            # alternates, a crowd is UNKNOWN, a thought is its thinker's
+            # (few-shot experiment, 2026-09-16).
+            prompt += '\n\nWorked examples, labelled by a person. Same format as your answer:'
+            for ex in examples:
+                prompt += ('\nUnits: ' + json.dumps(ex['units'], ensure_ascii=False)
+                           + '\nLabels: ' + json.dumps({'labels': ex['labels']}, ensure_ascii=False))
         schema = {'type':'object', 'properties': {'labels': {'type':'array', 'minItems':len(spoken), 'maxItems':len(spoken),
             'items': {'type':'object','properties': {'id': {'type':'string','enum':[u['id'] for u in spoken]},
                 'kind': {'type':'string','enum':['narration','dialogue']}, 'speaker': {'type':'string', 'pattern': speaker_pattern(text)}, 'certain': {'type':'boolean'}},

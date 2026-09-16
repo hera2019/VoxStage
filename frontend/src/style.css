@@ -290,3 +290,21 @@ main>footer{flex-shrink:0;margin:0 -36px -38px;border-top:1px solid #d5dccb}
 .role-unit.para-first{border-top:3px solid #d5dccb;margin-top:10px}.role-unit.same-para{border-top:0;padding-top:4px;margin-left:14px;border-left:2px solid #e5e5d9}.role-units .role-unit:first-child{margin-top:0;border-top:0}
 .colour-import{margin:12px 0 18px;border:1px solid #dfe1d8;border-radius:10px;padding:12px 14px;background:#faf9f5}.colour-table{width:100%;border-collapse:collapse;font-size:12px;margin:8px 0}.colour-table th{text-align:left;font-weight:500;color:#7a8474;padding:4px 6px;border-bottom:1px solid #dfe1d8}.colour-table td{padding:6px;vertical-align:top;border-bottom:1px solid #eeeee6}.colour-table select,.colour-table input{margin-top:0;padding:6px 8px;font-size:12px}.colour-table input{margin-top:6px}.colour-chip{display:inline-block;width:14px;height:14px;border-radius:4px;vertical-align:-2px;border:1px solid #d9ddd5}.colour-samples div{color:#5c665a;line-height:1.6;max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.unit-tag{display:inline-block;margin-left:8px;padding:1px 6px;border-radius:4px;background:#e9eee4;color:#5f6f58;font-size:10px}
 .cast-table{margin:10px 0 6px;border:1px solid #dfe1d8;border-radius:10px;padding:10px 12px;background:#faf9f5}.cast-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}.cast-head small{color:#8a8f81;font-size:11px;flex:1}.save-state{font-size:11px;color:#698256}.save-state.busy{color:#a06a2c}.cast-table table{width:100%;border-collapse:collapse;font-size:12px;margin-top:6px}.cast-table th{text-align:left;font-weight:500;color:#7a8474;padding:3px 6px;border-bottom:1px solid #dfe1d8}.cast-table td{padding:4px 6px;border-bottom:1px solid #eeeee6;vertical-align:middle}.cast-table td input{margin:0;padding:5px 7px;font-size:12px;width:auto;min-width:90px;max-width:160px}
+
+/* Compact shared page chrome · Astra · 2026-09-16 */
+.dialog-title{gap:12px;margin-bottom:10px}
+.dialog-title h2{font-size:20px;margin:0;line-height:1.4}
+.dialog-title>button{padding:5px 9px;min-height:30px}
+.dialog-title>.muted{margin-left:auto;white-space:nowrap;font-size:11px}
+.project-heading{gap:12px;margin-bottom:10px}
+.project-heading h2{font-size:24px;margin:4px 0;line-height:1.4}
+.project-heading .buttons button{padding:7px 11px}
+.script-toolbar{margin-top:10px;margin-bottom:8px}
+main>footer{min-height:48px;padding-top:6px;padding-bottom:6px;gap:10px}
+main>footer audio{height:34px}
+@media(max-width:850px){.project-heading h2{font-size:21px}.dialog-title h2{font-size:18px}main>footer{gap:8px}}
+.import-heading>label{display:flex;align-items:center;gap:7px;flex:1;font-size:11px;margin:0;white-space:nowrap}
+.import-heading>label input{min-width:0;width:100%;padding:5px 8px;font-size:12px;margin:0}
+.import-heading h2{white-space:nowrap;font-size:18px}
+.import-count{float:right;font-weight:400;color:#68786b;font-size:11px}
+@media(max-width:500px){.import-heading>label{font-size:0;gap:0}.import-heading{gap:8px}}

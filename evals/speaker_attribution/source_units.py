@@ -14,15 +14,27 @@ def source_units(text):
                 spans.append((i,i+1));start=i+1
         if start<len(text):spans.append((start,len(text)))
         return [{'id':f'u{i}','text':text[a:b],'start':a,'end':b} for i,(a,b) in enumerate(spans)]
-    spans=[];start=0;close=None;escaped=False
+    # A quote inside a quote — 叫道：“阿Q！同去同去！” inside a thought Lu Xun
+    # sets in the same double marks — is part of the outer unit: depth is
+    # counted, and the unit ends when it returns to zero. A blank line inside
+    # an open quote ends it (an unclosed mark must not swallow the chapter).
+    # Claude Hera 2026-09-16, 阿Q chapter 7.
+    spans=[];start=0;close=None;depth=0;escaped=False
     for i,char in enumerate(text):
         if escaped:escaped=False;continue
         if char=='\\':escaped=True;continue
         if close is None and char in PAIRS:
             if i>start:spans.append((start,i))
-            start=i;close=PAIRS[char]
-        elif close is not None and char==close:
-            spans.append((start,i+1));start=i+1;close=None
+            start=i;close=PAIRS[char];depth=1;opener=char
+        elif close is not None:
+            if char==opener and opener!=close:
+                depth+=1
+            elif char==close:
+                depth-=1
+                if depth==0:
+                    spans.append((start,i+1));start=i+1;close=None
+            elif char=='\n' and text[i+1:i+2]=='\n':
+                spans.append((start,i));start=i;close=None;depth=0
     if start<len(text):spans.append((start,len(text)))
     return [{'id':f'u{i}','text':text[a:b],'start':a,'end':b} for i,(a,b) in enumerate(spans)]
 def bind_labels(text,content):

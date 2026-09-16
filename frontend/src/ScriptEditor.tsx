@@ -32,7 +32,7 @@ export function ScriptEditor({project,request,onUpdated,onClose,limit=3000}:Prop
  function edit(value:string){setText(value);setPreview(null);setReport(null)}
  function close(){if(edited&&!confirm('原稿改动尚未应用，关闭后会丢失。仍要关闭吗？'))return;onClose()}
  return <div className="overlay"><section className="dialog role-import" role="dialog" aria-modal="true" aria-labelledby="script-title">
-  <div className="dialog-title"><h2 id="script-title">原稿编辑</h2><button disabled={waiting} aria-label="关闭原稿编辑" onClick={close}>✕</button></div>
+  <div className="dialog-title"><h2 id="script-title">原稿编辑</h2><span className="muted">共 {Array.from(text).length.toLocaleString()} 字符</span><button disabled={waiting} aria-label="关闭原稿编辑" onClick={close}>✕</button></div>
   <label>剧本原文<textarea aria-label="剧本原文" rows={12} maxLength={limit} disabled={waiting} value={text} onChange={e=>edit(e.target.value)}/></label>
   {stale&&<p className="line-error">这份原稿与当前句子不一致（可能是较早版本留下的）。直接应用会覆盖你后来的逐句修改。
    <button disabled={waiting} onClick={()=>edit(joined)}>改用当前句子的文字</button></p>}

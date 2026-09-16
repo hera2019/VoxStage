@@ -806,26 +806,8 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             # 27 times. Texts with no quotation marks at all are left alone.
             quoted = any(c in body.script for c in '“"「『')
             def cites_rather_than_speaks(unit):
-                # Chinese puts the full stop inside the quotation marks. A short
-                # quoted unit with nothing spoken about it -- “君子固穷”, “雪” -- is a
-                # word being cited, not a person speaking. The first form of this
-                # rule (no sentence-final mark inside) silenced web-novel speech
-                # that ends in a wave dash: “喜欢～，好滑呀～” became narration.
-                # Measured 2026-09-14 on 376 human-labelled quoted units across 14
-                # projects: that form called 21 spoken lines citations; this form
-                # calls none, and still catches 19 of the 25 citations (the ones it
-                # lets through carry a comma, like a shop sign). Chinese only:
-                # English speech carries a comma inside the quotes before a tag
-                # ("I know," said Mr. Bennet).
-                text = unit['text'].strip()
-                if len(text) < 2 or text[0] not in '“"「『' or text[-1] not in '”"」』':
-                    return False
-                inner = text[1:-1]
-                if any(c in inner for c in '。！？…；!?～~，、—'):    # any mark of speech
-                    return False
-                if inner[-1:] in '呀啊吗呢吧哦嗯啦哇嘛噢呗哩呐唉哎呦咯哟嘞呵':   # a spoken particle
-                    return False
-                return len(inner) <= 10
+                before, after = quote_context[unit['id']]
+                return habits.quoted_citation(unit['text'], before, after)
             def chinese_names(labels):
                 """Names in the text's own script that anything has offered for this
                 passage: the book's, the tags', and the model's own Chinese answers."""
@@ -848,18 +830,25 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                     return {'kind': 'narration', 'speaker': 'NARRATOR', 'suggested': speaker}
                 if body.language == 'zh' and label['kind'] == 'dialogue' and cites_rather_than_speaks(unit):
                     return {'kind': 'narration', 'speaker': 'NARRATOR', 'suggested': speaker}
+                english_support = habits.english_name_support(speaker, body.script) if body.language == 'en' and speaker else 0
+                name_present = bool(english_support) if body.language == 'en' else speaker in body.script
                 if label['kind'] == 'dialogue' and speaker.upper() not in ('', 'UNKNOWN', 'NARRATOR') and (
-                        (speaker not in body.script and speaker not in known_names) or len(speaker) > 12 or any(c in speaker for c in '，。！？～“”"：')
+                        (not name_present and speaker not in known_names) or len(speaker) > (80 if body.language == 'en' else 12) or any(c in speaker for c in '，。！？～“”"：')
                         or speaker in habits.NOT_NAMES):
                     # Not a name the story uses — invented, translated, or the
                     # line itself pasted into the speaker field.
                     return {'kind': 'dialogue', 'speaker': 'UNKNOWN', 'suggested': speaker[:20]}
+                if label['kind'] == 'dialogue' and english_support == 1 and speaker not in known_names:
+                    return {'kind': 'dialogue', 'speaker': speaker, 'tier': 'suggested', 'basis': '原文说话标记使用省略称谓的名字，请核对是否同一人'}
                 if label['kind'] == 'dialogue' and speaker.upper() not in ('', 'UNKNOWN', 'NARRATOR') and not label.get('certain', True):
                     # The model's best judgement, not settled by the passage: filled
                     # in yellow for the reviewer, adopted unless changed.
                     return {'kind': 'dialogue', 'speaker': speaker, 'tier': 'suggested', 'basis': '模型按上下文推断的'}
                 return {'kind': label['kind'], 'speaker': speaker}
             units = source_units(body.script)
+            quote_context = {u['id']: (units[i - 1]['text'] if i else '',
+                                       units[i + 1]['text'] if i + 1 < len(units) else '')
+                             for i, u in enumerate(units)}
             spoken = [u for u in units if u['text'].strip() and u['text'].strip()[0] in '“"「『']   # '' is "in" any string
             # No book yet: the names the speech tags themselves spell (孔乙己说：)
             # are the cast the model is told about. Without any list, the
@@ -901,9 +890,24 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             speech_units = spoken if spoken else [u for u in units if u['text'].strip() and u['id'] not in silent_units]
             settled_by_author = bool(hinted) and all(u['id'] in hinted or u['id'] in silent_units for u in speech_units)
             # Test doubles may not take the cast; the real engine does.
+            # Worked examples for the model: confirmed exchanges of this book's other
+            # chapters, else two invented ones (few-shot, 2026-09-16; off with VOXSTAGE_FEWSHOT=0).
+            # Measured 2026-09-16 (14B, ten texts): the book's own examples cut the
+            # lines to fix on 阿Q chapters 4 and 5 from 17 to 5; invented generic
+            # examples made the texts without a book worse (5 to 14) and are not used.
+            from .attribution import book_examples
+            examples = []
+            if os.environ.get('VOXSTAGE_FEWSHOT', '1') != '0' and body.book_id:
+                with store.lock:
+                    examples = book_examples(book_projects(books.get(body.book_id)), body.script)
             def annotate_with(engine_, log_name):
-                return (engine_.annotate(body.script, drafts/log_name, known_names=names_for_model) if names_for_model and 'known_names' in engine_.annotate.__code__.co_varnames
-                        else engine_.annotate(body.script, drafts/log_name))
+                params = engine_.annotate.__code__.co_varnames
+                kwargs = {}
+                if names_for_model and 'known_names' in params:
+                    kwargs['known_names'] = names_for_model
+                if examples and 'examples' in params:
+                    kwargs['examples'] = examples
+                return engine_.annotate(body.script, drafts/log_name, **kwargs)
             if settled_by_author:
                 result = {'labels': [{'id': u['id'], 'kind': 'dialogue' if hinted.get(u['id'], 'NARRATOR') != 'NARRATOR' else 'narration',
                                       'speaker': (hinted[u['id']] or 'UNKNOWN') if hinted.get(u['id'], 'NARRATOR') != 'NARRATOR' else 'NARRATOR', 'certain': True} for u in units],
@@ -1234,19 +1238,23 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 # Measured chapter one → two: 27 of 28 decided lines right. The sex
                 # of a character is what the book says of them (settings), else
                 # what their voice suggests; a weak clue, never plain.
-                line_sex, _ = habits.sex_of_line(u['text'], sex_prof) if sex_prof else (None, 0.0)
+                # Weak evidence, kept weak (本人 2026-09-16: “老Q”, “得，锵，锵令锵，锵！”
+                # and “阿Q！” were all called "like a woman's line" — noise on short
+                # lines): it needs a line long enough to have a style, a wider
+                # margin, and a same-sex person present in the exchange to
+                # suggest instead. With nobody to suggest it says nothing.
+                line_sex, sex_margin = habits.sex_of_line(u['text'], sex_prof) if sex_prof else (None, 0.0)
                 sp = u['speaker'].strip()
                 excluded = set(called)
-                if line_sex and sp in sex_of and sex_of[sp] and sex_of[sp] != line_sex:
-                    same_sex = [c for c in (local or cast) if sex_of.get(c) == line_sex and c not in excluded]
+                long_enough = len(habits.STRIP.sub('', u['text'])) >= 8
+                if line_sex and long_enough and sex_margin >= 2 * habits.SEX_MARGIN and sp in sex_of and sex_of[sp] and sex_of[sp] != line_sex and not u.get('decided'):
+                    same_sex = [c for c in in_exchange(i, blk) if sex_of.get(c) == line_sex and c not in excluded and c != sp]
                     pick = None
                     if profile:
                         pick = next((c for c, _ in habits.rank(u['text'], profile) if c in same_sex), None)
                     pick = pick or (same_sex[0] if len(same_sex) == 1 else None)
                     if pick:
-                        u.update({'speaker': pick, 'tier': 'suggested', 'basis': ('这句像女生说的' if line_sex == 'f' else '这句像男生说的') + '，像是'})
-                    else:
-                        u.update({'tier': 'suggested', 'basis': ('这句像女生说的' if line_sex == 'f' else '这句像男生说的') + '，但没有别的人选；像是'})
+                        u.update({'speaker': pick, 'tier': 'suggested', 'basis': ('这句像女生说的' if line_sex == 'f' else '这句像男生说的') + '，像是', 'hint': sp})
                 # Rule 3: the same speaker twice running, no narration between.
                 # In the labelled texts two quoted lines running were never one
                 # person's (0 of 36 pairs, 2026-09-16), so this applies even when
@@ -1516,6 +1524,13 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             if any(a <= seg['source_start'] and seg['source_end'] <= b for a, b in spans):
                 seg['read_aloud'] = False
         with store.lock:
+            # Segment construction happens outside the lock. A newer review or
+            # shared cast must never be overwritten by that earlier snapshot.
+            latest_record = read_draft(body.draft_id)
+            latest_cast, latest_book = draft_cast(latest_record)
+            if latest_record.get('revision', 1) != record.get('revision', 1) or latest_cast != cast:
+                raise HTTPException(status_code=409, detail={'message': '确认期间草稿或人物表有更新，请刷新后再确认。', 'revision': latest_record.get('revision', 1)})
+            book_record = latest_book
             for label in labels:
                 if label['kind'] == 'dialogue' and label['speaker'].strip().upper() not in ('', 'UNKNOWN'):
                     entry, _ = C.ensure(cast, label['speaker'].strip(), 'person')

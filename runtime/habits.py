@@ -100,6 +100,11 @@ def _subject_with_verb(sentence, mentions):
         for f in forms:
             for m in re.finditer(re.escape(f), sentence):
                 i = m.start()
+                if sentence[m.end():].startswith('们'):
+                    continue                    # the group is not the single named person
+                if any(len(g) > len(f) and g.startswith(f) and sentence.startswith(g, i)
+                       for fs in mentions.values() for g in fs):
+                    continue                    # a shorter name inside another name
                 if i > 0 and sentence[i - 1] not in _CLAUSE_MARKS:          # not at a clause start
                     continue
                 if i > 0 and sentence[i - 1] in _OBJECT_MARKS:
@@ -107,6 +112,13 @@ def _subject_with_verb(sentence, mentions):
                 if m.end() > verb_at:
                     continue
                 between = sentence[m.end():verb_at]
+                # A perception can introduce another actor; an unnamed noun
+                # phrase can be a new subject too. The distant named subject
+                # is not enough evidence to overwrite the model's answer.
+                if re.search(r'看见|见到|发现|听见|听得|听到', between):
+                    continue
+                if re.search(r'(?:^|[，、；])[^，。！？；：、]{1,12}的人', between):
+                    continue
                 # Another character between name and verb competes only as a
                 # subject (opening a clause); as an object (望着老板娘说) it does not.
                 if any(k == 0 or between[k - 1] in _CLAUSE_MARKS for n2, fs in mentions.items() if n2 != name
@@ -172,19 +184,53 @@ def opening_tag(before, mentions):
 
 
 def closing_tag(after, mentions):
-    """The name the narration after a line closes it with — ”小雪说。, ”赵太爷
-    踱开去，眼睛打量着他的全身，一面说。 — or None. The name opens the first
-    sentence, which must not itself introduce the next line (小雪说：)."""
-    clean = STRIP.sub('', after or '')
-    if not clean or clean.rstrip('。！？!?').endswith(('：', ':', '，', ',')):
+    """A completed attribution after the quote, in the same paragraph.
+
+    An unfinished tag (阿宁点头，说道) may introduce the next quote;
+    a tag in a new paragraph belongs to that paragraph, not this quote.
+    """
+    raw = (after or '').lstrip(' \t”"」』')
+    if raw.startswith(('\n', '\r')):
         return None
-    first = re.split(r'[。！？!?]', clean)[0]
-    if len(first) > 40:
+    clean = STRIP.sub('', raw)
+    if clean.rstrip('。！？!?').endswith(('：', ':', '，', ',')):
+        return None
+    end = re.search(r'[。！？!?]', clean)
+    if not end:
+        return None
+    first = clean[:end.start()]
+    if len(first) > 40 or '：' in first or ':' in first or first.endswith(('，', ',')):
         return None
     head = re.split('[' + re.escape(_CLAUSE_MARKS) + ']', first)[0]
     if not any(head.startswith(f) or (0 < head.find(f) <= 2) for forms in mentions.values() for f in forms):
         return None
     return _subject_with_verb(first, mentions)
+
+
+def quoted_citation(text, before='', after=''):
+    """Chinese quoted words need a citation cue; brevity alone is not one.
+
+    These narrow forms identify a written label, a term, or a retrospective
+    reference. Ambiguous short quotes keep their model classification.
+    """
+    text = text.strip()
+    if len(text) < 2 or text[0] not in '“"「『' or text[-1] not in '”"」』':
+        return False
+    inner = text[1:-1]
+    if not inner or any(c in inner for c in '。！？…；!?～~，、—'):
+        return False
+    left = before.rstrip()[-60:]
+    right = after.lstrip()
+    if re.match(r'(?:这|那)(?:句)?话(?:以后|之后|以前|之前|后|前)', right):
+        return True
+    if re.search(r'(?:什么|所谓|写着|写的是|写有|印着|挂着|标着|题着|叫做|称为|纸上的|书上的|牌上的)$', left):
+        return True
+    if re.match(r'(?:这个字|这个词|一词|二字|两字|几个字|之类|字[。，；])', right):
+        return True
+    if len(inner) <= 10 and re.search(r'(?:骂[^，。！？；]{0,16}是|(?:叫|称|唤)(?:他|她|它|我|他们|她们)(?:作|做|为)?)$', left):
+        return True
+    return False
+
 
 def comma_beat(after, mentions):
     """The one character a beat joined to the quote by a comma is about —
@@ -288,6 +334,8 @@ def names_from_tags(narrations, whole_text=''):
             continue
         if name in PRONOUNS or any(name.startswith(pro) and len(name) - len(pro) <= 1 for pro in PRONOUNS):
             continue
+        if re.search(r'[对向跟朝冲](?:我|你|他|她|您|它)(?:们)?$', name):
+            continue                         # 阿宁对我 is a phrase, not a longer name
         if name in NOT_NAMES or any(name.startswith(w) for w in FUNCTION_STARTS):
             continue
         if whole_text and len(whole_text) >= 1500 and whole_text.count(name) < 3:
@@ -444,3 +492,32 @@ def suggest(text, profile):
 
 
 # 最后更新：2026-09-16 · Claude Hera（对话块、自报家门、称呼与提及分开——按 Astra 2026-09-15 审阅）
+
+
+_EN_TITLE = r'(?:Mr|Mrs|Ms|Miss|Dr|Sir|Lady|Lord|Professor|Captain)'
+_EN_SPEECH = r'(?:said|asked|replied|answered|added|cried|remarked|continued|whispered|exclaimed)'
+
+
+def english_name_support(name, text):
+    """2: a whole name occurs; 1: its bare form occurs in a speech tag.
+
+    A bare surname supports a review suggestion, not an identity merge:
+    Mr. Finch and Miss Finch remain separate cast entries. Never accept a
+    surname substring or strip another character's title to create evidence.
+    """
+    titled = re.fullmatch('(' + _EN_TITLE + r')\.?\s+(.+)', name)
+    pattern = (re.escape(titled[1]) + r'\.?\s+' + re.escape(titled[2])) if titled else re.escape(name)
+    if re.search(r'(?<!\w)' + pattern + r'(?!\w)', text):
+        return 2
+    if not titled:
+        return 0
+    bare = re.escape(titled[2])
+    # A direct tag avoids treating "Miss Finch" elsewhere as "Mr. Finch".
+    after = re.search(r'\b' + _EN_SPEECH + r'\s+' + bare + r'(?!\w)', text)
+    if after:
+        return 1
+    for m in re.finditer(r'(?<!\w)' + bare + r'\s+' + _EN_SPEECH + r'\b', text):
+        prefix = text[:m.start()]
+        if not re.search(_EN_TITLE + r'\.?\s+$', prefix):
+            return 1
+    return 0

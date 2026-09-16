@@ -145,10 +145,8 @@ def test_an_unquoted_unit_in_a_quoted_text_is_prose_whatever_the_model_says(tmp_
         assert d['units'][0]['kind'] == 'dialogue'
 
 
-def test_a_quoted_word_with_no_sentence_mark_inside_is_a_citation_not_speech(tmp_path):
-    """什么“君子固穷”，什么“者乎”之类 -- words being quoted, not people talking.
-    Measured 2026-09-14 on 376 human-labelled quoted units across 14 projects:
-    the rule calls no spoken line a citation and catches 19 of 25 citations."""
+def test_citation_context_keeps_quoted_terms_in_narration(tmp_path):
+    """Citation cues keep quoted terms in prose; brevity alone does not."""
     class Everything(Roles):
         def annotate(self, text, log_path):
             units = source_units(text)

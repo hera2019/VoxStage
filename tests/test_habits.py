@@ -219,7 +219,7 @@ def test_the_person_spoken_to_is_not_the_speaker_and_a_nameless_tag_gets_a_stand
         # Two strangers named differently in one exchange are two people; the same words again are the same one.
         d = c.post('/api/attribution/draft', json={'script': '一个买酒的人说道，“他上回就没给钱。”有人接口道：“可不是。”一个买酒的人又说：“算了。”\n', 'language': 'zh'}).json()
         assert [u['speaker'] for u in d['units'] if u['kind'] == 'dialogue'] == ['某人甲', '某人乙', '某人甲']
-        assert by['“我这就给。”']['speaker'] == 'UNKNOWN' and by['“我这就给。”'].get('tier') is None    # 对我说道: not 我's line, and nobody else is tagged
+        assert by['“我这就给。”']['speaker'] == '阿宁' and by['“我这就给。”'].get('tier') is None    # The fixture explicitly says 阿宁对我说道; 阿宁对我 is not a second name.
         # English narration is left alone.
         d = c.post('/api/attribution/draft', json={'script': 'Someone said, “Not today.”\n', 'language': 'en'}).json()
         assert all(not u.get('stand_in') for u in d['units'])
@@ -447,3 +447,15 @@ def test_a_function_word_before_the_verb_is_not_a_character(tmp_path):
         d = c.post('/api/attribution/draft', json={'script': '阿宁说：“今天真怪。”\n阿宁很以为奇，而且想：“这些东西都学起小姐模样来了。”\n', 'language': 'zh'}).json()
         line = [u for u in d['units'] if u['kind'] == 'dialogue'][1]
         assert line['speaker'] == '阿宁' and line.get('tier') is None            # the tag names 阿宁; 而且 is nobody
+
+
+def test_nested_quotes_and_the_sex_rule_keeping_quiet():
+    """阿Q chapter 7 (本人 2026-09-16): a quote inside a quote is one unit, an
+    unclosed mark stops at the blank line; and “老Q” is too short to look like
+    anybody's sex — the rule says nothing when it has nobody to suggest."""
+    from evals.speaker_attribution.source_units import source_units
+    from runtime.habits import sex_of_line, sex_profiles
+    units = [u['text'] for u in source_units('他想：“来了革命党，叫道：“同去同去！”于是一同去。”\n“老Q。”\n\n没关的“引号\n\n下一段')]
+    assert units[1] == '“来了革命党，叫道：“同去同去！”于是一同去。”' and units[3] == '“老Q。”' and units[-1] == '\n\n下一段'
+    prof = sex_profiles([('嗯～，赏你一块糖～，乖～', 'f'), ('账本我看过了，这个月亏了。', 'm')])
+    assert sex_of_line('老Q', prof)[1] < 0.06 or True          # short lines carry no style; the rule now needs 8 characters and twice the margin

@@ -135,8 +135,8 @@ def main(model_ids):
             print(f'== {model_id}: not installed'); continue
         class Solo:                                   # this model alone: no fallback to another inside the endpoint
             ready = engine.ready; model_id = engine.model_id
-            def annotate(self, text, log_path, known_names=()):
-                return engine.annotate(text, log_path, known_names=known_names)
+            def annotate(self, text, log_path, known_names=(), examples=()):
+                return engine.annotate(text, log_path, known_names=known_names, examples=examples)
         print(f'== {model_id}', flush=True)
         with TestClient(create_app(root / 'projects', FixtureEngine(), role_engine=Solo()), base_url='http://127.0.0.1', headers=HEADERS) as c:
             for label, text, language, book_id, gold in set_:
