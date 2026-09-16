@@ -229,6 +229,12 @@ def quoted_citation(text, before='', after=''):
         return True
     if len(inner) <= 10 and re.search(r'(?:骂[^，。！？；]{0,16}是|(?:叫|称|唤)(?:他|她|它|我|他们|她们)(?:作|做|为)?)$', left):
         return True
+    # A quote the sentence runs straight on from — 几乎“魂飞魄散”了, “行状”上的
+    # 一个污点, 还是“手执钢鞭将你打”罢, “无师自通”的说出 — sits inside the
+    # narrator's own clause: recited, not spoken (阿Q chapter 9, 2026-09-16).
+    # Speech is followed by punctuation, a line break, or a tag (”他说).
+    if len(inner) <= 12 and re.match(r'(?:的|地|了|上|里|中|之|也|罢|吧|是|来|去|着|过|似的|一般|般|两字|二字|三字|四字)', right):
+        return True
     return False
 
 

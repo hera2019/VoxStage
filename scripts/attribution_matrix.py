@@ -59,10 +59,10 @@ def texts():
         p = json.load(open(f, encoding='utf-8'))
         book = next((b for b in books if b['id'] == (p.get('book') or {}).get('id')), None)
         if book and not p.get('archived') and (p.get('attribution') or {}).get('confirmed_labels'):
-            ch = next((c for c in book['chapters'] if c['index'] == p['book']['index']), None)
-            if ch:
-                out.append((f"{book['title'][:6]} 第{p['book']['index']}章", ch['text'], book['language'], book['id'],
-                            {l['id']: l for l in p['attribution']['confirmed_labels']}))
+            # The project's own text, not the chapter's: the reviewer may have edited
+            # it (阿Q chapter 7's nested quotes), and the labels' ids follow the edit.
+            out.append((f"{book['title'][:6]} 第{p['book']['index']}章", p['source_script'], book['language'], book['id'],
+                        {l['id']: l for l in p['attribution']['confirmed_labels']}))
     import hashlib
     for path in sorted(glob.glob(str(ROOT / 'user-data/attribution-cases/*.json'))):
         case = json.load(open(path, encoding='utf-8'))
@@ -70,8 +70,12 @@ def texts():
         # A case from the author's own text is named by a hash, not its title, so the
         # results file can be shown around; the public-domain samples keep their names.
         label = stem[:10] if any(k in stem for k in ('孔乙己', '阿Q', '傲慢')) else '私稿·' + hashlib.sha256(stem.encode()).hexdigest()[:4]
-        out.append((label, case['text'], case['language'], None, {l['id']: l for l in case['labels']}))
-    return out
+        out.append((label, case['text'], case.get('language', 'zh'), case.get('book_id'), {l['id']: l for l in case['labels']}))
+    seen, unique = set(), []                      # one entry per text: a case exported from a project repeats it
+    for t in out:
+        if t[1] not in seen:
+            seen.add(t[1]); unique.append(t)
+    return unique
 
 
 def unresolved(s):
