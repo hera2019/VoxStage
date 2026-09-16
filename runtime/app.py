@@ -1465,7 +1465,24 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                     'units': apply_decisions(record['units'], record.get('decisions', {})), 'cast': cast,
                     'model': {'id': record.get('model_id'), 'note': record.get('model_note') or record.get('model_id') or ''},
                     'language': record['language'], 'book_id': record.get('book_id'), 'notice': record.get('notice'),
-                    'confirmed_project_id': record.get('confirmed_project_id')}
+                    'confirmed_project_id': record.get('confirmed_project_id'), 'abandoned': bool(record.get('abandoned'))}
+
+    @app.delete('/api/attribution/draft/{draft_id}')
+    def abandon_draft(draft_id: str):
+        """An unfinished review the reviewer does not want to finish (本人
+        2026-09-17: 继续上次的复核 could only be continued). The record stays —
+        it holds the model's answers and the decisions made so far — but no
+        page offers it again; a draft already confirmed into a project is
+        left as it is."""
+        if not re.fullmatch(r'[a-f0-9]{32}', draft_id):
+            raise ValueError('找不到这份草稿。')
+        with store.lock:
+            record = read_draft(draft_id)
+            if record.get('confirmed_project_id'):
+                raise ValueError('这份草稿已经确认成工程了，没有可放弃的复核。')
+            record['abandoned'] = True; record['abandoned_at'] = time.time()
+            write_draft(record)
+        return {'draft_id': draft_id, 'abandoned': True}
 
     @app.patch('/api/attribution/draft/{draft_id}')
     def patch_draft(draft_id: str, body: DraftPatch):

@@ -103,3 +103,22 @@ def test_a_books_cast_is_shared_by_its_chapters_and_a_split_can_be_undone(tmp_pa
         assert next(e for e in r['cast'] if e['id'] == xue['id'])['name'] == '小雪' and c.get('/api/books/' + book['id']).json()['aliases'] == {'老板娘': '小雪', '陈小雪': '小雪'}
         bad = c.patch('/api/attribution/draft/' + d2['draft_id'], json={'expected_revision': 4, 'rename': {'cast_id': xue['id'], 'name': '王伯'}})
         assert bad.status_code == 400 and '已经有一个' in bad.text
+
+
+def test_an_unfinished_review_can_be_abandoned_and_a_confirmed_one_cannot(tmp_path):
+    """本人 2026-09-17: 继续上次的复核 could only be continued. Abandoning keeps
+    the record (the model's answers, the decisions so far) but marks it, so no
+    page offers it again; a draft already made into a project stays as it is."""
+    with TestClient(create_app(tmp_path / 'p', FixtureEngine(), role_engine=Tags()), base_url='http://127.0.0.1', headers=HEADERS) as c:
+        d = c.post('/api/attribution/draft', json={'script': TEXT, 'language': 'zh'}).json()
+        assert c.get('/api/attribution/draft/' + d['draft_id']).json()['abandoned'] is False
+        r = c.delete('/api/attribution/draft/' + d['draft_id'])
+        assert r.status_code == 200 and r.json() == {'draft_id': d['draft_id'], 'abandoned': True}
+        g = c.get('/api/attribution/draft/' + d['draft_id']).json()
+        assert g['abandoned'] is True and g['revision'] == 1 and len(g['units']) == len(d['units'])
+        d2 = c.post('/api/attribution/draft', json={'script': TEXT, 'language': 'zh'}).json()
+        labels = [{'id': u['id'], 'kind': u['kind'], 'speaker': u['speaker'] if u['speaker'] != 'UNKNOWN' else '王伯'} for u in d2['units']]
+        c.post('/api/attribution/confirm', json={'draft_id': d2['draft_id'], 'name': '店', 'labels': labels})
+        r = c.delete('/api/attribution/draft/' + d2['draft_id'])
+        assert r.status_code == 400 and '已经确认' in r.json()['detail']
+        assert c.delete('/api/attribution/draft/zz').status_code == 400
