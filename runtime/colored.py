@@ -126,11 +126,11 @@ def compose(paragraphs, choices):
     heading_levels = sorted({p['level'] for p in paragraphs if p['level']})
     top = heading_levels[0] if heading_levels else None
 
-    def emit(text, speaker=None):
+    def emit(text, speaker=None, colour=None):
         nonlocal pos
         lines.append(text)
         if speaker is not None:
-            hints.append({'start': pos, 'end': pos + len(text), 'speaker': speaker})
+            hints.append({'start': pos, 'end': pos + len(text), 'speaker': speaker, **({'colour': colour} if colour and colour != NONE else {})})
         pos += len(text) + 1                             # the line break after it
 
     for p in paragraphs:
@@ -168,11 +168,11 @@ def compose(paragraphs, choices):
             kind = choice.get('as', 'unassigned')
             speakers.append('NARRATOR' if kind == 'narration' else (choice.get('name', '').strip() if kind == 'character' else ''))
         if len(set(speakers)) == 1:
-            emit(''.join(t for t, _ in runs).strip(), speakers[0])
+            emit(''.join(t for t, _ in runs).strip(), speakers[0], runs[0][1])
             continue
         # Two speakers' colours in one paragraph: one line per run, each its own.
-        for (text, _), speaker in zip(runs, speakers):
-            emit(text.strip(), speaker)
+        for (text, colour), speaker in zip(runs, speakers):
+            emit(text.strip(), speaker, colour)
     text = '\n'.join(lines) + ('\n' if lines else '')
     return {'text': text, 'headings': headings, 'silent': silent, 'hints': hints}
 

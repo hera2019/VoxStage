@@ -159,7 +159,7 @@ class Books:
             end = offset + len(c['text']); lines = c['text'].count('\n') + (0 if c['text'].endswith('\n') else 1)
             record = {'index': i + 1, 'title': c['title'], 'chars': len(c['text']), 'text': c['text']}
             if hints:
-                record['hints'] = [{'start': h['start'] - offset, 'end': h['end'] - offset, 'speaker': h['speaker']}
+                record['hints'] = [{**h, 'start': h['start'] - offset, 'end': h['end'] - offset}
                                    for h in hints if h['start'] >= offset and h['end'] <= end]
             if silent:
                 record['silent'] = [n - line for n in silent if line <= n < line + lines]

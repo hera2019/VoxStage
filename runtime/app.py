@@ -49,6 +49,7 @@ class Hint(BaseModel):
     start: int = Field(ge=0)
     end: int = Field(ge=0)
     speaker: str = Field(default='', max_length=80)     # '' = the author marked it as speech but named nobody
+    colour: str | None = Field(default=None, pattern=r'^#[0-9a-f]{6}$')   # the colour the author used, kept with the character
 
 class BookRequest(BaseModel):
     title: str = Field(default='', max_length=120)
@@ -869,7 +870,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             # not read aloud (a heading) is narration kept silent. When the
             # colours settle every line that could be speech, the model is not
             # asked at all — the text never reaches it (本人 2026-09-16).
-            hinted, silent_units = {}, set()
+            hinted, silent_units, hint_colours = {}, set(), {}
             if body.hints:
                 for u in units:
                     stripped = u['text'].strip()
@@ -878,7 +879,10 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                     a = u['start'] + u['text'].index(stripped); b = a + len(stripped)
                     for h in body.hints:
                         if h.start <= a and b <= h.end:
-                            hinted[u['id']] = h.speaker.strip(); break
+                            hinted[u['id']] = h.speaker.strip()
+                            if h.colour and h.speaker.strip():
+                                hint_colours.setdefault(h.speaker.strip(), []).append(h.colour) if h.colour not in hint_colours.get(h.speaker.strip(), []) else None
+                            break
             if body.silent:
                 lines = body.script.split('\n'); starts = []; pos = 0
                 for line in lines:
@@ -1276,12 +1280,16 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                     if name.upper() in ('', 'UNKNOWN', 'NARRATOR'):
                         continue
                     source = {'mark': 'mark', 'tag': 'tag', 'model': 'model'}.get(u.get('source') or '', 'rule')
-                    entry, _ = C.ensure(cast, name, source, introduced={'draft_id': draft_id, 'unit_id': u['id']})
+                    entry, _ = C.ensure(cast, name, source, introduced={'draft_id': draft_id, 'unit_id': u['id']}, colours=hint_colours.get(name, ()))
                     u['cast_id'] = entry['id']
                 if body.book_id:
                     book_record['aliases'] = C.alias_table(cast); books.save(book_record)
-                view = {'draft_id': draft_id, 'notice': notice, 'units': out, 'revision': 1, 'decisions': {}, 'cast': cast}
-                record.update({'units': out, 'revision': 1, 'decisions': {}, 'book_id': body.book_id, 'cast': None if body.book_id else cast})
+                labels_of = {m['id']: m['label'] for m in role_engine.installed()} if hasattr(role_engine, 'installed') else {}
+                model_note = ('作者标的，没有用模型' if settled_by_author else
+                              (labels_of.get(result.get('model_id'), result.get('model_id') or '本机模型') + ('（默认模型交了白卷，换的）' if fallback_used else '')))
+                view = {'draft_id': draft_id, 'notice': notice, 'units': out, 'revision': 1, 'decisions': {}, 'cast': cast,
+                        'model': {'id': result.get('model_id'), 'note': model_note}}
+                record.update({'units': out, 'revision': 1, 'decisions': {}, 'book_id': body.book_id, 'cast': None if body.book_id else cast, 'model_note': model_note})
                 write_draft(record)
             return view
         except ValueError as exc:
@@ -1331,6 +1339,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             cast, _ = draft_cast(record)
             return {'draft_id': draft_id, 'revision': record.get('revision', 1), 'decisions': record.get('decisions', {}),
                     'units': apply_decisions(record['units'], record.get('decisions', {})), 'cast': cast,
+                    'model': {'id': record.get('model_id'), 'note': record.get('model_note') or record.get('model_id') or ''},
                     'language': record['language'], 'book_id': record.get('book_id'), 'notice': record.get('notice'),
                     'confirmed_project_id': record.get('confirmed_project_id')}
 
@@ -1504,6 +1513,11 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             save_cast(record, cast, book_record)
             project = store.create(body.name, record['source_script'], record['language'], segments=segments, preset_model=default_preset())
             project['cast_ids'] = {e['name']: e['id'] for e in cast if e['name'] in project['voices']}
+            # A colour the author gave a character in the manuscript is the
+            # character's colour in the project too (本人 2026-09-16).
+            for e in cast:
+                if e['name'] in project['voices'] and e.get('colours') and e['colours'][0] != 'none':
+                    project.setdefault('colors', {})[e['name']] = e['colours'][0]
             project['attribution'] = {'draft_id':body.draft_id,'model_sha256':record.get('model_sha256'),'model_id':record.get('model_id'),
                 'model_labels':record['labels'],'confirmed_labels':labels,'human_confirmed':True,'decisions':decisions,'draft_revision':record.get('revision', 1),
                 'cast':[{k: e[k] for k in ('id', 'name', 'aliases', 'colours', 'sex', 'source')} for e in cast],
