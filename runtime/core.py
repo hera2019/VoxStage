@@ -10,6 +10,7 @@ import time
 import uuid
 from pathlib import Path
 from . import readings
+from .pauses import split_at_pauses
 from .capacity import draft_limits
 from .audio import PROCESSING_VERSION
 from .content_check import check_status, file_sha
@@ -181,6 +182,12 @@ def fingerprint(project, segment, engine, library=None):
             'language':project['language'], 'engine':(engine.identity_for(project.get('preset_model','0.6B')) if hasattr(engine,'identity_for') else engine.identity), 'seed':260909+segment.get('take',0),
             **generation_parameters(project['language']),
             'runtime':'mlx-audio-0.5.1', 'processing':PROCESSING_VERSION}
+    # The ellipsis pause reaches the fingerprint only where it changes the
+    # reading — a line with a pause mark inside it — so switching it on
+    # regenerates those lines and no others.
+    gap = int(project.get('ellipsis_pause_ms') or 0)
+    if gap and len(split_at_pauses(data['text'])) > 1:
+        data['ellipsis_pause_ms'] = gap
     # A library voice is a reference like a fixed profile is, so its identity has
     # to reach the fingerprint: renaming may not invalidate audio, but pointing a
     # character at different reference audio must.
@@ -214,7 +221,7 @@ def drop_waveforms(project):
     return removed
 
 
-SETTINGS = ('lexicon', 'preset_model', 'clone_model', 'pause_ms', 'speech_rate', 'color_scope')
+SETTINGS = ('lexicon', 'preset_model', 'clone_model', 'pause_ms', 'speech_rate', 'color_scope', 'ellipsis_pause_ms')
 
 
 def inherit_settings(target, source, source_dir, target_dir):
@@ -247,7 +254,7 @@ def inherit_settings(target, source, source_dir, target_dir):
     return carried
 
 
-TEMPLATE_KEYS = ('voices', 'colors', 'sexes', 'color_scope', 'lexicon', 'preset_model', 'clone_model', 'pause_ms', 'speech_rate')
+TEMPLATE_KEYS = ('voices', 'colors', 'sexes', 'color_scope', 'lexicon', 'preset_model', 'clone_model', 'pause_ms', 'speech_rate', 'ellipsis_pause_ms')
 
 
 class Templates:
@@ -287,7 +294,7 @@ class Templates:
 
 
 def edit_state(project):
-    return copy.deepcopy({**{k:project[k] for k in ('name','language','voices','segments','pause_ms')},'lexicon':project.get('lexicon',{}),'preset_model':project.get('preset_model','0.6B'),'clone_model':project.get('clone_model','0.6B'),'voice_profiles':project.get('voice_profiles',{}), 'archived':project.get('archived',False), 'speech_rate':project.get('speech_rate',1.0), 'colors':project.get('colors',{}), 'color_scope':project.get('color_scope','both'), 'crowds':project.get('crowds',{}), 'sexes':project.get('sexes',{})})
+    return copy.deepcopy({**{k:project[k] for k in ('name','language','voices','segments','pause_ms')},'lexicon':project.get('lexicon',{}),'preset_model':project.get('preset_model','0.6B'),'clone_model':project.get('clone_model','0.6B'),'voice_profiles':project.get('voice_profiles',{}), 'archived':project.get('archived',False), 'speech_rate':project.get('speech_rate',1.0), 'colors':project.get('colors',{}), 'color_scope':project.get('color_scope','both'), 'crowds':project.get('crowds',{}), 'sexes':project.get('sexes',{}), 'ellipsis_pause_ms':project.get('ellipsis_pause_ms',0)})
 
 class Store:
     def __init__(self, root):
@@ -338,6 +345,9 @@ class Store:
             # 1.7B Base is installed keeps reading its cloned lines with it, and an
             # older project (no entry) stays on 0.6B, its audio still valid.
             data['clone_model'] = clone_model
+        # A pause of a beat where a line trails off (本人 2026-09-17, chosen by
+        # ear); older projects have no entry and read as before.
+        data['ellipsis_pause_ms'] = 500
         self.write(data)
         return data
 

@@ -27,6 +27,7 @@ from .fcp7 import timeline_xml, IMPORT_GUIDE
 from .rhythm import analyze_file, analyze, duration_marker, VERSION as RHYTHM_VERSION
 from . import readings
 from .core import reads_aloud, Store, fingerprint, spoken_text, inherit_settings, voice_of
+from .pauses import split_at_pauses, join_with_silence
 from .voices import VoiceLibrary, is_custom, custom_id, PREFIX as CUSTOM_PREFIX
 from .script_check import inspect as inspect_script, apply_fix
 from .attribution import RoleDraftEngine, project_segments, source_units, carry_locks
@@ -203,6 +204,7 @@ class EditRequest(BaseModel):
     lexicon: dict[str, str] | None = None
     preset_model: Literal['0.6B', '1.7B'] | None = None
     clone_model: Literal['0.6B', '1.7B'] | None = None      # the model that reads fixed and designed voices (2026-09-16)
+    ellipsis_pause_ms: Literal[0, 300, 500] | None = None   # a line read in parts at …… / ——, joined with this much silence (本人 2026-09-17)
     color: str | None = Field(default=None, pattern=r'^(#[0-9a-fA-F]{6}|auto)$')   # with speaker: this character's colour on screen
     color_scope: Literal['name', 'text', 'both'] | None = None                       # where the colours show: the name, the words, or both
     sex: Literal['m', 'f', 'auto'] | None = None                                     # with speaker: the character's sex for the speaker rules; 'auto' = as the voice suggests
@@ -715,6 +717,27 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
     def clone_size(project):
         """The cloning model the project chose, for engines that offer one."""
         return {'size': project.get('clone_model', '0.6B')} if hasattr(engine, 'reference_identity_for') else {}
+
+    def read_with_pauses(project, segment, read):
+        """`read(text)` -> (pcm, rate, metrics). With the project's ellipsis pause
+        on, a line that trails off or breaks (…… / ——) is read in parts and the
+        parts joined with that much silence (本人 2026-09-17: the version chosen
+        by ear); otherwise, or when there is nothing to cut, the line as it is."""
+        gap = int(project.get('ellipsis_pause_ms') or 0)
+        text = spoken_text(project, segment)
+        parts = split_at_pauses(text) if gap else [text]
+        if len(parts) < 2:
+            return read(text)
+        pieces, metrics, rate = [], None, None
+        for part in parts:
+            pcm, rate_, m = read(part)
+            trimmed, meta = process_audio(pcm, rate_)
+            pieces.append((trimmed, meta['speech_start_sample'], meta['speech_end_sample']))
+            rate = rate_
+            metrics = m if metrics is None else {**metrics, 'generation_seconds': metrics.get('generation_seconds', 0) + m.get('generation_seconds', 0),
+                                                 'mlx_peak_memory_bytes': max(metrics.get('mlx_peak_memory_bytes', 0), m.get('mlx_peak_memory_bytes', 0))}
+        pcm, silence = join_with_silence(pieces, rate, gap)
+        return pcm, rate, {**metrics, 'parts': len(parts), 'pause_seconds': silence, 'ellipsis_pause_ms': gap}
 
     def character_sex(project, speaker):
         """'f', 'm' or '': what the project says of the character, else what
@@ -1833,6 +1856,11 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 for s in p['segments']:
                     if s['speaker'] in (p.get('voice_profiles') or {}) or is_custom(voice_of(p, s)):
                         s['error'] = None
+            if body.ellipsis_pause_ms is not None:
+                p['ellipsis_pause_ms'] = body.ellipsis_pause_ms
+                for s in p['segments']:
+                    if len(split_at_pauses(spoken_text(p, s))) > 1:
+                        s['error'] = None
             if body.sex is not None:
                 # Who a character is, apart from which voice reads them (Astra
                 # 2026-09-15: the voice chosen must not decide whose line it
@@ -2129,25 +2157,26 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                             digest_ref=profile['sha256']
                             if len(digest_ref)!=64 or any(c not in '0123456789abcdef' for c in digest_ref):
                                 raise ValueError('固定声线标识无效。')
-                            pcm,rate,metrics=engine.synthesize_reference(spoken_text(p,s),p['language'],
+                            def read(text): return engine.synthesize_reference(text,p['language'],
                                 store.directory(project_id)/'references'/(digest_ref+'.wav'),profile['text'],
                                 260909+s.get('take',0),consent_confirmed=True,expected_sha256=digest_ref,**clone_size(p))
                         elif is_custom(voice_of(p, s)):
                             entry = library.get(custom_id(voice_of(p, s)))
-                            pcm,rate,metrics=engine.synthesize_reference(spoken_text(p,s),p['language'],
+                            def read(text): return engine.synthesize_reference(text,p['language'],
                                 library.audio_path(entry['id']),entry['reference_text'],
                                 260909+s.get('take',0),consent_confirmed=True,expected_sha256=entry['sha256'],**clone_size(p))
                         else:
-                            pcm, rate, metrics = engine.synthesize(spoken_text(p,s),
+                            def read(text): return engine.synthesize(text,
                                 voice_of(p, s), p['language'], 260909+s.get('take',0),
                                 **({'size': p.get('preset_model','0.6B')} if hasattr(engine,'identity_for') else {}))
+                        pcm, rate, metrics = read_with_pauses(p, s, read)
                         pcm, meta = process_audio(pcm, rate)
                         # A run-away take: the engine read the line and kept going -- a
                         # video outro, or a 26-character line rendered as 164 seconds.
                         # Seen four times today across both model sizes. One more
                         # attempt with the next seed, before anyone hears it; the
                         # duration marker still reports if the second is bad too.
-                        spoken_seconds = (meta['speech_end_sample'] - meta['speech_start_sample']) / rate
+                        spoken_seconds = (meta['speech_end_sample'] - meta['speech_start_sample']) / rate - metrics.get('pause_seconds', 0)
                         runaway = duration_marker(spoken_text(p,s), spoken_seconds, p['language'])
                         if runaway and not metrics.get('auto_retake') and sid not in retake_ids and not p.get('voice_profiles',{}).get(s['speaker']) and not is_custom(voice_of(p, s)):
                             logging.warning('Run-away take on %s (%.1fs for %d chars); retrying with the next seed', sid, spoken_seconds, len(spoken_text(p,s)))
