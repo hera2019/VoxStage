@@ -9,7 +9,7 @@ are not touched, and no model switching (fallback) happens inside a run.
 
 Texts: the cases exported to user-data/attribution-cases/ (see
 attribution_case.py) and every non-archived chapter project of a book with
-confirmed labels. Names from the author's own texts are never printed —
+confirmed labels. Names from the web novels used for testing are never printed —
 only counts. Scoring (2026-09-16, ai-lab 实测 17): every line the reviewer
 called dialogue counts, and a line the page silenced or a narration it made
 speech is an error too; a name the reviewer never used (a stand-in, a
@@ -68,9 +68,10 @@ def texts():
     for path in sorted(glob.glob(str(ROOT / 'user-data/attribution-cases/*.json'))):
         case = json.load(open(path, encoding='utf-8'))
         stem = Path(path).stem
-        # A case from the author's own text is named by a hash, not its title, so the
-        # results file can be shown around; the public-domain samples keep their names.
-        label = stem[:10] if any(k in stem for k in ('孔乙己', '阿Q', '傲慢', '风波', 'pride', 'fengbo')) else '私稿·' + hashlib.sha256(stem.encode()).hexdigest()[:4]
+        # A case from a web novel (copyrighted; used for testing only) is named by a
+        # hash, not its title, so the results file can be shown around; the
+        # public-domain samples keep their names.
+        label = stem[:10] if any(k in stem for k in ('孔乙己', '阿Q', '傲慢', '风波', 'pride', 'fengbo')) else '网络小说·' + hashlib.sha256(stem.encode()).hexdigest()[:4]
         out.append((label, case['text'], case.get('language', 'zh'), case.get('book_id'), {l['id']: l for l in case['labels']}))
     seen, unique = set(), []                      # one entry per text: a case exported from a project repeats it
     for t in out:
@@ -195,7 +196,7 @@ def main(model_ids):
         print(m.ljust(38) + ''.join(cells) + str(total))
     out = ROOT / 'results/speaker-attribution'; out.mkdir(parents=True, exist_ok=True)
     path = out / f"matrix-{time.strftime('%Y-%m-%d-%H%M')}.json"
-    path.write_text(json.dumps({'texts': labels, 'results': results, 'note': 'counts only; private texts are named by their case file stem'}, ensure_ascii=False, indent=1), encoding='utf-8')
+    path.write_text(json.dumps({'texts': labels, 'results': results, 'note': 'counts only; web-novel cases are named by a hash of their case file stem'}, ensure_ascii=False, indent=1), encoding='utf-8')
     print('wrote', path)
 
 

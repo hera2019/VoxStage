@@ -99,7 +99,7 @@ ROLE_MODELS = {
         # of a 30B. 18.6 GB of weights: on a 32 GB machine the context is capped
         # (推算: ~100 KB of cache per token; 20k tokens ≈ 2 GB). Measured
         # 2026-09-17 (ai-lab 实测 22): best and fastest on the public texts,
-        # balks on the author's explicit manuscript — hence the fallback chain.
+        # balks on a web-novel chapter with sensitive content — hence the fallback chain.
         'label': 'Qwen3-30B-A3B Instruct-2507 · Q4_K_M（unsloth GGUF）',
         'sha256': '6c997b8af17debdfb01d890214400ccbab00db6acc0ba8da5de1cc906c4774d0',
         'paths': [ROOT/'user-data/models/role-qwen3-30b-a3b/Qwen3-30B-A3B-Instruct-2507-Q4_K_M.gguf'],

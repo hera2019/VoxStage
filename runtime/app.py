@@ -981,7 +981,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 result = annotate_with(role_engine, draft_id+'.log')
             # Either model can answer a passage with a draft of nothing: every
             # quoted line narration, or every speaker a word the story never uses
-            # (the evaluated model on an explicit chapter; the abliterated one,
+            # (the evaluated model on a chapter with sensitive content; the abliterated one,
             # given no cast, answering Kong Yiji in English). When the chosen one
             # does, and the other is installed, ask that one before falling back
             # on the structural draft. Both runs are kept in the record.
@@ -1021,7 +1021,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             labels = {x['id']:x for x in result['labels']}
             units = source_units(body.script, body.cut)
             # A degenerate draft: the model called every quoted unit narration.
-            # Seen 2026-09-14 on an explicit web-novel chapter — 60 quoted units,
+            # Seen 2026-09-14 on a web-novel chapter with sensitive content — 60 quoted units,
             # 70 labels, all NARRATOR; the schema forces valid JSON, so a model
             # that balks at the text answers with nothing. Hand the reviewer the
             # structural draft instead: quoted units are speech with the speaker

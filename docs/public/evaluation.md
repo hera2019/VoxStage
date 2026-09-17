@@ -10,11 +10,11 @@ This record gathers what VoxStage has measured on two fronts: **speaker attribut
 | Kong Yiji | Lu Xun, public domain | 35 | as above; the densest multi-party exchange |
 | Storm in a Teacup (风波) | Lu Xun, public domain | 53 | as above |
 | Pride and Prejudice (excerpt) | Jane Austen, public domain, English | 21 | as above |
-| Private manuscript 1 | the author's private test manuscript | 35 | see below |
-| Private manuscript 2 | the author's private test manuscript | 86 | see below; adult content |
+| Web novel 1 | a web novel, not publishable for copyright reasons | 35 | see below |
+| Web novel 2 | a web novel, not publishable for copyright reasons | 86 | see below; contains sensitive content |
 | Blind chapter: Ah Q, chapter 9, first half | Lu Xun, public domain | 25 | labelled by the collaborating AI, spot-checked by the author; no rule was tuned on it before it was labelled |
 
-**Private manuscripts**: the author's own unpublished work, used as test material on the author's machine only; never in the repository, never in any public material — only line counts and scores are reported. Manuscript 2 contains adult content and exists in the set to check whether a model stops answering properly because of the content: a common way such tools fail on real manuscripts that public-domain texts cannot reveal.
+**Web novels**: novels found online, used as test material on the testing machine only; for copyright reasons their text is never in the repository and never in any public material — only line counts and scores are reported. Web novel 2 contains sensitive content and exists in the set to check whether a model stops answering properly because of the content: a common way such tools fail on real manuscripts that public-domain texts cannot reveal.
 
 ## 2. Scoring
 
@@ -49,13 +49,13 @@ Same prompt, same JSON constraint, same rules; only the model changes. Numbers a
 | Storm in a Teacup | 1 | **0** | 7 |
 | Pride and Prejudice (excerpt) | 0 | 1 | 2 |
 | Kong Yiji | 3 | **0** | 4 |
-| Private manuscript 1 | 2 | 9 | 2 |
-| Private manuscript 2 | 3 | **47** | 46 |
+| Web novel 1 | 2 | 9 | 2 |
+| Web novel 2 | 3 | **47** | 46 |
 | Blind chapter | 2 | 1 | 2 |
 | **Total** | **13** | 63 | 72 |
 | Time per text | 39–124 s | **22–60 s** | 28–116 s |
 
-Reading: the 30B-A3B (a mixture of experts, 3B active) is the best and the fastest on the public texts; on private manuscript 2 it collapses — 70 lines answered "not sure", and the abliterated version does the same, so this is not content filtering but the model being unsure of that long text. The 14B holds on the private manuscripts.
+Reading: the 30B-A3B (a mixture of experts, 3B active) is the best and the fastest on the public texts; on web novel 2 it collapses — 70 lines answered "not sure", and the abliterated version does the same, so this is not content filtering but the model being unsure of that long text. The 14B holds on the web novels.
 
 **Product behaviour settled from this**: a machine starts on the first of 30B-A3B → 14B → 4B that fits its memory and is installed; when the chosen model hands in a blank draft (fewer than half the lines placed), the 14B and then the abliterated 4B are asked once more. The two 9B models and the two abliterated large models were deleted after the measurement (the author's decision).
 
@@ -88,6 +88,6 @@ Cloning time per line 5–9 s → 9–15 s. **Decision**: where the 1.7B cloning
 - Labels were confirmed by one person; the blind chapter was labelled by the AI and spot-checked by the author; readers disagree on "quoted or spoken" for short quotes inside narration and for trailing ellipses.
 - One listener, 4–6 lines a round; the engine comparison used designed voices only, no preset voices.
 - All times include model loading and depend on the machine; here, 32 GB of memory.
-- The private manuscripts are not published, so their scores cannot be checked by others; the public-domain ones can.
+- The web novels are not published here, so their scores cannot be checked by others; the public-domain ones can.
 
 Last updated: 2026-09-17 · Claude Hera
