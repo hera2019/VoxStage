@@ -202,3 +202,102 @@ class MlxEngine:
             gc.collect()
             import mlx.core as mx
             mx.clear_cache()
+
+
+# A second road for cloned voices (TTS plan step 2, 2026-09-17): Resemble AI's
+# Chatterbox Multilingual v3 (MIT), converted for MLX by mlx-community; its
+# speech tokenizer is a separate download. It only clones — a reference wav is
+# the voice; there are no presets. Kept for the author's blind listening
+# against the Qwen Base; not a project's engine until it wins. The MLX port
+# applies no watermark (the original ships one, PerTh) — 2026-09-17, read from
+# mlx-audio 0.5.1's source.
+CHATTERBOX_ID = 'mlx-community/chatterbox-multilingual-v3@03565773edd72e949572557597af8063bb49a18a'
+CHATTERBOX_SHA = {'model.safetensors': 'e702f2c441e040bd360e59a86c85d462539759d665e41cfd1938adadd74187a3'}
+S3_TOKENIZER_REPO = 'mlx-community/S3TokenizerV2'
+S3_TOKENIZER_SHA = {'model.safetensors': '928726bc1f206a613d36b8f49e297eae9c5593a21bf9b92ddfe2c23f85eb92cc'}
+CHATTERBOX_LANGUAGES = {'zh': 'zh', 'en': 'en'}
+
+
+def chatterbox_parameters():
+    # The port's defaults for cloning, written down so a change is a change:
+    # exaggeration is the emotion knob (0 flat, 1 strong), cfg_weight how hard
+    # the reference is followed.
+    return {'exaggeration': 0.3, 'cfg_weight': 0.5, 'temperature': 0.8, 'repetition_penalty': 1.2, 'min_p': 0.05, 'top_p': 1.0, 'max_new_tokens': 1000}
+
+
+class ChatterboxEngine:
+    label = 'Chatterbox Multilingual v3 · 参考音克隆'
+    reference_identity = CHATTERBOX_ID
+    identity = CHATTERBOX_ID
+
+    def __init__(self, path, tokenizer_path):
+        self.path = Path(path); self.tokenizer_path = Path(tokenizer_path)
+        self.ready = all((self.path / n).is_file() for n in list(CHATTERBOX_SHA) + ['config.json', 'tokenizer.json']) \
+            and all((self.tokenizer_path / n).is_file() for n in S3_TOKENIZER_SHA)
+        self.reference_ready = self.ready
+        self.verified = False
+        self.model = None
+
+    def reference_identity_for(self, size='0.6B'):
+        return CHATTERBOX_ID                      # one size; the argument keeps the calling code the same
+
+    def _load(self):
+        for folder, shas in ((self.path, CHATTERBOX_SHA), (self.tokenizer_path, S3_TOKENIZER_SHA)):
+            for name, expected in shas.items():
+                with (folder / name).open('rb') as f:
+                    if hashlib.file_digest(f, 'sha256').hexdigest() != expected:
+                        raise ValueError('Chatterbox 模型校验失败。')
+        self.verified = True
+        import huggingface_hub
+        from mlx_audio.tts.models.chatterbox import Model
+        # The port fetches its speech tokenizer from the Hub by name; here it
+        # is the pinned local copy, and nothing else may be fetched.
+        real = huggingface_hub.snapshot_download
+        def local_only(repo_id, **kwargs):
+            if repo_id == S3_TOKENIZER_REPO:
+                return str(self.tokenizer_path)
+            raise RuntimeError('VoxStage 不联网下载模型：' + str(repo_id))
+        huggingface_hub.snapshot_download = local_only
+        try:
+            self.model = Model.from_pretrained(str(self.path), s3_tokenizer_repo=S3_TOKENIZER_REPO)
+        finally:
+            huggingface_hub.snapshot_download = real
+
+    def synthesize_reference(self, text, language, reference_path, reference_text, seed,
+                             *, consent_confirmed=False, expected_sha256=None, size='0.6B', **overrides):
+        """The same contract as MlxEngine.synthesize_reference (D29): a preserved
+        synthetic reference, its hash checked, consent on record. The reference
+        text is not used by this model."""
+        if not consent_confirmed or not expected_sha256:
+            raise ValueError('固定声线需要已确认的合成参考声音。')
+        if not self.ready:
+            raise ValueError('Chatterbox 模型未安装（scripts/setup_model.py --model chatterbox）。')
+        if language not in CHATTERBOX_LANGUAGES:
+            raise ValueError('Chatterbox 不支持这种语言。')
+        with Path(reference_path).open('rb') as f:
+            if hashlib.file_digest(f, 'sha256').hexdigest() != expected_sha256:
+                raise ValueError('固定声线参考文件已改变，请恢复原文件或重新选择声线。')
+        import mlx.core as mx
+        start = time.perf_counter()
+        if self.model is None:
+            gc.collect(); mx.clear_cache()
+            self._load()
+        loaded = time.perf_counter()
+        parameters = {**chatterbox_parameters(), **overrides}
+        mx.random.seed(seed); mx.reset_peak_memory()
+        results = list(self.model.generate(text=text, audio_prompt=str(reference_path), lang_code=CHATTERBOX_LANGUAGES[language],
+                                           stream=False, verbose=False, **parameters))
+        if not results:
+            raise ValueError('固定声线生成结果无效。')
+        pcm = np.concatenate([np.asarray(x.audio, dtype=np.float32).reshape(-1) for x in results])
+        rate = int(getattr(results[0], 'sample_rate', 0) or self.model.sample_rate)
+        return pcm, rate, {'load_seconds': loaded - start, 'generation_seconds': time.perf_counter() - loaded,
+                           'mlx_peak_memory_bytes': mx.get_peak_memory(), 'seed': seed, 'generation_parameters': parameters,
+                           'reference_sha256': expected_sha256, 'generation_mode': 'fixed_synthetic_reference', 'engine': CHATTERBOX_ID}
+
+    def unload(self):
+        if self.model is not None:
+            self.model = None
+            gc.collect()
+            import mlx.core as mx
+            mx.clear_cache()

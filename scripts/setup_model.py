@@ -66,6 +66,20 @@ MODELS={
     'role-14b-abliterated':{'folder':'role-qwen3-14b-abliterated','repo':'mradermacher/Huihui-Qwen3-14B-abliterated-v2-GGUF',
             'revision':'daac977bbc287a398b4e46e190149142bb46c184','gguf':True,
             'sha256':{'Huihui-Qwen3-14B-abliterated-v2.Q4_K_M.gguf':'66effa781874858e2d2efefa8d6d1d5b7c16f808fe018fe67c57f9014c18668f'}},
+    # Apache-2.0 (Qwen/Qwen3-30B-A3B-Instruct-2507, GGUF by unsloth); 18.6 GB.
+    'role-30b-a3b':{'folder':'role-qwen3-30b-a3b','repo':'unsloth/Qwen3-30B-A3B-Instruct-2507-GGUF',
+            'revision':'eea7b2be5805a5f151f8847ede8e5f9a9284bf77','gguf':True,
+            'sha256':{'Qwen3-30B-A3B-Instruct-2507-Q4_K_M.gguf':'6c997b8af17debdfb01d890214400ccbab00db6acc0ba8da5de1cc906c4774d0'}},
+    # A second cloning engine for the author's blind listening (TTS plan step 2,
+    # 2026-09-17): Chatterbox Multilingual v3 (Resemble AI, MIT) as converted for
+    # MLX by mlx-community (2.7 GB), plus its speech tokenizer (0.5 GB). `--model
+    # chatterbox` prepares both. Not a project's engine until it wins.
+    'chatterbox':{'folder':'chatterbox-multilingual-v3','repo':'mlx-community/chatterbox-multilingual-v3',
+            'revision':'03565773edd72e949572557597af8063bb49a18a','required':['config.json','tokenizer.json','Cangjie5_TC.json'],
+            'sha256':{'model.safetensors':'e702f2c441e040bd360e59a86c85d462539759d665e41cfd1938adadd74187a3'}},
+    's3tokenizer':{'folder':'s3tokenizer-v2','repo':'mlx-community/S3TokenizerV2',
+            'revision':'e0c9886f0e1c35ae85b1f27277416fb19fc72bec','required':['config.json'],
+            'sha256':{'model.safetensors':'928726bc1f206a613d36b8f49e297eae9c5593a21bf9b92ddfe2c23f85eb92cc'}},
 }
 REQUIRED=['config.json','tokenizer_config.json','vocab.json','merges.txt',
           'speech_tokenizer/config.json','speech_tokenizer/configuration.json']
@@ -73,7 +87,7 @@ REQUIRED=['config.json','tokenizer_config.json','vocab.json','merges.txt',
 
 def verify_files(folder, spec):
     problems=[]
-    for name in ([] if spec.get('gguf') else REQUIRED):
+    for name in ([] if spec.get('gguf') else spec.get('required', REQUIRED)):
         if not (folder/name).is_file():problems.append('缺少文件：'+name)
     for name,expected in spec['sha256'].items():
         path=folder/name
@@ -134,11 +148,11 @@ def prepare(kind, root=ROOT, verify_only=False, downloader=None):
 
 def main():
     parser=argparse.ArgumentParser(description='准备预设/固定声线模型，或仅离线校验已有文件')
-    parser.add_argument('--model',choices=['preset','base','base-large','preset-large','design','role-abliterated','role-9b-abliterated','role-9b','role-14b','role-14b-abliterated','all'],default='preset')
+    parser.add_argument('--model',choices=['preset','base','base-large','preset-large','design','role-abliterated','role-9b-abliterated','role-9b','role-14b','role-14b-abliterated','role-30b-a3b','chatterbox','all'],default='preset')
     parser.add_argument('--verify-only',action='store_true',help='只检查，不下载或修改任何文件')
     args=parser.parse_args()
     failed=False
-    for kind in (['preset','base'] if args.model=='all' else [args.model]):
+    for kind in (['preset','base'] if args.model=='all' else ['chatterbox','s3tokenizer'] if args.model=='chatterbox' else [args.model]):
         try:
             result=prepare(kind,verify_only=args.verify_only)
             print(json.dumps(result,ensure_ascii=False),flush=True)

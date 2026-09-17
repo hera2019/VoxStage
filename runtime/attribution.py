@@ -110,6 +110,15 @@ ROLE_MODELS = {
         'label': 'Qwen3-14B 去审查版 v2 · Q4_K_M（huihui-ai；候选）',
         'sha256': '66effa781874858e2d2efefa8d6d1d5b7c16f808fe018fe67c57f9014c18668f',
         'paths': [ROOT/'user-data/models/role-qwen3-14b-abliterated/Huihui-Qwen3-14B-abliterated-v2.Q4_K_M.gguf']},
+    'qwen3-30b-a3b-instruct-2507-q4km': {
+        # Attribution plan step 5 (Fable's suggestion, 2026-09-16): a mixture of
+        # experts with 3B active — the speed of a small model with the knowledge
+        # of a 30B. 18.6 GB of weights: on a 32 GB machine the context is capped
+        # (推算: ~100 KB of cache per token; 20k tokens ≈ 2 GB). Trial only.
+        'label': 'Qwen3-30B-A3B Instruct-2507 · Q4_K_M（unsloth GGUF；试验）',
+        'sha256': '6c997b8af17debdfb01d890214400ccbab00db6acc0ba8da5de1cc906c4774d0',
+        'paths': [ROOT/'user-data/models/role-qwen3-30b-a3b/Qwen3-30B-A3B-Instruct-2507-Q4_K_M.gguf'],
+        'max_context': 20480},
 }
 DEFAULT_ROLE_MODEL = 'qwen3-14b-q4km'
 # When the chosen model hands in a draft of nothing, this one is asked (if
@@ -355,7 +364,7 @@ class RoleDraftEngine:
         with Path(log_path).open('w') as log:
             launch = ROLE_MODELS.get(self.model_id, {}).get('launch') or ['--reasoning', 'off']   # a plain instruct model answers at once
             proc = subprocess.Popen([str(self.server),'-m',str(self.model),'--alias','role-draft','-ngl','all',
-                '-c',str(limits['context']),'-np','1','--jinja',*launch,'--host','127.0.0.1','--port',str(port),
+                '-c',str(min(limits['context'], ROLE_MODELS.get(self.model_id, {}).get('max_context', limits['context']))),'-np','1','--jinja',*launch,'--host','127.0.0.1','--port',str(port),
                 '--no-webui','--api-key',key],stdout=log,stderr=subprocess.STDOUT)
             try:
                 for _ in range(300):
