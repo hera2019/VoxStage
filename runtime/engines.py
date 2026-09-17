@@ -285,7 +285,10 @@ class ChatterboxEngine:
         loaded = time.perf_counter()
         parameters = {**chatterbox_parameters(), **overrides}
         mx.random.seed(seed); mx.reset_peak_memory()
-        results = list(self.model.generate(text=text, audio_prompt=str(reference_path), lang_code=CHATTERBOX_LANGUAGES[language],
+        # The port prepares its conditioning from a path itself (loaded at its
+        # 24 kHz); handing it the path as audio_prompt without a rate is refused.
+        conds = self.model.prepare_conditionals(str(reference_path), 0, parameters['exaggeration'])
+        results = list(self.model.generate(text=text, conds=conds, lang_code=CHATTERBOX_LANGUAGES[language],
                                            stream=False, verbose=False, **parameters))
         if not results:
             raise ValueError('固定声线生成结果无效。')
@@ -333,6 +336,26 @@ class IndexTtsEngine:
     def reference_identity_for(self, size='0.6B'):
         return INDEXTTS_ID
 
+    def _load(self):
+        # mlx-audio 0.5.1's generic loader builds this model's arguments from
+        # config.json alone, and the converted config carries no tokenizer_name
+        # (the folder itself) — so the loader's steps are taken here with it
+        # supplied; the tokenizer is the folder's own tokenizer.model.
+        import os
+        import mlx.core as mx
+        from mlx_audio.utils import load_config, load_weights, apply_quantization, from_dict
+        from mlx_audio.tts.models.indextts import indextts as I
+        os.environ.setdefault('HF_HUB_OFFLINE', '1')          # nothing is fetched for a local tokenizer either
+        config = load_config(self.path); config['tokenizer_name'] = str(self.path)
+        model = I.Model(from_dict(I.ModelArgs, config))
+        weights = load_weights(self.path)
+        if hasattr(model, 'sanitize'):
+            weights = model.sanitize(weights)
+        apply_quantization(model, config, weights, getattr(model, 'model_quant_predicate', None))
+        model.load_weights(list(weights.items()), strict=False)
+        mx.eval(model.parameters()); model.eval()
+        return model
+
     def synthesize_reference(self, text, language, reference_path, reference_text, seed,
                              *, consent_confirmed=False, expected_sha256=None, size='0.6B', **overrides):
         if not consent_confirmed or not expected_sha256:
@@ -351,9 +374,8 @@ class IndexTtsEngine:
                         if hashlib.file_digest(f, 'sha256').hexdigest() != expected:
                             raise ValueError('IndexTTS 模型校验失败。')
                 self.verified = True
-            from mlx_audio.tts.utils import load_model
             gc.collect(); mx.clear_cache()
-            self.model = load_model(str(self.path))
+            self.model = self._load()
         loaded = time.perf_counter()
         parameters = {**indextts_parameters(), **overrides}
         from mlx_audio.lm.sample_utils import make_sampler
