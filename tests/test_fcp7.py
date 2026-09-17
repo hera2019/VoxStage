@@ -69,7 +69,7 @@ def test_api_defaults_fps_downloads_and_preserves_existing_exports(client):
     for fps in FPS_CHOICES:
         response=client.post(base+'/export/xml',json=body if fps==30 else {**body,'video_fps':fps})
         assert response.status_code==200,response.text
-        exported=response.json();assert len(exported)==7
+        exported=response.json();from runtime.tempo import ffmpeg_path;assert len(exported)==(8 if ffmpeg_path() else 7) and ('full.mp3' in exported)==bool(ffmpeg_path())   # the MP3 rides along where ffmpeg is
         tree=ET.fromstring(client.get(exported[f'timeline-{fps}fps.xml']).content)
         assert tree.findtext('.//sequence/rate/timebase')==str(fps)
         assert [c.findtext('name') for c in tree.findall('.//clipitem')]==[s['text'] for s in p['segments']]

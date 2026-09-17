@@ -2504,7 +2504,19 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                              'listening_issue':s.get('listening_issue')} for s in store.public(p,engine,checker)['segments']]}
             (out/'content-check.json').write_text(json.dumps(check_report,ensure_ascii=False,indent=2))
             (out/'timeline.json').write_text(json.dumps(timeline, ensure_ascii=False, indent=2))
-            return {name:f'/api/projects/{project_id}/export/{p["revision"]}/{name}' for name in ('full.wav','subtitles.srt','timeline.json','content-check.json','delivery.zip')}
+            names = ['full.wav','subtitles.srt','timeline.json','content-check.json','delivery.zip']
+            # An MP3 of the full audio beside the WAV when ffmpeg is on the machine
+            # (本人 2026-09-18); the WAV stays the reference, the MP3 is for sharing.
+            ffmpeg = ffmpeg_path()
+            if ffmpeg:
+                import subprocess
+                done = subprocess.run([ffmpeg, '-y', '-loglevel', 'error', '-i', str(out/'full.wav'), '-codec:a', 'libmp3lame', '-q:a', '2', str(out/'full.mp3')],
+                                      capture_output=True, text=True, timeout=600)
+                if done.returncode == 0 and (out/'full.mp3').is_file():
+                    names.insert(1, 'full.mp3')
+                else:
+                    logging.warning('MP3 export failed: %s', done.stderr.strip()[:200])
+            return {name:f'/api/projects/{project_id}/export/{p["revision"]}/{name}' for name in names}
 
     @app.post('/api/projects/{project_id}/export/xml')
     def export_xml(project_id: str, body: ExportXmlRequest):
@@ -2525,7 +2537,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             return links
 
     @app.get('/api/projects/{project_id}/export/{revision}/{name}')
-    def download(project_id: str, revision: int, name: Literal['full.wav','subtitles.srt','timeline.json','content-check.json','delivery.zip','timeline-24fps.xml','timeline-25fps.xml','timeline-30fps.xml','timeline-50fps.xml','timeline-60fps.xml','timeline-README.txt']):
+    def download(project_id: str, revision: int, name: Literal['full.wav','full.mp3','subtitles.srt','timeline.json','content-check.json','delivery.zip','timeline-24fps.xml','timeline-25fps.xml','timeline-30fps.xml','timeline-50fps.xml','timeline-60fps.xml','timeline-README.txt']):
         if revision < 0:
             raise HTTPException(404)
         path = store.directory(project_id)/'exports'/str(revision)/name
