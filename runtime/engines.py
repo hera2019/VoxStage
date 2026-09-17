@@ -301,3 +301,76 @@ class ChatterboxEngine:
             gc.collect()
             import mlx.core as mx
             mx.clear_cache()
+
+
+# A third road (TTS plan step 4, reshaped 2026-09-17): IndexTTS 1.5 (Bilibili's
+# IndexTeam, Apache-2.0 — it is the 2.x line that carries a special licence),
+# converted for MLX by mlx-community, 1.4 GB. Cloning from a reference wav
+# like the others, and one thing the others cannot do: pinyin with a tone
+# digit inside the text — 肏 written as cao4 — is read as written (the port's
+# normaliser, mlx-audio 0.5.1). No emotion or duration control in 1.5.
+INDEXTTS_ID = 'mlx-community/IndexTTS-1.5@d163f13bc1816c20bd79d730cc88f866a2a43ceb'
+INDEXTTS_SHA = {'model.safetensors': 'd3caa59244869ed2ed2d865a3e800edb834cc7af46e29c92a3e7b7b44950437a',
+                'tokenizer.model': 'b2a5ce8090d32da3642cc4f81fdc996376bc6dd3f4cd5e3d165f71120d9f2bc8'}
+
+
+def indextts_parameters():
+    return {'max_tokens': 5000, 'temperature': 0.8, 'top_k': 30}
+
+
+class IndexTtsEngine:
+    label = 'IndexTTS 1.5 · 参考音克隆（可写拼音）'
+    reference_identity = INDEXTTS_ID
+    identity = INDEXTTS_ID
+
+    def __init__(self, path):
+        self.path = Path(path)
+        self.ready = all((self.path / n).is_file() for n in list(INDEXTTS_SHA) + ['config.json'])
+        self.reference_ready = self.ready
+        self.verified = False
+        self.model = None
+
+    def reference_identity_for(self, size='0.6B'):
+        return INDEXTTS_ID
+
+    def synthesize_reference(self, text, language, reference_path, reference_text, seed,
+                             *, consent_confirmed=False, expected_sha256=None, size='0.6B', **overrides):
+        if not consent_confirmed or not expected_sha256:
+            raise ValueError('固定声线需要已确认的合成参考声音。')
+        if not self.ready:
+            raise ValueError('IndexTTS 模型未安装（scripts/setup_model.py --model indextts）。')
+        with Path(reference_path).open('rb') as f:
+            if hashlib.file_digest(f, 'sha256').hexdigest() != expected_sha256:
+                raise ValueError('固定声线参考文件已改变，请恢复原文件或重新选择声线。')
+        import mlx.core as mx
+        start = time.perf_counter()
+        if self.model is None:
+            if not self.verified:
+                for name, expected in INDEXTTS_SHA.items():
+                    with (self.path / name).open('rb') as f:
+                        if hashlib.file_digest(f, 'sha256').hexdigest() != expected:
+                            raise ValueError('IndexTTS 模型校验失败。')
+                self.verified = True
+            from mlx_audio.tts.utils import load_model
+            gc.collect(); mx.clear_cache()
+            self.model = load_model(str(self.path))
+        loaded = time.perf_counter()
+        parameters = {**indextts_parameters(), **overrides}
+        from mlx_audio.lm.sample_utils import make_sampler
+        sampler = make_sampler(temp=parameters['temperature'], top_k=parameters['top_k'])
+        mx.random.seed(seed); mx.reset_peak_memory()
+        results = list(self.model.generate(text=text, ref_audio=str(reference_path), max_tokens=parameters['max_tokens'], sampler=sampler, verbose=False))
+        if not results:
+            raise ValueError('固定声线生成结果无效。')
+        pcm = np.concatenate([np.asarray(x.audio, dtype=np.float32).reshape(-1) for x in results])
+        rate = int(getattr(results[0], 'sample_rate', 0) or self.model.sample_rate)
+        return pcm, rate, {'load_seconds': loaded - start, 'generation_seconds': time.perf_counter() - loaded,
+                           'mlx_peak_memory_bytes': mx.get_peak_memory(), 'seed': seed, 'generation_parameters': parameters,
+                           'reference_sha256': expected_sha256, 'generation_mode': 'fixed_synthetic_reference', 'engine': INDEXTTS_ID}
+
+    def unload(self):
+        if self.model is not None:
+            self.model = None
+            gc.collect()
+            import mlx.core as mx
+            mx.clear_cache()

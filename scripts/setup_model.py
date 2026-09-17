@@ -80,6 +80,12 @@ MODELS={
     's3tokenizer':{'folder':'s3tokenizer-v2','repo':'mlx-community/S3TokenizerV2',
             'revision':'e0c9886f0e1c35ae85b1f27277416fb19fc72bec','required':['config.json'],
             'sha256':{'model.safetensors':'928726bc1f206a613d36b8f49e297eae9c5593a21bf9b92ddfe2c23f85eb92cc'}},
+    # IndexTTS 1.5 (IndexTeam, Apache-2.0; MLX port by mlx-community, 1.4 GB):
+    # cloning from a reference, and pinyin with tone digits read as written.
+    'indextts':{'folder':'indextts-1.5','repo':'mlx-community/IndexTTS-1.5',
+            'revision':'d163f13bc1816c20bd79d730cc88f866a2a43ceb','required':['config.json','model.safetensors.index.json'],
+            'sha256':{'model.safetensors':'d3caa59244869ed2ed2d865a3e800edb834cc7af46e29c92a3e7b7b44950437a',
+                      'tokenizer.model':'b2a5ce8090d32da3642cc4f81fdc996376bc6dd3f4cd5e3d165f71120d9f2bc8'}},
 }
 REQUIRED=['config.json','tokenizer_config.json','vocab.json','merges.txt',
           'speech_tokenizer/config.json','speech_tokenizer/configuration.json']
@@ -148,7 +154,7 @@ def prepare(kind, root=ROOT, verify_only=False, downloader=None):
 
 def main():
     parser=argparse.ArgumentParser(description='准备预设/固定声线模型，或仅离线校验已有文件')
-    parser.add_argument('--model',choices=['preset','base','base-large','preset-large','design','role-abliterated','role-9b-abliterated','role-9b','role-14b','role-14b-abliterated','role-30b-a3b','chatterbox','all'],default='preset')
+    parser.add_argument('--model',choices=['preset','base','base-large','preset-large','design','role-abliterated','role-9b-abliterated','role-9b','role-14b','role-14b-abliterated','role-30b-a3b','chatterbox','indextts','all'],default='preset')
     parser.add_argument('--verify-only',action='store_true',help='只检查，不下载或修改任何文件')
     args=parser.parse_args()
     failed=False

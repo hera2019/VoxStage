@@ -3,11 +3,12 @@ random order, the key kept aside (TTS plan, 2026-09-17).
 
     .venv/bin/python scripts/listening_pairs.py --a qwen:0.6B --b qwen:1.7B  PROJECT_ID:14 PROJECT_ID:19 …
     .venv/bin/python scripts/listening_pairs.py --a qwen:1.7B --b chatterbox  PROJECT_ID:3 …
+    .venv/bin/python scripts/listening_pairs.py --a qwen:1.7B --b indextts    PROJECT_ID:3 …
 
 A line is `project id:segment number` (the number the page shows). `qwen:SIZE`
 reads a preset line with the preset model of that size and a cloned line
 (fixed or designed voice) with the Base of that size; `chatterbox` reads
-cloned lines only. Same text, same voice reference, same seed on both sides;
+cloned lines only, as does `indextts`. Same text, same voice reference, same seed on both sides;
 only the engine differs. Output: ~/Desktop/VoxStage-对听-<date>/对N-甲.wav,
 对N-乙.wav and 说明.txt (what each pair is, not which is which); the key goes
 to user-data/listening/<date>.json. Nothing in the projects is touched.
@@ -24,17 +25,19 @@ sys.path.insert(0, str(ROOT))
 import soundfile as sf                                                  # noqa: E402
 from runtime.audio import process_audio                                 # noqa: E402
 from runtime.core import Store, spoken_text, voice_of                   # noqa: E402
-from runtime.engines import MlxEngine, ChatterboxEngine                 # noqa: E402
+from runtime.engines import MlxEngine, ChatterboxEngine, IndexTtsEngine  # noqa: E402
 from runtime.voices import VoiceLibrary, is_custom, custom_id           # noqa: E402
 
 
-def engines_for(spec, qwen, chatter):
+def engines_for(spec, qwen, chatter, index):
     kind, _, size = spec.partition(':')
     if kind == 'qwen':
         return qwen, size or '0.6B', f'Qwen3-TTS {size or "0.6B"}'
     if kind == 'chatterbox':
         return chatter, '0.6B', 'Chatterbox Multilingual v3'
-    raise SystemExit('引擎写法：qwen:0.6B / qwen:1.7B / chatterbox')
+    if kind == 'indextts':
+        return index, '0.6B', 'IndexTTS 1.5'
+    raise SystemExit('引擎写法：qwen:0.6B / qwen:1.7B / chatterbox / indextts')
 
 
 def read(engine, size, project, segment, library):
@@ -65,7 +68,8 @@ def main():
     store = Store(ROOT / 'user-data/projects'); library = VoiceLibrary(ROOT / 'user-data/voices')
     qwen = MlxEngine(ROOT / 'user-data/models/qwen-customvoice')
     chatter = ChatterboxEngine(ROOT / 'user-data/models/chatterbox-multilingual-v3', ROOT / 'user-data/models/s3tokenizer-v2')
-    sides = [engines_for(args.a, qwen, chatter), engines_for(args.b, qwen, chatter)]
+    index = IndexTtsEngine(ROOT / 'user-data/models/indextts-1.5')
+    sides = [engines_for(args.a, qwen, chatter, index), engines_for(args.b, qwen, chatter, index)]
     for engine, _, name in sides:
         if not engine.ready:
             raise SystemExit(name + ' 未安装。')
