@@ -233,6 +233,13 @@ repairs. Corpus, prompts and scoring:
 [`evals/speaker_attribution/`](evals/speaker_attribution/) · results:
 [`results/speaker-attribution-summary.md`](results/speaker-attribution-summary.md)
 
+The September 2026 round — eight local models on eleven reviewed texts
+including a blind chapter, the rules measured one by one against a frozen
+set of model answers, and the blind listening that chose the cloning model —
+is recorded with its scoring and its limits in
+[`docs/public/evaluation.md`](docs/public/evaluation.md)
+([中文](docs/public/evaluation-zh.md)).
+
 ## Limits
 
 - The speaker draft is a draft. Most scenes in the evaluation needed at least
