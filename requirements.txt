@@ -8,4 +8,3 @@ mlx-audio==0.5.1
 scipy==1.18.1
 
 pypinyin==0.55.0
-sentencepiece==0.2.2

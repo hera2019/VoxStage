@@ -82,22 +82,9 @@ ROLE_MODELS = {
         'label': 'Qwen3-4B-Instruct-2507 去审查版 · Q8（huihui-ai 微调）',
         'sha256': 'f3b6a790d226efadd863152415713d4d177a22e80eb37bc54537dab110062f31',
         'paths': [ROOT/'user-data/models/role-qwen3-4b-abliterated/Huihui-Qwen3-4B-Instruct-2507-abliterated.Q8_0.gguf']},
-    'qwen3.5-9b-abliterated-q5km': {
-        'label': 'Qwen3.5-9B 去审查版 · Q5_K_M（huihui-ai；候选，慢 3 倍）',
-        'sha256': '946072b16f5d672e60357410f900888f6522b3ae49f241b5bf2142cb89637fb6',
-        'paths': [ROOT/'user-data/models/role-qwen3.5-9b-abliterated/Huihui-Qwen3.5-9B-abliterated.Q5_K_M.gguf'],
-        # A thinking model: with thinking off it labels every line NARRATOR;
-        # unrestricted it thinks past the answer budget and never answers.
-        # A budget of 1,500 thinking tokens, then the JSON (measured 2026-09-16).
-        'launch': ['--reasoning-budget', '1500']},
-    # The plain models behind the abliterations, same quantisation each, so a
-    # comparison changes one thing at a time. Launch flags are what the first
-    # measurement finds works; recorded in the ai-lab notes when run.
-    'qwen3.5-9b-q5km': {
-        'label': 'Qwen3.5-9B 普通版 · Q5_K_M（unsloth 转换；候选）',
-        'sha256': 'dc2a39aef291f91a9116ad214058da0d86eb648743a124bd8c333787c4b9c91c',
-        'paths': [ROOT/'user-data/models/role-qwen3.5-9b/Qwen3.5-9B-Q5_K_M.gguf'],
-        'launch': ['--reasoning-budget', '1500']},
+    # Removed 2026-09-17 with the author's consent (「鸡肋」): the two Qwen3.5-9B
+    # (slow, balked), the abliterated 14B (worse than the plain), the abliterated
+    # 30B-A3B (worse both ways). Their measurements stay in the ai-lab notes.
     'qwen3-14b-q4km': {
         # Best of six on the fixed set (2026-09-16, ai-lab 实测 17): 16 lines to
         # fix across 215 against 28 for the next; twice the 4B's time. Recommended
@@ -106,10 +93,6 @@ ROLE_MODELS = {
         'sha256': '500a8806e85ee9c83f3ae08420295592451379b4f8cf2d0f41c15dffeb6b81f0',
         'paths': [ROOT/'user-data/models/role-qwen3-14b/Qwen3-14B-Q4_K_M.gguf'],
         'recommended_gb': 32},
-    'qwen3-14b-abliterated-v2-q4km': {
-        'label': 'Qwen3-14B 去审查版 v2 · Q4_K_M（huihui-ai；候选）',
-        'sha256': '66effa781874858e2d2efefa8d6d1d5b7c16f808fe018fe67c57f9014c18668f',
-        'paths': [ROOT/'user-data/models/role-qwen3-14b-abliterated/Huihui-Qwen3-14B-abliterated-v2.Q4_K_M.gguf']},
     'qwen3-30b-a3b-instruct-2507-q4km': {
         # Attribution plan step 5 (Fable's suggestion, 2026-09-16): a mixture of
         # experts with 3B active — the speed of a small model with the knowledge
@@ -121,13 +104,6 @@ ROLE_MODELS = {
         'sha256': '6c997b8af17debdfb01d890214400ccbab00db6acc0ba8da5de1cc906c4774d0',
         'paths': [ROOT/'user-data/models/role-qwen3-30b-a3b/Qwen3-30B-A3B-Instruct-2507-Q4_K_M.gguf'],
         'max_context': 20480, 'recommended_gb': 32},
-    'qwen3-30b-a3b-instruct-2507-abliterated-q4km': {
-        # The abliteration of the same model (huihui-ai; GGUF by mradermacher),
-        # for the manuscripts the plain 30B balks on (本人 2026-09-17: 再试). Trial.
-        'label': 'Qwen3-30B-A3B Instruct-2507 去审查版 · Q4_K_M（huihui-ai；试验）',
-        'sha256': 'c83692caa1226fe5747cd6f81ccfc51e6e5fcd390a38c1ae010b6b472a829b40',
-        'paths': [ROOT/'user-data/models/role-qwen3-30b-a3b-abliterated/Huihui-Qwen3-30B-A3B-Instruct-2507-abliterated.Q4_K_M.gguf'],
-        'max_context': 20480},
 }
 DEFAULT_ROLE_MODEL = 'qwen3-14b-q4km'          # the floor a machine of 32 GB starts on; VOXSTAGE_ROLE_MODEL points at its file
 # The best model a machine can hold, of those installed, is what it starts
