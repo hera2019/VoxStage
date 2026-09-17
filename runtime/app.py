@@ -999,9 +999,10 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 return len(spoken) >= 3 and len(placed(labels)) < 0.5 * len(spoken)
             fallback_used = None
             if not settled_by_author and balked(result['labels']) and hasattr(role_engine, 'installed') and hasattr(role_engine, 'select'):
-                from .attribution import FALLBACK_ROLE_MODEL
+                from .attribution import FALLBACK_ROLE_MODELS
                 others = [m['id'] for m in role_engine.installed() if m['installed'] and m['id'] != role_engine.model_id]
-                others.sort(key=lambda m: m != FALLBACK_ROLE_MODEL)          # the designated fallback first
+                rank = {m: i for i, m in enumerate(FALLBACK_ROLE_MODELS)}
+                others.sort(key=lambda m: rank.get(m, len(rank)))             # the designated fallbacks first, in order
                 if others:
                     chosen = role_engine.model_id
                     try:

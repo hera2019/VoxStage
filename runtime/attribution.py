@@ -102,7 +102,7 @@ ROLE_MODELS = {
         # Best of six on the fixed set (2026-09-16, ai-lab 实测 17): 16 lines to
         # fix across 215 against 28 for the next; twice the 4B's time. Recommended
         # where the memory allows it (32 GB: 9 GB weights + 5 GB of context).
-        'label': 'Qwen3-14B 普通版 · Q4_K_M（默认，Qwen 官方 GGUF）',
+        'label': 'Qwen3-14B 普通版 · Q4_K_M（Qwen 官方 GGUF）',
         'sha256': '500a8806e85ee9c83f3ae08420295592451379b4f8cf2d0f41c15dffeb6b81f0',
         'paths': [ROOT/'user-data/models/role-qwen3-14b/Qwen3-14B-Q4_K_M.gguf'],
         'recommended_gb': 32},
@@ -114,16 +114,40 @@ ROLE_MODELS = {
         # Attribution plan step 5 (Fable's suggestion, 2026-09-16): a mixture of
         # experts with 3B active — the speed of a small model with the knowledge
         # of a 30B. 18.6 GB of weights: on a 32 GB machine the context is capped
-        # (推算: ~100 KB of cache per token; 20k tokens ≈ 2 GB). Trial only.
-        'label': 'Qwen3-30B-A3B Instruct-2507 · Q4_K_M（unsloth GGUF；试验）',
+        # (推算: ~100 KB of cache per token; 20k tokens ≈ 2 GB). Measured
+        # 2026-09-17 (ai-lab 实测 22): best and fastest on the public texts,
+        # balks on the author's explicit manuscript — hence the fallback chain.
+        'label': 'Qwen3-30B-A3B Instruct-2507 · Q4_K_M（unsloth GGUF）',
         'sha256': '6c997b8af17debdfb01d890214400ccbab00db6acc0ba8da5de1cc906c4774d0',
         'paths': [ROOT/'user-data/models/role-qwen3-30b-a3b/Qwen3-30B-A3B-Instruct-2507-Q4_K_M.gguf'],
+        'max_context': 20480, 'recommended_gb': 32},
+    'qwen3-30b-a3b-instruct-2507-abliterated-q4km': {
+        # The abliteration of the same model (huihui-ai; GGUF by mradermacher),
+        # for the manuscripts the plain 30B balks on (本人 2026-09-17: 再试). Trial.
+        'label': 'Qwen3-30B-A3B Instruct-2507 去审查版 · Q4_K_M（huihui-ai；试验）',
+        'sha256': 'c83692caa1226fe5747cd6f81ccfc51e6e5fcd390a38c1ae010b6b472a829b40',
+        'paths': [ROOT/'user-data/models/role-qwen3-30b-a3b-abliterated/Huihui-Qwen3-30B-A3B-Instruct-2507-abliterated.Q4_K_M.gguf'],
         'max_context': 20480},
 }
-DEFAULT_ROLE_MODEL = 'qwen3-14b-q4km'
-# When the chosen model hands in a draft of nothing, this one is asked (if
-# installed): the fastest model that never balked on the fixed set.
-FALLBACK_ROLE_MODEL = 'qwen3-4b-instruct-2507-abliterated-q8'
+DEFAULT_ROLE_MODEL = 'qwen3-14b-q4km'          # the floor a machine of 32 GB starts on; VOXSTAGE_ROLE_MODEL points at its file
+# The best model a machine can hold, of those installed, is what it starts
+# on (本人 2026-09-17: 如果电脑配置够，30B 作默认 — ai-lab 实测 22: best and
+# fastest on the public texts). A choice saved in settings overrides this.
+PREFERRED_ROLE_MODELS = ('qwen3-30b-a3b-instruct-2507-q4km', 'qwen3-14b-q4km', 'qwen3-4b-instruct-2507-q8')
+# When the chosen model hands in a draft of nothing, these are asked in turn
+# (the first installed): the 14B answers the author's own manuscripts where
+# the 30B balks (实测 22); the 4B abliteration never balked on the fixed set.
+FALLBACK_ROLE_MODELS = ('qwen3-14b-q4km', 'qwen3-4b-instruct-2507-abliterated-q8')
+FALLBACK_ROLE_MODEL = FALLBACK_ROLE_MODELS[-1]
+
+
+def default_role_model():
+    gb = draft_limits()['memory_gb']
+    for m in PREFERRED_ROLE_MODELS:
+        spec = ROLE_MODELS[m]
+        if gb >= spec.get('recommended_gb', 0) - 0.5 and RoleDraftEngine.path_for(m):
+            return m
+    return DEFAULT_ROLE_MODEL
 
 
 def project_segments(source, labels, language, locks=(), cut=None):
@@ -285,7 +309,7 @@ def speaker_pattern(text):
 class RoleDraftEngine:
     def __init__(self, model_id=None):
         self.server = Path(os.environ.get('VOXSTAGE_ROLE_SERVER', ROOT.parent/'AI-Lab/qwen3-14b-llamacpp/worktrees/llama.cpp/build-release-metal/bin/llama-server'))
-        self.select(model_id or DEFAULT_ROLE_MODEL)
+        self.select(model_id or default_role_model())
 
     @staticmethod
     def path_for(model_id):

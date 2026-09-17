@@ -70,6 +70,9 @@ MODELS={
     'role-30b-a3b':{'folder':'role-qwen3-30b-a3b','repo':'unsloth/Qwen3-30B-A3B-Instruct-2507-GGUF',
             'revision':'eea7b2be5805a5f151f8847ede8e5f9a9284bf77','gguf':True,
             'sha256':{'Qwen3-30B-A3B-Instruct-2507-Q4_K_M.gguf':'6c997b8af17debdfb01d890214400ccbab00db6acc0ba8da5de1cc906c4774d0'}},
+    'role-30b-a3b-abliterated':{'folder':'role-qwen3-30b-a3b-abliterated','repo':'mradermacher/Huihui-Qwen3-30B-A3B-Instruct-2507-abliterated-GGUF',
+            'revision':'2b465901dd60faa77d4ef23d63549930fcec41c2','gguf':True,
+            'sha256':{'Huihui-Qwen3-30B-A3B-Instruct-2507-abliterated.Q4_K_M.gguf':'c83692caa1226fe5747cd6f81ccfc51e6e5fcd390a38c1ae010b6b472a829b40'}},
     # A second cloning engine for the author's blind listening (TTS plan step 2,
     # 2026-09-17): Chatterbox Multilingual v3 (Resemble AI, MIT) as converted for
     # MLX by mlx-community (2.7 GB), plus its speech tokenizer (0.5 GB). `--model
@@ -154,7 +157,7 @@ def prepare(kind, root=ROOT, verify_only=False, downloader=None):
 
 def main():
     parser=argparse.ArgumentParser(description='准备预设/固定声线模型，或仅离线校验已有文件')
-    parser.add_argument('--model',choices=['preset','base','base-large','preset-large','design','role-abliterated','role-9b-abliterated','role-9b','role-14b','role-14b-abliterated','role-30b-a3b','chatterbox','indextts','all'],default='preset')
+    parser.add_argument('--model',choices=['preset','base','base-large','preset-large','design','role-abliterated','role-9b-abliterated','role-9b','role-14b','role-14b-abliterated','role-30b-a3b','role-30b-a3b-abliterated','chatterbox','indextts','all'],default='preset')
     parser.add_argument('--verify-only',action='store_true',help='只检查，不下载或修改任何文件')
     args=parser.parse_args()
     failed=False
