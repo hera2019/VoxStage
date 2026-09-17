@@ -1,0 +1,163 @@
+{
+ "texts": [
+  "阿Q正传 第2章",
+  "阿Q正传 第7章",
+  "阿Q正传 第6章",
+  "阿Q正传 第4章",
+  "阿Q正传 第5章",
+  "fengbo-her",
+  "pride-hera",
+  "孔乙己 标准测试 0",
+  "私稿·322d",
+  "私稿·69a3",
+  "阿Q-第九章-1-盲"
+ ],
+ "results": {
+  "qwen3-30b-a3b-instruct-2507-abliterated-q4km": {
+   "阿Q正传 第2章": {
+    "lines": 13,
+    "right": 13,
+    "named_right": 10,
+    "named_wrong": 0,
+    "yellow_right": 3,
+    "yellow_wrong": 0,
+    "orange": 0,
+    "kind_errors": 0,
+    "renames": 0,
+    "to_fix": 0,
+    "seconds": 116
+   },
+   "阿Q正传 第7章": {
+    "lines": 30,
+    "right": 27,
+    "named_right": 23,
+    "named_wrong": 2,
+    "yellow_right": 4,
+    "yellow_wrong": 1,
+    "orange": 0,
+    "kind_errors": 0,
+    "renames": 0,
+    "to_fix": 3,
+    "seconds": 88
+   },
+   "阿Q正传 第6章": {
+    "lines": 24,
+    "right": 24,
+    "named_right": 23,
+    "named_wrong": 0,
+    "yellow_right": 1,
+    "yellow_wrong": 0,
+    "orange": 0,
+    "kind_errors": 0,
+    "renames": 2,
+    "to_fix": 0,
+    "seconds": 44
+   },
+   "阿Q正传 第4章": {
+    "lines": 23,
+    "right": 19,
+    "named_right": 19,
+    "named_wrong": 0,
+    "yellow_right": 0,
+    "yellow_wrong": 0,
+    "orange": 0,
+    "kind_errors": 4,
+    "renames": 1,
+    "to_fix": 4,
+    "seconds": 48
+   },
+   "阿Q正传 第5章": {
+    "lines": 14,
+    "right": 12,
+    "named_right": 12,
+    "named_wrong": 0,
+    "yellow_right": 0,
+    "yellow_wrong": 0,
+    "orange": 2,
+    "kind_errors": 0,
+    "renames": 0,
+    "to_fix": 2,
+    "seconds": 44
+   },
+   "fengbo-her": {
+    "lines": 53,
+    "right": 46,
+    "named_right": 45,
+    "named_wrong": 6,
+    "yellow_right": 1,
+    "yellow_wrong": 1,
+    "orange": 0,
+    "kind_errors": 0,
+    "renames": 2,
+    "to_fix": 7,
+    "seconds": 87
+   },
+   "pride-hera": {
+    "lines": 21,
+    "right": 19,
+    "named_right": 18,
+    "named_wrong": 2,
+    "yellow_right": 1,
+    "yellow_wrong": 0,
+    "orange": 0,
+    "kind_errors": 0,
+    "renames": 1,
+    "to_fix": 2,
+    "seconds": 28
+   },
+   "孔乙己 标准测试 0": {
+    "lines": 35,
+    "right": 31,
+    "named_right": 16,
+    "named_wrong": 2,
+    "yellow_right": 15,
+    "yellow_wrong": 2,
+    "orange": 0,
+    "kind_errors": 0,
+    "renames": 3,
+    "to_fix": 4,
+    "seconds": 56
+   },
+   "私稿·322d": {
+    "lines": 35,
+    "right": 33,
+    "named_right": 33,
+    "named_wrong": 1,
+    "yellow_right": 0,
+    "yellow_wrong": 0,
+    "orange": 1,
+    "kind_errors": 0,
+    "renames": 1,
+    "to_fix": 2,
+    "seconds": 39
+   },
+   "私稿·69a3": {
+    "lines": 86,
+    "right": 40,
+    "named_right": 14,
+    "named_wrong": 2,
+    "yellow_right": 26,
+    "yellow_wrong": 44,
+    "orange": 0,
+    "kind_errors": 0,
+    "renames": 1,
+    "to_fix": 46,
+    "seconds": 90
+   },
+   "阿Q-第九章-1-盲": {
+    "lines": 25,
+    "right": 23,
+    "named_right": 22,
+    "named_wrong": 0,
+    "yellow_right": 1,
+    "yellow_wrong": 1,
+    "orange": 0,
+    "kind_errors": 1,
+    "renames": 1,
+    "to_fix": 2,
+    "seconds": 44
+   }
+  }
+ },
+ "note": "counts only; private texts are named by their case file stem"
+}
