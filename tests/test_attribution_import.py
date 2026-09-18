@@ -69,10 +69,20 @@ def test_long_unit_is_split_without_losing_source(client):
     assert ''.join(s['text'] for s in p['segments'])==text
     assert all(len(s['text'])<=60 for s in p['segments'])
 
-def test_rejects_cross_origin_and_over_limit(client):
-    assert client.post('/api/attribution/draft',json={'script':'a'*3001,'language':'en'}).status_code==400   # over this machine's tier (capacity.py); tests pin it at 3,000
-    assert client.post('/api/attribution/draft',json={'script':'a'*12001,'language':'en'}).status_code==422  # over any tier
+def test_rejects_cross_origin_and_over_test_limit(client):
+    assert client.post('/api/attribution/draft',json={'script':'a'*6001,'language':'en'}).status_code==200   # test mode may exceed the conservative machine tier
+    assert client.post('/api/attribution/draft',json={'script':'a'*20001,'language':'en'}).status_code==422  # emergency input ceiling; model fit is token-based
     assert client.post('/api/attribution/draft',headers={'Origin':'https://example.com'},json={'script':'Hi','language':'en'}).status_code==403
+
+
+def test_role_draft_debug_channel_is_bound_to_the_requested_run(client):
+    debug_id = 'a' * 32
+    response = client.post('/api/attribution/draft', json={'script':'原文。','language':'zh','debug_id':debug_id})
+    assert response.status_code == 200, response.text
+    debug = client.get('/api/attribution/debug/' + debug_id)
+    assert debug.status_code == 200
+    assert 'text' in debug.json()
+    assert client.get('/api/attribution/debug/not-an-id').status_code == 400
 
 def test_invalid_model_labels_release_queue(tmp_path):
     roles=Roles();roles.broken=True

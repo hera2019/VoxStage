@@ -30,7 +30,7 @@ from .core import reads_aloud, Store, fingerprint, spoken_text, inherit_settings
 from .pauses import split_at_pauses, join_with_silence
 from .voices import VoiceLibrary, is_custom, custom_id, PREFIX as CUSTOM_PREFIX
 from .script_check import inspect as inspect_script, apply_fix
-from .attribution import RoleDraftEngine, project_segments, source_units, carry_locks
+from .attribution import RoleDraftEngine, ROLE_MODELS, project_segments, source_units, carry_locks
 from .content_check import WhisperChecker, compare_text, file_sha
 from .engines import MlxEngine, FixtureEngine, VOICES
 
@@ -56,6 +56,8 @@ class BookRequest(BaseModel):
     title: str = Field(default='', max_length=120)
     script: str = Field(min_length=1, max_length=2_000_000)
     language: Literal['zh','en']
+    chapter_chars: int | None = Field(default=None, ge=1000, le=12000)
+    token_mode: bool = False                                      # test mode: split by estimated model token budget
     headings: list[int] | None = Field(default=None, max_length=5000)   # line numbers, from a Markdown or Word import
     hints: list[Hint] | None = Field(default=None, max_length=20000)     # spans whose speaker the manuscript's colours settle
     silent: list[int] | None = Field(default=None, max_length=5000)     # line numbers kept but not read aloud (headings)
@@ -71,8 +73,13 @@ class DocxApplyRequest(BaseModel):
 class MarkdownRequest(BaseModel):
     text: str = Field(min_length=1, max_length=2_000_000)
 
+class RoleEstimateRequest(BaseModel):
+    script: str = Field(min_length=1, max_length=2_000_000)
+    cut: Literal['lines'] | None = None
+
 class RoleDraftRequest(BaseModel):
-    script: str = Field(min_length=1, max_length=12000)     # the machine's own limit is checked in the handler (capacity.py)
+    script: str = Field(min_length=1, max_length=20000)     # token preflight is checked by the role engine
+    debug_id: str | None = Field(default=None, pattern=r'^[a-f0-9]{32}$')   # local UI may poll llama-server output while this draft runs
     hints: list[Hint] | None = Field(default=None, max_length=5000)     # from a coloured or marked manuscript: settled speakers
     silent: list[int] | None = Field(default=None, max_length=2000)     # line numbers not read aloud (headings)
     cut: Literal['lines'] | None = None                                 # 'lines': one unit per line, whatever quotation marks the text holds (本人 2026-09-17)
@@ -316,6 +323,12 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             role_engine.select(settings_file()['role_model'])
         except ValueError:
             pass
+    def role_token_budget():
+        from .capacity import draft_limits
+        limits = draft_limits()
+        spec = ROLE_MODELS.get(getattr(role_engine, 'model_id', None), {})
+        context = min(limits['context'], spec.get('max_context', limits['context']))
+        return {'context': context, 'max_tokens': limits['max_tokens']}
     drafts = store.root.parent / (store.root.name + '-role-drafts')
 
     def write_draft(record):
@@ -348,6 +361,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
         else:
             record['cast'] = cast
     drafts.mkdir(exist_ok=True)
+    debug_runs = {}        # browser-generated debug id -> server draft id; local and temporary
     executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix='voxstage-render')
     cancel = threading.Event()
     active = {'project_id':None}
@@ -400,8 +414,18 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
 
     @app.get('/api/config')
     def config():
+        token_budget = role_token_budget()
+        cap = __import__('runtime.capacity',fromlist=['draft_limits','TOKEN_SAFETY_RATIO'])
         return {'engine':engine.label, 'engine_id':engine.identity, 'ready':engine.ready,
-                'attribution_ready':role_engine.ready, 'role_models':(role_engine.installed() if hasattr(role_engine,'installed') else []), 'role_model':getattr(role_engine,'model_id',None), 'speed_ready':bool(ffmpeg_path()),'checker_ready':checker.ready, 'checker_id':checker.identity, 'voices':VOICES, 'fixed_voice_ready':getattr(engine,'reference_ready',False), 'preset_models':['0.6B']+(['1.7B'] if getattr(engine,'large_identity',None) else []), 'default_preset_model':('1.7B' if getattr(engine,'large_identity',None) else '0.6B'), 'design_ready':getattr(engine,'design_ready',False), 'local_only':True, 'synthetic_audio':True, 'draft_limits':__import__('runtime.capacity',fromlist=['draft_limits']).draft_limits(), 'clone_models':['0.6B']+(['1.7B'] if getattr(engine,'large_reference_ready',False) else []), 'default_clone_model':default_clone()}
+                'attribution_ready':role_engine.ready, 'role_models':(role_engine.installed() if hasattr(role_engine,'installed') else []), 'role_model':getattr(role_engine,'model_id',None), 'role_context':token_budget['context'], 'role_token_safe_total':int(token_budget['context']*cap.TOKEN_SAFETY_RATIO), 'speed_ready':bool(ffmpeg_path()),'checker_ready':checker.ready, 'checker_id':checker.identity, 'voices':VOICES, 'fixed_voice_ready':getattr(engine,'reference_ready',False), 'preset_models':['0.6B']+(['1.7B'] if getattr(engine,'large_identity',None) else []), 'default_preset_model':('1.7B' if getattr(engine,'large_identity',None) else '0.6B'), 'design_ready':getattr(engine,'design_ready',False), 'local_only':True, 'synthetic_audio':True, 'draft_limits':cap.draft_limits(), 'clone_models':['0.6B']+(['1.7B'] if getattr(engine,'large_reference_ready',False) else []), 'default_clone_model':default_clone()}
+
+    @app.post('/api/attribution/estimate')
+    def estimate_role_draft(body: RoleEstimateRequest):
+        from .capacity import estimate_role_tokens
+        budget = role_token_budget()
+        units = sum(1 for u in source_units(body.script, body.cut) if u['text'].strip())
+        estimate = estimate_role_tokens(len(body.script), units, budget['context'], budget['max_tokens'])
+        return {'chars': len(body.script), 'units': units, **estimate}
 
     @app.get('/api/settings')
     def read_settings():
@@ -624,9 +648,12 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
     @app.post('/api/books')
     def create_book(body: BookRequest):
         """Keep a long text as a book cut into chapters; each becomes a project later."""
+        token_budget = role_token_budget() if body.token_mode else None
         with store.lock:
             book = books.create(body.title, body.script, body.language, body.headings,
-                                hints=[h.model_dump() for h in body.hints] if body.hints else None, silent=body.silent, cut=body.cut)
+                                hints=[h.model_dump() for h in body.hints] if body.hints else None, silent=body.silent,
+                                cut=body.cut, chapter_chars=(None if body.token_mode else body.chapter_chars),
+                                token_budget=token_budget)
         return books.public(book)
 
     imports = {}          # import_id -> parsed document, until its colours are answered (a handful at most)
@@ -652,6 +679,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             imports.pop(next(iter(imports)))
         imports[import_id] = doc
         return {'import_id': import_id, 'title': doc['title'] or body.name.rsplit('.', 1)[0], 'paragraphs': sum(1 for p in doc['paragraphs'] if not p['level']),
+                'chars': sum(len(p['text']) for p in doc['paragraphs']) + max(0, len(doc['paragraphs']) - 1),
                 'headings': [{'level': p['level'], 'text': p['text']} for p in doc['paragraphs'] if p['level']],
                 'colours': colored.colour_groups(doc['paragraphs']), 'has_quotes': colored.has_quotes(doc['paragraphs'])}
 
@@ -792,14 +820,30 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
         for summary in books.list():
             book_projects(books.get(summary['id']))
 
+    @app.get('/api/attribution/debug/{debug_id}')
+    def role_debug(debug_id: str):
+        if not re.fullmatch(r'[a-f0-9]{32}', debug_id):
+            raise ValueError('调试编号无效。')
+        draft_id = debug_runs.get(debug_id)
+        if not draft_id:
+            return {'text': '[VoxStage] 等待模型任务开始…', 'running': False}
+        chunks = []
+        for path in (drafts / (draft_id + '.log'), drafts / (draft_id + '-fallback.log')):
+            if path.is_file():
+                label = '主模型' if path.name == draft_id + '.log' else '备用模型'
+                text = path.read_text(encoding='utf-8', errors='replace')
+                chunks.append(f'===== {label} =====\n' + text[-120000:])
+        return {'text': '\n\n'.join(chunks) if chunks else '[VoxStage] 正在准备模型…',
+                'running': active.get('project_id') == 'role-draft'}
+
     @app.post('/api/attribution/draft')
     def role_draft(body: RoleDraftRequest):
         from .core import uid
         from .capacity import draft_limits
         limits = draft_limits()
-        if len(body.script) > limits['chars']:
-            raise ValueError(f"这段原文有 {len(body.script)} 字，这台机器一次最多处理 {limits['chars']} 字（按内存 {limits['memory_gb']} GB 定）。请分成几段。")
         draft_id = uid()
+        if body.debug_id:
+            debug_runs[body.debug_id] = draft_id
         with store.lock:
             if active['project_id']:
                 raise RuntimeError('正在处理其他任务，请稍后再生成角色草稿。')

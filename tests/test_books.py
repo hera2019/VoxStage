@@ -32,6 +32,46 @@ def test_a_short_text_is_one_chapter_and_short_flow_is_unchanged():
     assert split_chapters('小雪看着窗外。') == [{'title': '', 'text': '小雪看着窗外。'}]
 
 
+def test_custom_chapter_character_limit_is_respected():
+    text = ('雨点敲着窗。她抬头看了看。然后继续写。\n') * 400
+    for limit in (1000, 2000, 3000):
+        chapters = split_chapters(text, chapter_chars=limit)
+        assert len(chapters) > 1
+        assert all(len(c['text']) <= limit for c in chapters)
+        assert ''.join(c['text'] for c in chapters) == text
+
+
+def test_selected_size_packs_adjacent_short_source_chapters_together():
+    body = '雨点敲着窗。她抬头看了看。' * 80 + '\n'
+    text = ''.join(f'第{i}章 测试\n{body}' for i in range(1, 7))
+    original = split_chapters(text)
+    assert len(original) == 6
+    packed = split_chapters(text, chapter_chars=3000)
+    assert len(packed) == 3
+    assert all(len(c['text']) <= 3000 for c in packed)
+    assert packed[0]['title'] == '第1章 测试 ～ 第2章 测试'
+    assert packed[1]['title'] == '第3章 测试 ～ 第4章 测试'
+    assert ''.join(c['text'] for c in packed) == text
+
+
+def test_book_api_accepts_selected_chapter_size_and_rejects_above_machine_limit(tmp_path):
+    from fastapi.testclient import TestClient
+    from runtime.app import create_app
+    from runtime.engines import FixtureEngine
+    from tests.test_attribution_import import Roles, HEADERS
+    text = ('雨点敲着窗。她抬头看了看。然后继续写。\n') * 180
+    with TestClient(create_app(tmp_path / 'projects', FixtureEngine(), role_engine=Roles()),
+                    base_url='http://127.0.0.1', headers=HEADERS) as c:
+        response = c.post('/api/books', json={'title': '测试分章', 'language': 'zh', 'script': text, 'chapter_chars': 1000})
+        assert response.status_code == 200, response.text
+        book = response.json()
+        assert book['chapter_chars'] == 1000
+        assert all(ch['chars'] <= 1000 for ch in book['chapters'])
+        # Test mode may deliberately exceed the conservative machine tier.
+        assert c.post('/api/books', json={'title': '四千字测试', 'language': 'zh', 'script': text, 'chapter_chars': 4000}).status_code == 200
+        assert c.post('/api/books', json={'title': '超过测试上限', 'language': 'zh', 'script': text, 'chapter_chars': 12001}).status_code == 422
+
+
 def test_a_book_hands_out_chapters_with_names_from_its_other_chapters(client):
     book = client.post('/api/books', json={'title': '孔乙己', 'language': 'zh',
                                            'script': '第一章 酒店\n' + '鲁镇的酒店。' * 300 + '\n第二章 伙计\n我从十二岁起。\n'}).json()
@@ -72,7 +112,7 @@ def test_a_dialogue_heavy_chapter_is_cut_so_the_draft_can_take_each_piece():
     text = '第三回 相见\n' + line * 100
     chapters = split_chapters(text)
     assert len(chapters) > 1
-    assert all(len(source_units(c['text'])) <= UNIT_LIMIT for c in chapters)
+    assert all(sum(1 for u in source_units(c['text']) if u['text'].strip()) <= UNIT_LIMIT for c in chapters)
     assert all(c['text'].endswith('\n') for c in chapters)                     # cut at paragraph ends
     assert [c['title'] for c in chapters][:2] == ['第三回 相见 · 1', '第三回 相见 · 2']
     assert ''.join(c['text'] for c in chapters) == text
@@ -85,7 +125,7 @@ def test_a_single_paragraph_of_dialogue_is_never_cut_inside_a_quotation():
     chapters = split_chapters(text)
     assert len(chapters) > 1
     for c in chapters:
-        assert len(source_units(c['text'])) <= UNIT_LIMIT
+        assert sum(1 for u in source_units(c['text']) if u['text'].strip()) <= UNIT_LIMIT
         assert c['text'].count('“') == c['text'].count('”')                    # every quotation closed
         assert c['text'].rstrip('\n').endswith(('。', '”'))
     assert ''.join(c['text'] for c in chapters) == text
@@ -222,3 +262,26 @@ def test_a_character_has_a_sex_apart_from_the_voice_and_it_is_inherited(client):
     assert q['sexes'] == {'阿宁': 'f'}
     p = client.patch('/api/projects/' + p['id'], json={'revision': p['revision'], 'speaker': '阿宁', 'sex': 'auto'}).json()
     assert p['sexes'] == {}
+
+
+def test_token_budget_split_records_estimates_and_stays_under_budget(tmp_path):
+    from fastapi.testclient import TestClient
+    from runtime.app import create_app
+    from runtime.engines import FixtureEngine
+    from tests.test_attribution_import import Roles, HEADERS
+    text = ('旁白走过长廊。\n“你来了吗？”\n“我来了。”\n') * 260
+    with TestClient(create_app(tmp_path / 'projects-token', FixtureEngine(), role_engine=Roles()),
+                    base_url='http://127.0.0.1', headers=HEADERS) as c:
+        response = c.post('/api/books', json={'title': 'Token 自动分段', 'language': 'zh',
+                                              'script': text, 'token_mode': True})
+        assert response.status_code == 200, response.text
+        book = response.json()
+        assert book['split_mode'] == 'tokens'
+        assert book['chapter_chars'] is None
+        assert len(book['chapters']) > 1
+        assert ''.join(c.get('/api/books/%s/chapters/%s' % (book['id'], ch['index'])).json()['text']
+                       for ch in book['chapters']) == text
+        for chapter in book['chapters']:
+            assert chapter['units'] > 0
+            assert chapter['estimated_total_tokens'] <= chapter['token_budget']
+            assert chapter['estimated_prompt_tokens'] + chapter['estimated_completion_tokens'] == chapter['estimated_total_tokens']

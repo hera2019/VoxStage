@@ -84,6 +84,7 @@ def test_a_coloured_document_goes_through_import_book_draft_and_confirm_without_
     data = base64.b64encode(docx(body, body_colour='800080')).decode()
     with TestClient(create_app(tmp_path / 'p', FixtureEngine(), role_engine=Never()), base_url='http://127.0.0.1', headers=HEADERS) as c:
         r = c.post('/api/import/docx', json={'name': 'test.docx', 'data': data}).json()
+        assert r['chars'] == sum(len(''.join(text for text, _ in runs)) for _, runs in body) + len(body) - 1
         assert [h['text'] for h in r['headings']] == ['第一章 猫', '第二章 账', '[夜里]'] and r['has_quotes'] is False
         colours = {g['colour']: g for g in r['colours']}
         assert set(colours) == {'#800080', '#000080', '#8064a2', '#bfbfbf'} and colours['#000080']['runs'] == 2

@@ -3,7 +3,7 @@ import hashlib
 import json
 import os
 import re
-from .capacity import draft_limits
+from .capacity import draft_limits, estimate_role_tokens
 import socket
 import subprocess
 import time
@@ -319,8 +319,12 @@ class RoleDraftEngine:
         # sent, counted against the limit, and required in the answer.
         spoken = [u for u in units if u['text'].strip()]
         limits = draft_limits()
-        if not spoken or len(spoken) > limits['units']:
-            raise ValueError(f"请选取更短的原稿（最多 {limits['units']} 个片段）。")
+        effective_context = min(limits['context'], ROLE_MODELS.get(self.model_id, {}).get('max_context', limits['context']))
+        estimate = estimate_role_tokens(len(text), len(spoken), effective_context, limits['max_tokens'])
+        if not spoken:
+            raise ValueError('原稿里没有可以分析的片段。')
+        if not estimate['fits']:
+            raise ValueError(f"这段原稿预计需要约 {estimate['total']} tokens，当前安全预算是 {estimate['safe_total']}（{len(spoken)} 个片段）。请让自动分段先切开。")
         with self.model.open('rb') as stream:
             if hashlib.file_digest(stream, 'sha256').hexdigest() != self.sha256:
                 raise ValueError('分角色模型校验不一致。')
@@ -363,8 +367,13 @@ class RoleDraftEngine:
         started = time.monotonic()
         with Path(log_path).open('w') as log:
             launch = ROLE_MODELS.get(self.model_id, {}).get('launch') or ['--reasoning', 'off']   # a plain instruct model answers at once
+            log.write(f'[VoxStage] model={self.model_id}\n')
+            log.write(f'[VoxStage] chars={len(text)} units={len(spoken)} context={effective_context} max_tokens={limits["max_tokens"]}\n')
+            log.write(f'[VoxStage] estimated_prompt={estimate["prompt"]} estimated_completion={estimate["completion"]} estimated_total={estimate["total"]} safe_total={estimate["safe_total"]}\n')
+            log.write(f'[VoxStage] model_file={self.model.name}\n')
+            log.flush()
             proc = subprocess.Popen([str(self.server),'-m',str(self.model),'--alias','role-draft','-ngl','all',
-                '-c',str(min(limits['context'], ROLE_MODELS.get(self.model_id, {}).get('max_context', limits['context']))),'-np','1','--jinja',*launch,'--host','127.0.0.1','--port',str(port),
+                '-c',str(effective_context),'-np','1','--jinja',*launch,'--host','127.0.0.1','--port',str(port),
                 '--no-webui','--api-key',key],stdout=log,stderr=subprocess.STDOUT)
             try:
                 for _ in range(300):
@@ -381,6 +390,12 @@ class RoleDraftEngine:
                         [{'id':u['id'],'text':u['text']} for u in spoken],ensure_ascii=False)}],
                     'response_format':{'type':'json_schema','json_schema':{'name':'speaker_segments','schema':schema}}})
                 raw = response['choices'][0]['message']['content'] or ''
+                usage = response.get('usage') or {}
+                log.write(f'\n[VoxStage] finish_reason={response["choices"][0].get("finish_reason")} '
+                          f'prompt_tokens={usage.get("prompt_tokens", "?")} completion_tokens={usage.get("completion_tokens", "?")} '
+                          f'total_tokens={usage.get("total_tokens", "?")} elapsed={time.monotonic()-started:.2f}s\n')
+                log.write('[VoxStage] model_response:\n' + raw + '\n')
+                log.flush()
                 if response['choices'][0].get('finish_reason') == 'length':
                     raise ValueError('模型的回答被截断了（超过输出上限）。请把原文分成两段再试。')
                 # The answer covers the units that were sent; blank units are
@@ -416,6 +431,10 @@ class RoleDraftEngine:
                 return {'labels':labels, 'raw_response':response, 'model_sha256':self.sha256, 'model_id':self.model_id,
                         'settings':settings,'prompt_sha256':hashlib.sha256(prompt.encode()).hexdigest(),
                         'repaired':repaired, 'seconds_measured':time.monotonic()-started}
+            except Exception as exc:
+                log.write(f'\n[VoxStage] ERROR {type(exc).__name__}: {exc}\n')
+                log.flush()
+                raise
             finally:
                 proc.terminate()
                 try:

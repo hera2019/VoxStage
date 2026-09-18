@@ -23,12 +23,10 @@ from evals.speaker_attribution.source_units import source_units, PAIRS
 HEADING = re.compile(r'^\s*(?:第[零一二三四五六七八九十百千万0-9０-９]+[章回节卷集部]|'
                      r'(?:CHAPTER|Chapter|BOOK|Book|PART|Part)\s+(?:[IVXLC]+|\d+|[A-Z][a-z]+)\b).*$')
 
-from .capacity import draft_limits
+from .capacity import draft_limits, estimate_role_tokens
 _LIMITS = draft_limits()
-CHAPTER_LIMIT = _LIMITS['chars']            # the draft's own limit, by this machine's memory (capacity.py); a chapter over it is cut like headingless text
-PARAGRAPH_TARGET = CHAPTER_LIMIT - 400      # leave headroom under the limit when cutting at paragraphs
-UNIT_LIMIT = _LIMITS['units']               # the draft's other limit: quoted units (attribution.annotate)
-UNIT_TARGET = 70              # the same headroom, in units
+CHAPTER_LIMIT = _LIMITS['chars']            # hard ceiling for this machine (capacity.py)
+UNIT_LIMIT = _LIMITS['units']               # hard ceiling for model-labelled source units
 MIN_TAIL = 300                # a final piece shorter than this joins the piece before it
 PARAGRAPH_END = re.compile(r'(\n\s*\n|(?<=[。！？!?”』」…])\n)')
 
@@ -38,20 +36,34 @@ def _units(text, cut=None):
     return sum(1 for u in source_units(text, cut) if u['text'].strip())
 
 
-def _fits(text, cut=None):
-    return len(text) <= CHAPTER_LIMIT and _units(text, cut) <= UNIT_LIMIT
+def _token_estimate(text, cut, token_budget):
+    return estimate_role_tokens(len(text), _units(text, cut), token_budget['context'], token_budget['max_tokens'])
 
 
-def split_chapters(text, headings=None, cut=None):
+def _fits(text, cut=None, chapter_limit=CHAPTER_LIMIT, unit_limit=UNIT_LIMIT, token_budget=None):
+    if token_budget is not None:
+        return _token_estimate(text, cut, token_budget)['fits']
+    return len(text) <= chapter_limit and _units(text, cut) <= unit_limit
+
+
+def split_chapters(text, headings=None, cut=None, chapter_chars=None, token_budget=None):
     """Cut a text into chapters. Returns [{'title', 'text'}] covering the text
     exactly (concatenating the pieces gives the input back). `headings` may
     name the heading lines outright (0-based line numbers — a Markdown import
     knows its headings); otherwise they are found by their look.
 
-    With headings, each heading line opens a chapter and stays in its text.
-    Without any, the text is cut at blank-line paragraph breaks so no piece
-    exceeds the draft limit; never inside a paragraph, never inside a sentence.
+    With headings, each heading line is a preferred boundary and stays in the
+    text. With no explicit chapter size, headings retain the old one-heading-
+    per-piece behaviour. When a size is explicitly selected in the UI, adjacent
+    short heading sections are packed together up to that size/model-unit limit;
+    an individual overlong section is still split at paragraphs/sentences.
+    Without headings, the text is cut at paragraph/sentence boundaries.
     """
+    explicit_size = chapter_chars is not None or token_budget is not None
+    chapter_limit = CHAPTER_LIMIT if chapter_chars is None else int(chapter_chars)
+    if chapter_chars is not None and not 1 <= chapter_limit <= 12000:
+        raise ValueError('每章字数必须在 1 到 12000 之间。')
+    unit_limit = UNIT_LIMIT
     lines = text.split('\n')
     if headings is not None:
         heads = sorted({i for i in headings if 0 <= i < len(lines) and lines[i].strip()})
@@ -59,62 +71,109 @@ def split_chapters(text, headings=None, cut=None):
         heads = [i for i, line in enumerate(lines) if HEADING.match(line)]
     if heads:
         bounds = ([0] if heads[0] > 0 else []) + heads + [len(lines)]
-        chapters = []
+        sections = []
         for a, b in zip(bounds, bounds[1:]):
             body = '\n'.join(lines[a:b]) + ('\n' if b < len(lines) else '')
             if not body.strip():
                 continue
             title = lines[a].strip() if a in heads else '（开头）'
-            chapters += _fit(title, body, cut)
+            sections.append((title, body))
+        if not explicit_size:
+            chapters = []
+            for title, body in sections:
+                chapters += _fit(title, body, cut, chapter_limit, unit_limit, token_budget)
+            return _reassemble_exact(text, chapters)
+
+        chapters, current, titles = [], '', []
+        def flush():
+            nonlocal current, titles
+            if current:
+                chapters.append({'title': _packed_title(titles), 'text': current})
+                current, titles = '', []
+        for title, body in sections:
+            if not _fits(body, cut, chapter_limit, unit_limit, token_budget):
+                flush()
+                chapters += _fit(title, body, cut, chapter_limit, unit_limit, token_budget)
+                continue
+            if current and not _fits(current + body, cut, chapter_limit, unit_limit, token_budget):
+                flush()
+            current += body
+            titles.append(title)
+        flush()
         return _reassemble_exact(text, chapters)
-    return _reassemble_exact(text, _fit('', text, cut))
+    return _reassemble_exact(text, _fit('', text, cut, chapter_limit, unit_limit, token_budget))
 
 
-def _fit(title, body, cut=None):
-    """One chapter, or several pieces of it when it is more than the draft can take."""
-    if _fits(body, cut):
+def _packed_title(titles):
+    """Readable label for one processing piece containing one or more source chapters."""
+    names = [t for t in titles if t]
+    if not names:
+        return ''
+    if len(names) == 1:
+        return names[0]
+    return f'{names[0]} ～ {names[-1]}'
+
+
+def _fit(title, body, cut=None, chapter_limit=CHAPTER_LIMIT, unit_limit=UNIT_LIMIT, token_budget=None):
+    """One source chapter, or several pieces when the selected budget cannot take it."""
+    if _fits(body, cut, chapter_limit, unit_limit, token_budget):
         return [{'title': title, 'text': body}]
     # A paragraph ends at a blank line, or at a line break that follows a
-    # sentence end — Chinese web novels separate paragraphs with a single
-    # newline, and a hard-wrapped line ending mid-sentence is not a boundary.
-    # The separator stays with the paragraph before it so the pieces
-    # concatenate back to the original.
+    # sentence end. Test the whole candidate against the same budget used by
+    # the model instead of summing a separate character/unit heuristic.
     merged = []
     for i, chunk in enumerate(re.split(PARAGRAPH_END, body)):
         if merged and i % 2:
             merged[-1] += chunk
         else:
             merged.append(chunk)
-    pieces, current, count = [], '', 0
+    pieces, current = [], ''
     for para in merged:
-        units = _units(para, cut)     # summed per paragraph; the exact check comes below
-        if current and (len(current) + len(para) > PARAGRAPH_TARGET or count + units > UNIT_TARGET):
-            pieces.append(current); current, count = para, units
+        candidate = current + para
+        if current and not _fits(candidate, cut, chapter_limit, unit_limit, token_budget):
+            pieces.append(current)
+            current = para
         else:
-            current += para; count += units
+            current = candidate
     if current:
-        if pieces and len(current) < MIN_TAIL and _fits(pieces[-1] + current, cut):
+        if pieces and len(current) < MIN_TAIL and _fits(pieces[-1] + current, cut, chapter_limit, unit_limit, token_budget):
             pieces[-1] += current
         else:
             pieces.append(current)
     out = []
     for n, piece in enumerate(pieces, 1):
-        if not _fits(piece, cut):
-            out += _cut_sentences(title, piece, n, cut)
+        if not _fits(piece, cut, chapter_limit, unit_limit, token_budget):
+            out += _cut_sentences(title, piece, n, cut, chapter_limit, unit_limit, token_budget)
         else:
             out.append({'title': f'{title} · {n}' if title and len(pieces) > 1 else (title or f'第 {n} 段'), 'text': piece})
     return out
 
 
-def _cut_sentences(title, piece, n, cut=None):
-    """A single paragraph that is more than the draft can take: cut after
-    sentence ends only, never inside a quotation, and within both caps."""
+def _cut_sentences(title, piece, n, cut=None, chapter_limit=CHAPTER_LIMIT, unit_limit=UNIT_LIMIT, token_budget=None):
+    """Cut an over-budget paragraph at the furthest sentence end that still fits."""
     out, start = [], 0
     while start < len(piece):
-        end = min(start + PARAGRAPH_TARGET, len(piece))
-        if end < len(piece) or _units(piece[start:end], cut) > UNIT_TARGET:
-            stops = [x for x in _stops(piece, start, end) if _units(piece[start:x]) <= UNIT_TARGET]
-            end = stops[-1] if stops else (_stops(piece, start, len(piece)) or [end])[0]
+        if _fits(piece[start:], cut, chapter_limit, unit_limit, token_budget):
+            end = len(piece)
+        else:
+            stops = _stops(piece, start, len(piece))
+            fitting = [x for x in stops if _fits(piece[start:x], cut, chapter_limit, unit_limit, token_budget)]
+            if fitting:
+                end = fitting[-1]
+            else:
+                # A single sentence itself is over budget. Find the largest safe
+                # prefix rather than refusing the whole book; this is only the
+                # emergency path for pathological paragraphs.
+                lo, hi = start + 1, len(piece)
+                end = start + 1
+                while lo <= hi:
+                    mid = (lo + hi) // 2
+                    if _fits(piece[start:mid], cut, chapter_limit, unit_limit, token_budget):
+                        end = mid; lo = mid + 1
+                    else:
+                        hi = mid - 1
+                if end <= start:
+                    raise ValueError('单个片段超过模型预算，无法安全分段。')
         out.append({'title': f'{title or "第 %d 段" % n} · {len(out) + 1}', 'text': piece[start:end]})
         start = end
     return out
@@ -150,21 +209,32 @@ class Books:
     def __init__(self, root):
         self.root = Path(root); self.root.mkdir(parents=True, exist_ok=True)
 
-    def create(self, title, text, language, headings=None, hints=None, silent=None, cut=None):
+    def create(self, title, text, language, headings=None, hints=None, silent=None, cut=None, chapter_chars=None, token_budget=None):
         """`hints` are spans of `text` whose speaker a coloured manuscript settles,
         `silent` line numbers not read aloud; both are kept per chapter, rebased."""
-        chapters = split_chapters(text, headings, cut)
+        chapters = split_chapters(text, headings, cut, chapter_chars, token_budget)
         records, offset, line = [], 0, 0
         for i, c in enumerate(chapters):
             end = offset + len(c['text']); lines = c['text'].count('\n') + (0 if c['text'].endswith('\n') else 1)
-            record = {'index': i + 1, 'title': c['title'], 'chars': len(c['text']), 'text': c['text']}
+            record = {'index': i + 1, 'title': c['title'], 'chars': len(c['text']), 'units': _units(c['text'], cut), 'text': c['text']}
+            if token_budget is not None:
+                estimate = _token_estimate(c['text'], cut, token_budget)
+                record['estimated_prompt_tokens'] = estimate['prompt']
+                record['estimated_completion_tokens'] = estimate['completion']
+                record['estimated_total_tokens'] = estimate['total']
+                record['token_budget'] = estimate['safe_total']
             if hints:
                 record['hints'] = [{**h, 'start': h['start'] - offset, 'end': h['end'] - offset}
                                    for h in hints if h['start'] >= offset and h['end'] <= end]
             if silent:
                 record['silent'] = [n - line for n in silent if line <= n < line + lines]
             records.append(record); offset = end; line += lines
-        book = {'id': uuid.uuid4().hex, 'title': title.strip()[:120] or '未命名', 'language': language, 'chapters': records}
+        book = {'id': uuid.uuid4().hex, 'title': title.strip()[:120] or '未命名', 'language': language,
+                'chapter_chars': (None if token_budget is not None else (CHAPTER_LIMIT if chapter_chars is None else int(chapter_chars))),
+                'split_mode': ('tokens' if token_budget is not None else 'chars'), 'chapters': records}
+        if token_budget is not None:
+            book['token_context'] = token_budget['context']
+            book['token_max_tokens'] = token_budget['max_tokens']
         if cut:
             book['cut'] = cut              # 'lines': the manuscript's colours, not its quotation marks, cut the lines
         narration = next((h.get('colour') for h in (hints or []) if h.get('speaker') == 'NARRATOR' and h.get('colour')), None)
