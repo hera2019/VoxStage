@@ -269,7 +269,7 @@ main>footer{flex-shrink:0;margin:0 -36px -38px;border-top:1px solid #d5dccb}
 .template-list{list-style:none;margin:6px 0 0;padding:0;font-size:12px}
 .template-list li{display:flex;justify-content:space-between;align-items:center;padding:3px 0}
 .template-list button{padding:1px 7px;font-size:11px;opacity:.6}
-.history .gear{font-size:inherit;line-height:inherit;padding:inherit}
+
 .tags{display:inline-flex;flex-wrap:wrap;gap:4px;border:0;background:none;padding:2px 0;margin-top:3px;cursor:pointer}
 .tags span{font-size:10px;padding:1px 6px;border-radius:9px;background:#e9eee4;color:#5a6a58}
 .tags .tag-edit{background:none;color:#9da38f}
