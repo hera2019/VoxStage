@@ -233,3 +233,39 @@ def test_merge_refuses_across_the_read_aloud_switch_and_over_the_limit(ranged):
         {'id': 'y', 'speaker': '旁白', 'kind': 'narration', 'text': '甲' * 35, 'source_start': 35, 'source_end': 70, 'audio': None, 'error': None, 'spoken_as': ''}]}
     with pytest.raises(ValueError, match='上限'):
         merge_segments(long, 'x', 'next', 'zh')
+
+
+def test_muting_a_role_skips_all_its_lines_and_restoring_keeps_per_line_silence(client):
+    p = generate(client, create(client, 'zh'))
+    base = '/api/projects/' + p['id']
+    narrator = next(s for s in p['segments'] if s['speaker'] == '旁白')
+    dialogue = next(s for s in p['segments'] if s['speaker'] != '旁白')
+    # One dialogue line is independently silent before the whole narrator role is muted.
+    p = client.patch(base, json={'revision': p['revision'], 'segment_id': dialogue['id'], 'read_aloud': False}).json()
+    p = client.patch(base, json={'revision': p['revision'], 'speaker': '旁白', 'speaker_muted': True}).json()
+    assert '旁白' in p['muted_speakers']
+    assert all(s['status'] == 'silent' for s in p['segments'] if s['speaker'] == '旁白')
+    assert next(s for s in p['segments'] if s['id'] == dialogue['id'])['status'] == 'silent'
+    # Export keeps only effective spoken lines: muted narration is absent from audio/timeline/subtitles.
+    links = client.post(base + '/export/create', json={'revision': p['revision']})
+    assert links.status_code == 200, links.text
+    timeline = client.get(links.json()['timeline.json']).json()
+    assert all(e['speaker'] != '旁白' for e in timeline['segments'])
+    assert all(e['id'] != dialogue['id'] for e in timeline['segments'])
+    assert '雨点轻轻敲着窗' not in client.get(links.json()['subtitles.srt']).text
+    # A muted role is skipped by generation just like an individually muted line.
+    r = client.post(base + '/render/start', json={'revision': p['revision'], 'segment_id': narrator['id']})
+    assert r.status_code == 400 and '不朗读' in r.json()['detail']
+    # Restore the role without touching the dialogue line's own read_aloud flag.
+    p = client.patch(base, json={'revision': p['revision'], 'speaker': '旁白', 'speaker_muted': False}).json()
+    assert '旁白' not in p['muted_speakers']
+    assert next(s for s in p['segments'] if s['id'] == narrator['id'])['status'] == 'ready'
+    restored_dialogue = next(s for s in p['segments'] if s['id'] == dialogue['id'])
+    assert restored_dialogue['read_aloud'] is False and restored_dialogue['status'] == 'silent'
+
+
+def test_reads_aloud_respects_role_mute_without_losing_line_setting():
+    line = {'speaker': '旁白', 'text': 'x'}
+    assert reads_aloud(line, {'muted_speakers': []}) is True
+    assert reads_aloud(line, {'muted_speakers': ['旁白']}) is False
+    assert reads_aloud({**line, 'read_aloud': False}, {'muted_speakers': []}) is False

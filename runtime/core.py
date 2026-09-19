@@ -53,9 +53,11 @@ def parse_script(script, language):
         raise ValueError(f'一个工程需要 1–{cap} 行，当前 {len(segments)} 行。')
     return segments
 
-def reads_aloud(segment):
-    """Older projects have no flag; every line in them is read."""
-    return segment.get('read_aloud', True)
+def reads_aloud(segment, project=None):
+    """Effective read state: a line may be silent itself, or its whole role may be muted."""
+    if not segment.get('read_aloud', True):
+        return False
+    return project is None or segment.get('speaker') not in set(project.get('muted_speakers', []))
 
 
 def split_segment(project, segment_id, at):
@@ -294,7 +296,7 @@ class Templates:
 
 
 def edit_state(project):
-    return copy.deepcopy({**{k:project[k] for k in ('name','language','voices','segments','pause_ms')},'lexicon':project.get('lexicon',{}),'preset_model':project.get('preset_model','0.6B'),'clone_model':project.get('clone_model','0.6B'),'voice_profiles':project.get('voice_profiles',{}), 'archived':project.get('archived',False), 'speech_rate':project.get('speech_rate',1.0), 'colors':project.get('colors',{}), 'color_scope':project.get('color_scope','both'), 'crowds':project.get('crowds',{}), 'sexes':project.get('sexes',{}), 'ellipsis_pause_ms':project.get('ellipsis_pause_ms',0)})
+    return copy.deepcopy({**{k:project[k] for k in ('name','language','voices','segments','pause_ms')},'lexicon':project.get('lexicon',{}),'preset_model':project.get('preset_model','0.6B'),'clone_model':project.get('clone_model','0.6B'),'voice_profiles':project.get('voice_profiles',{}), 'archived':project.get('archived',False), 'speech_rate':project.get('speech_rate',1.0), 'colors':project.get('colors',{}), 'color_scope':project.get('color_scope','both'), 'crowds':project.get('crowds',{}), 'sexes':project.get('sexes',{}), 'muted_speakers':project.get('muted_speakers',[]), 'ellipsis_pause_ms':project.get('ellipsis_pause_ms',0)})
 
 class Store:
     def __init__(self, root):
@@ -320,6 +322,7 @@ class Store:
         p.setdefault('voice_profiles',{})
         p.setdefault('archived',False)
         p.setdefault('speech_rate',1.0)
+        p.setdefault('muted_speakers',[])
         return p
 
     def write(self, data):
@@ -423,6 +426,7 @@ class Store:
         result.setdefault('voice_profiles',{})
         result.setdefault('archived',False)
         result.setdefault('speech_rate',1.0)
+        result.setdefault('muted_speakers',[])
         result['can_undo'], result['can_redo'] = bool(p['history']), bool(p['future'])
         result.pop('history', None); result.pop('future', None)
         for s in result['segments']:
@@ -432,9 +436,9 @@ class Store:
             if audio and audio['fingerprint'] == current and (self.directory(p['id'])/'audio'/(current+'.wav')).exists():
                 s['status'] = 'ready'
             s.setdefault('read_aloud', True); s.setdefault('lock_before', False)
-            if not s['read_aloud']:
+            if not reads_aloud(s, p):
                 # A line kept in the script but not in the recording. Whatever
-                # audio it had stays on disk for when it is switched back on.
+                # audio it had stays on disk for when the line or role is switched back on.
                 s['status'] = 'silent'
             spoken = spoken_text(p,s)
             s['check_status']=check_status(s,current,getattr(checker,'identity',None),spoken)

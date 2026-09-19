@@ -360,3 +360,30 @@ def test_content_errors_cancel_and_audio_preservation(tmp_path):
         assert p['segments'][0]['check_status']=='stale'
 
 # 最后更新：2026-09-09 · Astra
+
+
+def test_current_export_links_follow_revision_and_stay_stale_after_undo(client):
+    p = generate(client, create(client, 'zh'))
+    base = f'/api/projects/{p["id"]}'
+    assert client.get(base + '/export/current').json() == {}
+
+    links = client.post(base + '/export/create', json={'revision': p['revision']}).json()
+    current = client.get(base + '/export/current')
+    assert current.status_code == 200
+    assert current.json() == links
+    old_wav = links['full.wav']
+    assert client.get(old_wav).status_code == 200
+
+    # Any saved edit creates a new revision, so the old export is immediately stale.
+    changed = client.patch(base, json={'revision': p['revision'], 'pause_ms': 500}).json()
+    assert changed['revision'] > p['revision']
+    assert client.get(base + '/export/current').json() == {}
+    assert client.get(old_wav).status_code == 404
+
+    # Undo restores the content but deliberately does not restore export validity:
+    # undo itself creates another revision, avoiding fragile content-equality reuse.
+    restored = client.post(base + '/undo', json={'revision': changed['revision']}).json()
+    assert restored['pause_ms'] == p['pause_ms']
+    assert restored['revision'] > changed['revision']
+    assert client.get(base + '/export/current').json() == {}
+    assert client.get(old_wav).status_code == 404

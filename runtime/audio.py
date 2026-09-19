@@ -55,11 +55,12 @@ def prepare_segment(project, segment, directory):
 
 
 def export_audio(project, directory: Path, output: Path, *, delivery=False):
+    from .core import reads_aloud
     parts, entries, cues, rendered = [], [], [], []
     position, rate = 0, None
     # A line switched off stays in the script and out of the recording: no
     # audio, no cue, no delivery file, and no pause of its own.
-    spoken = [s for s in project['segments'] if s.get('read_aloud', True)]
+    spoken = [s for s in project['segments'] if reads_aloud(s, project)]
     if not spoken:
         raise ValueError('所有句子都设为不朗读，没有可导出的内容。')
     for index, segment in enumerate(spoken):

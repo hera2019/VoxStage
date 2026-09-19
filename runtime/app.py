@@ -208,6 +208,7 @@ class EditRequest(BaseModel):
     pause_ms: int | None = Field(default=None, ge=0, le=2000)
     pause_after: int | None = Field(default=None, ge=0, le=2000, strict=True)
     read_aloud: bool | None = None
+    speaker_muted: bool | None = None                     # with speaker: mute/unmute the whole role without losing its chosen voice
     lexicon: dict[str, str] | None = None
     preset_model: Literal['0.6B', '1.7B'] | None = None
     clone_model: Literal['0.6B', '1.7B'] | None = None      # the model that reads fixed and designed voices (2026-09-16)
@@ -1871,6 +1872,15 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                     s['speaker'] = body.speaker
                 if any(getattr(body, field) is not None for field in ('text', 'spoken_as', 'speaker')):
                     s['error'] = None
+            if body.speaker_muted is not None:
+                if body.speaker not in p['voices']:
+                    raise ValueError('Select an existing speaker')
+                muted = p.setdefault('muted_speakers', [])
+                if body.speaker_muted:
+                    if body.speaker not in muted:
+                        muted.append(body.speaker)
+                else:
+                    p['muted_speakers'] = [name for name in muted if name != body.speaker]
             if body.voice is not None and body.segment_id and body.speaker is None:
                 # One line read in a voice of its own — 'auto' returns it to its character's.
                 s = next((x for x in p['segments'] if x['id'] == body.segment_id), None)
@@ -1979,6 +1989,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             for speaker in [x for x in p['voices'] if x not in used]:
                 p['voices'].pop(speaker, None)
                 p.get('voice_profiles', {}).pop(speaker, None)
+                p['muted_speakers'] = [name for name in p.get('muted_speakers', []) if name != speaker]
         with store.lock:
             return store.public(store.edit(project_id, body.revision, change), engine, checker)
 
@@ -2061,6 +2072,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             if any(s['speaker'] == name for s in p['segments']):
                 raise ValueError('这个角色还有句子，先把句子改给别人。')
             p['voices'].pop(name); (p.get('colors') or {}).pop(name, None); (p.get('sexes') or {}).pop(name, None); (p.get('voice_profiles') or {}).pop(name, None); (p.get('crowds') or {}).pop(name, None)
+            p['muted_speakers'] = [speaker for speaker in p.get('muted_speakers', []) if speaker != name]
         return store.public(store.edit(project_id, revision, apply), engine, checker)
 
     @app.post('/api/projects/{project_id}/crowd')
@@ -2281,9 +2293,9 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 retake_ids={s['id'] for s in store.public(p,engine,checker)['segments'] if s['listening_status']=='issue'}
                 if not retake_ids:raise ValueError('没有当前版本的声音问题标记。')
             selected = [s for s in p['segments'] if (s['id'] in retake_ids if body.marked_only else (not body.segment_id or s['id']==body.segment_id))]
-            if body.segment_id and selected and not reads_aloud(selected[0]):
-                raise ValueError('这一句已设为不朗读；要生成它，先把它切回朗读。')
-            selected = [s for s in selected if reads_aloud(s)]
+            if body.segment_id and selected and not reads_aloud(selected[0], p):
+                raise ValueError('这一句或它的角色已设为不朗读；要生成它，先恢复朗读。')
+            selected = [s for s in selected if reads_aloud(s, p)]
             if not selected:
                 raise ValueError('Unknown segment' if body.segment_id else '没有需要朗读的句子。')
             if body.force:
@@ -2522,6 +2534,39 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
         if not path.is_file():raise HTTPException(404)
         return FileResponse(path,media_type='audio/wav')
 
+    def existing_export_links(project_id: str, p: dict):
+        """Return only a complete export for the project's current revision.
+
+        Export validity is intentionally revision-based, not content-hash based:
+        any edit/undo/redo/render creates a new revision, so even if a person later
+        changes the text back to identical content, the older export stays stale.
+        """
+        revision = p['revision']
+        out = store.directory(project_id)/'exports'/str(revision)
+        required = ['full.wav','subtitles.srt','timeline.json','content-check.json','delivery.zip']
+        if not all((out/name).is_file() for name in required):
+            return {}
+        try:
+            if json.loads((out/'timeline.json').read_text()).get('project_revision') != revision:
+                return {}
+            if json.loads((out/'content-check.json').read_text()).get('project_revision') != revision:
+                return {}
+        except (OSError, ValueError, json.JSONDecodeError):
+            return {}
+        optional = ['full.mp3','timeline-24fps.xml','timeline-25fps.xml','timeline-30fps.xml',
+                    'timeline-50fps.xml','timeline-60fps.xml','timeline-README.txt']
+        names = required[:]
+        if (out/'full.mp3').is_file():
+            names.insert(1, 'full.mp3')
+        names += [name for name in optional[1:] if (out/name).is_file()]
+        return {name:f'/api/projects/{project_id}/export/{revision}/{name}' for name in names}
+
+    @app.get('/api/projects/{project_id}/export/current')
+    def current_export(project_id: str):
+        with store.lock:
+            p = store.read(project_id)
+            return existing_export_links(project_id, p)
+
     @app.post('/api/projects/{project_id}/export/create')
     def export(project_id: str, body: RevisionRequest):
         with store.lock:
@@ -2582,7 +2627,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
 
     @app.get('/api/projects/{project_id}/export/{revision}/{name}')
     def download(project_id: str, revision: int, name: Literal['full.wav','full.mp3','subtitles.srt','timeline.json','content-check.json','delivery.zip','timeline-24fps.xml','timeline-25fps.xml','timeline-30fps.xml','timeline-50fps.xml','timeline-60fps.xml','timeline-README.txt']):
-        if revision < 0:
+        if revision < 0 or store.read(project_id)['revision'] != revision:
             raise HTTPException(404)
         path = store.directory(project_id)/'exports'/str(revision)/name
         if not path.is_file():
