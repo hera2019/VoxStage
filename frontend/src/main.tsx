@@ -5,6 +5,8 @@ import {RoleImport} from './RoleImport';
 import {draftCandidates,forgetDraft,abandonDraft,type DraftResume} from './draftResume';
 import {ScriptEditor} from './ScriptEditor';
 import {Settings} from './Settings';
+import {BookList,groupByBook,type Listed} from './BookList';
+import {ChapterSettings} from './ChapterSettings';
 import {Timeline,type Region,type Cut} from './Timeline';
 import {finishWindow,type PlayWindow} from './playback';
 import {sourceToOutput,type PlaybackContext} from './timeMapping';
@@ -52,7 +54,7 @@ function speakerColors(p:Project,voiceLabels:Record<string,string>,custom:{id:st
  return out;
 }
 function App(){
- const [config,setConfig]=useState<Config>();const [projects,setProjects]=useState<{id:string;name:string;archived?:boolean;updated_at?:number}[]>([]);
+ const [config,setConfig]=useState<Config>();const [projects,setProjects]=useState<(Listed&{updated_at?:number})[]>([]);
  const [p,setP]=useState<Project>();const [selected,setSelected]=useState('');const [draft,setDraft]=useState({text:'',speaker:'',spoken_as:''});
  const [error,setError]=useState('');const [notice,setNotice]=useState('');const [waiting,setWaiting]=useState(false);
  const [showArchived,setShowArchived]=useState(false);const [renaming,setRenaming]=useState(false);const [newName,setNewName]=useState('');
@@ -81,7 +83,9 @@ function App(){
  const reviewConfirmed=current?.check_status==='confirmed'||current?.rhythm_status==='confirmed';
  const issueCount=p?.segments.filter(s=>s.listening_status==='issue').length??0;
  const listenCount=p?.segments.filter(s=>s.listening_status==='needs_listening').length??0;
- const visibleProjects=projects.filter(x=>!!x.archived===showArchived).slice().sort((a,b)=>(b.updated_at??0)-(a.updated_at??0));
+ // Chapters of a master book (new schema) are listed under their book, not among the loose projects (Opus 一).
+ const visibleProjects=groupByBook(projects).loose.filter(x=>!!x.archived===showArchived).slice().sort((a,b)=>(b.updated_at??0)-(a.updated_at??0));
+ const [chapterSettings,setChapterSettings]=useState<{kind:'project'|'book';id:string}|null>(null);
  const rhythmCount=p?.segments.filter(s=>s.status==='ready'&&s.rhythm_status==='review').length??0;
  const reviewCount=p?.segments.filter(s=>s.status==='ready'&&s.check_status==='review').length??0;
  const uncheckedCount=p?.segments.filter(s=>s.status==='ready'&&['not_checked','stale','error'].includes(s.check_status??'not_checked')).length??0;
@@ -145,6 +149,7 @@ function App(){
   <div className={"workspace"+(leftOpen?"":" left-hidden")+(rightOpen?"":" right-hidden")}><button className="pane-toggle left" aria-pressed={leftOpen} title={leftOpen?"收起工程栏":"展开工程栏"} onClick={()=>setLeftOpen(v=>{localStorage.setItem("voxstage-left",v?"0":"1");return !v})}>{leftOpen?"‹":"›"}</button><button className="pane-toggle right" aria-pressed={rightOpen} title={rightOpen?"收起侧栏":"展开侧栏"} onClick={()=>setRightOpen(v=>{localStorage.setItem("voxstage-right",v?"0":"1");return !v})}>{rightOpen?"›":"‹"}</button>
    <aside className="sidebar"><a className="brand" href="/" aria-label="VoxStage 首页"><span className="mark">v</span>VoxStage <small>PREVIEW</small></a><span className="local"><i/>本地运行 · 内容留在你的 Mac</span><h1>让故事<br/><em>开口。</em></h1><p className="muted">从一句台词，<br/>到一段有声音的故事。</p><div className="section-label space">工程</div>
    <button className="primary new-project" onClick={()=>{if(!dirty){setImporting(true);setName((language==='zh'?'新工程 · ':'New project · ')+stamp());if(!firstTime()&&script===samples[language])setScript('');void api('/books').then(setBooks).catch(()=>{})}}} disabled={dirty||busy}>＋ 新建工程</button>{resumeDraft&&<div className="resume-row"><button className="new-project resume-draft" title={resumeDraft.name} disabled={dirty||busy} onClick={()=>{setOpeningResume(resumeDraft);setRoleSeed(null);setImporting(false);setRoleImporting(true)}}>继续上次的复核</button><button className="resume-drop" title="放弃上次没做完的复核" aria-label="放弃上次的复核" disabled={dirty||busy} onClick={()=>{if(!confirm(`放弃上次没做完的角色复核？\n\n「${resumeDraft.name}」的草稿不再提示；原稿和已建好的工程都不受影响。`))return;const id=resumeDraft.draft_id;void action(async()=>{await api('/attribution/draft/'+id,'DELETE');abandonDraft(id);setResumeDraft(null);setNotice('已放弃上次的复核。')})}}>✕</button></div>}<button className="archive-toggle" disabled={!!blocked} onClick={()=>setShowArchived(!showArchived)}>{showArchived?'← 常用工程':'查看归档工程'}</button>
+   <BookList projects={projects.filter(x=>!x.archived)} current={p?.id} disabled={!!blocked} onOpen={id=>void action(()=>open(id))} onSettings={(kind,id)=>setChapterSettings({kind,id})}/>
    {visibleProjects.length?visibleProjects.map(x=><button className={'project-link '+(p?.id===x.id?'active':'')} disabled={!!blocked} key={x.id} onClick={()=>void action(()=>open(x.id))}>{x.name}<span>↗</span></button>):<p className="muted">{showArchived?'没有归档工程。':'从一份短剧本开始。'}</p>}
    <div className="engine"><div className="section-label">声音引擎</div><strong>{config?.engine??'正在连接…'}</strong><p>{config?.ready?'已就绪 · 合成音频':'模型未就绪，请先完成本地设置'}</p></div></aside>
    <main><div className="main-scroll">
@@ -179,7 +184,8 @@ function App(){
   
   {renaming&&p&&<div className="overlay"><section className="dialog" role="dialog" aria-modal="true" aria-labelledby="rename-title"><h2 id="rename-title">修改工程名称</h2><label>工程名称<input autoFocus aria-label="新的工程名称" maxLength={120} value={newName} onChange={e=>setNewName(e.target.value)}/></label>{error&&<p role="alert" className="line-error">{error}</p>}<div className="buttons"><button disabled={waiting} onClick={()=>setRenaming(false)}>取消</button><button className="primary" disabled={waiting||!newName.trim()} onClick={()=>void action(async()=>{receive(await api('/projects/'+p.id,'PATCH',{revision:p.revision,name:newName}));setRenaming(false);setNotice('工程已改名，声音无需重新生成。')})}>保存名称</button></div></section></div>}
   {marking&&p&&current&&<div className="overlay"><section className="dialog" role="dialog" aria-modal="true" aria-labelledby="mark-title"><h2 id="mark-title">记下这句声音的问题</h2><p className="muted">{current.speaker}：{current.text}</p><label>问题类型<select aria-label="声音问题类型" value={issueKind} onChange={e=>setIssueKind(e.target.value)}>{Object.entries(issueKinds).map(([key,label])=><option key={key} value={key}>{label}</option>)}</select></label><label>备注（选填）<textarea aria-label="声音问题备注" rows={3} maxLength={300} value={issueNote} onChange={e=>setIssueNote(e.target.value)} placeholder="例如：最后一个字拖出奇怪的尾音"/></label><p className="muted">标记针对当前这一版声音，重新生成后仍需试听。</p>{error&&<p role="alert" className="line-error">{error}</p>}<div className="buttons"><button disabled={waiting} onClick={()=>setMarking(false)}>取消</button><button className="primary" disabled={waiting} onClick={()=>void action(async()=>{receive(await api('/projects/'+p.id+'/listening/review','POST',{revision:p.revision,segment_id:current.id,kind:issueKind,note:issueNote}));setMarking(false);setNotice('问题已记录，可单句重做或集中重做标记的句子。')})}>保存问题标记</button></div></section></div>}
-  {settingsFor!==null&&config&&<Settings request={api} voices={config.voices} designReady={!!config.design_ready} language={p?.language??'zh'}
+  {chapterSettings&&<div className="chapter-settings-wrap"><ChapterSettings kind={chapterSettings.kind} id={chapterSettings.id} request={api} presetModels={config?.preset_models} cloneModels={config?.clone_models} onClose={()=>setChapterSettings(null)}/></div>}
+   {settingsFor!==null&&config&&<Settings request={api} voices={config.voices} designReady={!!config.design_ready} language={p?.language??'zh'}
     speedReady={!!config.speed_ready} roleModels={config.role_models} roleModel={config.role_model??undefined} pickFor={settingsFor||undefined} onClose={()=>{setSettingsFor(null);void api('/voices/custom').then(setCustomVoices).catch(()=>{});void api('/settings').then(s=>setFavourites(s.favourite_voices??[])).catch(()=>{});void api('/config').then(setConfig).catch(()=>{})}}
     onPick={settingsFor?voice=>void action(async()=>{receive(await api('/projects/'+p!.id,'PATCH',{revision:p!.revision,speaker:settingsFor,voice}));setSettingsFor(null);setNotice('已换用新音色。该角色的句子需要重新生成。')}):undefined}/>}
   {scriptEditing&&p&&<ScriptEditor project={p} request={api} limit={config?.draft_limits?.chars??3000} onClose={()=>setScriptEditing(false)} onUpdated={value=>{receive(value);setNotice('原稿已更新。未改动的句子保留了原来的声音，只有受影响的需要重新生成。')}}/>}
