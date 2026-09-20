@@ -9,7 +9,7 @@ type Source={level:string;id?:string;roles?:Record<string,{level:string;id?:stri
 type Payload={project_id?:string;book_id?:string;project_revision?:number;book_revision?:number|null;revision?:number;
   overrides?:Record<string,unknown>;effective?:Record<string,unknown>;settings?:Record<string,unknown>;sources?:Record<string,Source>};
 type Props={kind:'project'|'book';id:string;request:(path:string,method?:string,data?:unknown)=>Promise<any>;
-  presetModels?:string[];cloneModels?:string[];onClose:()=>void};
+  presetModels?:string[];cloneModels?:string[];chapterIds?:string[];onClose:()=>void};
 
 const PAGES:[string,string[]][]=[['角色声音',['voices','colors','sexes','muted_speakers']],['朗读与停顿',['preset_model','clone_model','speech_rate','pause_ms','ellipsis_pause_ms','color_scope']],['发音',['lexicon']],['导出',[]]];
 const LABELS:Record<string,string>={voices:'角色声音',colors:'角色颜色',sexes:'角色性别',muted_speakers:'不朗读的角色',preset_model:'预设音色模型',clone_model:'固定声线模型',speech_rate:'语速',pause_ms:'句间停顿（毫秒）',ellipsis_pause_ms:'省略号、破折号处停顿',color_scope:'颜色用在',lexicon:'发音词典'};
@@ -17,10 +17,13 @@ const LEVEL:Record<string,string>={project:'本章',local:'本章',book:'主工�
 
 export function whereFrom(s?:Source|{level:string;id?:string}){return s?LEVEL[s.level]??s.level:'—'}
 
-export function ChapterSettings({kind,id,request,presetModels=['0.6B'],cloneModels=['0.6B'],onClose}:Props){
+export function ChapterSettings({kind,id,request,presetModels=['0.6B'],cloneModels=['0.6B'],chapterIds=[],onClose}:Props){
  const base=kind==='project'?`/projects/${id}/settings`:`/master-books/${id}/settings`;
  const [data,setData]=useState<Payload|null>(null);const [page,setPage]=useState(0);const [busy,setBusy]=useState(false);const [error,setError]=useState('');
- const [lexiconText,setLexiconText]=useState('');
+ const [lexiconText,setLexiconText]=useState('');const [pending,setPending]=useState<Record<string,string>>({});
+ // 整书应用预览：主工程改一项会影响多少章（仍在继承的）、多少章有自己的设置不受影响。
+ const [overridden,setOverridden]=useState<Record<string,number>|null>(null);
+ useEffect(()=>{if(kind!=='book'||!chapterIds.length){setOverridden(null);return}let stop=false;void Promise.all(chapterIds.map(c=>request(`/projects/${c}/settings`).catch(()=>null))).then(list=>{if(stop)return;const n:Record<string,number>={};for(const d of list)for(const k of Object.keys(d?.overrides??{}))n[k]=(n[k]??0)+1;setOverridden(n)});return()=>{stop=true}},[kind,id,chapterIds.join(',')]);   // eslint-disable-line react-hooks/exhaustive-deps
  const load=async()=>{const d=await request(base);setData(d);setLexiconText(JSON.stringify((kind==='project'?d.effective?.lexicon:d.settings?.lexicon)??{},null,1))};
  useEffect(()=>{void load().catch(e=>setError((e as Error).message))},[id,kind]);   // eslint-disable-line react-hooks/exhaustive-deps
  if(error&&!data)return <div className="chapter-settings"><p role="alert" className="line-error">{error}</p><button onClick={onClose}>关闭</button></div>;
@@ -30,10 +33,12 @@ export function ChapterSettings({kind,id,request,presetModels=['0.6B'],cloneMode
  const overrides=(kind==='project'?data.overrides:data.settings)??{};
  const sources=data.sources??{};
  const save=async(values:Record<string,unknown>,inherit:string[]=[])=>{setBusy(true);setError('');try{await request(base,'PATCH',{revision,values,inherit});await load()}catch(e){setError((e as Error).message)}finally{setBusy(false)}};
- const owned=(key:string)=>kind==='book'||key in overrides;
- const origin=(key:string)=>kind==='book'?'主工程':whereFrom(sources[key]);
- const Row=({k,children}:{k:string;children:React.ReactNode})=><label className="setting-row"><span className="setting-name">{LABELS[k]??k}<small className={'setting-source '+(owned(k)?'own':'inherited')}>{owned(k)?(kind==='book'?'主工程默认':'本章设置'):`继承 · 来自${origin(k)}`}</small></span>{children}{kind==='project'&&owned(k)&&<button type="button" className="setting-inherit" disabled={busy} title="删掉本章的这一项，回到主工程或应用默认" onClick={()=>void save({},[k])}>恢复继承</button>}</label>;
- const num=(k:string,step:number,min:number,max:number)=><Row k={k}><input type="number" step={step} min={min} max={max} disabled={busy} value={String(effective[k]??'')} onChange={e=>void save({[k]:Number(e.target.value)})}/></Row>;
+ const owned=(key:string)=>key in overrides;
+ const origin=(key:string)=>kind==='book'?'应用默认（主工程没设）':whereFrom(sources[key]);
+ const reach=(key:string)=>{if(kind!=='book'||!overridden)return null;const kept=overridden[key]??0;return `改动影响 ${chapterIds.length-kept} 章${kept?`；${kept} 章有自己的设置，不受影响`:''}`};
+ const Row=({k,children}:{k:string;children:React.ReactNode})=><label className="setting-row"><span className="setting-name">{LABELS[k]??k}<small className={'setting-source '+(owned(k)?'own':'inherited')}>{owned(k)?(kind==='book'?'主工程默认':'本章设置'):(kind==='book'?origin(k):`继承 · 来自${origin(k)}`)}{reach(k)&&<> · {reach(k)}</>}</small></span>{children}{kind==='project'&&owned(k)&&<button type="button" className="setting-inherit" disabled={busy} title="删掉本章的这一项，回到主工程或应用默认" onClick={()=>void save({},[k])}>恢复继承</button>}</label>;
+ // A number is saved when the field is left (or Enter), not on every keystroke.
+ const num=(k:string,step:number,min:number,max:number)=><Row k={k}><input type="number" step={step} min={min} max={max} disabled={busy} value={pending[k]??String(effective[k]??'')} onChange={e=>setPending(x=>({...x,[k]:e.target.value}))} onKeyDown={e=>{if(e.key==='Enter')(e.target as HTMLInputElement).blur()}} onBlur={e=>{const v=Number(e.target.value);setPending(x=>{const y={...x};delete y[k];return y});if(Number.isFinite(v)&&v!==Number(effective[k]))void save({[k]:v})}}/></Row>;
  const sel=(k:string,options:[string,string][])=><Row k={k}><select disabled={busy} value={String(effective[k]??'')} onChange={e=>void save({[k]:isNaN(Number(e.target.value))||k==='preset_model'||k==='clone_model'||k==='color_scope'?e.target.value:Number(e.target.value)})}>{options.map(([v,l])=><option key={v} value={v}>{l}</option>)}</select></Row>;
  const roles=Object.keys((effective.voices as Record<string,string>)??{});
  const roleSource=(k:string,name:string)=>{const s=sources[k];const r=s?.roles?.[name];return r?whereFrom(r):whereFrom(s)};
