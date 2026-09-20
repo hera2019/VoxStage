@@ -35,6 +35,7 @@ from .content_check import WhisperChecker, compare_text, file_sha
 from .engines import MlxEngine, FixtureEngine, VOICES
 from .project_settings import application_defaults
 from .project_service import ProjectService
+from .book_transactions import BookTransactions
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -87,6 +88,24 @@ class SettingPatchRequest(BaseModel):
     revision: int = Field(ge=0)
     values: dict = Field(default_factory=dict)
     inherit: list[str] = Field(default_factory=list, max_length=32)
+
+class BookCastRenameRequest(BaseModel):
+    revision: int = Field(ge=0)
+    cast_id: str = Field(pattern=r'^[a-f0-9]{32}$')
+    name: str = Field(min_length=1, max_length=80)
+
+class BookStructureRequest(BaseModel):
+    op: Literal['split','merge','reorder','attach','detach','dissolve']
+    revision: int | None = Field(default=None, ge=0)
+    project_id: str | None = Field(default=None, pattern=r'^[a-f0-9]{32}$')
+    at: int | None = Field(default=None, ge=1)
+    left_id: str | None = Field(default=None, pattern=r'^[a-f0-9]{32}$')
+    right_id: str | None = Field(default=None, pattern=r'^[a-f0-9]{32}$')
+    resolutions: dict[str, object] = Field(default_factory=dict)
+    members: list[str] = Field(default_factory=list, max_length=5000)
+    position: int | None = Field(default=None, ge=0)
+    inherit: bool = False
+    identities: dict[str, dict] = Field(default_factory=dict)
 
 class DocxImportRequest(BaseModel):
     name: str = Field(default='', max_length=200)
@@ -347,6 +366,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
     project_service = ProjectService(
         store, books,
         lambda: application_defaults(preset_model=default_preset(), clone_model=default_clone()))
+    book_transactions = BookTransactions(project_service)
     store.resolver = project_service.view
 
     def work_project(project):
@@ -396,7 +416,15 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
     def save_cast(record, cast, book_record):
         from . import cast as C
         if book_record is not None:
-            book_record['cast'] = cast; book_record['aliases'] = C.alias_table(cast); books.save(book_record)
+            book_record['cast'] = cast
+            book_record['aliases'] = C.alias_table(cast)
+            # In a v1 master book the cast is shared state.  A chapter review,
+            # rename or alias decision changes what every other chapter sees,
+            # so it participates in the same optimistic book revision used by
+            # whole-book and structure transactions.
+            if book_record.get('master_schema') == 1:
+                book_record['revision'] = book_record.get('revision', 0) + 1
+            books.save(book_record)
         else:
             record['cast'] = cast
     drafts.mkdir(exist_ok=True)
@@ -765,6 +793,31 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
     def patch_master_book_settings(book_id: str, body: SettingPatchRequest):
         book = project_service.update_book_settings(book_id, body.revision, body.values, body.inherit)
         return {'book_id': book['id'], 'revision': book['revision'], 'settings': book['settings']}
+
+    @app.post('/api/master-books/{book_id}/settings/unify')
+    def unify_master_book_settings(book_id: str, body: SettingPatchRequest):
+        return book_transactions.unify_settings(
+            book_id, body.revision, body.values, body.inherit)
+
+    @app.post('/api/master-books/{book_id}/cast/rename/plan')
+    def plan_master_cast_rename(book_id: str, body: BookCastRenameRequest):
+        return book_transactions.rename_plan(
+            book_id, body.revision, body.cast_id, body.name)
+
+    @app.post('/api/master-books/{book_id}/cast/rename')
+    def rename_master_cast(book_id: str, body: BookCastRenameRequest):
+        return book_transactions.rename_cast(
+            book_id, body.revision, body.cast_id, body.name)
+
+    @app.post('/api/master-books/{book_id}/structure/plan')
+    def plan_master_structure(book_id: str, body: BookStructureRequest):
+        return book_transactions.preview_structure(book_id, body.model_dump(exclude_none=True))
+
+    @app.post('/api/master-books/{book_id}/structure/apply')
+    def apply_master_structure(book_id: str, body: BookStructureRequest):
+        if body.revision is None:
+            raise ValueError('执行结构操作需要主工程 revision。')
+        return book_transactions.apply_structure(book_id, body.model_dump(exclude_none=True))
 
     imports = {}          # import_id -> parsed document, until its colours are answered (a handful at most)
 
