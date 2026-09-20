@@ -276,12 +276,18 @@ class Books:
 
     def delete(self, book_id):
         """Forget a book. Projects made from its chapters are their own files and stay."""
+        guard = getattr(self, 'write_guard', None)
+        if guard is not None:
+            guard(book_id)
         path = self.root / (book_id + '.json')
         if not re.fullmatch(r'[0-9a-f]{32}', book_id) or not path.is_file():
             raise ValueError('找不到这本书。')
         path.unlink()
 
     def save(self, book):
+        guard = getattr(self, 'write_guard', None)
+        if guard is not None:
+            guard(book['id'])
         (self.root / (book['id'] + '.json')).write_text(json.dumps(book, ensure_ascii=False), encoding='utf-8')
 
     def cast_of(self, book, names=()):

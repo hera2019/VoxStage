@@ -36,6 +36,7 @@ from .engines import MlxEngine, FixtureEngine, VOICES
 from .project_settings import application_defaults
 from .project_service import ProjectService
 from .book_transactions import BookTransactions
+from .book_export import BookExportService
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -320,6 +321,16 @@ class RevisionRequest(BaseModel):
 class ExportXmlRequest(RevisionRequest):
     video_fps: int = Field(default=30, strict=True)
 
+class BookExportRequest(BaseModel):
+    revision: int = Field(ge=0)
+    chapters: list[str] = Field(default_factory=list, max_length=5000)
+    outputs: list[Literal['wav','mp3','srt','zip','timeline','xml','report']] = Field(default_factory=lambda:['mp3','srt'])
+    video_fps: int = Field(default=30, strict=True)
+
+class BookExportSettingsRequest(BaseModel):
+    revision: int = Field(ge=0)
+    chapter_pause_ms: int = Field(ge=0, le=10000)
+
 
 def _splice_source(project, segment, text):
     """Write an edited line back into the source script and shift what follows."""
@@ -367,6 +378,9 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
         store, books,
         lambda: application_defaults(preset_model=default_preset(), clone_model=default_clone()))
     book_transactions = BookTransactions(project_service)
+    book_export = BookExportService(project_service, engine, checker)
+    store.write_guard = book_export.guard_project_write
+    books.write_guard = book_export.guard_book_write
     store.resolver = project_service.view
 
     def work_project(project):
@@ -442,6 +456,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
 
     app = FastAPI(title='VoxStage', docs_url=None, redoc_url=None, openapi_url=None, lifespan=lifespan)
     app.state.store, app.state.engine, app.state.checker = store, engine, checker
+    app.state.book_export = book_export
 
     @app.middleware('http')
     async def local_only(request: Request, call_next):
@@ -773,6 +788,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
 
     @app.post('/api/master-books/{book_id}/chapters')
     def create_master_chapter(book_id: str, body: MasterChapterRequest):
+        book_export.assert_book_writable(book_id)
         with store.lock:
             book, project = project_service.create_chapter(
                 book_id, body.revision, body.title, body.text, cut=body.cut,
@@ -791,11 +807,13 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
 
     @app.patch('/api/master-books/{book_id}/settings')
     def patch_master_book_settings(book_id: str, body: SettingPatchRequest):
+        book_export.assert_book_writable(book_id)
         book = project_service.update_book_settings(book_id, body.revision, body.values, body.inherit)
         return {'book_id': book['id'], 'revision': book['revision'], 'settings': book['settings']}
 
     @app.post('/api/master-books/{book_id}/settings/unify')
     def unify_master_book_settings(book_id: str, body: SettingPatchRequest):
+        book_export.assert_book_writable(book_id)
         return book_transactions.unify_settings(
             book_id, body.revision, body.values, body.inherit)
 
@@ -806,6 +824,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
 
     @app.post('/api/master-books/{book_id}/cast/rename')
     def rename_master_cast(book_id: str, body: BookCastRenameRequest):
+        book_export.assert_book_writable(book_id)
         return book_transactions.rename_cast(
             book_id, body.revision, body.cast_id, body.name)
 
@@ -815,9 +834,44 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
 
     @app.post('/api/master-books/{book_id}/structure/apply')
     def apply_master_structure(book_id: str, body: BookStructureRequest):
+        book_export.assert_book_writable(book_id)
         if body.revision is None:
             raise ValueError('执行结构操作需要主工程 revision。')
         return book_transactions.apply_structure(book_id, body.model_dump(exclude_none=True))
+
+    @app.get('/api/master-books/{book_id}/export/settings')
+    def get_master_export_settings(book_id: str):
+        return book_export.export_settings(book_id)
+
+    @app.patch('/api/master-books/{book_id}/export/settings')
+    def patch_master_export_settings(book_id: str, body: BookExportSettingsRequest):
+        return book_export.update_export_settings(
+            book_id, body.revision, body.chapter_pause_ms)
+
+    @app.post('/api/master-books/{book_id}/export/estimate')
+    def estimate_master_export(book_id: str, body: BookExportRequest):
+        return book_export.estimate(
+            book_id, body.revision, body.chapters, body.outputs)
+
+    @app.post('/api/master-books/{book_id}/export/create')
+    def create_master_export(book_id: str, body: BookExportRequest):
+        return book_export.create(
+            book_id, body.revision, body.chapters, body.outputs, body.video_fps)
+
+    @app.get('/api/master-books/{book_id}/export/current')
+    def current_master_export(book_id: str):
+        return book_export.current(book_id)
+
+    @app.get('/api/master-books/{book_id}/export/{batch_id}/{name}')
+    def download_master_export(book_id: str, batch_id: str, name: str):
+        path = book_export.download(book_id, batch_id, name)
+        return FileResponse(path, filename=f'VoxStage-{batch_id}-{name}')
+
+    @app.get('/api/migration/master-books/preview')
+    def preview_master_book_migration():
+        from .book_migration import preview
+        with store.lock:
+            return preview(store, books)
 
     imports = {}          # import_id -> parsed document, until its colours are answered (a handful at most)
 
@@ -1992,6 +2046,11 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                               'kind': job.get('kind'), 'status': job.get('status'),
                               'completed': job.get('completed', 0), 'total': job.get('total', 0),
                               'queued_at': job.get('queued_at')})
+        for book_id in book_export.active_tasks():
+            busy_books.add(book_id)
+            tasks.append({'project_id': None, 'book_id': book_id, 'kind': 'book_export',
+                          'status': 'running', 'completed': 0, 'total': 0,
+                          'queued_at': None})
         tasks.sort(key=lambda item: item.get('queued_at') or 0)
         position = 0
         for task in tasks:
@@ -3110,14 +3169,8 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
         if not path.is_file():raise HTTPException(404)
         return FileResponse(path,media_type='audio/wav')
 
-    def existing_export_links(project_id: str, p: dict):
-        """Return only a complete export for the project's current revision.
-
-        Export validity is intentionally revision-based, not content-hash based:
-        any edit/undo/redo/render creates a new revision, so even if a person later
-        changes the text back to identical content, the older export stays stale.
-        """
-        revision = p['revision']
+    def export_links_at_revision(project_id: str, revision: int):
+        """Return one complete, self-consistent export batch at a saved revision."""
         out = store.directory(project_id)/'exports'/str(revision)
         required = ['full.wav','subtitles.srt','timeline.json','content-check.json','delivery.zip']
         if not all((out/name).is_file() for name in required):
@@ -3137,11 +3190,40 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
         names += [name for name in optional[1:] if (out/name).is_file()]
         return {name:f'/api/projects/{project_id}/export/{revision}/{name}' for name in names}
 
+    def existing_export_links(project_id: str, p: dict):
+        # Kept for the existing UI: it must not display a stale batch without a
+        # warning. Opus 三 can switch to /export/status when it renders the label.
+        return export_links_at_revision(project_id, p['revision'])
+
+    def last_project_export(project_id: str, current_revision: int):
+        root = store.directory(project_id)/'exports'
+        candidates = []
+        if root.is_dir():
+            for path in root.iterdir():
+                if path.is_dir() and path.name.isdigit():
+                    revision = int(path.name)
+                    links = export_links_at_revision(project_id, revision)
+                    if links:
+                        candidates.append((revision, links))
+        if not candidates:
+            return {'status':'none','revision':None,'current_revision':current_revision,'links':{}}
+        revision, links = max(candidates, key=lambda row: row[0])
+        return {'status':'latest' if revision == current_revision else 'stale',
+                'revision':revision,'current_revision':current_revision,
+                'stale_reasons':[] if revision == current_revision else ['工程在导出后有改动'],
+                'links':links}
+
     @app.get('/api/projects/{project_id}/export/current')
     def current_export(project_id: str):
         with store.lock:
             p = store.read(project_id)
             return existing_export_links(project_id, p)
+
+    @app.get('/api/projects/{project_id}/export/status')
+    def project_export_status(project_id: str):
+        with store.lock:
+            p = store.read(project_id)
+            return last_project_export(project_id, p['revision'])
 
     @app.post('/api/projects/{project_id}/export/create')
     def export(project_id: str, body: RevisionRequest):
@@ -3182,7 +3264,14 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                     names.insert(1, 'full.mp3')
                 else:
                     logging.warning('MP3 export failed: %s', done.stderr.strip()[:200])
-            return {name:f'/api/projects/{project_id}/export/{p["revision"]}/{name}' for name in names}
+            links = {name:f'/api/projects/{project_id}/export/{p["revision"]}/{name}' for name in names}
+            # The product exposes one successful batch, not an export history.
+            # Only after this batch is complete do we remove older batch folders.
+            root = out.parent
+            for previous in root.iterdir():
+                if previous.is_dir() and previous.name.isdigit() and previous != out:
+                    shutil.rmtree(previous, ignore_errors=True)
+            return links
 
     @app.post('/api/projects/{project_id}/export/xml')
     def export_xml(project_id: str, body: ExportXmlRequest):
@@ -3204,9 +3293,13 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
 
     @app.get('/api/projects/{project_id}/export/{revision}/{name}')
     def download(project_id: str, revision: int, name: Literal['full.wav','full.mp3','subtitles.srt','timeline.json','content-check.json','delivery.zip','timeline-24fps.xml','timeline-25fps.xml','timeline-30fps.xml','timeline-50fps.xml','timeline-60fps.xml','timeline-README.txt']):
-        if revision < 0 or store.read(project_id)['revision'] != revision:
+        if revision < 0:
             raise HTTPException(404)
         path = store.directory(project_id)/'exports'/str(revision)/name
+        # Status discovery only advertises complete successful batches, but a
+        # concrete legacy URL remains usable whenever that exact artifact still
+        # exists. This preserves old downloads without pretending a partial batch
+        # is the current/last successful export.
         if not path.is_file():
             raise HTTPException(404)
         return FileResponse(path, filename='VoxStage-'+name)

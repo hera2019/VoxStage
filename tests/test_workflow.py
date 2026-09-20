@@ -374,16 +374,29 @@ def test_current_export_links_follow_revision_and_stay_stale_after_undo(client):
     old_wav = links['full.wav']
     assert client.get(old_wav).status_code == 200
 
-    # Any saved edit creates a new revision, so the old export is immediately stale.
+    # Any saved edit makes the last batch stale, but it remains downloadable.
+    # The compatibility endpoint still hides stale links until the new UI can
+    # render the warning carried by /export/status.
     changed = client.patch(base, json={'revision': p['revision'], 'pause_ms': 500}).json()
     assert changed['revision'] > p['revision']
     assert client.get(base + '/export/current').json() == {}
-    assert client.get(old_wav).status_code == 404
+    stale = client.get(base + '/export/status').json()
+    assert stale['status'] == 'stale' and stale['revision'] == p['revision']
+    assert stale['links']['full.wav'] == old_wav
+    assert client.get(old_wav).status_code == 200
 
-    # Undo restores the content but deliberately does not restore export validity:
-    # undo itself creates another revision, avoiding fragile content-equality reuse.
+    # Undo may restore equal content, but revision history still marks the old
+    # batch as potentially stale. It stays usable until a new export succeeds.
     restored = client.post(base + '/undo', json={'revision': changed['revision']}).json()
     assert restored['pause_ms'] == p['pause_ms']
     assert restored['revision'] > changed['revision']
     assert client.get(base + '/export/current').json() == {}
+    assert client.get(base + '/export/status').json()['status'] == 'stale'
+    assert client.get(old_wav).status_code == 200
+
+    # A newly successful batch becomes the only exposed batch and removes the
+    # older saved revision. A failed export would have left it in place.
+    newest = client.post(base + '/export/create', json={'revision': restored['revision']})
+    assert newest.status_code == 200, newest.text
+    assert client.get(base + '/export/status').json()['status'] == 'latest'
     assert client.get(old_wav).status_code == 404

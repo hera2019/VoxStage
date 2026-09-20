@@ -340,6 +340,9 @@ class Store:
 
     def write(self, data):
         assert_raw(data)
+        guard = getattr(self, 'write_guard', None)
+        if guard is not None:
+            guard(data)
         path = self.directory(data['id'])
         path.mkdir(exist_ok=True)
         temporary = path / 'project.json.tmp'
@@ -432,6 +435,9 @@ class Store:
                 raise RuntimeError('工程已改变或正在处理，请重新载入后再删除。')
             if not p.get('archived'):
                 raise ValueError('只能删除已归档的工程：先归档，确认不再需要，再删除。')
+            guard = getattr(self, 'write_guard', None)
+            if guard is not None:
+                guard(p)
             directory = self.directory(project_id)
             if directory.is_symlink() or any(x.is_symlink() for x in directory.rglob('*')):
                 raise ValueError('工程目录含有链接，为了不误删链接指向的文件，请手动处理。')
