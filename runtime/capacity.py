@@ -70,3 +70,40 @@ def draft_limits(gb=None):
 
 
 # 最后更新：2026-09-16 · Claude Hera
+
+
+def role_batch_limits(model_spec, gb=None):
+    """Shared contract for the upcoming within-chapter batch adapter.
+
+    Hardware and model bounds BOTH bind. Does not change legacy splitter or
+    inference paths, and does not claim the model weights fit this machine.
+    """
+    limits = draft_limits(gb)
+    for field, registered in (('units', 'max_units'), ('context', 'max_context'),
+                              ('max_tokens', 'max_tokens'), ('chars', 'max_chars')):
+        value = model_spec.get(registered, limits[field])
+        if not isinstance(value, int) or isinstance(value, bool) or value <= 0:
+            raise ValueError(f'Invalid model capacity: {registered}')
+        limits[field] = min(limits[field], value)
+    return limits
+
+
+def estimate_role_batch(chars, units, limits, extra_prompt_tokens=0):
+    """Estimate a complete request, including context units supplied by caller."""
+    if any(not isinstance(n, int) or isinstance(n, bool) or n < 0
+           for n in (chars, units, extra_prompt_tokens)):
+        raise ValueError('批次字符数和单元数必须是非负整数。')
+    result = estimate_role_tokens(chars, units, limits['context'], limits['max_tokens'])
+    result['prompt'] += extra_prompt_tokens
+    result['total'] += extra_prompt_tokens
+    result['fits'] = (result['total'] <= result['safe_total']
+                      and result['completion'] <= result['safe_completion'])
+    reasons = []
+    if chars > limits['chars']:
+        reasons.append('character_limit')
+    if units > limits['units']:
+        reasons.append('unit_limit')
+    if not result['fits']:
+        reasons.append('token_budget')
+    return {**result, 'fits': not reasons, 'reasons': reasons,
+            'limits': {key: limits[key] for key in ('chars', 'units', 'context', 'max_tokens')}}

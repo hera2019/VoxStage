@@ -10,6 +10,7 @@ import time
 import uuid
 from pathlib import Path
 from . import readings
+from .project_settings import assert_raw, SETTING_KEYS, VIEW_KEY
 from .pauses import split_at_pauses
 from .capacity import draft_limits
 from .audio import PROCESSING_VERSION
@@ -296,7 +297,15 @@ class Templates:
 
 
 def edit_state(project):
-    return copy.deepcopy({**{k:project[k] for k in ('name','language','voices','segments','pause_ms')},'lexicon':project.get('lexicon',{}),'preset_model':project.get('preset_model','0.6B'),'clone_model':project.get('clone_model','0.6B'),'voice_profiles':project.get('voice_profiles',{}), 'archived':project.get('archived',False), 'speech_rate':project.get('speech_rate',1.0), 'colors':project.get('colors',{}), 'color_scope':project.get('color_scope','both'), 'crowds':project.get('crowds',{}), 'sexes':project.get('sexes',{}), 'muted_speakers':project.get('muted_speakers',[]), 'ellipsis_pause_ms':project.get('ellipsis_pause_ms',0)})
+    if 'settings_schema' not in project:
+        return copy.deepcopy({**{k:project[k] for k in ('name','language','voices','segments','pause_ms')},'lexicon':project.get('lexicon',{}),'preset_model':project.get('preset_model','0.6B'),'clone_model':project.get('clone_model','0.6B'),'voice_profiles':project.get('voice_profiles',{}), 'archived':project.get('archived',False), 'speech_rate':project.get('speech_rate',1.0), 'colors':project.get('colors',{}), 'color_scope':project.get('color_scope','both'), 'crowds':project.get('crowds',{}), 'sexes':project.get('sexes',{}), 'muted_speakers':project.get('muted_speakers',[]), 'ellipsis_pause_ms':project.get('ellipsis_pause_ms',0)})
+    # New inherited projects retain only their explicit local overrides in an
+    # undo snapshot. Parent values are resolved at request time and must never
+    # be frozen into a chapter merely because its content was edited.
+    keys = ('name', 'language', 'segments', 'source_script', 'archived', *SETTING_KEYS)
+    state = {key: project[key] for key in keys if key in project}
+    state['_settings_snapshot'] = [key for key in SETTING_KEYS if key in project]
+    return copy.deepcopy(state)
 
 class Store:
     def __init__(self, root):
@@ -304,10 +313,11 @@ class Store:
         self.root.mkdir(parents=True, exist_ok=True)
         self.lock = threading.RLock()
         self.library = None          # set by create_app; see runtime/voices.py
+        self.resolver = None         # app supplies raw Project -> one effective read view
         for path in self.root.glob('*/project.json'):
             data = json.loads(path.read_text())
             changed = drop_waveforms(data)
-            if data.get('job',{}).get('status') == 'running':
+            if data.get('job',{}).get('status') in ('queued', 'running'):
                 data['job']['status'] = 'interrupted'; changed = True
             if changed:
                 self.write(data)
@@ -319,13 +329,17 @@ class Store:
 
     def read(self, project_id):
         p=json.loads((self.directory(project_id)/'project.json').read_text())
-        p.setdefault('voice_profiles',{})
         p.setdefault('archived',False)
-        p.setdefault('speech_rate',1.0)
-        p.setdefault('muted_speakers',[])
+        # New inherited records stay raw: defaults here would become accidental
+        # local overrides. The service adapter resolves an effective view.
+        if 'settings_schema' not in p:
+            p.setdefault('voice_profiles',{})
+            p.setdefault('speech_rate',1.0)
+            p.setdefault('muted_speakers',[])
         return p
 
     def write(self, data):
+        assert_raw(data)
         path = self.directory(data['id'])
         path.mkdir(exist_ok=True)
         temporary = path / 'project.json.tmp'
@@ -388,9 +402,14 @@ class Store:
                     return p
                 p[target].append(edit_state(p))
                 restored=p[source].pop()
-                restored.setdefault('voice_profiles',{})
-                restored.setdefault('archived',False)
-                restored.setdefault('speech_rate',1.0)
+                local_settings = restored.pop('_settings_snapshot', None)
+                if local_settings is not None:
+                    for key in SETTING_KEYS:
+                        p.pop(key, None)
+                else:
+                    restored.setdefault('voice_profiles',{})
+                    restored.setdefault('archived',False)
+                    restored.setdefault('speech_rate',1.0)
                 p.update(restored)
             else:
                 before = edit_state(p)
@@ -419,6 +438,10 @@ class Store:
             shutil.rmtree(directory)
 
     def public(self, p, engine, checker=None, library=None):
+        if p.get('settings_schema') is not None and VIEW_KEY not in p:
+            if self.resolver is None:
+                raise ValueError('新版工程读取前必须解析有效设置。')
+            p = self.resolver(p)
         library = library or self.library
         # The undo stacks are the bulk of a long project and never leave the
         # server; copy everything else.

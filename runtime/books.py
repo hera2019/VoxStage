@@ -104,6 +104,31 @@ def split_chapters(text, headings=None, cut=None, chapter_chars=None, token_budg
     return _reassemble_exact(text, _fit('', text, cut, chapter_limit, unit_limit, token_budget))
 
 
+def author_chapters(text, headings=None):
+    """Return the author's chapters without capacity-driven processing cuts.
+
+    A headingless manuscript is one chapter. Long chapters remain whole here;
+    model-sized windows are a later processing concern and never become extra
+    Projects merely because one model has a smaller context window.
+    """
+    lines = text.split('\n')
+    if headings is not None:
+        heads = sorted({i for i in headings if 0 <= i < len(lines) and lines[i].strip()})
+    else:
+        heads = [i for i, line in enumerate(lines) if HEADING.match(line)]
+    if not heads:
+        return [{'title': '', 'text': text}]
+    bounds = ([0] if heads[0] > 0 else []) + heads + [len(lines)]
+    chapters = []
+    for start, end in zip(bounds, bounds[1:]):
+        body = '\n'.join(lines[start:end]) + ('\n' if end < len(lines) else '')
+        if not body.strip():
+            continue
+        chapters.append({'title': lines[start].strip() if start in heads else '（开头）',
+                         'text': body})
+    return _reassemble_exact(text, chapters)
+
+
 def _packed_title(titles):
     """Readable label for one processing piece containing one or more source chapters."""
     names = [t for t in titles if t]

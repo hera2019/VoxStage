@@ -33,6 +33,8 @@ from .script_check import inspect as inspect_script, apply_fix
 from .attribution import RoleDraftEngine, ROLE_MODELS, project_segments, source_units, carry_locks
 from .content_check import WhisperChecker, compare_text, file_sha
 from .engines import MlxEngine, FixtureEngine, VOICES
+from .project_settings import application_defaults
+from .project_service import ProjectService
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -63,6 +65,29 @@ class BookRequest(BaseModel):
     silent: list[int] | None = Field(default=None, max_length=5000)     # line numbers kept but not read aloud (headings)
     cut: Literal['lines'] | None = None                                 # 'lines': the colours cut the lines, quotation marks do not
 
+class MasterBookRequest(BaseModel):
+    title: str = Field(default='', max_length=120)
+    script: str = Field(min_length=1, max_length=2_000_000)
+    language: Literal['zh','en']
+    headings: list[int] | None = Field(default=None, max_length=5000)
+    hints: list[Hint] | None = Field(default=None, max_length=20000)
+    silent: list[int] | None = Field(default=None, max_length=5000)
+    cut: Literal['lines'] | None = None
+
+class MasterChapterRequest(BaseModel):
+    revision: int = Field(ge=0)
+    title: str = Field(default='', max_length=120)
+    text: str = Field(min_length=1, max_length=2_000_000)
+    copy_settings_from: str | None = Field(default=None, pattern=r'^[a-f0-9]{32}$')
+    hints: list[Hint] | None = Field(default=None, max_length=20000)
+    silent: list[int] | None = Field(default=None, max_length=5000)
+    cut: Literal['lines'] | None = None
+
+class SettingPatchRequest(BaseModel):
+    revision: int = Field(ge=0)
+    values: dict = Field(default_factory=dict)
+    inherit: list[str] = Field(default_factory=list, max_length=32)
+
 class DocxImportRequest(BaseModel):
     name: str = Field(default='', max_length=200)
     data: str = Field(min_length=1, max_length=28_000_000)              # base64 of the .docx (≤ 20 MB)
@@ -78,13 +103,19 @@ class RoleEstimateRequest(BaseModel):
     cut: Literal['lines'] | None = None
 
 class RoleDraftRequest(BaseModel):
-    script: str = Field(min_length=1, max_length=20000)     # token preflight is checked by the role engine
+    script: str = Field(min_length=1, max_length=20000)     # long chapters enter only through the internal validated batch adapter
     debug_id: str | None = Field(default=None, pattern=r'^[a-f0-9]{32}$')   # local UI may poll llama-server output while this draft runs
     hints: list[Hint] | None = Field(default=None, max_length=5000)     # from a coloured or marked manuscript: settled speakers
     silent: list[int] | None = Field(default=None, max_length=2000)     # line numbers not read aloud (headings)
     cut: Literal['lines'] | None = None                                 # 'lines': one unit per line, whatever quotation marks the text holds (本人 2026-09-17)
     language: Literal['zh','en']
     book_id: str | None = Field(default=None, pattern=r'^[a-f0-9]{32}$')   # lines confirmed in the book's other chapters teach the habits
+    prepared_token: str | None = Field(default=None, pattern=r'^[a-f0-9]{32}$', exclude=True)
+    target_project_id: str | None = Field(default=None, pattern=r'^[a-f0-9]{32}$', exclude=True)
+
+class AttributionBatchRequest(BaseModel):
+    revision: int = Field(ge=0)
+    resume: bool = True
 
 class SuggestUnit(BaseModel):
     id: str = Field(max_length=16)
@@ -188,8 +219,8 @@ class CrowdRequest(BaseModel):
 
 class ScriptRequest(BaseModel):
     revision: int = Field(ge=0)
-    source_script: str = Field(min_length=1, max_length=12000)
-    labels: list[RoleLabel] | None = Field(default=None, max_length=200)
+    source_script: str = Field(min_length=1, max_length=2_000_000)
+    labels: list[RoleLabel] | None = Field(default=None, max_length=5000)
 
 class ScriptFixRequest(BaseModel):
     source_script: str = Field(min_length=1, max_length=12000)
@@ -313,6 +344,13 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
     engine = engine or MlxEngine(os.environ.get('VOXSTAGE_MODEL', ROOT/'user-data/models/qwen-customvoice'))
     checker = checker or WhisperChecker(ROOT/'user-data/asr-settings.json')
     role_engine = role_engine or RoleDraftEngine()
+    project_service = ProjectService(
+        store, books,
+        lambda: application_defaults(preset_model=default_preset(), clone_model=default_clone()))
+    store.resolver = project_service.view
+
+    def work_project(project):
+        return project_service.view(project) if project.get('settings_schema') == 1 else project
     def settings_file():
         path = workspace/'settings.json'
         try:
@@ -363,6 +401,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             record['cast'] = cast
     drafts.mkdir(exist_ok=True)
     debug_runs = {}        # browser-generated debug id -> server draft id; local and temporary
+    prepared_results = {}  # one-use, validated batch result -> existing review pipeline
     executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix='voxstage-render')
     cancel = threading.Event()
     active = {'project_id':None}
@@ -456,8 +495,11 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             with store.lock:
                 if active['project_id']:
                     raise RuntimeError('正在处理其他任务，请稍后再切换模型。')
-                if not any(m['id'] == body.role_model and m['installed'] for m in role_engine.installed()):
+                candidate = next((m for m in role_engine.installed() if m['id'] == body.role_model), None)
+                if not candidate or not candidate['installed']:
                     raise ValueError('这个分角色模型还没有安装：运行 scripts/setup_model.py --model role-abliterated。')
+                if not candidate.get('loadable', True):
+                    raise ValueError(f"这个模型登记的最低内存是 {candidate.get('minimum_memory_gb')} GB，当前电脑不适合加载。")
                 role_engine.select(body.role_model)
             stored['role_model'] = body.role_model
         (workspace/'settings.json').write_text(json.dumps(stored, ensure_ascii=False, indent=1))
@@ -657,6 +699,73 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                                 token_budget=token_budget)
         return books.public(book)
 
+    def master_chapters(body):
+        """Rebase manuscript marks onto author chapters without processing cuts."""
+        from .books import author_chapters
+        chapters = author_chapters(body.script, body.headings)
+        hints = [hint.model_dump() for hint in body.hints] if body.hints else []
+        total_lines = body.script.count('\n') + (0 if body.script.endswith('\n') else 1)
+        if any(not isinstance(number, int) or isinstance(number, bool)
+               or not 0 <= number < total_lines for number in (body.silent or [])):
+            raise ValueError('不朗读行号超出原稿范围。')
+        offset = 0
+        line = 0
+        assigned_hints = set()
+        for chapter in chapters:
+            end = offset + len(chapter['text'])
+            line_count = chapter['text'].count('\n') + (0 if chapter['text'].endswith('\n') else 1)
+            chapter['cut'] = body.cut
+            chapter['hints'] = []
+            for hint_index, hint in enumerate(hints):
+                if offset <= hint['start'] < hint['end'] <= end:
+                    chapter['hints'].append({**hint, 'start': hint['start'] - offset,
+                                             'end': hint['end'] - offset})
+                    assigned_hints.add(hint_index)
+            chapter['silent'] = [number - line for number in (body.silent or [])
+                                 if line <= number < line + line_count]
+            offset = end
+            line += line_count
+        if len(assigned_hints) != len(hints):
+            raise ValueError('作者颜色标记超出原稿或跨越章节边界，请先调整章节或标记范围。')
+        return chapters
+
+    @app.post('/api/master-books')
+    def create_master_book(body: MasterBookRequest):
+        with store.lock:
+            book, projects = project_service.create_book(body.title, body.language, master_chapters(body))
+        return {**books.public(book),
+                'projects': [{'id': p['id'], 'name': p['name'], 'processing_state': p['processing_state']}
+                             for p in projects]}
+
+    @app.post('/api/project-records')
+    def create_project_record(body: ImportRequest):
+        with store.lock:
+            project = project_service.create_standalone(body.name, body.script, body.language)
+            return project_service.public_project(project, engine, checker)
+
+    @app.post('/api/master-books/{book_id}/chapters')
+    def create_master_chapter(book_id: str, body: MasterChapterRequest):
+        with store.lock:
+            book, project = project_service.create_chapter(
+                book_id, body.revision, body.title, body.text, cut=body.cut,
+                hints=[hint.model_dump() for hint in body.hints] if body.hints else None,
+                silent=body.silent, copy_from_id=body.copy_settings_from)
+            return {'book_revision': book['revision'],
+                    'project': project_service.public_project(project, engine, checker)}
+
+    @app.get('/api/master-books/{book_id}/settings')
+    def get_master_book_settings(book_id: str):
+        book = books.get(book_id)
+        if book.get('master_schema') != 1:
+            raise ValueError('旧版书目没有主工程设置。')
+        return {'book_id': book['id'], 'revision': book.get('revision', 0),
+                'settings': book.get('settings', {})}
+
+    @app.patch('/api/master-books/{book_id}/settings')
+    def patch_master_book_settings(book_id: str, body: SettingPatchRequest):
+        book = project_service.update_book_settings(book_id, body.revision, body.values, body.inherit)
+        return {'book_id': book['id'], 'revision': book['revision'], 'settings': book['settings']}
+
     imports = {}          # import_id -> parsed document, until its colours are answered (a handful at most)
 
     @app.post('/api/import/docx')
@@ -723,6 +832,9 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
     @app.delete('/api/books/{book_id}')
     def delete_book(book_id: str):
         with store.lock:
+            record = books.get(book_id)
+            if record.get('master_schema') == 1 and record.get('members'):
+                raise ValueError('主工程仍有子工程，不能直接删除。')
             books.delete(book_id)
         return {'deleted': book_id}
 
@@ -732,6 +844,13 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
         chapter = next((c for c in book['chapters'] if c['index'] == index), None)
         if chapter is None:
             raise ValueError('没有这一章。')
+        if book.get('master_schema') == 1:
+            raw = store.read(chapter['project_id'])
+            return {**chapter, 'text': raw['source_script'], 'book_id': book['id'],
+                    'book_title': book['title'], 'language': book['language'],
+                    'chapters': len(book['members']), 'cut': raw.get('cut'),
+                    'project_name': raw['name'], 'known_names': [],
+                    'existing_project_id': raw['id'], 'processing_state': raw.get('processing_state')}
         # Names already confirmed in this book's other chapters, offered to the
         # reviewer as candidates so 孔乙己 is typed once, not once per chapter.
         names, existing = [], None
@@ -845,10 +964,12 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
         draft_id = uid()
         if body.debug_id:
             debug_runs[body.debug_id] = draft_id
+        owns_active = body.prepared_token is None
         with store.lock:
-            if active['project_id']:
-                raise RuntimeError('正在处理其他任务，请稍后再生成角色草稿。')
-            active['project_id'] = 'role-draft'
+            if owns_active:
+                if active['project_id']:
+                    raise RuntimeError('正在处理其他任务，请稍后再生成角色草稿。')
+                active['project_id'] = 'role-draft'
         try:
             if hasattr(engine, 'unload'):
                 engine.unload()
@@ -866,8 +987,8 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                     book_record = books.get(body.book_id)
                     aliases = dict(book_record.get('aliases') or {})
                     for sibling in book_projects(book_record):
-                        known_names.update(sp for sp in sibling['voices'] if sp not in ('旁白', 'Narrator', 'NARRATOR'))
-                        for sp, voice in sibling['voices'].items():
+                        known_names.update(sp for sp in sibling.get('voices', {}) if sp not in ('旁白', 'Narrator', 'NARRATOR'))
+                        for sp, voice in sibling.get('voices', {}).items():
                             if sp in ('旁白', 'Narrator', 'NARRATOR') or any(n.startswith(sp) for n in names_for_model):
                                 continue
                             # The cast with the sex of each character — as the
@@ -1007,6 +1128,11 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 with store.lock:
                     examples = book_examples(book_projects(books.get(body.book_id)), body.script)
             def annotate_with(engine_, log_name):
+                if body.prepared_token:
+                    prepared = prepared_results.pop(body.prepared_token, None)
+                    if prepared is None:
+                        raise ValueError('分批结果已失效，请从子工程重新继续。')
+                    return prepared
                 params = engine_.annotate.__code__.co_varnames
                 kwargs = {}
                 if names_for_model and 'known_names' in params:
@@ -1043,7 +1169,8 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 # the whole text again (Astra 2026-09-15, step 3).
                 return len(spoken) >= 3 and len(placed(labels)) < 0.5 * len(spoken)
             fallback_used = None
-            if not settled_by_author and balked(result['labels']) and hasattr(role_engine, 'installed') and hasattr(role_engine, 'select'):
+            if (not body.prepared_token and not settled_by_author and balked(result['labels'])
+                    and hasattr(role_engine, 'installed') and hasattr(role_engine, 'select')):
                 from .attribution import FALLBACK_ROLE_MODELS
                 others = [m['id'] for m in role_engine.installed() if m['installed'] and m['id'] != role_engine.model_id]
                 rank = {m: i for i, m in enumerate(FALLBACK_ROLE_MODELS)}
@@ -1061,7 +1188,9 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             # Validate even injected engines; no unbound model text reaches a project.
             from evals.speaker_attribution.source_units import bind_labels
             bind_labels(body.script,json.dumps({'labels':result['labels']}),body.cut)
-            record = {**result,'draft_id':draft_id,'source_script':body.script,'language':body.language,'fallback_model':fallback_used,'cut':body.cut}
+            record = {**result,'draft_id':draft_id,'source_script':body.script,'language':body.language,
+                      'fallback_model':fallback_used,'cut':body.cut,
+                      'target_project_id': body.target_project_id}
             write_draft(record)                       # the model's answer is kept even if the rules below fail
             labels = {x['id']:x for x in result['labels']}
             units = source_units(body.script, body.cut)
@@ -1143,7 +1272,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             if body.book_id:
                 with store.lock:
                     for sibling in book_projects(books.get(body.book_id)):
-                        for sp in sibling['voices']:
+                        for sp in sibling.get('voices', {}):
                             sex_of.setdefault(sp, character_sex(sibling, sp))
             sex_prof = habits.sex_profiles((t, sex_of.get(sp, '')) for t, sp in taught) if body.book_id and taught else None
             mentions = {name: [name] + [a for a, n in aliases.items() if n == name] for name in cast}
@@ -1505,8 +1634,318 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             logging.warning('Role draft %s failed: %r', draft_id, exc)
             raise ValueError('角色草稿生成失败，请保留原稿后重试。') from exc
         finally:
+            if owns_active:
+                with store.lock:
+                    active['project_id'] = None
+
+    def attribution_batch_context(project):
+        from .attribution import book_examples
+        names = []
+        examples = []
+        book_id = (project.get('book') or {}).get('id')
+        if book_id:
+            book = books.get(book_id)
+            names.extend(entry['name'] for entry in book.get('cast', [])
+                         if entry.get('name') and entry['name'] not in ('旁白', 'Narrator', 'NARRATOR'))
+            siblings = book_projects(book)
+            for sibling in siblings:
+                for name in sibling.get('voices', {}):
+                    if name not in ('旁白', 'Narrator', 'NARRATOR') and name not in names:
+                        names.append(name)
+            examples = book_examples(siblings, project['source_script'])
+        return names, examples
+
+    def attribution_capacity(project):
+        from .attribution_batches import plan_batches
+        from .capacity import role_batch_limits
+        model_id = getattr(role_engine, 'model_id', None)
+        spec = ROLE_MODELS.get(model_id, {})
+        limits = role_batch_limits(spec)
+        names, examples = attribution_batch_context(project)
+        plan = plan_batches(project['source_script'], project.get('cut'), limits,
+                            known_names=names, examples=examples)
+        installed = next((item for item in role_engine.installed() if item['id'] == model_id), None) \
+            if hasattr(role_engine, 'installed') else None
+        return {
+            'model': {'id': model_id, 'label': (installed or {}).get('label', model_id),
+                      'installed': (installed or {}).get('installed', bool(getattr(role_engine, 'ready', False))),
+                      'loadable': (installed or {}).get('loadable', bool(getattr(role_engine, 'ready', False))),
+                      'recommended_for_machine': (installed or {}).get('recommended', False)},
+            'machine': {'memory_gb': limits['memory_gb']},
+            'limits': {key: limits[key] for key in ('chars', 'units', 'context', 'max_tokens')},
+            'source': {'chars': len(project['source_script']), 'units': plan['total_units'],
+                       'estimated_segments': sum(max(1, (len(unit['text']) + (60 if project['language'] == 'zh' else 240) - 1)
+                                                          // (60 if project['language'] == 'zh' else 240))
+                                                 for unit in source_units(project['source_script'], project.get('cut'))
+                                                 if unit['text'].strip()),
+                       'segment_limit': limits['segments']},
+            'batches': len(plan['batches']),
+            'batch_sizes': [len(batch['target_ids']) for batch in plan['batches']],
+            'explanation': ('章节原稿保持完整；角色归属会按本机内存与当前模型的较小上限分批。'
+                            '批次包含只读上下文，人物表和示例也计入预算。'),
+            '_plan': plan, '_known_names': names, '_examples': examples,
+        }
+
+    def wait_for_model_slot(project_id):
+        while True:
             with store.lock:
-                active['project_id'] = None
+                project = store.read(project_id)
+                batch = project.get('attribution_batch') or {}
+                if batch.get('cancel_requested'):
+                    return False
+                if not active['project_id']:
+                    active['project_id'] = 'attribution:' + project_id
+                    return True
+            time.sleep(.2)
+
+    def attribution_batch_worker(project_id):
+        from .core import uid
+        from .capacity import estimate_role_batch, role_batch_limits
+        from .attribution import FALLBACK_ROLE_MODELS
+        from .attribution_batches import (combined_labels, progress, source_fingerprint,
+                                          units_for_batch, validate_batch_labels)
+        owns_active = False
+        selected_before = getattr(role_engine, 'model_id', None)
+        try:
+            if not wait_for_model_slot(project_id):
+                with store.lock:
+                    project = store.read(project_id)
+                    project['job'].update(status='cancelled', current_batch=None)
+                    store.write(project)
+                return
+            owns_active = True
+            with store.lock:
+                project = store.read(project_id)
+                plan = project['attribution_batch']
+                model_id = plan['model_id']
+            if hasattr(role_engine, 'select') and getattr(role_engine, 'model_id', None) != model_id:
+                role_engine.select(model_id)
+            for index in range(len(plan['batches'])):
+                with store.lock:
+                    project = store.read(project_id)
+                    plan = project['attribution_batch']
+                    if plan.get('cancel_requested'):
+                        project['job'].update(status='cancelled', current_batch=None)
+                        store.write(project)
+                        return
+                    batch = plan['batches'][index]
+                    if batch.get('status') == 'completed':
+                        continue
+                    batch.update(status='running', error=None)
+                    project['job'].update(status='running', current_batch=index + 1,
+                                          completed=progress(plan)['completed'], total=len(plan['batches']))
+                    store.write(project)
+                    text, cut = project['source_script'], project.get('cut')
+                    known_names = plan.get('known_names', [])
+                    examples = plan.get('examples', [])
+                    limits = plan['limits']
+                if source_fingerprint(text, cut) != plan['source_sha256']:
+                    raise ValueError('原稿已改变，不能继续旧批次。')
+                batch_units = units_for_batch(text, cut, batch)
+                kwargs = {'known_names': known_names, 'examples': examples,
+                          'units_override': batch_units,
+                          'strict_ids': True, 'limits_override': limits}
+                if cut:
+                    kwargs['cut'] = cut
+                result = role_engine.annotate(text, drafts / f'{project_id}-batch-{index + 1}.log', **kwargs)
+                labels = validate_batch_labels(batch, result['labels'])
+                target_ids = set(batch['target_ids'])
+                quoted = {unit['id'] for unit in batch_units
+                          if unit['id'] in target_ids
+                          and unit['text'].strip().startswith(('“', '"', '「', '『'))}
+                def placed(rows):
+                    return sum(row['id'] in quoted and row['kind'] == 'dialogue'
+                               and row['speaker'].strip().upper() not in ('', 'UNKNOWN', 'NARRATOR')
+                               for row in rows)
+                fallback_model = None
+                first_model = result.get('model_id')
+                if (len(quoted) >= 3 and placed(labels) < .5 * len(quoted)
+                        and hasattr(role_engine, 'installed') and hasattr(role_engine, 'select')):
+                    installed = [item for item in role_engine.installed()
+                                 if item.get('installed') and item.get('loadable', True)
+                                 and item['id'] != model_id]
+                    order = {candidate: rank for rank, candidate in enumerate(FALLBACK_ROLE_MODELS)}
+                    installed.sort(key=lambda item: order.get(item['id'], len(order)))
+                    fallback_choice = next((
+                        (item['id'], role_batch_limits(ROLE_MODELS[item['id']]))
+                        for item in installed
+                        if estimate_role_batch(
+                            sum(len(unit['text']) for unit in batch_units), len(batch_units),
+                            role_batch_limits(ROLE_MODELS[item['id']]),
+                            plan.get('extra_prompt_tokens', 0))['fits']), None)
+                    if fallback_choice:
+                        fallback_model, fallback_limits = fallback_choice
+                        try:
+                            role_engine.select(fallback_model)
+                            fallback_kwargs = {**kwargs, 'limits_override': fallback_limits}
+                            second = role_engine.annotate(
+                                text, drafts / f'{project_id}-batch-{index + 1}-fallback.log',
+                                **fallback_kwargs)
+                            second_labels = validate_batch_labels(batch, second['labels'])
+                            if placed(second_labels) > placed(labels):
+                                result, labels = second, second_labels
+                            else:
+                                fallback_model = None
+                        finally:
+                            role_engine.select(model_id)
+                with store.lock:
+                    project = store.read(project_id)
+                    current = project['attribution_batch']['batches'][index]
+                    if current.get('status') != 'running' or current.get('sent_ids') != batch.get('sent_ids'):
+                        raise RuntimeError('批次状态已改变，请重新继续。')
+                    current.update(status='completed', labels=labels, error=None,
+                                   model_id=result.get('model_id'), model_sha256=result.get('model_sha256'),
+                                   prompt_sha256=result.get('prompt_sha256'), seconds=result.get('seconds_measured'),
+                                   repaired=result.get('repaired'), fallback_model=fallback_model,
+                                   first_model_id=first_model)
+                    done = progress(project['attribution_batch'])
+                    project['job'].update(completed=done['completed'], total=done['total'], current_batch=None)
+                    store.write(project)
+            with store.lock:
+                project = store.read(project_id)
+                plan = project['attribution_batch']
+                labels = combined_labels(project['source_script'], project.get('cut'), plan)
+                token = uid()
+                prepared_results[token] = {
+                    'labels': labels, 'model_id': plan['model_id'],
+                    'model_sha256': plan.get('model_sha256'), 'batch_plan_version': plan['version'],
+                    'batch_count': len(plan['batches']), 'raw_response': None,
+                }
+                request = RoleDraftRequest.model_construct(
+                    script=project['source_script'], language=project['language'],
+                    book_id=(project.get('book') or {}).get('id'), hints=project.get('hints'),
+                    silent=project.get('silent'), cut=project.get('cut'),
+                    prepared_token=token, target_project_id=project_id)
+            draft = role_draft(request)
+            prepared_results.pop(token, None)
+            with store.lock:
+                project = store.read(project_id)
+                project['attribution_batch']['draft_id'] = draft['draft_id']
+                project['attribution_batch']['completed_at'] = time.time()
+                project['job'].update(status='completed', completed=len(plan['batches']),
+                                      total=len(plan['batches']), current_batch=None, error=None)
+                project['revision'] += 1
+                store.write(project)
+                record = read_draft(draft['draft_id'])
+                record['target_project_revision'] = project['revision']
+                write_draft(record)
+        except Exception as exc:
+            logging.exception('Project attribution batch failed for %s', project_id)
+            with store.lock:
+                try:
+                    project = store.read(project_id)
+                    plan = project.get('attribution_batch') or {}
+                    for batch in plan.get('batches', []):
+                        if batch.get('status') == 'running':
+                            batch.update(status='failed', error=str(exc))
+                    project.setdefault('job', {}).update(status='failed', current_batch=None,
+                                                          error=str(exc))
+                    store.write(project)
+                except (OSError, ValueError, KeyError):
+                    pass
+        finally:
+            if hasattr(role_engine, 'select') and selected_before and getattr(role_engine, 'model_id', None) != selected_before:
+                try:
+                    role_engine.select(selected_before)
+                except ValueError:
+                    pass
+            if owns_active:
+                with store.lock:
+                    if active.get('project_id') == 'attribution:' + project_id:
+                        active['project_id'] = None
+
+    @app.get('/api/projects/{project_id}/attribution/capacity')
+    def project_attribution_capacity(project_id: str):
+        with store.lock:
+            project = store.read(project_id)
+            if project.get('settings_schema') != 1 or project.get('processing_state') != 'unprocessed':
+                raise ValueError('只有新版未处理子工程需要分批角色归属。')
+            result = attribution_capacity(project)
+            return {key: value for key, value in result.items() if not key.startswith('_')}
+
+    @app.post('/api/projects/{project_id}/attribution/start')
+    def start_project_attribution(project_id: str, body: AttributionBatchRequest):
+        from .attribution_batches import resume_plan
+        with store.lock:
+            project = store.read(project_id)
+            if project.get('settings_schema') != 1 or project.get('processing_state') != 'unprocessed':
+                raise ValueError('只有新版未处理子工程可以继续角色归属。')
+            if project['revision'] != body.revision:
+                raise RuntimeError('工程已改变，请刷新后再继续。')
+            if project.get('job', {}).get('status') in ('queued', 'running'):
+                raise RuntimeError('这个子工程已经在等待或处理中。')
+            book_id = (project.get('book') or {}).get('id')
+            if book_id:
+                book = books.get(book_id)
+                for member_id in book.get('members', []):
+                    if member_id == project_id:
+                        continue
+                    sibling = store.read(member_id)
+                    if sibling.get('job', {}).get('status') in ('queued', 'running'):
+                        raise RuntimeError('同一主工程已有章节在处理，请等它完成。')
+            capacity = attribution_capacity(project)
+            if not capacity['model']['installed']:
+                raise ValueError('当前分角色模型尚未安装。')
+            if not capacity['model']['loadable']:
+                raise ValueError('当前模型不适合在这台电脑的内存配置上加载，请先换较小模型。')
+            if capacity['source']['estimated_segments'] > capacity['source']['segment_limit']:
+                raise ValueError(
+                    f"本章预计至少形成 {capacity['source']['estimated_segments']} 个片段，"
+                    f"当前电脑的工程上限是 {capacity['source']['segment_limit']} 个；请先拆成两个作者章节。")
+            model_id = capacity['model']['id']
+            old = project.get('attribution_batch')
+            if body.resume and old and not old.get('draft_id'):
+                plan = resume_plan(old, project['source_script'], project.get('cut'), model_id)
+            else:
+                plan = capacity['_plan']
+                plan.update(model_id=model_id, model_sha256=getattr(role_engine, 'sha256', None),
+                            known_names=capacity['_known_names'], examples=capacity['_examples'])
+            plan['cancel_requested'] = False
+            project['attribution_batch'] = plan
+            project['job'] = {'kind': 'attribution', 'status': 'queued',
+                              'total': len(plan['batches']), 'completed': sum(
+                                  batch.get('status') == 'completed' for batch in plan['batches']),
+                              'current_batch': None, 'error': None,
+                              'queued_at': time.time()}
+            project['revision'] += 1
+            store.write(project)
+            executor.submit(attribution_batch_worker, project_id)
+            return project_service.public_project(project, engine, checker)
+
+    @app.post('/api/projects/{project_id}/attribution/cancel')
+    def cancel_project_attribution(project_id: str):
+        with store.lock:
+            project = store.read(project_id)
+            if project.get('job', {}).get('kind') != 'attribution' or project['job'].get('status') not in ('queued', 'running'):
+                raise ValueError('这个子工程没有正在等待或运行的角色归属。')
+            project.setdefault('attribution_batch', {})['cancel_requested'] = True
+            store.write(project)
+        return {'project_id': project_id, 'cancel_requested': True}
+
+    @app.get('/api/model-tasks')
+    def model_tasks():
+        tasks = []
+        busy_books = set()
+        with store.lock:
+            for path in store.root.glob('*/project.json'):
+                project = json.loads(path.read_text())
+                job = project.get('job') or {}
+                if job.get('status') not in ('queued', 'running'):
+                    continue
+                book_id = (project.get('book') or {}).get('id')
+                if book_id:
+                    busy_books.add(book_id)
+                tasks.append({'project_id': project['id'], 'book_id': book_id,
+                              'kind': job.get('kind'), 'status': job.get('status'),
+                              'completed': job.get('completed', 0), 'total': job.get('total', 0),
+                              'queued_at': job.get('queued_at')})
+        tasks.sort(key=lambda item: item.get('queued_at') or 0)
+        position = 0
+        for task in tasks:
+            if task['status'] == 'queued':
+                position += 1
+                task['queue_position'] = position
+        return {'active': active.get('project_id'), 'busy_books': sorted(busy_books), 'tasks': tasks}
 
     def apply_decisions(units, decisions):
         """The page view with the reviewer's saved decisions laid over it: a decided
@@ -1540,6 +1979,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                     'units': apply_decisions(record['units'], record.get('decisions', {})), 'cast': cast,
                     'model': {'id': record.get('model_id'), 'note': record.get('model_note') or record.get('model_id') or ''},
                     'language': record['language'], 'book_id': record.get('book_id'), 'notice': record.get('notice'),
+                    'target_project_id': record.get('target_project_id'),
                     'confirmed_project_id': record.get('confirmed_project_id'), 'abandoned': bool(record.get('abandoned'))}
 
     @app.delete('/api/attribution/draft/{draft_id}')
@@ -1734,19 +2174,47 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                     entry, _ = C.ensure(cast, label['speaker'].strip(), 'person')
                     label['cast_id'] = entry['id']
             save_cast(record, cast, book_record)
-            project = store.create(body.name, record['source_script'], record['language'], segments=segments, preset_model=default_preset(), clone_model=default_clone())
-            if record.get('cut'):
-                project['cut'] = record['cut']          # the lines were cut by the manuscript's colours; a rewrite cuts the same way
-            project['cast_ids'] = {e['name']: e['id'] for e in cast if e['name'] in project['voices']}
+            target_id = record.get('target_project_id')
+            if target_id:
+                project = store.read(target_id)
+                if (project.get('settings_schema') != 1
+                        or project.get('processing_state') != 'unprocessed'
+                        or project.get('source_script') != record['source_script']
+                        or (project.get('attribution_batch') or {}).get('draft_id') != body.draft_id):
+                    raise RuntimeError('目标子工程或原稿已经改变，请从该章节重新继续。')
+                project['name'] = body.name.strip() or project['name']
+                project['segments'] = segments
+                project['processing_state'] = 'processed'
+                project['job'] = {'status': 'idle'}
+                if record.get('cut'):
+                    project['cut'] = record['cut']
+                current_view = project_service.view(project)
+                local_voices = project.setdefault('voices', {})
+                presets = ['Vivian','Uncle_Fu','Serena','Dylan'] if record['language'] == 'zh' else ['Ryan','Aiden']
+                used = set(current_view.get('voices', {}).values())
+                for speaker in dict.fromkeys(segment['speaker'] for segment in segments):
+                    if speaker not in current_view.get('voices', {}):
+                        voice = next((candidate for candidate in presets if candidate not in used),
+                                     presets[len(used) % len(presets)])
+                        local_voices[speaker] = voice
+                        used.add(voice)
+                voice_names = set(project_service.view(project).get('voices', {}))
+            else:
+                project = store.create(body.name, record['source_script'], record['language'], segments=segments,
+                                       preset_model=default_preset(), clone_model=default_clone())
+                if record.get('cut'):
+                    project['cut'] = record['cut']          # the lines were cut by the manuscript's colours; a rewrite cuts the same way
+                voice_names = set(project['voices'])
+            project['cast_ids'] = {e['name']: e['id'] for e in cast if e['name'] in voice_names}
             # A colour the author gave a character in the manuscript is the
             # character's colour in the project too (本人 2026-09-16).
             for e in cast:
-                if e['name'] in project['voices'] and e.get('colours') and e['colours'][0] != 'none':
+                if e['name'] in voice_names and e.get('colours') and e['colours'][0] != 'none':
                     project.setdefault('colors', {})[e['name']] = e['colours'][0]
             narration_colour = record.get('narration_colour') or (book_record or {}).get('narration_colour')
             if narration_colour:
                 narrator = '旁白' if record['language'] == 'zh' else 'Narrator'
-                if narrator in project['voices']:
+                if narrator in voice_names:
                     project.setdefault('colors', {})[narrator] = narration_colour
             project['attribution'] = {'draft_id':body.draft_id,'model_sha256':record.get('model_sha256'),'model_id':record.get('model_id'),
                 'model_labels':record['labels'],'confirmed_labels':labels,'human_confirmed':True,'decisions':decisions,'draft_revision':record.get('revision', 1),
@@ -1755,7 +2223,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 # the page showed, what the person changed, how long it took.
                 'review':{k: body.review.get(k) for k in ('seconds','dialogue','orange','yellow','changed','named_changed','yellow_changed','orange_filled')} if body.review else None}
             inherited = None
-            if body.book_id and body.chapter_index:
+            if not target_id and body.book_id and body.chapter_index:
                 # A chapter of a book: remember which, and start from the settings
                 # of the chapter before it — the same characters, the same voices,
                 # the same lexicon — so a book is configured once, not per chapter.
@@ -1772,9 +2240,13 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 if source:
                     carried = inherit_settings(project, source, store.directory(source['id']), store.directory(project['id']))
                     inherited = {'from': source['name'], **carried}
+            if target_id:
+                project['revision'] += 1
             store.write(project)
             record['confirmed_project_id'] = project['id']; write_draft(record)
-            return {**store.public(project, engine, checker), 'inherited': inherited}
+            public = (project_service.public_project(project, engine, checker)
+                      if project.get('settings_schema') == 1 else store.public(project, engine, checker))
+            return {**public, 'inherited': inherited}
 
     @app.get('/api/projects')
     def projects(include_archived: bool = False):
@@ -1782,7 +2254,8 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             # Most recently touched first: a list ordered by folder name is a
             # list ordered by nothing anyone can see.
             return [{'id':p['id'],'name':p['name'],'language':p['language'],
-                     'archived':p.get('archived',False),'updated_at':path.stat().st_mtime}
+                     'archived':p.get('archived',False),'updated_at':path.stat().st_mtime,
+                     'processing_state': p.get('processing_state'), 'book': p.get('book')}
                     for path in sorted(store.root.glob('*/project.json'))
                     for p in [json.loads(path.read_text())] if include_archived or not p.get('archived',False)]
 
@@ -1794,7 +2267,24 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
     @app.get('/api/projects/{project_id}')
     def get_project(project_id: str):
         with store.lock:
-            return store.public(store.read(project_id), engine, checker)
+            project = store.read(project_id)
+            if project.get('settings_schema') == 1:
+                return project_service.public_project(project, engine, checker)
+            return store.public(project, engine, checker)
+
+    @app.get('/api/projects/{project_id}/settings')
+    def get_project_settings(project_id: str):
+        with store.lock:
+            project = store.read(project_id)
+            if project.get('settings_schema') != 1:
+                raise ValueError('旧工程继续使用原设置接口，不自动迁移。')
+            return project_service.setting_payload(project)
+
+    @app.patch('/api/projects/{project_id}/settings')
+    def patch_project_settings(project_id: str, body: SettingPatchRequest):
+        project = project_service.update_project_settings(
+            project_id, body.revision, body.values, body.inherit)
+        return project_service.setting_payload(project)
 
     @app.patch('/api/projects/{project_id}')
     def edit_project(project_id: str, body: EditRequest):
@@ -1802,6 +2292,8 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
         if has_pause and not body.segment_id:
             raise ValueError('请先选择要设置停顿的句子。')
         def apply(p):
+            effective = work_project(p)
+            effective_voices = effective['voices']
             if body.name is not None:
                 if not body.name.strip():raise ValueError('工程名称不能为空。')
                 p['name']=body.name.strip()
@@ -1858,7 +2350,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                             _splice_source(p, s, value)
                         s[field] = value
                 if body.speaker is not None:
-                    if body.speaker not in p['voices']:
+                    if body.speaker not in effective_voices:
                         # A character who first appears after the project was made
                         # (本人 2026-09-15): named on a line, born with a preset voice
                         # not yet used by anyone, to be changed under 角色音色.
@@ -1866,16 +2358,19 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                         if not name or len(name) > 80 or any(c in name for c in '：:\n'):
                             raise ValueError('角色名需为 1–80 个字符，且不含冒号。')
                         presets = ['Vivian', 'Uncle_Fu', 'Serena', 'Dylan', 'Eric'] if p['language'] == 'zh' else ['Ryan', 'Aiden']
-                        used = set(p['voices'].values())
-                        p['voices'][name] = next((v for v in presets if v not in used), presets[len(p['voices']) % len(presets)])
+                        used = set(effective_voices.values())
+                        voices = p.setdefault('voices', {})
+                        voices[name] = next((v for v in presets if v not in used), presets[len(effective_voices) % len(presets)])
                         body.speaker = name
                     s['speaker'] = body.speaker
                 if any(getattr(body, field) is not None for field in ('text', 'spoken_as', 'speaker')):
                     s['error'] = None
             if body.speaker_muted is not None:
-                if body.speaker not in p['voices']:
+                if body.speaker not in effective_voices:
                     raise ValueError('Select an existing speaker')
-                muted = p.setdefault('muted_speakers', [])
+                if 'muted_speakers' not in p:
+                    p['muted_speakers'] = list(effective.get('muted_speakers', []))
+                muted = p['muted_speakers']
                 if body.speaker_muted:
                     if body.speaker not in muted:
                         muted.append(body.speaker)
@@ -1894,11 +2389,11 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                     raise ValueError('Unknown voice')
                 s['error'] = None
             elif body.voice is not None:
-                if (body.voice not in VOICES and not (is_custom(body.voice) and library.label(body.voice))) or body.speaker not in p['voices']:
+                if (body.voice not in VOICES and not (is_custom(body.voice) and library.label(body.voice))) or body.speaker not in effective_voices:
                     raise ValueError('Unknown voice or speaker')
-                if p['voices'][body.speaker] != body.voice:
+                if effective_voices[body.speaker] != body.voice:
                     p.get('voice_profiles',{}).pop(body.speaker,None)
-                p['voices'][body.speaker] = body.voice
+                p.setdefault('voices', {})[body.speaker] = body.voice
                 for s in p['segments']:
                     if s['speaker'] == body.speaker:
                         s['error'] = None
@@ -1908,20 +2403,24 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 if body.clone_model == '1.7B' and not getattr(engine, 'large_reference_ready', False):
                     raise ValueError('1.7B 固定声线模型未安装。')
                 p['clone_model'] = body.clone_model
+                changed_view = work_project(p)
                 for s in p['segments']:
-                    if s['speaker'] in (p.get('voice_profiles') or {}) or is_custom(voice_of(p, s)):
+                    work_segment = next(item for item in changed_view['segments'] if item['id'] == s['id'])
+                    if s['speaker'] in (changed_view.get('voice_profiles') or {}) or is_custom(voice_of(changed_view, work_segment)):
                         s['error'] = None
             if body.ellipsis_pause_ms is not None:
                 p['ellipsis_pause_ms'] = body.ellipsis_pause_ms
+                changed_view = work_project(p)
                 for s in p['segments']:
-                    if len(split_at_pauses(spoken_text(p, s))) > 1:
+                    work_segment = next(item for item in changed_view['segments'] if item['id'] == s['id'])
+                    if len(split_at_pauses(spoken_text(changed_view, work_segment))) > 1:
                         s['error'] = None
             if body.sex is not None:
                 # Who a character is, apart from which voice reads them (Astra
                 # 2026-09-15: the voice chosen must not decide whose line it
                 # is). Set here, it is what the speaker rules go by; 'auto'
                 # returns to what the voice suggests.
-                if body.speaker not in p['voices']:
+                if body.speaker not in effective_voices:
                     raise ValueError('Select an existing speaker')
                 sexes = p.setdefault('sexes', {})
                 if body.sex == 'auto':
@@ -1932,14 +2431,17 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 # A character's colour in the script list: a screen preference,
                 # kept with the project, nothing to do with the audio. 'auto'
                 # returns the character to the palette's own choice.
-                if body.speaker not in p['voices']:
+                if body.speaker not in effective_voices:
                     raise ValueError('Select an existing speaker')
                 colors = p.setdefault('colors', {})
                 if body.color == 'auto':
                     colors.pop(body.speaker, None)
                 else:
                     colors[body.speaker] = body.color.lower()
-        return store.public(store.edit(project_id, body.revision, apply), engine, checker)
+        updated = store.edit(project_id, body.revision, apply)
+        return (project_service.public_project(updated, engine, checker)
+                if updated.get('settings_schema') == 1
+                else store.public(updated, engine, checker))
 
     class SplitRequest(RevisionRequest):
         at: int = Field(ge=1)
@@ -2147,6 +2649,8 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             segment=next((s for s in p['segments'] if s['id']==body.segment_id),None)
             if segment is None:
                 raise ValueError('Unknown segment')
+            effective = work_project(p)
+            work_segment = next(s for s in effective['segments'] if s['id'] == segment['id'])
             profiles=p.setdefault('voice_profiles',{})
             if action=='release':
                 profiles.pop(segment['speaker'],None)
@@ -2159,7 +2663,8 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             current=next(s for s in public['segments'] if s['id']==segment['id'])
             audio=segment.get('audio')
             if (current['status']!='ready' or not audio or not audio.get('synthetic_audio')
-                or audio.get('engine')!=engine.identity or segment['speaker'] in profiles):
+                or audio.get('engine')!=engine.identity
+                or segment['speaker'] in effective.get('voice_profiles', {})):
                 raise ValueError('请先生成并试听一条预设声音，再固定声线。')
             source=store.directory(project_id)/'audio'/(audio['fingerprint']+'.wav')
             info=sf.info(source)
@@ -2174,8 +2679,8 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 shutil.copyfile(source,temporary);temporary.replace(dest)
             if hashlib.sha256(dest.read_bytes()).hexdigest()!=digest:
                 raise ValueError('已有参考声音校验失败。')
-            profiles[segment['speaker']]={'sha256':digest,'text':spoken_text(p,segment),
-                'voice':p['voices'][segment['speaker']],'source_fingerprint':audio['fingerprint'],
+            profiles[segment['speaker']]={'sha256':digest,'text':spoken_text(effective,work_segment),
+                'voice':effective['voices'][segment['speaker']],'source_fingerprint':audio['fingerprint'],
                 'source_engine':audio['engine'],'synthetic_audio':True,'consent_confirmed':True}
             for s in p['segments']:
                 if s['speaker']==segment['speaker']:s['error']=None
@@ -2193,7 +2698,9 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                         # D33: advance only when this sentence starts; cancellation preserves untouched issues.
                         s['take']=s.get('take',0)+1
                         s['error']=None
-                    digest = fingerprint(p, s, engine, library)
+                    work = work_project(p)
+                    work_segment = next(item for item in work['segments'] if item['id'] == sid)
+                    digest = fingerprint(work, work_segment, engine, library)
                     folder = store.directory(project_id)/'audio'
                     folder.mkdir(exist_ok=True)
                     path = folder/(digest+'.wav')
@@ -2207,26 +2714,26 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                         if info.frames != meta['samples'] or info.samplerate != meta['sample_rate']:
                             raise ValueError('Cached asset is invalid; generate a new take')
                     else:
-                        profile=p.get('voice_profiles',{}).get(s['speaker'])
+                        profile=work.get('voice_profiles',{}).get(work_segment['speaker'])
                         if profile:
                             if not profile.get('synthetic_audio') or not profile.get('consent_confirmed'):
                                 raise ValueError('固定声线缺少合成来源或授权记录。')
                             digest_ref=profile['sha256']
                             if len(digest_ref)!=64 or any(c not in '0123456789abcdef' for c in digest_ref):
                                 raise ValueError('固定声线标识无效。')
-                            def read(text): return engine.synthesize_reference(text,p['language'],
+                            def read(text): return engine.synthesize_reference(text,work['language'],
                                 store.directory(project_id)/'references'/(digest_ref+'.wav'),profile['text'],
-                                260909+s.get('take',0),consent_confirmed=True,expected_sha256=digest_ref,**clone_size(p))
-                        elif is_custom(voice_of(p, s)):
-                            entry = library.get(custom_id(voice_of(p, s)))
-                            def read(text): return engine.synthesize_reference(text,p['language'],
+                                260909+work_segment.get('take',0),consent_confirmed=True,expected_sha256=digest_ref,**clone_size(work))
+                        elif is_custom(voice_of(work, work_segment)):
+                            entry = library.get(custom_id(voice_of(work, work_segment)))
+                            def read(text): return engine.synthesize_reference(text,work['language'],
                                 library.audio_path(entry['id']),entry['reference_text'],
-                                260909+s.get('take',0),consent_confirmed=True,expected_sha256=entry['sha256'],**clone_size(p))
+                                260909+work_segment.get('take',0),consent_confirmed=True,expected_sha256=entry['sha256'],**clone_size(work))
                         else:
                             def read(text): return engine.synthesize(text,
-                                voice_of(p, s), p['language'], 260909+s.get('take',0),
-                                **({'size': p.get('preset_model','0.6B')} if hasattr(engine,'identity_for') else {}))
-                        pcm, rate, metrics = read_with_pauses(p, s, read)
+                                voice_of(work, work_segment), work['language'], 260909+work_segment.get('take',0),
+                                **({'size': work.get('preset_model','0.6B')} if hasattr(engine,'identity_for') else {}))
+                        pcm, rate, metrics = read_with_pauses(work, work_segment, read)
                         pcm, meta = process_audio(pcm, rate)
                         # A run-away take: the engine read the line and kept going -- a
                         # video outro, or a 26-character line rendered as 164 seconds.
@@ -2234,22 +2741,24 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                         # attempt with the next seed, before anyone hears it; the
                         # duration marker still reports if the second is bad too.
                         spoken_seconds = (meta['speech_end_sample'] - meta['speech_start_sample']) / rate - metrics.get('pause_seconds', 0)
-                        runaway = duration_marker(spoken_text(p,s), spoken_seconds, p['language'])
-                        if runaway and not metrics.get('auto_retake') and sid not in retake_ids and not p.get('voice_profiles',{}).get(s['speaker']) and not is_custom(voice_of(p, s)):
-                            logging.warning('Run-away take on %s (%.1fs for %d chars); retrying with the next seed', sid, spoken_seconds, len(spoken_text(p,s)))
+                        runaway = duration_marker(spoken_text(work,work_segment), spoken_seconds, work['language'])
+                        if runaway and not metrics.get('auto_retake') and sid not in retake_ids and not work.get('voice_profiles',{}).get(work_segment['speaker']) and not is_custom(voice_of(work, work_segment)):
+                            logging.warning('Run-away take on %s (%.1fs for %d chars); retrying with the next seed', sid, spoken_seconds, len(spoken_text(work,work_segment)))
                             with store.lock:
                                 p = store.read(project_id)
                                 s = next(x for x in p['segments'] if x['id']==sid)
                                 s['take'] = s.get('take',0)+1
-                                digest = fingerprint(p, s, engine, library)
+                                work = work_project(p)
+                                work_segment = next(item for item in work['segments'] if item['id'] == sid)
+                                digest = fingerprint(work, work_segment, engine, library)
                                 path = folder/(digest+'.wav'); meta_path = folder/(digest+'.json')
                                 store.write(p)
-                            pcm, rate, metrics = engine.synthesize(spoken_text(p,s),
-                                voice_of(p, s), p['language'], 260909+s.get('take',0),
-                                **({'size': p.get('preset_model','0.6B')} if hasattr(engine,'identity_for') else {}))
+                            pcm, rate, metrics = engine.synthesize(spoken_text(work,work_segment),
+                                voice_of(work, work_segment), work['language'], 260909+work_segment.get('take',0),
+                                **({'size': work.get('preset_model','0.6B')} if hasattr(engine,'identity_for') else {}))
                             pcm, meta = process_audio(pcm, rate)
                             metrics = {**metrics, 'auto_retake': True, 'first_take_seconds': round(spoken_seconds, 2)}
-                        meta.update({'fingerprint':digest, 'engine':(engine.reference_identity_for(p.get('clone_model','0.6B')) if hasattr(engine,'reference_identity_for') else getattr(engine,'reference_identity',engine.identity)) if (p.get('voice_profiles',{}).get(s['speaker']) or is_custom(voice_of(p, s))) else engine.identity, **metrics})
+                        meta.update({'fingerprint':digest, 'engine':(engine.reference_identity_for(work.get('clone_model','0.6B')) if hasattr(engine,'reference_identity_for') else getattr(engine,'reference_identity',engine.identity)) if (work.get('voice_profiles',{}).get(work_segment['speaker']) or is_custom(voice_of(work, work_segment))) else engine.identity, **metrics})
                         temp = folder/(digest+'.tmp.wav')
                         sf.write(temp, pcm, rate, subtype='PCM_16')
                         temp.replace(path)
@@ -2292,16 +2801,18 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 if body.segment_id or body.force:raise ValueError('标记重做不能同时指定单句或强制全部重做。')
                 retake_ids={s['id'] for s in store.public(p,engine,checker)['segments'] if s['listening_status']=='issue'}
                 if not retake_ids:raise ValueError('没有当前版本的声音问题标记。')
-            selected = [s for s in p['segments'] if (s['id'] in retake_ids if body.marked_only else (not body.segment_id or s['id']==body.segment_id))]
-            if body.segment_id and selected and not reads_aloud(selected[0], p):
+            work = work_project(p)
+            selected = [s for s in work['segments'] if (s['id'] in retake_ids if body.marked_only else (not body.segment_id or s['id']==body.segment_id))]
+            if body.segment_id and selected and not reads_aloud(selected[0], work):
                 raise ValueError('这一句或它的角色已设为不朗读；要生成它，先恢复朗读。')
-            selected = [s for s in selected if reads_aloud(s, p)]
+            selected = [s for s in selected if reads_aloud(s, work)]
             if not selected:
                 raise ValueError('Unknown segment' if body.segment_id else '没有需要朗读的句子。')
             if body.force:
                 for s in selected:
-                    s['take'] = s.get('take',0)+1
-                    s['error'] = None
+                    raw_segment = next(item for item in p['segments'] if item['id'] == s['id'])
+                    raw_segment['take'] = raw_segment.get('take',0)+1
+                    raw_segment['error'] = None
             public = store.public(p, engine, checker)
             pending = {s['id'] for s in public['segments'] if s['status']!='ready'}
             ids = [s['id'] for s in selected if s['id'] in pending or s['id'] in retake_ids]
@@ -2321,14 +2832,15 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 if cancel.is_set():break
                 with store.lock:
                     p=store.read(project_id)
-                    segment=next(s for s in p['segments'] if s['id']==sid)
-                    digest=fingerprint(p,segment,engine,library)
-                    expected=spoken_text(p,segment)
+                    work=work_project(p)
+                    segment=next(s for s in work['segments'] if s['id']==sid)
+                    digest=fingerprint(work,segment,engine,library)
+                    expected=spoken_text(work,segment)
                     source=store.directory(project_id)/'audio'/(digest+'.wav')
                     p['job']['current_segment']=sid;store.write(p)
                 rhythm={'source_fingerprint':digest,'version':RHYTHM_VERSION,'expected_text':expected}
                 try:
-                    rhythm.update(analyze_file(source,language=p['language'],expected_text=expected))
+                    rhythm.update(analyze_file(source,language=work['language'],expected_text=expected))
                     stat=source.stat();rhythm.update(audio_sha256=file_sha(source),audio_stat=[stat.st_size,stat.st_mtime_ns])
                 except Exception:
                     logging.exception('Rhythm analysis failed for %s',sid)
@@ -2337,11 +2849,11 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                         'checked_at':time.time(),'reviewed':False}
                 try:
                     before=file_sha(source)
-                    transcript=checker.transcribe(source,p['language'],store.directory(project_id)/'checks')
+                    transcript=checker.transcribe(source,work['language'],store.directory(project_id)/'checks')
                     if file_sha(source)!=before:raise ValueError('检查过程中音频发生变化，请重试。')
                     stat=source.stat()
                     result.update(transcript)
-                    result.update(compare_text(expected,transcript['recognized_text'],p['language'],names=list(p['voices'])))
+                    result.update(compare_text(expected,transcript['recognized_text'],work['language'],names=list(work['voices'])))
                     result.update({'audio_sha256':before,'audio_stat':[stat.st_size,stat.st_mtime_ns]})
                 except Exception as exc:
                     logging.exception('Local content check failed for segment %s',sid)
@@ -2350,9 +2862,10 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                         stat=source.stat();result['audio_stat']=[stat.st_size,stat.st_mtime_ns]
                 with store.lock:
                     p=store.read(project_id)
+                    work=work_project(p)
                     target=next(s for s in p['segments'] if s['id']==sid)
                     if result.get('timed_text') and not rhythm.get('error'):
-                        try:rhythm.update(analyze_file(source,result['timed_text'],p['language'],expected))
+                        try:rhythm.update(analyze_file(source,result['timed_text'],work['language'],expected))
                         except Exception:
                             logging.exception('Pace timing analysis failed for %s',sid)
                             rhythm['pace']={'status':'unavailable','reason':'语速起伏估计失败，请人工试听。'}
@@ -2409,9 +2922,11 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             sha=file_sha(path)
             stat=path.stat()
             if before!=[stat.st_size,stat.st_mtime_ns]:raise ValueError('音频发生变化，请重新试听再标记。')
+            effective = work_project(p)
+            work_segment = next(s for s in effective['segments'] if s['id'] == segment['id'])
             segment['listening_issue']={'kind':body.kind,'note':body.note.strip(),'marked_at':time.time(),
-                'source_fingerprint':digest,'audio_sha256':sha,'audio_stat':before,'speech_rate':p.get('speech_rate',1.0),
-                'expected_text':spoken_text(p,segment),'tempo_edit':segment.get('tempo_edit')}
+                'source_fingerprint':digest,'audio_sha256':sha,'audio_stat':before,'speech_rate':effective.get('speech_rate',1.0),
+                'expected_text':spoken_text(effective,work_segment),'tempo_edit':segment.get('tempo_edit')}
         return store.public(store.edit(project_id,body.revision,apply),engine,checker)
 
     @app.post('/api/projects/{project_id}/checks/review')
@@ -2462,7 +2977,9 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             p,s,path=ready_segment(project_id,segment_id)
             public=next(x for x in store.public(p,engine,checker)['segments'] if x['id']==segment_id)
             timed=s.get('content_check',{}).get('timed_text') if public['check_status'] not in ('stale','not_checked','error') else None
-            result=analyze_file(path,timed,p['language'],spoken_text(p,segment))
+            effective = work_project(p)
+            work_segment = next(x for x in effective['segments'] if x['id'] == segment_id)
+            result=analyze_file(path,timed,effective['language'],spoken_text(effective,work_segment))
             result.update(source_fingerprint=s['audio']['fingerprint'],revision=p['revision'])
             return result
 
@@ -2483,7 +3000,9 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             target['tempo_edit']={'source_fingerprint':s['audio']['fingerprint'],'audio_sha256':file_sha(path),
                                  'audio_stat':[stat.st_size,stat.st_mtime_ns],'regions':regions,**({'cuts':cuts} if cuts else {})}
             # Validate the proposed edit before recording it; invalid remnants must not poison exports.
-            prepare_segment(p,target,store.directory(project_id))
+            effective = work_project(p)
+            work_target = next(x for x in effective['segments'] if x['id'] == segment_id)
+            prepare_segment(effective,work_target,store.directory(project_id))
         return store.public(store.edit(project_id,body.revision,apply),engine,checker)
 
     @app.get('/api/projects/{project_id}/segments/{segment_id}/clips')
@@ -2502,7 +3021,9 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             target=next(x for x in p['segments'] if x['id']==segment_id)
             target['tempo_edit']={'source_fingerprint':s['audio']['fingerprint'],'audio_sha256':file_sha(path),
                                  'audio_stat':[stat.st_size,stat.st_mtime_ns],'regions':[],'clips':clips}
-            prepare_segment(p,target,store.directory(project_id))
+            effective = work_project(p)
+            work_target = next(x for x in effective['segments'] if x['id'] == segment_id)
+            prepare_segment(effective,work_target,store.directory(project_id))
         return store.public(store.edit(project_id,body.revision,apply),engine,checker)
 
     @app.post('/api/projects/{project_id}/segments/{segment_id}/preview')
@@ -2513,12 +3034,14 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             sha=file_sha(path)
             stat=path.stat()
             effective_edit=s.get('tempo_edit') if edit_status(s,[stat.st_size,stat.st_mtime_ns])=='current' else None
-            identity={'source_sha':sha,'fingerprint':s['audio']['fingerprint'],'tempo':effective_edit,'speed':p.get('speech_rate',1.),'version':TEMPO_VERSION}
+            effective = work_project(p)
+            work_segment = next(x for x in effective['segments'] if x['id'] == segment_id)
+            identity={'source_sha':sha,'fingerprint':s['audio']['fingerprint'],'tempo':effective_edit,'speed':effective.get('speech_rate',1.),'version':TEMPO_VERSION}
             key=hashlib.sha256(json.dumps(identity,sort_keys=True).encode()).hexdigest()
             directory=store.directory(project_id);folder=directory/'previews';folder.mkdir(exist_ok=True)
             audio_file=folder/(key+'.wav');meta_file=folder/(key+'.json')
             if not audio_file.is_file() or not meta_file.is_file():
-                pcm,rate,_,mapping=prepare_segment(p,s,directory)
+                pcm,rate,_,mapping=prepare_segment(effective,work_segment,directory)
                 if file_sha(path)!=sha:raise ValueError('原音发生变化，请重试。')
                 metadata={'mapping':mapping,'duration':len(pcm)/rate,'synthetic_audio':True,
                           'processed_checks':{**analyze(pcm,rate),'notice':'成品的低能量检查；时间为成品秒数，语速与自然度仍需试听。'},'source_sha256':sha}
@@ -2573,24 +3096,25 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             p = store.read(project_id)
             if p['revision'] != body.revision or p['job']['status']=='running':
                 raise RuntimeError('Finish generation and reload before exporting')
-            public = store.public(p,engine,checker)['segments']
+            effective = work_project(p)
+            public = store.public(effective,engine,checker)['segments']
             if all(s['status']=='silent' for s in public):
                 raise ValueError('所有句子都设为不朗读，没有可导出的内容。')
             waiting = sum(1 for s in public if s['status'] not in ('ready','silent'))
             if waiting:
                 raise ValueError(f'还有 {waiting} 句没有生成声音，先生成再导出。')
             out = store.directory(project_id)/'exports'/str(p['revision'])
-            timeline = export_audio(p, store.directory(project_id), out, delivery=True)
+            timeline = export_audio(effective, store.directory(project_id), out, delivery=True)
             timeline['project_revision'] = p['revision']
             check_report={'project_revision':p['revision'],'synthetic_audio':True,
-                'speech_rate':p.get('speech_rate',1.0),'checked_audio':'original_generated_audio',
+                'speech_rate':effective.get('speech_rate',1.0),'checked_audio':'original_generated_audio',
                 'notice':'自动文字检查针对原始合成声音；剪切可能移除发音，成品文字及字幕需要重新人工核对。',
                 'segments':[{'id':s['id'],'text':s['text'],'check_status':s['check_status'],
                              'content_check':s.get('content_check'),'listening_status':s['listening_status'],
                              'rhythm_status':s['rhythm_status'],'rhythm_check':s.get('rhythm_check'),
                              'tempo_status':s['tempo_status'],'tempo_edit':s.get('tempo_edit'),
                              'edited_content_requires_review':s['tempo_status']=='current' and bool(s.get('tempo_edit',{}).get('cuts') or s.get('tempo_edit',{}).get('clips')),
-                             'listening_issue':s.get('listening_issue')} for s in store.public(p,engine,checker)['segments']]}
+                             'listening_issue':s.get('listening_issue')} for s in store.public(effective,engine,checker)['segments']]}
             (out/'content-check.json').write_text(json.dumps(check_report,ensure_ascii=False,indent=2))
             (out/'timeline.json').write_text(json.dumps(timeline, ensure_ascii=False, indent=2))
             names = ['full.wav','subtitles.srt','timeline.json','content-check.json','delivery.zip']

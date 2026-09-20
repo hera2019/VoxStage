@@ -75,12 +75,12 @@ def book_examples(siblings, exclude_text, limit=2, max_chars=360):
 ROLE_MODELS = {
     'qwen3-4b-instruct-2507-q8': {
         'label': 'Qwen3-4B-Instruct-2507 · Q8（评测过）',
-        'sha256': MODEL_SHA,
+        'sha256': MODEL_SHA, 'minimum_memory_gb': 8,
         'paths': [ROOT/'user-data/models/role-qwen3-4b/qwen3-4b-instruct-2507-q8_0.gguf',
                   ROOT.parent/'AI-Models/generators/qwen3-4b-instruct-2507/qwen3-4b-instruct-2507-q8_0.gguf']},
     'qwen3-4b-instruct-2507-abliterated-q8': {
         'label': 'Qwen3-4B-Instruct-2507 去审查版 · Q8（huihui-ai 微调）',
-        'sha256': 'f3b6a790d226efadd863152415713d4d177a22e80eb37bc54537dab110062f31',
+        'sha256': 'f3b6a790d226efadd863152415713d4d177a22e80eb37bc54537dab110062f31', 'minimum_memory_gb': 8,
         'paths': [ROOT/'user-data/models/role-qwen3-4b-abliterated/Huihui-Qwen3-4B-Instruct-2507-abliterated.Q8_0.gguf']},
     # Removed 2026-09-17 with the author's consent (「鸡肋」): the two Qwen3.5-9B
     # (slow, balked), the abliterated 14B (worse than the plain), the abliterated
@@ -92,7 +92,7 @@ ROLE_MODELS = {
         'label': 'Qwen3-14B 普通版 · Q4_K_M（Qwen 官方 GGUF）',
         'sha256': '500a8806e85ee9c83f3ae08420295592451379b4f8cf2d0f41c15dffeb6b81f0',
         'paths': [ROOT/'user-data/models/role-qwen3-14b/Qwen3-14B-Q4_K_M.gguf'],
-        'recommended_gb': 32},
+        'recommended_gb': 32, 'minimum_memory_gb': 16},
     'qwen3-30b-a3b-instruct-2507-q4km': {
         # Attribution plan step 5 (Fable's suggestion, 2026-09-16): a mixture of
         # experts with 3B active — the speed of a small model with the knowledge
@@ -103,7 +103,9 @@ ROLE_MODELS = {
         'label': 'Qwen3-30B-A3B Instruct-2507 · Q4_K_M（unsloth GGUF）',
         'sha256': '6c997b8af17debdfb01d890214400ccbab00db6acc0ba8da5de1cc906c4774d0',
         'paths': [ROOT/'user-data/models/role-qwen3-30b-a3b/Qwen3-30B-A3B-Instruct-2507-Q4_K_M.gguf'],
-        'max_context': 20480, 'recommended_gb': 32},
+        # Conservative batch policy after the reported 151-unit ID mismatch.
+        # Consumed by the upcoming batch adapter; not a measured accuracy guarantee.
+        'max_units': 100, 'max_context': 20480, 'recommended_gb': 32, 'minimum_memory_gb': 24},
 }
 DEFAULT_ROLE_MODEL = 'qwen3-14b-q4km'          # the floor a machine of 32 GB starts on; VOXSTAGE_ROLE_MODEL points at its file
 # The best model a machine can hold, of those installed, is what it starts
@@ -300,7 +302,10 @@ class RoleDraftEngine:
     def installed(self):
         gb = draft_limits()['memory_gb']
         return [{'id': k, 'label': v['label'] + ('（本机推荐）' if v.get('recommended_gb') and gb >= v['recommended_gb'] - 0.5 else ''),
-                 'installed': self.path_for(k) is not None, 'recommended': bool(v.get('recommended_gb') and gb >= v['recommended_gb'] - 0.5)} for k, v in ROLE_MODELS.items()]
+                 'installed': self.path_for(k) is not None,
+                 'loadable': self.path_for(k) is not None and gb >= v.get('minimum_memory_gb', 0) - 0.5,
+                 'minimum_memory_gb': v.get('minimum_memory_gb', 0),
+                 'recommended': bool(v.get('recommended_gb') and gb >= v['recommended_gb'] - 0.5)} for k, v in ROLE_MODELS.items()]
 
     def select(self, model_id):
         if model_id not in ROLE_MODELS:
@@ -310,17 +315,19 @@ class RoleDraftEngine:
         self.sha256 = ROLE_MODELS[model_id]['sha256']
         self.ready = self.model.is_file() and self.server.is_file()
 
-    def annotate(self, text, log_path, known_names=(), examples=(), cut=None):
+    def annotate(self, text, log_path, known_names=(), examples=(), cut=None,
+                 units_override=None, strict_ids=False, limits_override=None):
         if not self.ready:
             raise ValueError('本地分角色模型未就绪；仍可使用已标注剧本导入。')
-        units = source_units(text, cut)
+        units = source_units(text, cut) if units_override is None else list(units_override)
         # Blank units — the line breaks between lines — are not the model's to
         # label; they are narration and are filled in below. Only the rest are
         # sent, counted against the limit, and required in the answer.
         spoken = [u for u in units if u['text'].strip()]
-        limits = draft_limits()
+        limits = dict(limits_override or draft_limits())
         effective_context = min(limits['context'], ROLE_MODELS.get(self.model_id, {}).get('max_context', limits['context']))
-        estimate = estimate_role_tokens(len(text), len(spoken), effective_context, limits['max_tokens'])
+        sent_chars = len(text) if units_override is None else sum(len(unit['text']) for unit in spoken)
+        estimate = estimate_role_tokens(sent_chars, len(spoken), effective_context, limits['max_tokens'])
         if not spoken:
             raise ValueError('原稿里没有可以分析的片段。')
         if not estimate['fits']:
@@ -368,7 +375,7 @@ class RoleDraftEngine:
         with Path(log_path).open('w') as log:
             launch = ROLE_MODELS.get(self.model_id, {}).get('launch') or ['--reasoning', 'off']   # a plain instruct model answers at once
             log.write(f'[VoxStage] model={self.model_id}\n')
-            log.write(f'[VoxStage] chars={len(text)} units={len(spoken)} context={effective_context} max_tokens={limits["max_tokens"]}\n')
+            log.write(f'[VoxStage] chars={sent_chars} units={len(spoken)} context={effective_context} max_tokens={limits["max_tokens"]}\n')
             log.write(f'[VoxStage] estimated_prompt={estimate["prompt"]} estimated_completion={estimate["completion"]} estimated_total={estimate["total"]} safe_total={estimate["safe_total"]}\n')
             log.write(f'[VoxStage] model_file={self.model.name}\n')
             log.flush()
@@ -408,6 +415,11 @@ class RoleDraftEngine:
                 parsed = json.loads(raw).get('labels') if raw else None
                 if not isinstance(parsed, list):
                     raise ValueError('模型没有给出标签。')
+                expected_ids = [unit['id'] for unit in spoken]
+                parsed_ids = [row.get('id') for row in parsed if isinstance(row, dict)]
+                if strict_ids and (len(parsed_ids) != len(parsed) or parsed_ids != expected_ids
+                                   or len(parsed_ids) != len(set(parsed_ids))):
+                    raise ValueError('本批标签缺号、重号或顺序与全局单元不一致。')
                 first = {}
                 for x in parsed:
                     if isinstance(x, dict):
@@ -426,7 +438,10 @@ class RoleDraftEngine:
                 if len(first) != len(parsed):
                     repaired = 'skipped_units_filled'
                 raw = json.dumps({'labels': full}, ensure_ascii=False)
-                bind_labels(text, raw, cut)
+                if units_override is None:
+                    bind_labels(text, raw, cut)
+                elif [row.get('id') for row in full] != [unit['id'] for unit in units]:
+                    raise ValueError('本批标签没有逐个绑定到请求单元。')
                 labels = [{**x, 'speaker': tidy_speaker(x['speaker']), 'certain': bool(x.get('certain', True))} for x in json.loads(raw)['labels']]
                 return {'labels':labels, 'raw_response':response, 'model_sha256':self.sha256, 'model_id':self.model_id,
                         'settings':settings,'prompt_sha256':hashlib.sha256(prompt.encode()).hexdigest(),
