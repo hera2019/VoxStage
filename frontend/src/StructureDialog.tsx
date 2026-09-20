@@ -23,20 +23,21 @@ export function StructureDialog({bookId,title,chapters,loose,request,onClose,onA
  const [op,setOp]=useState('split');const [target,setTarget]=useState(chapters[0]?.id??'');const [second,setSecond]=useState(chapters[1]?.id??'');
  const [segments,setSegments]=useState<Segment[]>([]);const [at,setAt]=useState<number|''>('');const [order,setOrder]=useState(chapters.map(c=>c.id));
  const [looseId,setLooseId]=useState(loose[0]?.id??'');const [position,setPosition]=useState(chapters.length);const [inherit,setInherit]=useState(false);
- const [resolutions,setResolutions]=useState<Record<string,string>>({});const [plan,setPlan]=useState<Plan|null>(null);const [busy,setBusy]=useState(false);const [error,setError]=useState('');
+ const [resolutions,setResolutions]=useState<Record<string,string>>({});const [identities,setIdentities]=useState<Record<string,{action:'link'|'rename';name?:string}>>({});const [plan,setPlan]=useState<Plan|null>(null);const [busy,setBusy]=useState(false);const [error,setError]=useState('');
  const names=Object.fromEntries([...chapters,...loose].map(c=>[c.id,c.name]));
  useEffect(()=>{if(op!=='split'||!target)return;let stop=false;void request('/projects/'+target).then((p:{segments?:Segment[]})=>{if(!stop)setSegments((p.segments??[]).filter(s=>s.text.trim()))}).catch(()=>setSegments([]));return()=>{stop=true}},[op,target]);   // eslint-disable-line react-hooks/exhaustive-deps
  const body=()=>{
   if(op==='split')return {op,project_id:target,at};
   if(op==='merge'){const i=chapters.findIndex(c=>c.id===target);return {op,left_id:target,right_id:chapters[i+1]?.id??second,resolutions:Object.fromEntries(Object.entries(resolutions).map(([k,v])=>[k,v.startsWith('value:')?{value:JSON.parse(v.slice(6))}:v]))}}
   if(op==='reorder')return {op,members:order};
-  if(op==='attach')return {op,project_id:looseId,position,inherit};
+  if(op==='attach')return {op,project_id:looseId,position,inherit,identities};
   if(op==='detach')return {op,project_id:target};
   return {op};
  };
  const preview=async()=>{setBusy(true);setError('');try{setPlan(await request(`/master-books/${bookId}/structure/plan`,'POST',body()))}catch(e){setPlan(null);setError((e as Error).message)}finally{setBusy(false)}};
  const apply=async()=>{if(!plan)return;setBusy(true);setError('');try{await request(`/master-books/${bookId}/structure/apply`,'POST',{...body(),revision:plan.book_revision});onApplied();onClose()}catch(e){setError((e as Error).message)}finally{setBusy(false)}};
  const move=(i:number,d:number)=>{const j=i+d;if(j<0||j>=order.length)return;const next=order.slice();[next[i],next[j]]=[next[j],next[i]];setOrder(next);setPlan(null)};
+ const identitiesReady=!plan||plan.questions.every(q=>q.kind!=='same_name'||(identities[q.name!]?.action==='link')||(identities[q.name!]?.action==='rename'&&(identities[q.name!]?.name??'').trim()));
  const ready=op==='split'?!!target&&at!=='':op==='merge'?!!target&&chapters.findIndex(c=>c.id===target)<chapters.length-1:op==='attach'?!!looseId:op==='detach'?!!target:true;
  return <div className="structure-wrap"><div className="structure-dialog" role="dialog" aria-label={`《${title}》的结构`}>
   <div className="setting-head"><strong>《{title}》的结构</strong><small>先看方案，再执行；原工程保留为恢复快照，声音不重生成。</small><button type="button" aria-label="关闭结构窗口" onClick={onClose}>✕</button></div>
@@ -52,11 +53,11 @@ export function StructureDialog({bookId,title,chapters,loose,request,onClose,onA
    {op==='dissolve'&&<p className="muted">全部章节变成独立工程，各自固化现在的有效设置；不删任何声音。</p>}
   </div>
   {error&&<p role="alert" className="line-error">{error}</p>}
-  <div className="buttons"><button type="button" className="primary" disabled={busy||!ready} onClick={()=>void preview()}>{busy?'…':'看方案'}</button>{plan&&!plan.unresolved?.length&&<button type="button" className="primary" disabled={busy} onClick={()=>void apply()}>执行</button>}</div>
+  <div className="buttons"><button type="button" className="primary" disabled={busy||!ready} onClick={()=>void preview()}>{busy?'…':'看方案'}</button>{plan&&!plan.unresolved?.length&&<button type="button" className="primary" disabled={busy||!identitiesReady} title={identitiesReady?'':'先回答同名人物的问题'} onClick={()=>void apply()}>执行</button>}</div>
   {plan&&<div className="structure-plan">
    {plan.conflicts.length>0&&<section><strong>设置冲突（{plan.unresolved?.length??0} 项待定）</strong>{plan.conflicts.map(c=><label key={conflictKey(c)} className="setting-row"><span className="setting-name">{c.key}{c.role?` · ${c.role}`:''}<small className="setting-source">前 {show(c.left)} · 后 {show(c.right)}</small></span><select value={resolutions[conflictKey(c)]??''} onChange={e=>{setResolutions(x=>({...x,[conflictKey(c)]:e.target.value}));setPlan(null)}}><option value="">— 选 —</option><option value="left">用前一章的</option><option value="right">用后一章的</option><option value="inherit">改为继承</option></select></label>)}<p className="muted">选完再点「看方案」。</p></section>}
-   {plan.questions.length>0&&<section><strong>要你定的</strong><ul>{plan.questions.map((q,i)=><li key={i}>{q.kind==='same_name'?`「${q.name}」：${q.note}`:q.kind==='new_name'?`「${q.name}」是新人物，会加进人物表`:q.kind==='segment_ids_remapped'?`有 ${Object.keys(q.map??{}).length} 句编号撞了，会换新编号`:q.kind}</li>)}</ul></section>}
-   {plan.new_projects.length>0&&<section><strong>之后的章节</strong><ol>{plan.chapters_after.map(c=><li key={c.project_id}>{c.title}{plan.new_projects.some(p=>p.id===c.project_id)?<small> · 新</small>:null}</li>)}</ol></section>}
+   {plan.questions.length>0&&<section><strong>要你定的</strong><ul>{plan.questions.map((q,i)=><li key={i}>{q.kind==='same_name'?<span className="attach-row">「{q.name}」书里已有同名人物：<select value={identities[q.name!]?.action??''} onChange={e=>{const v=e.target.value as ''|'link'|'rename';setIdentities(x=>{const y={...x};if(!v)delete y[q.name!];else y[q.name!]={action:v,name:v==='rename'?(x[q.name!]?.name??''):undefined};return y})}}><option value="">— 选 —</option><option value="link">是同一个人（关联）</option><option value="rename">另一个人，改名为…</option></select>{identities[q.name!]?.action==='rename'&&<input placeholder="新名字" value={identities[q.name!]?.name??''} onChange={e=>setIdentities(x=>({...x,[q.name!]:{action:'rename',name:e.target.value}}))}/>}</span>:q.kind==='new_name'?`「${q.name}」是新人物，会加进人物表`:q.kind==='segment_ids_remapped'?`有 ${Object.keys(q.map??{}).length} 句编号撞了，会换新编号`:q.kind}</li>)}</ul></section>}
+   {(plan.new_projects.length>0||plan.op==='reorder'||plan.op==='detach')&&<section><strong>之后的章节</strong><ol>{plan.chapters_after.map(c=><li key={c.project_id}>{c.title}{plan.new_projects.some(p=>p.id===c.project_id)?<small> · 新</small>:null}</li>)}</ol></section>}
    {plan.retired.length>0&&<p className="muted">原工程 {plan.retired.length} 个保留为恢复快照，不再列在成员里。{plan.snapshot?.note??''}</p>}
    {plan.assets.length>0&&<p className="muted">要复制 {plan.assets.filter(a=>a.required!==false).length} 个声音/参考文件到新工程（不删原文件）。</p>}
   </div>}

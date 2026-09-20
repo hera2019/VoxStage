@@ -7,7 +7,7 @@ import {useState} from 'react';
  *  really opened, and a collapsed book carries a ● when that project lives
  *  in it. Opus 一, 2026-09-20. */
 export type Listed={id:string;name:string;archived?:boolean;processing_state?:string|null;book?:{id:string;title?:string;index?:number;chapters?:number}|null};
-type Props={projects:Listed[];current?:string;busyBooks?:Set<string>;disabled?:boolean;onOpen:(id:string)=>void;onSettings:(kind:'project'|'book',id:string)=>void;onContinue?:(id:string)=>void;onStructure?:(bookId:string)=>void};
+type Props={projects:Listed[];current?:string;busyBooks?:Set<string>;disabled?:boolean;onOpen:(id:string)=>void;onSettings:(kind:'project'|'book',id:string)=>void;onContinue?:(id:string)=>void;onStructure?:(bookId:string)=>void;onExport?:(bookId:string)=>void};
 
 export function groupByBook<T extends Listed>(projects:T[]){
  const books=new Map<string,{title:string;chapters:T[]}>();const loose:T[]=[];
@@ -19,7 +19,7 @@ export function groupByBook<T extends Listed>(projects:T[]){
  return {books,loose};
 }
 
-export function BookList({projects,current,busyBooks,disabled,onOpen,onSettings,onContinue,onStructure}:Props){
+export function BookList({projects,current,busyBooks,disabled,onOpen,onSettings,onContinue,onStructure,onExport}:Props){
  const {books}=groupByBook(projects);
  const [open,setOpen]=useState<string|null>(()=>{try{return localStorage.getItem('voxstage-open-book')}catch{return null}});
  if(books.size===0)return null;
@@ -28,7 +28,7 @@ export function BookList({projects,current,busyBooks,disabled,onOpen,onSettings,
   {[...books.entries()].map(([id,b])=>{const here=b.chapters.some(c=>c.id===current);const expanded=open===id;const busy=busyBooks?.has(id);
    return <div key={id} className={'book-master '+(expanded?'expanded':'')}>
     <div className="book-master-row"><button type="button" className="book-master-title" aria-expanded={expanded} onClick={()=>toggle(id)}>{expanded?'▾':'▸'} 《{b.title}》 <small>{b.chapters.length} 章{busy?' · 处理中':''}</small>{!expanded&&here&&<span className="book-here" title="当前打开的工程在这里">●</span>}</button>
-     {onStructure&&<button type="button" className="book-master-settings" title="章节结构：拆分、合并、排序、加入、脱离" aria-label={`《${b.title}》的结构`} disabled={disabled||busy} onClick={()=>onStructure(id)}>⇅</button>}<button type="button" className="book-master-settings" title="主工程默认设置" aria-label={`《${b.title}》的设置`} disabled={disabled} onClick={()=>onSettings('book',id)}>⚙</button></div>
+     {onExport&&<button type="button" className="book-master-settings" title="导出整本或选章" aria-label={`导出《${b.title}》`} disabled={disabled} onClick={()=>onExport(id)}>⬇</button>}{onStructure&&<button type="button" className="book-master-settings" title="章节结构：拆分、合并、排序、加入、脱离" aria-label={`《${b.title}》的结构`} disabled={disabled||busy} onClick={()=>onStructure(id)}>⇅</button>}<button type="button" className="book-master-settings" title="主工程默认设置" aria-label={`《${b.title}》的设置`} disabled={disabled} onClick={()=>onSettings('book',id)}>⚙</button></div>
     {expanded&&<ol className="book-chapters">{b.chapters.map(c=>{const done=c.processing_state!=='unprocessed';
      return <li key={c.id} className={(c.id===current?'current ':'')+(done?'':'unprocessed')}>
       <button type="button" disabled={disabled||(!done&&!onContinue)} title={done?'打开':'还没处理：分批处理接口接入后从这里继续'} onClick={()=>done?onOpen(c.id):onContinue?.(c.id)}>{c.book?.index?`${c.book.index}. `:''}{c.name}{!done&&<small> · 未处理{onContinue?' · 继续':''}</small>}</button>
