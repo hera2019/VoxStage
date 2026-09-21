@@ -34,8 +34,10 @@
 .role-import .cast-table thead{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
 .role-import .cast-table tr{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;background:#fff;border:1px solid #dce4d8;border-radius:12px;padding:12px}
 .role-import .cast-table td{padding:0;border:0;min-width:0;overflow-wrap:anywhere;font-size:11px;color:#647364}
-.role-import .cast-table td:first-child,.role-import .cast-table td:nth-child(2){grid-column:1/-1}
-.role-import .cast-table td:nth-child(2)::before{content:'别名 · ';color:#819080}
+.role-import .cast-table td:first-child,.role-import .cast-table td:nth-child(3){grid-column:1/-1}
+.role-import .cast-table td:nth-child(2)::before{content:'性别 · ';color:#819080}
+.role-import .cast-table td:nth-child(2) select{display:inline-block;width:auto;min-height:26px;padding:2px 6px;font-size:11px;margin:0}
+.role-import .cast-table td:nth-child(3)::before{content:'别名 · ';color:#819080}
 .role-import .cast-table td input{width:100%;min-width:0;max-width:none;margin:0;font-size:14px;font-weight:600;padding:6px 8px}
 .role-import .cast-source-link{border:0;padding:4px 0;background:none;color:#456a52;font-size:11px;text-decoration:underline;text-underline-offset:3px}
 .role-import .role-units{max-height:none;min-height:0;overflow:auto;margin:0;border:0;padding:20px 24px 30px;background:#fffefa;scroll-padding:24px;overscroll-behavior:contain}
