@@ -601,3 +601,40 @@ def test_a_passage_past_the_models_unit_ceiling_goes_to_its_fallback_in_one_shot
         assert '超过「Big」一次能对齐的 4 个' in d['notice'] and '改用「Small」' in d['notice']
         record = json.loads((tmp_path / 'p-role-drafts' / (d['draft_id'] + '.json')).read_text())
         assert record['model_id'] == 'small' and record['over_unit_ceiling'] == {'model_id': 'big', 'ceiling': 4}
+
+
+def test_the_models_own_scene_declaration_fills_a_turn_and_questions_a_name_it_did_not_list(tmp_path):
+    """Attribution plan step 2 (2026-09-22): asked to declare the scene before
+    labelling, the model's list of who speaks and whether two people take turns
+    is weak evidence — it fills a line the page's turn-taking could not (the
+    second speaker not yet settled) and marks a named speaker outside its own
+    list yellow; it never changes a name outright."""
+    class Declares(Roles):
+        def annotate(self, text, log_path):
+            labels = []
+            for u in source_units(text):
+                if u['text'].startswith('“'):
+                    labels.append({'id': u['id'], 'kind': 'dialogue', 'speaker': {0: '小雪', 1: 'UNKNOWN', 2: '王伯'}[len([l for l in labels if l['kind'] == 'dialogue'])], 'certain': True})
+                else:
+                    labels.append({'id': u['id'], 'kind': 'narration', 'speaker': 'NARRATOR', 'certain': True})
+            return {'labels': labels, 'model_sha256': 'fixture', 'model_id': 'fixture',
+                    'scene': {'participants': ['小雪', '阿宁'], 'exchange': 'two_alternating'}}
+    with TestClient(create_app(tmp_path / 'p', FixtureEngine(), role_engine=Declares()), base_url='http://127.0.0.1', headers=HEADERS) as c:
+        d = c.post('/api/attribution/draft', json={'script': '王伯在门口。\n小雪说：“来了。”\n“好。”\n“走吧。”\n', 'language': 'zh'}).json()
+        assert d['scene'] == {'participants': ['小雪', '阿宁'], 'exchange': 'two_alternating'}
+        spoken = [u for u in d['units'] if u['kind'] == 'dialogue']
+        assert spoken[1]['speaker'] == '阿宁' and spoken[1]['tier'] == 'suggested' and '两人对答' in spoken[1]['basis']
+        assert spoken[2]['speaker'] == '王伯' and spoken[2]['tier'] == 'suggested' and '没有这个名字' in spoken[2]['basis']
+
+
+def test_scene_first_changes_the_schema_and_prompt_only_when_asked():
+    """The engine's request: with scene_first the answer object starts with the
+    declaration and the prompt says how to fill it; without, nothing changes."""
+    from runtime import attribution
+    text = '阿Q说：“好。”'
+    schema = attribution.scene_schema(text)
+    assert schema['required'] == ['participants', 'exchange'] and schema['properties']['exchange']['enum'] == list(attribution.EXCHANGES)
+    assert attribution.tidy_scene({'participants': ['阿Q ', 'NARRATOR', '阿Q', 7], 'exchange': 'several'}) == {'participants': ['阿Q'], 'exchange': 'several'}
+    assert attribution.tidy_scene({'participants': [], 'exchange': 'dance'}) == {'participants': [], 'exchange': None}
+    assert attribution.tidy_scene(None) is None
+    assert attribution.SCENE_FIRST is False                      # off until the frozen set says it helps

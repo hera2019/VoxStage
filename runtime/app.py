@@ -1185,7 +1185,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             try:
                 entry = library.get(custom_id(voice)); origin = entry.get('derived_from') or ''
                 label = VOICES.get(origin.split(' · ')[0], '') + ' ' + origin
-            except ValueError:
+            except (ValueError, OSError, KeyError):      # a voice since deleted from the library: sex unknown, the draft goes on
                 label = ''
         low = label.lower()
         if any(k in low for k in ('女', 'female', 'girl', 'woman')): return 'f'
@@ -1683,6 +1683,14 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                         if len(recent) == 2:
                             break
                 return recent
+            # The model's own plan for the passage (attribution plan step 2,
+            # 2026-09-22): who speaks aloud and whether two people take turns.
+            # Weak evidence, like the pronoun rules: it fills a line the page's
+            # turn-taking could not, and asks about a name it did not list.
+            scene = result.get('scene') or {}
+            declared = [n for n in (scene.get('participants') or []) if n]
+            pair = declared if scene.get('exchange') == 'two_alternating' and len(declared) == 2 else None
+            listed_cast = {n.split('（')[0] for n in (names_for_model or [])}
             for k, i in enumerate(spoken):
                 u = out[i]
                 if u['kind'] != 'dialogue':
@@ -1897,6 +1905,9 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                     others = [c for c in recent if c != before['speaker'].strip() and c not in excluded]
                     if len(recent) == 2 and len(others) == 1:
                         u.update({'speaker': others[0], 'tier': 'suggested', 'basis': '上一句已经是这个人，一来一往像是'})
+                    elif pair and before['speaker'].strip() in pair and (pair[0] if pair[1] == before['speaker'].strip() else pair[1]) not in excluded:
+                        other = pair[0] if pair[1] == before['speaker'].strip() else pair[1]
+                        u.update({'speaker': other, 'tier': 'suggested', 'basis': '上一句已经是这个人，一来一往（模型说这场是两人对答）像是'})
                 # Rule 3: the same speaker twice running, no narration between.
                 # In the labelled texts two quoted lines running were never one
                 # person's (0 of 36 pairs, 2026-09-16), so this applies even when
@@ -1916,6 +1927,9 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                     elif u.get('tier') != 'suggested':
                         u.update({'tier': 'suggested', 'basis': '上一句已经是这个人，很少连着两句；像是'})
                 sp = u['speaker'].strip()
+                if declared and sp.upper() not in ('', 'UNKNOWN', 'NARRATOR') and sp not in declared and sp not in listed_cast \
+                        and not u.get('stand_in') and u.get('tier') != 'suggested' and not u.get('decided') and u.get('source') not in ('tag', 'mark'):
+                    u.update({'tier': 'suggested', 'basis': '模型先列的这一场说话的人里没有这个名字，请看一眼；模型说是'})
                 if sp.upper() not in ('', 'UNKNOWN', 'NARRATOR') and u.get('tier') != 'suggested':
                     u['source'] = 'model'; settled(sp, blk)
                 elif u.get('basis', '').startswith('上一句已经是这个人，一来一往'):
@@ -1981,6 +1995,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 from .script_check import quote_findings
                 view = {'draft_id': draft_id, 'notice': notice, 'units': out, 'revision': 1, 'decisions': {}, 'cast': cast,
                         'model': {'id': result.get('model_id'), 'note': model_note},
+                        'scene': result.get('scene'),                  # the model's own declaration of who speaks, when asked for one
                         # Quotation marks the cutter will have read wrongly (本人 2026-09-21): shown on
                         # the review page so the reviewer knows why a stretch came out as one line.
                         'warnings': [w for w in quote_findings(body.script) if w['level'] != 'info'][:20]}

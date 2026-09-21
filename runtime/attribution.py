@@ -316,7 +316,7 @@ class RoleDraftEngine:
         self.ready = self.model.is_file() and self.server.is_file()
 
     def annotate(self, text, log_path, known_names=(), examples=(), cut=None,
-                 units_override=None, strict_ids=False, limits_override=None):
+                 units_override=None, strict_ids=False, limits_override=None, scene_first=None):
         if not self.ready:
             raise ValueError('本地分角色模型未就绪；仍可使用已标注剧本导入。')
         units = source_units(text, cut) if units_override is None else list(units_override)
@@ -355,10 +355,17 @@ class RoleDraftEngine:
             for ex in examples:
                 prompt += ('\nUnits: ' + json.dumps(ex['units'], ensure_ascii=False)
                            + '\nLabels: ' + json.dumps({'labels': ex['labels']}, ensure_ascii=False))
-        schema = {'type':'object', 'properties': {'labels': {'type':'array', 'minItems':len(spoken), 'maxItems':len(spoken),
+        scene_first = SCENE_FIRST if scene_first is None else scene_first
+        if scene_first:
+            prompt += SCENE_PROMPT
+        labels_schema = {'type':'array', 'minItems':len(spoken), 'maxItems':len(spoken),
             'items': {'type':'object','properties': {'id': {'type':'string','enum':[u['id'] for u in spoken]},
                 'kind': {'type':'string','enum':['narration','dialogue']}, 'speaker': {'type':'string', 'pattern': speaker_pattern(text)}, 'certain': {'type':'boolean'}},
-                'required':['id','kind','speaker','certain'],'additionalProperties':False}}}, 'required':['labels'],'additionalProperties':False}
+                'required':['id','kind','speaker','certain'],'additionalProperties':False}}
+        if scene_first:      # property order is answer order under the grammar: the scene comes out before the labels
+            schema = {'type':'object', 'properties': {'scene': scene_schema(text), 'labels': labels_schema}, 'required':['scene','labels'],'additionalProperties':False}
+        else:
+            schema = {'type':'object', 'properties': {'labels': labels_schema}, 'required':['labels'],'additionalProperties':False}
         with socket.socket() as sock:
             sock.bind(('127.0.0.1',0)); port = sock.getsockname()[1]
         key = uuid.uuid4().hex
@@ -412,7 +419,9 @@ class RoleDraftEngine:
                 # are right; keep the first label per id and give a skipped unit
                 # a label of its own — narration for an unquoted one, an unplaced
                 # line for a quoted one — and say the answer was mended.
-                parsed = json.loads(raw).get('labels') if raw else None
+                answer = json.loads(raw) if raw else {}
+                parsed = answer.get('labels') if isinstance(answer, dict) else None
+                scene = tidy_scene(answer.get('scene')) if isinstance(answer, dict) and scene_first else None
                 if not isinstance(parsed, list):
                     raise ValueError('模型没有给出标签。')
                 expected_ids = [unit['id'] for unit in spoken]
@@ -443,7 +452,7 @@ class RoleDraftEngine:
                 elif [row.get('id') for row in full] != [unit['id'] for unit in units]:
                     raise ValueError('本批标签没有逐个绑定到请求单元。')
                 labels = [{**x, 'speaker': tidy_speaker(x['speaker']), 'certain': bool(x.get('certain', True))} for x in json.loads(raw)['labels']]
-                return {'labels':labels, 'raw_response':response, 'model_sha256':self.sha256, 'model_id':self.model_id,
+                return {'labels':labels, 'scene':scene, 'raw_response':response, 'model_sha256':self.sha256, 'model_id':self.model_id,
                         'settings':settings,'prompt_sha256':hashlib.sha256(prompt.encode()).hexdigest(),
                         'repaired':repaired, 'seconds_measured':time.monotonic()-started}
             except Exception as exc:
@@ -456,6 +465,42 @@ class RoleDraftEngine:
                     proc.wait(timeout=10)
                 except subprocess.TimeoutExpired:
                     proc.kill(); proc.wait()
+
+
+# Step 2 of the attribution plan (2026-09-22): the model first declares the
+# scene — who speaks aloud in the passage and how the talk goes — and only
+# then labels the lines. The schema's property order makes the declaration
+# come out first, so it stands as the model's own plan for the labels. Off
+# until the frozen set says it helps (VOXSTAGE_SCENE_FIRST=1 turns it on).
+SCENE_FIRST = os.environ.get('VOXSTAGE_SCENE_FIRST', '0') == '1'
+EXCHANGES = ('two_alternating', 'several', 'one', 'none')
+SCENE_PROMPT = ('\nBefore the labels, declare the scene: "participants" lists every character who speaks aloud in these fragments, '
+                'each name exactly as the fragments write it (no narrator, no one who is only mentioned); "exchange" is two_alternating '
+                'when two people take turns, several when three or more speak, one when a single person speaks, none when nobody speaks aloud. '
+                'The labels must then use only names from participants. '
+                'Return {"scene":{"participants":[...],"exchange":"..."},"labels":[...]}.')
+
+
+def scene_schema(text):
+    """The scene declaration, first in the answer."""
+    return {'type': 'object', 'properties': {
+                'participants': {'type': 'array', 'maxItems': 40, 'items': {'type': 'string', 'pattern': speaker_pattern(text)}},
+                'exchange': {'type': 'string', 'enum': list(EXCHANGES)}},
+            'required': ['participants', 'exchange'], 'additionalProperties': False}
+
+
+def tidy_scene(parsed):
+    """What the model declared, tidied like the labels; None when it declared nothing."""
+    if not isinstance(parsed, dict):
+        return None
+    names = []
+    for name in parsed.get('participants') or []:
+        if isinstance(name, str):
+            name = tidy_speaker(name)
+            if name.upper() not in ('', 'UNKNOWN', 'NARRATOR') and name not in names:
+                names.append(name)
+    exchange = parsed.get('exchange')
+    return {'participants': names, 'exchange': exchange if exchange in EXCHANGES else None}
 
 
 def narration_name(language):
