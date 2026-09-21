@@ -29,6 +29,11 @@ were made with the flow below. New material still needs listening to.
      the model, then reviewed and confirmed like any project. The next chapter
      of an existing book is added with ＋ 新章 in the book's workspace, or by
      choosing the book under 归属 when creating a project.
+2a. **A TXT or Markdown file**: choose the file. An old file that is not
+   UTF-8 — GB2312/GBK, Big5 (Hong Kong, Taiwan), Shift_JIS, UTF-16 — is
+   detected and converted, with a note; if the guess is wrong, pick the
+   encoding under 文件编码. Markdown loses its marks and keeps its headings as
+   chapters.
 2b. **A coloured Word manuscript** (.docx): give each character a colour in
    Pages or Word, export .docx, choose the file in the new-project dialog.
    The program lists every colour with counts and samples and asks, colour by
