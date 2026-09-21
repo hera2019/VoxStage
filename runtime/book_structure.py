@@ -299,6 +299,14 @@ def plan_attach(book, project, position=None, *, inherit=False, defaults=None):
     if inherit:
         for key in SETTING_KEYS:
             joined.pop(key, None)
+        # The book's role maps are keyed by name: a character the book has no
+        # entry for keeps the project's own (2026-09-21: a chapter joined an
+        # empty book with 改为继承 and nobody in it had a voice any more).
+        for key in ROLE_MAPS:
+            known = book.get('settings', {}).get(key) or {}
+            kept = {name: deepcopy(value) for name, value in (frozen.get(key) or {}).items() if name not in known}
+            if kept:
+                joined[key] = kept
     else:
         for key in SETTING_KEYS:
             joined[key] = deepcopy(frozen[key])

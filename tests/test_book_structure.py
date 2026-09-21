@@ -114,8 +114,9 @@ def test_reorder_attach_detach_and_dissolve(book):
     assert plan['members_after'] == [ps[0]['id'], loose['id'], ps[1]['id'], ps[2]['id']] and j['book']['index'] == 2
     assert j['pause_ms'] == 400 and j['settings_schema'] == 1 and j['preset_model'] == '0.6B'    # every effective value now its own
     assert [q['kind'] for q in plan['questions']] == ['same_name', 'new_name'] and plan['questions'][0]['name'] == '阿宁'
+    b['settings']['voices'] = {'阿宁': 'Vivian'}
     inherit = S.plan_attach(b, loose, 1, inherit=True)['new_projects'][0]
-    assert 'pause_ms' not in inherit and 'voices' not in inherit
+    assert 'pause_ms' not in inherit and inherit['voices'] == {'王伯': 'Uncle_Fu'}      # the book's 阿宁 applies; 王伯, unknown to the book, keeps his voice
     # Detaching chapter three freezes what it was inheriting.
     b['settings']['pause_ms'] = 180
     plan = S.plan_detach(b, ps[2])
@@ -124,3 +125,19 @@ def test_reorder_attach_detach_and_dissolve(book):
     assert effective(free)['pause_ms'] == 180
     plan = S.plan_dissolve(b, ps)
     assert plan['members_after'] == [] and len(plan['new_projects']) == 3 and all('book' not in p for p in plan['new_projects'])
+
+
+def test_a_speaker_no_layer_voices_reads_in_a_preset_by_turns():
+    """2026-09-21: a chapter that joined an empty book with 改为继承 had no voice
+    for anyone and could not be opened (KeyError on read). The effective view
+    now gives such a speaker a preset of the language, by turns, with the
+    source saying it is a default; the record is not written."""
+    from runtime.project_settings import effective, VIEW_KEY
+    book = {'id': 'b' * 32, 'title': '书', 'language': 'zh', 'master_schema': 1, 'revision': 0, 'members': ['p' * 32], 'settings': {'voices': {'阿宁': 'Serena'}}}
+    project = {'id': 'p' * 32, 'language': 'zh', 'settings_schema': 1, 'book': {'id': book['id']}, 'revision': 1,
+               'segments': [{'speaker': '旁白'}, {'speaker': '阿宁'}, {'speaker': '王伯'}, {'speaker': '旁白'}]}
+    view = effective(project, book)
+    assert view['voices'] == {'阿宁': 'Serena', '旁白': 'Vivian', '王伯': 'Uncle_Fu'}          # unused presets first
+    roles = view[VIEW_KEY]['sources']['voices']['roles']
+    assert roles['阿宁']['level'] == 'book' and roles['旁白'] == {'level': 'default', 'id': None} and roles['王伯']['level'] == 'default'
+    assert 'voices' not in project

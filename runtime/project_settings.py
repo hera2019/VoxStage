@@ -91,6 +91,18 @@ def effective(project, book=None, *, defaults=None):
                     view[key] = deepcopy(value)
                     sources[key] = source
         book_revision = book.get('revision', 0) if book else None
+        # A speaker no layer gives a voice — a chapter that joined an empty book
+        # with 改为继承 (2026-09-21: a chapter could not even be opened) — reads
+        # in a preset of the language, by turns, until someone chooses; the
+        # source says so and nothing is written.
+        presets = ['Vivian', 'Uncle_Fu', 'Serena', 'Dylan'] if project.get('language') == 'zh' else ['Ryan', 'Aiden']
+        voices = view.setdefault('voices', {})
+        roles = sources.setdefault('voices', {'level': 'application', 'id': None, 'roles': {}})['roles']
+        for speaker in dict.fromkeys(s['speaker'] for s in project.get('segments') or [] if s.get('speaker')):
+            if speaker not in voices:
+                used = set(voices.values())
+                voices[speaker] = next((v for v in presets if v not in used), presets[len(voices) % len(presets)])
+                roles[speaker] = {'level': 'default', 'id': None}
     view[VIEW_KEY] = {'project_revision': project.get('revision', 0),
                       'book_revision': book_revision, 'sources': sources}
     return view
