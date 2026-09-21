@@ -35,7 +35,7 @@ export function StructureDialog({bookId,title,chapters,loose,request,onClose,onA
   return {op};
  };
  const preview=async()=>{setBusy(true);setError('');try{setPlan(await request(`/master-books/${bookId}/structure/plan`,'POST',body()))}catch(e){setPlan(null);setError((e as Error).message)}finally{setBusy(false)}};
- const apply=async()=>{if(!plan)return;setBusy(true);setError('');try{await request(`/master-books/${bookId}/structure/apply`,'POST',{...body(),revision:plan.book_revision});onApplied();onClose()}catch(e){setError((e as Error).message)}finally{setBusy(false)}};
+ const apply=async()=>{if(!plan)return;if(op==='dissolve'&&!confirm(`解散《${title}》？\n\n${chapters.length} 章都变成独立工程，这本书的记录删除（快照保留）。还没处理的章以后只能一章一章单独处理，书级的设置、人物表和整本导出都没有了。\n\n只是想删掉这本书？请用「章节」页底下的删除按钮。`))return;setBusy(true);setError('');try{await request(`/master-books/${bookId}/structure/apply`,'POST',{...body(),revision:plan.book_revision});onApplied();onClose()}catch(e){setError((e as Error).message)}finally{setBusy(false)}};
  const move=(i:number,d:number)=>{const j=i+d;if(j<0||j>=order.length)return;const next=order.slice();[next[i],next[j]]=[next[j],next[i]];setOrder(next);setPlan(null)};
  const identitiesReady=!plan||plan.questions.every(q=>q.kind!=='same_name'||(identities[q.name!]?.action==='link')||(identities[q.name!]?.action==='rename'&&(identities[q.name!]?.name??'').trim()));
  const ready=op==='split'?!!target&&at!=='':op==='merge'?!!target&&chapters.findIndex(c=>c.id===target)<chapters.length-1:op==='attach'?!!looseId:op==='detach'?!!target:true;
