@@ -143,3 +143,9 @@
 .import-workspace-actions .wide{width:auto;margin:0;padding:8px 14px}
 .import-workspace-fields .books{flex-shrink:0}
 .token-split-mode>span{display:flex;align-items:center;gap:7px;font-weight:500}.token-split-mode input[type=checkbox]{display:inline-block;width:auto;margin:0;padding:0;flex:0 0 auto}
+
+/* 中间栏里的复核页（2026-09-22）：占满中间栏高度，页头不动，左右两栏各自滚动——和原来弹窗里一样 */
+.role-inline{display:flex;flex-direction:column;height:100%;min-height:0;padding:0 0 6px}
+.role-inline .role-import.role-page:not(.is-review){flex:none;padding:8px 0 24px}
+.role-inline .role-import.role-page.is-review{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;background:#f8f9f5;border:1px solid #dce4d8;border-radius:14px;color:#283b33}
+@media(max-width:700px){.role-inline .role-import.role-page.is-review{height:auto;max-height:none;overflow:auto}}
