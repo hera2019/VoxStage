@@ -289,8 +289,8 @@ def plan_attach(book, project, position=None, *, inherit=False, defaults=None):
     exist in the book's cast are questions, not merges."""
     if project.get('book', {}).get('id') == book['id'] and project['id'] in book['members']:
         raise ValueError('这个工程已经在这本书里。')
-    if project.get('book') and project['book'].get('id') != book['id'] and project.get('processing_state'):
-        raise ValueError('这个工程属于另一本书，先从那本书脱离。')
+    if project.get('book') and project['book'].get('id') != book['id'] and (project.get('processing_state') or project.get('settings_schema') == 1):
+        raise ValueError('这个工程属于另一本主工程，先从那本书脱离。')      # a link to an old-style book is only a note
     if project['language'] != book['language']:
         raise ValueError('工程语言与主工程不同。')
     joined = deepcopy(project)
@@ -303,6 +303,7 @@ def plan_attach(book, project, position=None, *, inherit=False, defaults=None):
         for key in SETTING_KEYS:
             joined[key] = deepcopy(frozen[key])
     joined['settings_schema'] = 1
+    joined['processing_state'] = 'processed' if project.get('segments') else 'unprocessed'   # a legacy project had no state (2026-09-21: attached chapters vanished from the list)
     joined['book'] = {'id': book['id'], 'title': book['title']}
     members = list(book['members'])
     at = len(members) if position is None else max(0, min(int(position), len(members)))

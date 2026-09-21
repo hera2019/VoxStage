@@ -6,13 +6,13 @@ import {useState} from 'react';
  *  a book only changes the navigation; the editor keeps the last project
  *  really opened, and a collapsed book carries a ● when that project lives
  *  in it. Opus 一, 2026-09-20. */
-export type Listed={id:string;name:string;archived?:boolean;processing_state?:string|null;book?:{id:string;title?:string;index?:number;chapters?:number}|null};
+export type Listed={id:string;name:string;archived?:boolean;processing_state?:string|null;settings_schema?:number|null;book?:{id:string;title?:string;index?:number;chapters?:number}|null};
 type Props={projects:Listed[];emptyBooks?:{id:string;title:string}[];current?:string;busyBooks?:Set<string>;disabled?:boolean;onOpen:(id:string)=>void;onSettings:(kind:'project'|'book',id:string)=>void;onContinue?:(id:string)=>void;onOpenBook?:(bookId:string)=>void;openBook?:string|null;onNewBook?:()=>void};
 
 export function groupByBook<T extends Listed>(projects:T[]){
  const books=new Map<string,{title:string;chapters:T[]}>();const loose:T[]=[];
  for(const p of projects){
-  if(p.processing_state&&p.book?.id){const b=books.get(p.book.id)??{title:p.book.title??'未命名',chapters:[]};b.chapters.push(p);books.set(p.book.id,b)}
+  if((p.processing_state||p.settings_schema===1)&&p.book?.id){const b=books.get(p.book.id)??{title:p.book.title??'未命名',chapters:[]};b.chapters.push(p);books.set(p.book.id,b)}
   else loose.push(p);
  }
  for(const b of books.values())b.chapters.sort((a,c)=>(a.book?.index??0)-(c.book?.index??0));

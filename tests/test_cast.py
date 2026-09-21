@@ -146,3 +146,20 @@ def test_a_redone_draft_carries_the_decisions_of_the_lines_that_kept_their_words
         wang = next(u for u in again['units'] if '账' in u['text'] and u['kind'] == 'dialogue')
         assert wang['speaker'] in ('王伯', '王伯伯')                      # the changed line is the model's again
         assert any(e['name'] == '王伯伯' for e in again['cast']) and next(u for u in again['units'] if '猫' in u['text'])['speaker'] == '阿宁'
+
+
+def test_redoing_a_confirmed_project_updates_it_in_place(tmp_path):
+    """本人 2026-09-21: recognising a confirmed project again on a corrected
+    text made a second project and left the first. Now the redone draft
+    targets the project it came from; confirming replaces its lines, keeping
+    the audio of every line whose words and speaker did not change."""
+    with TestClient(create_app(tmp_path / 'p', FixtureEngine(), role_engine=Tags()), base_url='http://127.0.0.1', headers=HEADERS) as c:
+        d = c.post('/api/attribution/draft', json={'script': TEXT, 'language': 'zh'}).json()
+        labels = [{'id': u['id'], 'kind': u['kind'], 'speaker': u['speaker'] if u['speaker'] != 'UNKNOWN' else '王伯'} for u in d['units']]
+        p = c.post('/api/attribution/confirm', json={'draft_id': d['draft_id'], 'name': '店', 'labels': labels}).json()
+        r = c.post('/api/attribution/draft', json={'script': TEXT.replace('猫跑了', '猫又跑了'), 'language': 'zh', 'carry_from': d['draft_id']}).json()
+        assert r['target_project_id'] == p['id']
+        labels2 = [{'id': u['id'], 'kind': u['kind'], 'speaker': u['speaker'] if u['speaker'] != 'UNKNOWN' else '王伯'} for u in r['units']]
+        q = c.post('/api/attribution/confirm', json={'draft_id': r['draft_id'], 'name': '店', 'labels': labels2}).json()
+        assert q['id'] == p['id'] and q['revision'] == p['revision'] + 1 and any('猫又跑了' in s['text'] for s in q['segments'])
+        assert len(c.get('/api/projects').json()) == 1                        # no second project

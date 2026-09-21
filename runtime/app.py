@@ -1844,6 +1844,13 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 if body.carry_from and earlier:
                     record['decisions'] = carried
                     record['carried_from'] = body.carry_from
+                    if earlier.get('confirmed_project_id') and not earlier.get('target_project_id'):
+                        # The earlier draft was already made into a project: confirming
+                        # this one updates that project in place instead of making a
+                        # second (本人 2026-09-21: 出了个新工程，老工程还在).
+                        record['target_project_id'] = earlier['confirmed_project_id']
+                        record['target_kind'] = 'redo'
+                        view['target_project_id'] = earlier['confirmed_project_id']
                     view['decisions'] = carried
                     view['units'] = apply_decisions(out, carried)
                     view['notice'] = ((notice + ' ') if notice else '') + f'已按改后的原稿重新识别：你确认或改过的 {len(carried)} 句按原句找回，其余按新识别的结果。'
@@ -2410,7 +2417,31 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                     label['cast_id'] = entry['id']
             save_cast(record, cast, book_record)
             target_id = record.get('target_project_id')
-            if target_id:
+            if target_id and record.get('target_kind') == 'redo':
+                # A confirmed project recognised again on (nearly) the same text: the
+                # new segments replace the old ones, and every line whose words and
+                # speaker did not change keeps its audio and review state.
+                from .attribution import carry_state
+                project = store.read(target_id)
+                if project.get('job', {}).get('status') in ('queued', 'running'):
+                    raise RuntimeError('这个工程正在处理，等它完成再确认。')
+                project['name'] = body.name.strip() or project['name']
+                project['source_script'] = record['source_script']
+                carried_segments, stats = carry_state(project['segments'], [dict(s) for s in segments])
+                project['segments'] = carried_segments
+                if record.get('cut'):
+                    project['cut'] = record['cut']
+                presets = ['Vivian','Uncle_Fu','Serena','Dylan'] if record['language'] == 'zh' else ['Ryan','Aiden']
+                view_now = project_service.view(project) if project.get('settings_schema') == 1 else project
+                voices_now = dict(view_now.get('voices', {}))
+                used = set(voices_now.values())
+                for speaker in dict.fromkeys(segment['speaker'] for segment in project['segments']):
+                    if speaker not in voices_now:
+                        voice = next((candidate for candidate in presets if candidate not in used), presets[len(used) % len(presets)])
+                        project.setdefault('voices', {})[speaker] = voice; voices_now[speaker] = voice; used.add(voice)
+                voice_names = set(voices_now)
+                project['redo'] = {'draft_id': body.draft_id, 'kept_audio': stats.get('kept_audio'), 'fresh': stats.get('fresh')}
+            elif target_id:
                 project = store.read(target_id)
                 if (project.get('settings_schema') != 1
                         or project.get('processing_state') != 'unprocessed'
@@ -2490,7 +2521,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             # list ordered by nothing anyone can see.
             return [{'id':p['id'],'name':p['name'],'language':p['language'],
                      'archived':p.get('archived',False),'updated_at':path.stat().st_mtime,
-                     'processing_state': p.get('processing_state'), 'book': p.get('book')}
+                     'processing_state': p.get('processing_state'), 'settings_schema': p.get('settings_schema'), 'book': p.get('book')}
                     for path in sorted(store.root.glob('*/project.json'))
                     for p in [json.loads(path.read_text())] if include_archived or not p.get('archived',False)]
 
