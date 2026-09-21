@@ -399,10 +399,13 @@ class RoleDraftEngine:
                         time.sleep(.2)
                 else:
                     raise ValueError('本地分角色模型启动超时。')
+                # ~26 answer tokens a unit at 25 tokens/s on the 14B (实测): a 200-unit
+                # passage needs over three minutes, so the wait grows with the passage.
                 response = request('/v1/chat/completions', {**settings,'model':'role-draft',
                     'messages':[{'role':'system','content':prompt},{'role':'user','content':json.dumps(
                         [{'id':u['id'],'text':u['text']} for u in spoken],ensure_ascii=False)}],
-                    'response_format':{'type':'json_schema','json_schema':{'name':'speaker_segments','schema':schema}}})
+                    'response_format':{'type':'json_schema','json_schema':{'name':'speaker_segments','schema':schema}}},
+                    timeout=max(180, 4 * len(spoken) + 120))
                 raw = response['choices'][0]['message']['content'] or ''
                 usage = response.get('usage') or {}
                 log.write(f'\n[VoxStage] finish_reason={response["choices"][0].get("finish_reason")} '
