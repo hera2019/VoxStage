@@ -130,6 +130,7 @@ class RoleDraftRequest(BaseModel):
     cut: Literal['lines'] | None = None                                 # 'lines': one unit per line, whatever quotation marks the text holds (本人 2026-09-17)
     language: Literal['zh','en']
     book_id: str | None = Field(default=None, pattern=r'^[a-f0-9]{32}$')   # lines confirmed in the book's other chapters teach the habits
+    carry_from: str | None = Field(default=None, pattern=r'^[a-f0-9]{32}$')   # an earlier draft of (nearly) this text: its decisions follow the lines that kept their words (本人 2026-09-21)
     prepared_token: str | None = Field(default=None, pattern=r'^[a-f0-9]{32}$', exclude=True)
     target_project_id: str | None = Field(default=None, pattern=r'^[a-f0-9]{32}$', exclude=True)
 
@@ -866,6 +867,18 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
     def download_master_export(book_id: str, batch_id: str, name: str):
         path = book_export.download(book_id, batch_id, name)
         return FileResponse(path, filename=f'VoxStage-{batch_id}-{name}')
+
+    @app.post('/api/migration/master-books/{book_id}/adopt')
+    def adopt_legacy_book(book_id: str):
+        """A legacy book becomes a master book in place (本人 2026-09-21: 把《阿Q
+        正传》收进主工程): exact chapter projects join as processed members,
+        missing chapters become unprocessed projects; backed up first."""
+        from .book_adopt import adopt
+        if not re.fullmatch(r'[a-f0-9]{32}', book_id):
+            raise ValueError('找不到这本书。')
+        book_export.assert_book_writable(book_id)
+        with store.lock:
+            return adopt(store, books, book_id, defaults=project_service.application_defaults())
 
     @app.get('/api/migration/master-books/preview')
     def preview_master_book_migration():
@@ -1725,6 +1738,31 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                         'model': {'id': result.get('model_id'), 'note': model_note}}
                 record.update({'units': out, 'revision': 1, 'decisions': {}, 'book_id': body.book_id, 'cast': None if body.book_id else cast, 'model_note': model_note,
                                'narration_colour': (hint_colours.get('NARRATOR') or [None])[0]})
+                if body.carry_from:
+                    # The reviewer fixed the text (a quotation mark that swallowed a
+                    # page) and asked again: every decision they had made follows
+                    # its line by exact words, first unused match wins; the rest is
+                    # the new draft's (本人 2026-09-21).
+                    try:
+                        earlier = read_draft(body.carry_from)
+                    except ValueError:
+                        earlier = None
+                    if earlier and earlier.get('decisions'):
+                        by_text = {}
+                        for u in earlier.get('units', []):
+                            d = earlier['decisions'].get(u['id'])
+                            if d and u['text'].strip():
+                                by_text.setdefault(u['text'].strip(), []).append(d)
+                        carried = {}
+                        for u in out:
+                            pool = by_text.get(u['text'].strip())
+                            if pool:
+                                carried[u['id']] = {**pool.pop(0), 'carried_from': body.carry_from}
+                        record['decisions'] = carried
+                        record['carried_from'] = body.carry_from
+                        view['decisions'] = carried
+                        view['units'] = apply_decisions(out, carried)
+                        view['notice'] = ((notice + ' ') if notice else '') + f'已按改后的原稿重新识别；你之前改过的 {len(carried)} 句判断按原句找回来了。'
                 write_draft(record)
             return view
         except ValueError as exc:

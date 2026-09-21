@@ -122,3 +122,20 @@ def test_an_unfinished_review_can_be_abandoned_and_a_confirmed_one_cannot(tmp_pa
         r = c.delete('/api/attribution/draft/' + d2['draft_id'])
         assert r.status_code == 400 and '已经确认' in r.json()['detail']
         assert c.delete('/api/attribution/draft/zz').status_code == 400
+
+
+def test_a_redone_draft_carries_the_decisions_of_the_lines_that_kept_their_words(tmp_path):
+    """本人 2026-09-21: a quotation mark that swallowed the end of a chapter could
+    not be fixed once the draft existed — the text was read-only and the model
+    could not be asked again for the tail. Now the source can be edited in the
+    review and asked again; every decision follows its line by exact words."""
+    with TestClient(create_app(tmp_path / 'p', FixtureEngine(), role_engine=Tags()), base_url='http://127.0.0.1', headers=HEADERS) as c:
+        d = c.post('/api/attribution/draft', json={'script': TEXT, 'language': 'zh'}).json()
+        cat = next(u for u in d['units'] if '猫' in u['text'])
+        c.patch('/api/attribution/draft/' + d['draft_id'], json={'expected_revision': 1, 'decisions': [{'unit_id': cat['id'], 'speaker': '阿宁', 'edited': True, 'confirmed': True}]})
+        fixed = TEXT.replace('糖', '糖！')                                  # the reviewer touched another line
+        r = c.post('/api/attribution/draft', json={'script': fixed, 'language': 'zh', 'carry_from': d['draft_id']}).json()
+        new_cat = next(u for u in r['units'] if '猫' in u['text'])
+        assert new_cat['speaker'] == '阿宁' and new_cat['decided'] == {'edited': True, 'confirmed': True, 'source': 'person'}
+        assert r['decisions'][new_cat['id']]['carried_from'] == d['draft_id'] and '找回来' in (r['notice'] or '')
+        assert c.get('/api/attribution/draft/' + r['draft_id']).json()['decisions'][new_cat['id']]['speaker'] == '阿宁'
