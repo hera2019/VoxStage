@@ -498,8 +498,10 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
         if request.method not in ('GET','HEAD'):
             if request.headers.get('x-voxstage') != '1':
                 return JSONResponse({'detail':'Missing local request header'}, status_code=403)
-            if int(request.headers.get('content-length','0')) > 400000:
-                return JSONResponse({'detail':'Request too large'}, status_code=413)
+            # A whole novel pasted in is a few megabytes; a coloured .docx up to 20 MB
+            # base64 (本人 2026-09-22: a long paste met the old 400 KB ceiling as a bare 413).
+            if int(request.headers.get('content-length','0')) > 30_000_000:
+                return JSONResponse({'detail':'内容太大（超过 30 MB），请分成几个文件。'}, status_code=413)
         response = await call_next(request)
         response.headers['X-Content-Type-Options'] = 'nosniff'
         response.headers['Referrer-Policy'] = 'no-referrer'
