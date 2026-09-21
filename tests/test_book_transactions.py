@@ -331,3 +331,24 @@ def test_merge_conflict_preview_has_complete_dialog_shape(tmp_path):
             assert key in plan
             assert isinstance(plan[key], list)
 
+
+
+def test_one_characters_voice_can_be_unified_for_the_whole_book_leaving_other_overrides(tmp_path):
+    """本人 2026-09-22: a voice changed in one chapter, applied to every chapter —
+    but only that character's: a chapter's other entries (the character grown
+    old with a voice of its own) stay its own."""
+    app = create_app(tmp_path / 'projects', FixtureEngine())
+    with TestClient(app, base_url='http://127.0.0.1', headers=HEADERS) as client:
+        book = make_book(client)
+        one, two = (p['id'] for p in book['projects'])
+        for pid, voices in ((one, {'阿宁': 'Dylan', '王伯': 'Uncle_Fu'}), (two, {'阿宁': 'Serena'})):
+            raw = app.state.store.read(pid); raw['voices'] = voices; app.state.store.write(raw)
+        current = read_book(tmp_path, book['id'])
+        r = client.post(f"/api/master-books/{book['id']}/settings/unify-role", json={'revision': current['revision'], 'key': 'voices', 'name': '阿宁', 'value': 'Dylan'})
+        assert r.status_code == 200, r.text
+        result = r.json()
+        assert result['settings']['voices'] == {'阿宁': 'Dylan'} and set(result['updated_projects']) == {one, two}
+        assert app.state.store.read(one)['voices'] == {'王伯': 'Uncle_Fu'} and 'voices' not in app.state.store.read(two)
+        assert client.get('/api/projects/' + two).json()['voices']['阿宁'] == 'Dylan'         # inherited now
+        stale = client.post(f"/api/master-books/{book['id']}/settings/unify-role", json={'revision': current['revision'], 'key': 'voices', 'name': '阿宁', 'value': 'Vivian'})
+        assert stale.status_code == 409

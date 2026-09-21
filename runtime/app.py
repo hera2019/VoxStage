@@ -92,6 +92,12 @@ class SettingPatchRequest(BaseModel):
     values: dict = Field(default_factory=dict)
     inherit: list[str] = Field(default_factory=list, max_length=32)
 
+class RoleUnifyRequest(BaseModel):
+    revision: int = Field(ge=0)
+    key: Literal['voices', 'colors', 'sexes', 'crowds'] = 'voices'
+    name: str = Field(min_length=1, max_length=80)
+    value: object = None                                           # None clears the book's entry for the name
+
 class BookCastRenameRequest(BaseModel):
     revision: int = Field(ge=0)
     cast_id: str = Field(pattern=r'^[a-f0-9]{32}$')
@@ -894,6 +900,12 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
         book_export.assert_book_writable(book_id)
         return book_transactions.unify_settings(
             book_id, body.revision, body.values, body.inherit)
+
+    @app.post('/api/master-books/{book_id}/settings/unify-role')
+    def unify_master_book_role(book_id: str, body: RoleUnifyRequest):
+        """One character's voice (colour, sex, crowd) for the whole book."""
+        book_export.assert_book_writable(book_id)
+        return book_transactions.unify_role(book_id, body.revision, body.key, body.name, body.value)
 
     @app.post('/api/master-books/{book_id}/cast/rename/plan')
     def plan_master_cast_rename(book_id: str, body: BookCastRenameRequest):

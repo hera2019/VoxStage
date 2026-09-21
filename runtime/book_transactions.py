@@ -437,6 +437,48 @@ class BookTransactions:
                 'cleared_overrides': cleared, 'updated_projects': list(updates),
             }
 
+    def unify_role(self, book_id, revision, key, name, value):
+        """One character's entry in a role map — 阿宁's voice — for the whole
+        book (本人 2026-09-22: 改了一个子工程里的角色音色，怎么应用到其它章节):
+        the book's map takes it, every chapter's own entry for that name goes,
+        the rest of each chapter's map stays. A chapter that wants its own —
+        the character grown old — sets it again afterwards. Claude Hera."""
+        from .project_settings import ROLE_MAPS
+        if key not in ROLE_MAPS or key == 'voice_profiles':
+            raise ValueError('只能统一角色声音、颜色、性别或群口。')
+        name = (name or '').strip()
+        if not name:
+            raise ValueError('请说明是哪个角色。')
+        with self.store.lock:
+            book = self._book(book_id)
+            if book.get('revision', 0) != revision:
+                raise RuntimeError('主工程已改变，请刷新后再统一设置。')
+            members = self._members(book)
+            self._assert_idle(members)
+            updated_book = deepcopy(book)
+            settings = updated_book.setdefault('settings', {})
+            role_map = dict(settings.get(key) or {})
+            if value is None:
+                role_map.pop(name, None)
+            else:
+                role_map[name] = deepcopy(value)
+            settings[key] = role_map
+            updated_book['revision'] = revision + 1
+            updates, cleared = {}, {}
+            for raw in members:
+                own = raw.get(key)
+                if isinstance(own, dict) and name in own:
+                    changed = deepcopy(raw)
+                    changed[key] = {n: v for n, v in own.items() if n != name}
+                    if not changed[key]:
+                        changed.pop(key, None)
+                    changed['revision'] = raw.get('revision', 0) + 1
+                    updates[raw['id']] = changed
+                    cleared[raw['id']] = [name]
+            sid = self._commit(book, updated_book, updates, {}, reason=f'settings:unify-role:{key}')
+            return {'book_id': book_id, 'revision': updated_book['revision'], 'settings': updated_book['settings'],
+                    'snapshot_id': sid, 'cleared_overrides': cleared, 'updated_projects': list(updates)}
+
     @staticmethod
     def _remove_settings_from_history(project, keys):
         changed = False
