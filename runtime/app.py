@@ -332,6 +332,10 @@ class EmptyBookRequest(BaseModel):
     title: str = Field(min_length=1, max_length=120)
     language: Literal['zh','en'] = 'zh'
 
+class BookArchiveRequest(BaseModel):
+    revision: int = Field(ge=0)
+    archived: bool = True
+
 class BookRenameRequest(BaseModel):
     revision: int = Field(ge=0)
     title: str = Field(min_length=1, max_length=120)
@@ -937,6 +941,31 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             raise ValueError('找不到这本书。')
         with store.lock:
             return recover(store, books, book_id, defaults=project_service.application_defaults())
+
+    @app.post('/api/master-books/{book_id}/archive')
+    def archive_master_book(book_id: str, body: BookArchiveRequest):
+        """The whole book and its chapters archived together, or brought back
+        (本人 2026-09-21: 做完不用了，又不舍得删)."""
+        book_export.assert_book_writable(book_id)
+        with store.lock:
+            book = books.get(book_id)
+            if book.get('master_schema') != 1:
+                raise ValueError('旧版书目不能整本归档。')
+            if book.get('revision', 0) != body.revision:
+                raise RuntimeError('主工程已改变，请刷新后再试。')
+            for member_id in book.get('members', []):
+                try:
+                    project = store.read(member_id)
+                except (OSError, ValueError, KeyError):
+                    continue
+                if project.get('job', {}).get('status') in ('queued', 'running'):
+                    raise RuntimeError('有章节正在处理，等它完成再归档。')
+                if bool(project.get('archived')) != body.archived:
+                    project['archived'] = body.archived
+                    store.write(project)
+            book['archived'] = body.archived; book['revision'] = book.get('revision', 0) + 1
+            books.save(book)
+            return {'book_id': book_id, 'archived': body.archived, 'revision': book['revision']}
 
     @app.delete('/api/master-books/{book_id}')
     def delete_master_book(book_id: str):

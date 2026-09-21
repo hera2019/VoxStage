@@ -66,3 +66,14 @@ def test_recovering_an_orphan_group_and_deleting_an_empty_master(tmp_path):
         assert r['language'] == 'en' and r['title'] == '空书'
         assert c.delete('/api/master-books/' + b['id']).json() == {'deleted': b['id']}
         assert c.delete('/api/master-books/' + b['id']).status_code in (400, 404)
+
+
+def test_a_master_book_is_archived_and_brought_back_with_its_chapters(tmp_path):
+    with TestClient(create_app(tmp_path / 'p', FixtureEngine(), role_engine=Never()), base_url='http://127.0.0.1', headers=HEADERS) as c:
+        b = c.post('/api/master-books', json={'title': '小店', 'language': 'zh', 'script': '第一章 猫\n陈小雪看着窗外。\n\n第二章 账\n王伯翻开账本。\n'}).json()
+        r = c.post('/api/master-books/' + b['id'] + '/archive', json={'revision': b['revision'], 'archived': True}).json()
+        assert r['archived'] is True
+        assert [p['archived'] for p in c.get('/api/projects?include_archived=true').json()] == [True, True] and c.get('/api/projects').json() == []
+        assert next(x for x in c.get('/api/books').json() if x['id'] == b['id'])['archived'] is True
+        r = c.post('/api/master-books/' + b['id'] + '/archive', json={'revision': r['revision'], 'archived': False}).json()
+        assert r['archived'] is False and len(c.get('/api/projects').json()) == 2

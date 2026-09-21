@@ -347,7 +347,7 @@ class Books:
         out = []
         for path in sorted(self.root.glob('*.json')):
             b = json.loads(path.read_text(encoding='utf-8'))
-            out.append({'id': b['id'], 'title': b['title'], 'language': b['language'], 'chapters': len(b['chapters'])})
+            out.append({'id': b['id'], 'title': b['title'], 'language': b['language'], 'chapters': len(b['chapters']), 'archived': bool(b.get('archived'))})
         return out
 
     @staticmethod
