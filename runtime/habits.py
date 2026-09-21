@@ -341,6 +341,20 @@ def quoted_citation(text, before='', after=''):
     # person called speech). A verb of saying before the quote is not here.
     if len(inner) <= 12 and re.search(r'(?:是|这|那|的|记得|想起|记起|所谓|谓|即)$', left):
         return True
+    # 本人 2026-09-22: a quoted word or two with nothing else in it, set inside
+    # the narrator's own line — 觉得很“过瘾”, 俗称为“白喉”的疫情 — is a term
+    # cited, not a line spoken, unless a verb of saying or a colon leads into
+    # it (说了一声“好”, 道：“好”), a tag follows it (”他说), or the quote opens
+    # its line (“老Q”，赵太爷怯怯的迎着低声的叫 — 阿Q chapter 7). The reviewer
+    # can still make it a line; as narration it joins the prose around it.
+    if len(inner) <= 4:
+        line_before = (before or '').rsplit('\n', 1)[-1]
+        line_after = (after or '').split('\n', 1)[0]
+        embedded = bool(line_before.strip())        # prose before it on its line; a quote opening the line (“老Q”，赵太爷…叫) is a line spoken
+        led_by_speech = bool(re.search(r'(?:' + _VERB_ALT_ALL + r')[^，。！？；]{0,4}[：:]?$|[：:]$', line_before.rstrip()[-12:]))
+        tag_after = bool(re.match(r'\s*[，,]?\s*[^，。！？!?\s]{0,6}(?:' + _VERB_ALT_ALL + r')', line_after[:14]))
+        if embedded and not led_by_speech and not tag_after:
+            return True
     return False
 
 

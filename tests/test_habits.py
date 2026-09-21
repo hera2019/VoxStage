@@ -638,3 +638,19 @@ def test_scene_first_changes_the_schema_and_prompt_only_when_asked():
     assert attribution.tidy_scene({'participants': [], 'exchange': 'dance'}) == {'participants': [], 'exchange': None}
     assert attribution.tidy_scene(None) is None
     assert attribution.SCENE_FIRST is False                      # off until the frozen set says it helps
+
+
+def test_a_short_bare_quoted_word_inside_prose_is_cited_not_spoken():
+    """本人 2026-09-22: “过瘾” set inside the narrator's line came out as a line
+    of dialogue. A quoted word or two with no punctuation inside, with prose
+    before it on its line, is a citation — unless a verb of saying or a colon
+    leads into it, or a tag follows. A quote opening its line is still speech
+    (“老Q”，赵太爷怯怯的迎着低声的叫). Replay: 13 → 12 on the frozen set."""
+    from runtime import habits
+    assert habits.quoted_citation('“过瘾”', '他觉得很', '，又来了一次。')
+    assert habits.quoted_citation('“白喉”', '被民间俗称为', '的疫情')
+    assert not habits.quoted_citation('“好”', '他说了一声', '，转身走了。')
+    assert not habits.quoted_citation('“好”', '他道：', '')
+    assert not habits.quoted_citation('“好”', '他抬头', '，王伯说。')
+    assert not habits.quoted_citation('“老Q”', '\n\n', '，赵太爷怯怯的迎着低声的叫。')
+    assert not habits.quoted_citation('“过瘾！”', '他觉得很', '。')
