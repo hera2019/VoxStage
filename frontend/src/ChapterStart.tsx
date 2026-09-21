@@ -11,9 +11,9 @@ type Capacity={model:{id:string;label:string;installed:boolean;loadable:boolean;
   batches:number;batch_sizes:number[];explanation:string};
 type Job={kind?:string;status?:string;completed?:number;total?:number;current_batch?:number|null;error?:string|null};
 type ProjectState={id:string;name:string;revision:number;job?:Job;attribution_batch?:{draft_id?:string;batches?:{status:string}[]}|null;processing_state?:string;book?:{id:string;index?:number}|null};
-type Props={projectId:string;request:(path:string,method?:string,data?:unknown)=>Promise<any>;onClose:()=>void;onReview:(draft:{draft_id:string;name:string;book?:{id:string;index:number}})=>void;onChanged:()=>void};
+type Props={projectId:string;request:(path:string,method?:string,data?:unknown)=>Promise<any>;onClose:()=>void;onReview:(draft:{draft_id:string;name:string;book?:{id:string;index:number}})=>void;onChanged:()=>void;inline?:boolean};
 
-export function ChapterStart({projectId,request,onClose,onReview,onChanged}:Props){
+export function ChapterStart({projectId,request,onClose,onReview,onChanged,inline}:Props){
  const [p,setP]=useState<ProjectState|null>(null);const [cap,setCap]=useState<Capacity|null>(null);const [queue,setQueue]=useState<number|null>(null);
  const [busy,setBusy]=useState(false);const [error,setError]=useState('');
  const load=async()=>{const proj:ProjectState=await request('/projects/'+projectId);setP(proj);
@@ -26,9 +26,10 @@ export function ChapterStart({projectId,request,onClose,onReview,onChanged}:Prop
  const done=(p?.attribution_batch?.batches??[]).filter(b=>b.status==='completed').length;
  const canResume=!running&&done>0&&!p?.attribution_batch?.draft_id;
  const draftReady=p?.job?.status==='completed'&&!!p?.attribution_batch?.draft_id;
- if(!p)return <div className="structure-wrap"><div className="chapter-settings"><p className="muted">{error||'读取章节…'}</p><button onClick={onClose}>关闭</button></div></div>;
- return <div className="structure-wrap"><div className="chapter-settings" role="dialog" aria-label={`处理「${p.name}」`}>
-  <div className="setting-head"><strong>处理「{p.name}」</strong><small>原稿保持完整；分角色按本机与模型的上限分批跑，跑完进复核页。</small><button type="button" aria-label="关闭" onClick={onClose}>✕</button></div>
+ const wrap=inline?'structure-inline':'structure-wrap', box=inline?'structure-page chapter-start':'chapter-settings';
+ if(!p)return <div className={wrap}><div className={box}><p className="muted">{error||'读取章节…'}</p><button onClick={onClose}>{inline?'返回':'关闭'}</button></div></div>;
+ return <div className={wrap}><div className={box} role={inline?undefined:'dialog'} aria-label={`处理「${p.name}」`}>
+  <div className="setting-head"><strong>处理「{p.name}」</strong><small>原稿保持完整；分角色按本机与模型的上限分批跑，跑完进复核页。</small><button type="button" aria-label={inline?'返回':'关闭'} title={inline?'回到主工程':undefined} onClick={onClose}>{inline?'← 返回':'✕'}</button></div>
   {error&&<p role="alert" className="line-error">{error}</p>}
   {cap&&<div className="setting-page">
    <p><strong>模型</strong> {cap.model.label}{cap.model.recommended_for_machine?'（本机推荐）':''}{!cap.model.installed?' · 未安装':!cap.model.loadable?' · 这台电脑装不下，请在设置里换较小模型':''}</p>
