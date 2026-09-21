@@ -163,3 +163,27 @@ def test_redoing_a_confirmed_project_updates_it_in_place(tmp_path):
         q = c.post('/api/attribution/confirm', json={'draft_id': r['draft_id'], 'name': '店', 'labels': labels2}).json()
         assert q['id'] == p['id'] and q['revision'] == p['revision'] + 1 and any('猫又跑了' in s['text'] for s in q['segments'])
         assert len(c.get('/api/projects').json()) == 1                        # no second project
+
+
+def test_a_characters_sex_set_while_reviewing_picks_a_voice_of_that_sex_and_carries_into_the_next_chapter(tmp_path):
+    """本人: 角色音色按出场顺序轮发，无性别概念. The review page's cast now takes
+    女/男; confirming gives a new character a preset of that sex instead of the
+    next in the rotation, the project keeps the sex, and the next chapter's
+    draft knows it. A character already voiced in an earlier chapter keeps that
+    voice — consistency across chapters comes first (2026-09-22)."""
+    with TestClient(create_app(tmp_path / 'p', FixtureEngine(), role_engine=Tags()), base_url='http://127.0.0.1', headers=HEADERS) as c:
+        book = c.post('/api/books', json={'title': '店', 'language': 'zh', 'script': '第一章 一\n' + TEXT + '\n第二章 二\n王伯说：“账本呢？”\n陈小雪说：“在这～”\n'}).json()
+        ch1 = c.get(f"/api/books/{book['id']}/chapters/1").json()
+        d1 = c.post('/api/attribution/draft', json={'script': ch1['text'], 'language': 'zh', 'book_id': book['id']}).json()
+        xue = next(e for e in d1['cast'] if e['name'] == '陈小雪')
+        r = c.patch('/api/attribution/draft/' + d1['draft_id'], json={'expected_revision': 1, 'sex': {'cast_id': xue['id'], 'sex': 'f'}}).json()
+        assert next(e for e in r['cast'] if e['id'] == xue['id'])['sex'] == 'f'
+        labels = [{'id': u['id'], 'kind': u['kind'], 'speaker': u['speaker'] if u['speaker'] != 'UNKNOWN' else '王伯'} for u in d1['units']]
+        p1 = c.post('/api/attribution/confirm', json={'draft_id': d1['draft_id'], 'name': '一', 'labels': labels, 'book_id': book['id'], 'chapter_index': 1, 'expected_revision': 2}).json()
+        assert p1['voices']['陈小雪'] in ('Vivian', 'Serena') and p1['sexes'] == {'陈小雪': 'f'}   # she spoke after the narrator: the rotation would have given her a man's voice
+        ch2 = c.get(f"/api/books/{book['id']}/chapters/2").json()
+        d2 = c.post('/api/attribution/draft', json={'script': ch2['text'], 'language': 'zh', 'book_id': book['id']}).json()
+        assert next(e for e in d2['cast'] if e['name'] == '陈小雪')['sex'] == 'f'
+        labels = [{'id': u['id'], 'kind': u['kind'], 'speaker': u['speaker'] if u['speaker'] != 'UNKNOWN' else '王伯'} for u in d2['units']]
+        p2 = c.post('/api/attribution/confirm', json={'draft_id': d2['draft_id'], 'name': '二', 'labels': labels, 'book_id': book['id'], 'chapter_index': 2}).json()
+        assert p2['voices']['陈小雪'] == p1['voices']['陈小雪'] and p2['sexes'].get('陈小雪') == 'f'

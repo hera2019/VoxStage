@@ -169,10 +169,15 @@ class CastAlias(BaseModel):
     cast_id: str = Field(pattern=r'^[a-f0-9]{32}$')
     alias: str = Field(min_length=1, max_length=80)
 
+class CastSex(BaseModel):
+    cast_id: str = Field(pattern=r'^[a-f0-9]{32}$')
+    sex: Literal['f', 'm', ''] = ''
+
 class DraftPatch(BaseModel):
     expected_revision: int = Field(ge=1)
     decisions: list[Decision] = Field(default_factory=list, max_length=500)
     rename: CastRename | None = None
+    sex: CastSex | None = None                                   # 女/男 on the cast: a voice of that sex at confirm, and the line rules know
     alias: CastAlias | None = None                               # 老板娘 is 陈小雪 — the reviewer carried a rename along
     split: str | None = Field(default=None, max_length=80)      # this alias is a character of its own after all
     unsplit: str | None = Field(default=None, pattern=r'^[a-f0-9]{32}$')   # undo a split: the character made from an alias
@@ -369,6 +374,15 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
     from .core import Templates
     books = Books(store.root.parent/'books')
     templates = Templates(store.root.parent/'templates')
+    def preset_for(language, sex, used):
+        """A preset voice for a character new to the project: one of the
+        character's sex when that is known (本人: 角色音色按出场顺序轮发，无性别概念),
+        unused by anyone yet if possible; the usual rotation otherwise."""
+        presets = ['Vivian', 'Uncle_Fu', 'Serena', 'Dylan'] if language == 'zh' else ['Ryan', 'Aiden']
+        by_sex = {'f': ['Vivian', 'Serena'], 'm': ['Uncle_Fu', 'Dylan', 'Eric']} if language == 'zh' else {'m': ['Ryan', 'Aiden']}
+        pool = by_sex.get(sex) or presets
+        return next((v for v in pool if v not in used), next((v for v in presets if v not in used), pool[len(used) % len(pool)]))
+
     def default_preset():
         # New projects start on the larger preset model when it is installed;
         # existing projects keep whatever they were made with. 0.6B stays
@@ -1986,6 +2000,8 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                         continue
                     source = {'mark': 'mark', 'tag': 'tag', 'model': 'model'}.get(u.get('source') or '', 'rule')
                     entry, _ = C.ensure(cast, name, source, introduced={'draft_id': draft_id, 'unit_id': u['id']}, colours=hint_colours.get(name, ()))
+                    if not entry.get('sex') and sex_of.get(name) in ('f', 'm'):
+                        entry['sex'] = sex_of[name]                   # what the book's earlier chapters know: a voice of that sex at confirm
                     u['cast_id'] = entry['id']
                 if body.book_id:
                     book_record['aliases'] = C.alias_table(cast); books.save(book_record)
@@ -2430,6 +2446,12 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                     if u.get('cast_id') == entry['id']:
                         u['speaker'] = entry['name']
                 events.append({'rename': entry['id'], 'name': entry['name']})
+            if body.sex:
+                entry = next((e for e in cast if e['id'] == body.sex.cast_id), None)
+                if entry is None:
+                    raise ValueError('人物表里没有这个人。')
+                entry['sex'] = body.sex.sex
+                events.append({'sex': body.sex.sex, 'of': entry['id']})
             if body.alias:
                 entry = C.add_alias(cast, body.alias.cast_id, body.alias.alias, 'person')
                 events.append({'alias': body.alias.alias, 'of': entry['id'] if entry else None})
@@ -2576,6 +2598,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                     entry, _ = C.ensure(cast, label['speaker'].strip(), 'person')
                     label['cast_id'] = entry['id']
             save_cast(record, cast, book_record)
+            cast_sex = {e['name']: e['sex'] for e in cast if e.get('sex') in ('f', 'm')}
             target_id = record.get('target_project_id')
             if target_id and record.get('target_kind') == 'redo':
                 # A confirmed project recognised again on (nearly) the same text: the
@@ -2591,13 +2614,12 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 project['segments'] = carried_segments
                 if record.get('cut'):
                     project['cut'] = record['cut']
-                presets = ['Vivian','Uncle_Fu','Serena','Dylan'] if record['language'] == 'zh' else ['Ryan','Aiden']
                 view_now = project_service.view(project) if project.get('settings_schema') == 1 else project
                 voices_now = dict(view_now.get('voices', {}))
                 used = set(voices_now.values())
                 for speaker in dict.fromkeys(segment['speaker'] for segment in project['segments']):
                     if speaker not in voices_now:
-                        voice = next((candidate for candidate in presets if candidate not in used), presets[len(used) % len(presets)])
+                        voice = preset_for(record['language'], cast_sex.get(speaker) or (view_now.get('sexes') or {}).get(speaker), used)
                         project.setdefault('voices', {})[speaker] = voice; voices_now[speaker] = voice; used.add(voice)
                 voice_names = set(voices_now)
                 project['redo'] = {'draft_id': body.draft_id, 'kept_audio': stats.get('kept_audio'), 'fresh': stats.get('fresh')}
@@ -2616,12 +2638,10 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                     project['cut'] = record['cut']
                 current_view = project_service.view(project)
                 local_voices = project.setdefault('voices', {})
-                presets = ['Vivian','Uncle_Fu','Serena','Dylan'] if record['language'] == 'zh' else ['Ryan','Aiden']
                 used = set(current_view.get('voices', {}).values())
                 for speaker in dict.fromkeys(segment['speaker'] for segment in segments):
                     if speaker not in current_view.get('voices', {}):
-                        voice = next((candidate for candidate in presets if candidate not in used),
-                                     presets[len(used) % len(presets)])
+                        voice = preset_for(record['language'], cast_sex.get(speaker) or (current_view.get('sexes') or {}).get(speaker), used)
                         local_voices[speaker] = voice
                         used.add(voice)
                 voice_names = set(project_service.view(project).get('voices', {}))
@@ -2630,8 +2650,16 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                                        preset_model=default_preset(), clone_model=default_clone())
                 if record.get('cut'):
                     project['cut'] = record['cut']          # the lines were cut by the manuscript's colours; a rewrite cuts the same way
+                if any(cast_sex.get(n) for n in project['voices']):   # the cast knows who is a woman and who a man: voices to match
+                    used = set(); voices = {}
+                    for speaker in project['voices']:
+                        voices[speaker] = preset_for(record['language'], cast_sex.get(speaker), used); used.add(voices[speaker])
+                    project['voices'] = voices
                 voice_names = set(project['voices'])
             project['cast_ids'] = {e['name']: e['id'] for e in cast if e['name'] in voice_names}
+            for name, sex in cast_sex.items():                           # the cast's sexes reach the project's own map
+                if name in voice_names and not (project.get('sexes') or {}).get(name):
+                    project.setdefault('sexes', {})[name] = sex
             # A colour the author gave a character in the manuscript is the
             # character's colour in the project too (本人 2026-09-16).
             for e in cast:
@@ -2783,10 +2811,9 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                         name = body.speaker.strip()
                         if not name or len(name) > 80 or any(c in name for c in '：:\n'):
                             raise ValueError('角色名需为 1–80 个字符，且不含冒号。')
-                        presets = ['Vivian', 'Uncle_Fu', 'Serena', 'Dylan', 'Eric'] if p['language'] == 'zh' else ['Ryan', 'Aiden']
                         used = set(effective_voices.values())
                         voices = p.setdefault('voices', {})
-                        voices[name] = next((v for v in presets if v not in used), presets[len(effective_voices) % len(presets)])
+                        voices[name] = preset_for(p['language'], body.sex if body.sex in ('f', 'm') else (p.get('sexes') or {}).get(name), used)
                         body.speaker = name
                     s['speaker'] = body.speaker
                 if any(getattr(body, field) is not None for field in ('text', 'spoken_as', 'speaker')):
