@@ -127,7 +127,7 @@ def recover_plan(book_id, projects, *, defaults=None):
     book (the preview's orphan group): same id, so the links stay true;
     members in chapter order; every project a processed member with its
     effective settings frozen; the book's defaults from the first. Pure."""
-    linked = sorted([p for p in projects if (p.get('book') or {}).get('id') == book_id and not p.get('archived')],
+    linked = sorted([p for p in projects if (p.get('book') or {}).get('id') == book_id],      # archived ones too: recovery brings them back
                     key=lambda p: (p.get('book') or {}).get('index', 0))
     if not linked:
         raise ValueError('没有找到指向这本书的工程。')
@@ -149,6 +149,7 @@ def recover_plan(book_id, projects, *, defaults=None):
             raw[key] = deepcopy(view[key])
         raw['settings_schema'] = 1
         raw['processing_state'] = 'processed' if raw.get('segments') else 'unprocessed'
+        raw['archived'] = False
         raw['book'] = {'id': book_id, 'title': title, 'index': n, 'chapters': len(linked)}
         updated.append(raw)
         master['members'].append(raw['id'])
