@@ -335,6 +335,7 @@ class EmptyBookRequest(BaseModel):
 class BookRenameRequest(BaseModel):
     revision: int = Field(ge=0)
     title: str = Field(min_length=1, max_length=120)
+    language: Literal['zh','en'] | None = None         # only while the book has no chapters
 
 class BookExportSettingsRequest(BaseModel):
     revision: int = Field(ge=0)
@@ -837,6 +838,10 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             title = body.title.strip()[:120]
             if not title:
                 raise ValueError('主工程名不能为空。')
+            if body.language and body.language != book.get('language'):
+                if book.get('members'):
+                    raise ValueError('主工程已有章节，语言不能改；新建一本另一种语言的主工程。')
+                book['language'] = body.language
             book['title'] = title; book['revision'] = book.get('revision', 0) + 1
             books.save(book)
             for member_id in book.get('members', []):
@@ -847,7 +852,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 if (project.get('book') or {}).get('id') == book_id and project['book'].get('title') != title:
                     project['book']['title'] = title
                     store.write(project)
-            return {'book_id': book_id, 'title': title, 'revision': book['revision']}
+            return {'book_id': book_id, 'title': title, 'language': book.get('language'), 'revision': book['revision']}
 
     @app.patch('/api/master-books/{book_id}/settings')
     def patch_master_book_settings(book_id: str, body: SettingPatchRequest):
@@ -922,6 +927,28 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
         book_export.assert_book_writable(book_id)
         with store.lock:
             return adopt(store, books, book_id, defaults=project_service.application_defaults())
+
+    @app.post('/api/migration/master-books/{book_id}/recover')
+    def recover_orphan_book(book_id: str):
+        """The projects still pointing at a deleted book become a master book
+        again (本人 2026-09-21: 帮我恢复出来); backed up first."""
+        from .book_adopt import recover
+        if not re.fullmatch(r'[a-f0-9]{32}', book_id):
+            raise ValueError('找不到这本书。')
+        with store.lock:
+            return recover(store, books, book_id, defaults=project_service.application_defaults())
+
+    @app.delete('/api/master-books/{book_id}')
+    def delete_master_book(book_id: str):
+        """An empty master book is deleted; one with chapters must be dissolved
+        first — nothing here deletes a project or its audio."""
+        book_export.assert_book_writable(book_id)
+        with store.lock:
+            book = books.get(book_id)
+            if book.get('members'):
+                raise ValueError('主工程还有章节：先在「结构 → 解散主工程」里把章节变回独立工程，再删除。')
+            books.delete(book_id)
+        return {'deleted': book_id}
 
     @app.get('/api/migration/master-books/preview')
     def preview_master_book_migration():
