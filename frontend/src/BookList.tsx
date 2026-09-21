@@ -36,7 +36,7 @@ export function BookList({projects,emptyBooks=[],archivedBooks,showArchived,curr
     <div className="book-master-row"><button type="button" className="book-master-fold" aria-label={expanded?'折叠':'展开'} onClick={()=>toggle(id)}>{expanded?'▾':'▸'}</button><button type="button" className={'book-master-title '+(openBook===id?'active':'')} title="打开主工程：章节、设置、结构、导出" onClick={()=>{try{localStorage.setItem('voxstage-book-opened-'+id,String(Date.now()))}catch{}onOpenBook?.(id);if(!expanded)toggle(id)}}>《{b.title}》{isArchived(id,b.chapters)&&<small> · 已归档</small>} <small>{b.chapters.length} 章{busy?' · 处理中':''}</small>{!expanded&&here&&<span className="book-here" title="当前打开的工程在这里">●</span>}</button></div>
     {expanded&&<ol className="book-chapters">{b.chapters.map(c=>{const done=c.processing_state!=='unprocessed';
      return <li key={c.id} className={(c.id===current?'current ':'')+(done?'':'unprocessed')}>
-      <button type="button" disabled={disabled||(!done&&!onContinue)} title={done?'打开':'还没处理：分批处理接口接入后从这里继续'} onClick={()=>done?onOpen(c.id):onContinue?.(c.id)}>{c.book?.index?`${c.book.index}. `:''}{c.name}{!done&&<small> · 未处理{onContinue?' · 继续':''}</small>}</button>
+      <button type="button" disabled={disabled||(!done&&!onContinue)} title={done?'打开':'还没处理：从这里继续'} onClick={()=>done?onOpen(c.id):onContinue?.(c.id)}>{c.book?.index?`${c.book.index}. `:''}{c.name}{!done&&<small> · 未处理{onContinue?' · 继续':''}</small>}</button>
       <button type="button" className="book-chapter-settings" aria-label={c.name+' 的设置'} title="本章设置" disabled={disabled} onClick={()=>onSettings('project',c.id)}>⚙</button></li>})}</ol>}
    </div>})}
  </div>;
