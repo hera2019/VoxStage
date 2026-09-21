@@ -7,7 +7,7 @@ import {useState} from 'react';
  *  really opened, and a collapsed book carries a ● when that project lives
  *  in it. Opus 一, 2026-09-20. */
 export type Listed={id:string;name:string;archived?:boolean;processing_state?:string|null;book?:{id:string;title?:string;index?:number;chapters?:number}|null};
-type Props={projects:Listed[];current?:string;busyBooks?:Set<string>;disabled?:boolean;onOpen:(id:string)=>void;onSettings:(kind:'project'|'book',id:string)=>void;onContinue?:(id:string)=>void;onOpenBook?:(bookId:string)=>void;openBook?:string|null};
+type Props={projects:Listed[];emptyBooks?:{id:string;title:string}[];current?:string;busyBooks?:Set<string>;disabled?:boolean;onOpen:(id:string)=>void;onSettings:(kind:'project'|'book',id:string)=>void;onContinue?:(id:string)=>void;onOpenBook?:(bookId:string)=>void;openBook?:string|null;onNewBook?:()=>void};
 
 export function groupByBook<T extends Listed>(projects:T[]){
  const books=new Map<string,{title:string;chapters:T[]}>();const loose:T[]=[];
@@ -19,12 +19,13 @@ export function groupByBook<T extends Listed>(projects:T[]){
  return {books,loose};
 }
 
-export function BookList({projects,current,busyBooks,disabled,onOpen,onSettings,onContinue,onOpenBook,openBook}:Props){
+export function BookList({projects,emptyBooks=[],current,busyBooks,disabled,onOpen,onSettings,onContinue,onOpenBook,openBook,onNewBook}:Props){
  const {books}=groupByBook(projects);
+ for(const b of emptyBooks)if(!books.has(b.id))books.set(b.id,{title:b.title,chapters:[]});
  const [open,setOpen]=useState<string|null>(()=>{try{return localStorage.getItem('voxstage-open-book')}catch{return null}});
- if(books.size===0)return null;
+ if(books.size===0&&!onNewBook)return null;
  const toggle=(id:string)=>{const next=open===id?null:id;setOpen(next);try{if(next)localStorage.setItem('voxstage-open-book',next);else localStorage.removeItem('voxstage-open-book')}catch{}};
- return <div className="book-list"><div className="section-label">主工程</div>
+ return <div className="book-list"><div className="section-label">主工程{onNewBook&&<button type="button" className="see-lines" title="新建一个空的主工程，再把已有的工程加进来" disabled={disabled} onClick={onNewBook}>＋ 新建</button>}</div>
   {[...books.entries()].map(([id,b])=>{const here=b.chapters.some(c=>c.id===current);const expanded=open===id;const busy=busyBooks?.has(id);
    return <div key={id} className={'book-master '+(expanded?'expanded':'')}>
     <div className="book-master-row"><button type="button" className="book-master-fold" aria-label={expanded?'折叠':'展开'} onClick={()=>toggle(id)}>{expanded?'▾':'▸'}</button><button type="button" className={'book-master-title '+(openBook===id?'active':'')} title="打开主工程：章节、设置、结构、导出" onClick={()=>{onOpenBook?.(id);if(!expanded)toggle(id)}}>《{b.title}》 <small>{b.chapters.length} 章{busy?' · 处理中':''}</small>{!expanded&&here&&<span className="book-here" title="当前打开的工程在这里">●</span>}</button></div>

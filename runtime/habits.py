@@ -268,6 +268,36 @@ def outer_speech(text):
     return t
 
 
+# A verb of saying that ends its clause (争辩道：, 说，); 收回袖中 is not one.
+_TAG_VERB = re.compile(r'(?:' + _VERB_ALT_ALL + r')(?=[：:，,。！？!?]|$)')
+
+
+def action_after(after, mentions):
+    """The character whose action follows the quote in the same paragraph
+    without a verb of saying — “是。”陈小雪将账本重新收回袖中 — or None.
+    Textual, but weaker than a tag: the caller only confirms an answer that
+    agrees with it, or suggests it where the line is empty."""
+    raw = (after or '').lstrip(' \t”"」』')
+    if not raw or raw[0] in '\n\r，,':
+        return None
+    clean = STRIP.sub('', raw)
+    first = re.split(r'[。！？!?；;\n]', clean)[0]
+    head = re.split('[' + re.escape(_CLAUSE_MARKS) + ']', first)[0]
+    # A sentence that leads into the next line — 孔乙己便涨红了脸，……争辩道：
+    # — is that line's tag, not this line's action.
+    if not head or len(head) > 30 or _TAG_VERB.search(first) or clean[len(first):len(first) + 1] in ('：', ':'):
+        return None
+    found = []
+    for name, forms in mentions.items():
+        for f in forms:
+            if head.startswith(f) and not head.startswith(f + '们') and len(head) > len(f):
+                if any(len(g) > len(f) and head.startswith(g) for fs in mentions.values() for g in fs):
+                    continue                    # a shorter name inside a longer one (王伯 in 王伯母)
+                found.append(name); break
+    found = list(dict.fromkeys(found))
+    return found[0] if len(found) == 1 else None
+
+
 def run_on(text):
     """A quoted unit opened but not closed — the first paragraph of a speech
     that runs over several, each opened with “ and closed only at the last."""

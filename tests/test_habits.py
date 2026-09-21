@@ -542,3 +542,28 @@ def test_an_english_tag_names_the_speaker_of_a_split_quotation(tmp_path):
         d = c.post('/api/attribution/draft', json={'script': text, 'language': 'en'}).json()
         rows = [(u['text'].strip(), u['speaker'], u.get('tier')) for u in d['units'] if u['kind'] == 'dialogue']
         assert rows == [('“Then,”', 'Elizabeth Bennet', None), ('“you must know a great deal.”', 'Elizabeth Bennet', None)]
+
+
+def test_the_action_after_a_line_names_its_speaker_and_confirms_an_agreeing_guess(tmp_path):
+    """本人 2026-09-21: every line of one character came back yellow although the
+    narration after each says whose it is — “是。”陈小雪将账本重新收回袖中.
+    The action that follows the quote in the same paragraph is evidence: it
+    confirms the model's guess when they agree, fills an empty line, and only
+    questions a different name. A sentence that leads into the next line
+    (孔乙己便涨红了脸，……争辩道：) is that line's tag, not this one's action."""
+    from runtime.habits import action_after
+    M = {'阿宁': ['阿宁'], '陈小雪': ['陈小雪', '老板娘'], '阿': ['阿']}
+    assert action_after('阿宁将账本收回袖中。\n', M) == '阿宁' and action_after('老板娘笑了笑，转身走了。', M) == '陈小雪'
+    assert action_after('阿宁便红了脸，争辩道：', M) is None and action_after('，阿宁却不甚热心了。', M) is None
+    assert action_after('\n阿宁走了。', M) is None and action_after('阿宁们都笑了。', M) is None and action_after('阿宁道。', M) is None
+    class Unsure(Roles):
+        def annotate(self, text, log_path):
+            return {'labels': [{'id': u['id'], 'kind': 'dialogue' if u['text'].startswith('“') else 'narration',
+                                'speaker': ('陈小雪' if '走' in u['text'] else '阿宁' if u['text'].startswith('“') else 'NARRATOR'), 'certain': not u['text'].startswith('“')} for u in source_units(text)],
+                    'model_sha256': 'fixture'}
+    with TestClient(create_app(tmp_path / 'p', FixtureEngine(), role_engine=Unsure()), base_url='http://127.0.0.1', headers=HEADERS) as c:
+        d = c.post('/api/attribution/draft', json={'script': '阿宁进来。\n“是。”阿宁将账本收回袖中。\n“好。”陈小雪点点头。\n“走吧。”\n', 'language': 'zh'}).json()
+        rows = [(u['speaker'], u.get('tier'), (u.get('basis') or '')[:12]) for u in d['units'] if u['kind'] == 'dialogue']
+        assert rows[0][0] == '阿宁' and rows[0][1] is None and '模型也这么判断' in rows[0][2] + (d['units'][1].get('basis') or '')   # the guess agrees with the text: plain
+        line = [u for u in d['units'] if u['kind'] == 'dialogue'][1]
+        assert line['speaker'] == '阿宁' and line['tier'] == 'suggested' and '陈小雪' in line['basis']   # the text says 陈小雪: questioned, not renamed

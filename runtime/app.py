@@ -328,6 +328,10 @@ class BookExportRequest(BaseModel):
     outputs: list[Literal['wav','mp3','srt','zip','timeline','xml','report']] = Field(default_factory=lambda:['mp3','srt'])
     video_fps: int = Field(default=30, strict=True)
 
+class EmptyBookRequest(BaseModel):
+    title: str = Field(min_length=1, max_length=120)
+    language: Literal['zh','en'] = 'zh'
+
 class BookRenameRequest(BaseModel):
     revision: int = Field(ge=0)
     title: str = Field(min_length=1, max_length=120)
@@ -784,6 +788,16 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
         return {**books.public(book),
                 'projects': [{'id': p['id'], 'name': p['name'], 'processing_state': p['processing_state']}
                              for p in projects]}
+
+    @app.post('/api/master-books/empty')
+    def create_empty_master_book(body: EmptyBookRequest):
+        """A master book with a name and no chapters yet, for gathering
+        existing projects into (本人 2026-09-21: 怎么创建一个主工程并把已存在的子工程放进来)."""
+        from .book_master import new_book
+        with store.lock:
+            book = new_book(body.title, body.language, defaults=project_service.application_defaults())
+            books.save(book)
+        return books.public(book)
 
     @app.post('/api/project-records')
     def create_project_record(body: ImportRequest):
@@ -1557,6 +1571,10 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 if tagged:
                     if u['speaker'].strip() != tagged:
                         u.update({'speaker': tagged, 'basis': '旁边的叙述点了这个名字'}); u.pop('tier', None); u.pop('hint', None)
+                    elif u.get('tier') == 'suggested' and u.get('basis') == '模型按上下文推断的':
+                        # The model's guess and the tag agree: the tag settles it (2026-09-21:
+                        # such lines had stayed yellow). A bare English surname's caveat stays.
+                        u['basis'] = '旁边的叙述点了这个名字，模型也这么判断'; u.pop('tier', None); u.pop('hint', None)
                     u['source'] = 'tag'; settled(tagged, blk)
                     continue
                 # A tag that names nobody in particular (有的叫道, 旁人便又问道,
@@ -1592,10 +1610,30 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 # a verb of saying — 阿Q的思想也迸跳起来了：—— (chapter 7); with a
                 # name, yellow over the model's answer; with 他/她, resolved below.
                 lead = habits.colon_lead(before['text'] if before and before['kind'] == 'narration' else '', mentions)
-                if lead and lead not in ('他', '她') and lead not in called_names(u['text'], mentions):
-                    if sp != lead:
-                        u.update({'speaker': lead, 'tier': 'suggested', 'basis': '冒号引出这句话的是', **({'hint': sp} if named else {})})
-                    settled(lead, blk)
+                # The narration right after the quote going on with this person's action
+                # — “是。”陈小雪将账本重新收回袖中 — names them too (本人 2026-09-21:
+                # every one of her lines came out yellow though the text says whose they are).
+                follow = habits.action_after(after['text'] if after and after['kind'] == 'narration' else '', mentions)
+                if follow and follow in called_names(u['text'], mentions):
+                    follow = None
+                upgraded = False
+                for evidence, how in ((lead if lead not in ('他', '她') else None, '冒号引出这句话的是'), (follow, '紧接着的叙述写的是这个人的动作')):
+                    if not evidence or evidence in called_names(u['text'], mentions):
+                        continue
+                    if named and sp == evidence:
+                        # The model's guess agrees with the text: no longer a guess.
+                        if u.get('tier') == 'suggested' and not u.get('stand_in'):
+                            u.pop('tier', None); u.pop('hint', None)
+                            u['basis'] = how + '，模型也这么判断'
+                        u['source'] = u.get('source') or 'model'; settled(sp, blk); upgraded = True
+                    elif not named:
+                        u.update({'speaker': evidence, 'tier': 'suggested', 'basis': how + '，像是'}); settled(evidence, blk); upgraded = True
+                    elif evidence == lead:
+                        u.update({'speaker': lead, 'tier': 'suggested', 'basis': how, 'hint': sp}); settled(lead, blk); upgraded = True
+                    else:
+                        u.update({'tier': 'suggested', 'basis': how + f'{evidence}，请看一眼；模型说是'})
+                    break
+                if upgraded:
                     continue
                 pronoun = (habits.pronoun_tag(before['text'] if before and before['kind'] == 'narration' else '', mentions)
                            or habits.pronoun_closing(after['text'] if after and after['kind'] == 'narration' else '')
@@ -1762,14 +1800,15 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                     if not pool:
                         continue
                     old = pool.pop(0)
+                    d = (earlier.get('decisions') or {}).get(old['id'])
+                    if not d:
+                        continue            # never reviewed: the new draft's answer stands (本人 2026-09-21: stale yellows had been carried)
                     for key in keep:
                         if key in old:
                             u[key] = old[key]
                         else:
                             u.pop(key, None)
-                    d = (earlier.get('decisions') or {}).get(old['id'])
-                    if d:
-                        carried[u['id']] = {**d, 'carried_from': body.carry_from}
+                    carried[u['id']] = {**d, 'carried_from': body.carry_from}
             # The cast: every name the draft gave a line, with how it came to be
             # (Astra 2026-09-16: 角色编号独立于名字). A chapter's cast is the
             # book's; a draft made outside a book keeps its own until confirmed.
@@ -1807,8 +1846,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                     record['carried_from'] = body.carry_from
                     view['decisions'] = carried
                     view['units'] = apply_decisions(out, carried)
-                    n = sum(1 for u in out if not u['blank'] and u['text'].strip() in {x['text'].strip() for x in earlier['units']})
-                    view['notice'] = ((notice + ' ') if notice else '') + f'已按改后的原稿重新识别：原句没变的 {n} 句沿用你复核过的结果（含 {len(carried)} 处改动），只有改过和新出现的句子是新识别的。'
+                    view['notice'] = ((notice + ' ') if notice else '') + f'已按改后的原稿重新识别：你确认或改过的 {len(carried)} 句按原句找回，其余按新识别的结果。'
                 write_draft(record)
             return view
         except ValueError as exc:
