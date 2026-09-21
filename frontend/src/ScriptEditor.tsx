@@ -5,7 +5,7 @@ type Unit={id:string;text:string;kind:'narration'|'dialogue';speaker:string};
 type Preview={preview:true;labels:{id:string;kind:string;speaker:string}[];unresolved:Unit[];report:Report;segments:number;kept:number;kept_audio:number;fresh:number};
 type Props={project:{id:string;revision:number;source_script:string;language:'zh'|'en';voices:Record<string,string>;segments:{text:string}[]};request:(path:string,method?:string,data?:unknown)=>Promise<any>;onUpdated:(project:any)=>void;onClose:()=>void;limit?:number};
 
-const fixable:Record<string,string>={ellipsis_dots:'改为 ……',dash_ascii:'改为 ——',ideographic_space:'删除全角空格',repeated_space:'合并空格',trailing_space:'删除行尾空白',decoration:'删除装饰符号'};
+const fixable:Record<string,string>={quote_wrong_direction:'把写反的引号转过来',ellipsis_dots:'改为 ……',dash_ascii:'改为 ——',ideographic_space:'删除全角空格',repeated_space:'合并空格',trailing_space:'删除行尾空白',decoration:'删除装饰符号'};
 
 export function ScriptEditor({project,request,onUpdated,onClose,limit=3000}:Props){
  const [text,setText]=useState(project.source_script??'');

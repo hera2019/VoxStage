@@ -33,6 +33,46 @@ def _quote_scan(text):
     return (opened_at, opened) if close is not None else (-1, ''), styles
 
 
+def quote_findings(text):
+    """Quotation marks that will mislead the cutter (本人 2026-09-21: “……不好。“
+    — the closing mark written as an opening one swallowed the rest of the
+    chapter). Three shapes:
+      quote_wrong_direction — an opening mark that ends a sentence, or a
+        closing mark that opens a line: fixable, the mark is turned round;
+      quote_run_on — a quote still open across a blank line or after 200
+        characters: warned with where it opened, since the reason is usually
+        a mark missing or turned round somewhere inside;
+      quote_nested — the same marks opened again inside a quote: the cutter
+        keeps the outer one whole, which is right for a quote within a speech
+        and wrong if the inner “ was meant to close the outer."""
+    out = []
+    for m in re.finditer(r'(?<=[。！？…～?!])“(?=[ \t]*(?:\n|$))', text):
+        out.append({'kind': 'quote_wrong_direction', 'level': 'warning', 'index': m.start(), 'excerpt': _excerpt(text, m.start()),
+                    'message': '句末的引号写成了开引号 “，后面的话会被当成同一句；应是 ”。', 'replace': ['“', '”']})
+    for m in re.finditer(r'(?m)^[ \t]*(”)(?=[^\s”])', text):
+        out.append({'kind': 'quote_wrong_direction', 'level': 'warning', 'index': m.start(1), 'excerpt': _excerpt(text, m.start(1)),
+                    'message': '行首的引号写成了闭引号 ”，这句话不会被当成对白；应是 “。', 'replace': ['”', '“']})
+    depth, opened_at, run_on, nested = 0, -1, set(), set()
+    for i, ch in enumerate(text):
+        if ch == '“':
+            if depth == 0:
+                opened_at = i
+            elif depth >= 1:
+                nested.add(opened_at)
+            depth += 1
+        elif ch == '”' and depth > 0:
+            depth -= 1
+        elif depth > 0 and opened_at >= 0 and (i - opened_at > 200 or (ch == '\n' and text[i + 1:i + 2] == '\n')):
+            run_on.add(opened_at); depth = 0
+    for at in sorted(run_on):
+        out.append({'kind': 'quote_run_on', 'level': 'warning', 'index': at, 'excerpt': _excerpt(text, at),
+                    'message': '这个引号开了很久都没关上（跨过了空行或超过 200 字）：多半是后面某个 ” 写成了 “，或漏了。切分会把这一大段当成一句。', 'replace': None})
+    for at in sorted(nested - run_on):
+        out.append({'kind': 'quote_nested', 'level': 'info', 'index': at, 'excerpt': _excerpt(text, at),
+                    'message': '引号里面又开了同样的引号。话里引话时这样是对的；如果里面那个 “ 其实是上一句的结尾，请改成 ”。', 'replace': None})
+    return out
+
+
 def _excerpt(text, index, span=14):
     start = max(0, index - span // 2)
     piece = text[start:index + span].replace('\n', '⏎')
@@ -85,6 +125,7 @@ def inspect(text, language='zh'):
                        f'后面所有角色都会判错。请补上 {PAIRS[opened]}。',
             'replace': None})
 
+    findings += quote_findings(text)
     if len(styles) > 1:
         findings.append({
             'kind': 'mixed_quotes', 'level': 'warning', 'index': 0,
@@ -142,6 +183,9 @@ def inspect(text, language='zh'):
 
 def apply_fix(text, kind):
     """Apply every safe replacement of one kind. Explicit, idempotent, reversible."""
+    if kind == 'quote_wrong_direction':
+        text = re.sub(r'(?<=[。！？…～?!])“(?=[ \t]*(?:\n|$))', '”', text)
+        return re.sub(r'(?m)^([ \t]*)”(?=[^\s”])', r'\1“', text)
     if kind == 'ellipsis_dots':
         return re.sub(r'(?<!\.)\.{3,6}(?!\.)', '……', text)
     if kind == 'dash_ascii':

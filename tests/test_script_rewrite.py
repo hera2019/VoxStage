@@ -407,3 +407,19 @@ def test_underscore_emphasis_is_still_reported_outside_a_block():
     findings = inspect_script('He _may_ fall in love.', 'en')['findings']
     assert any(f['kind'] == 'markup_emphasis' for f in findings)
     assert fix_script('He _may_ fall in love.', 'markup_emphasis') == 'He may fall in love.'
+
+
+def test_quotation_marks_written_the_wrong_way_round_are_found_and_turned():
+    """本人 2026-09-21: “……不好。“ — a closing mark typed as an opening one
+    swallowed the rest of the chapter and nothing said why. The check names
+    the shapes it can see and turns the plain ones round."""
+    from runtime.script_check import quote_findings, apply_fix, inspect
+    text = '他说：“你总爱想这些有的没的，不好。“\n她没有回答。\n”走吧。”他说。\n“他念道：“天下太平”，然后笑了。”\n'
+    kinds = [(f['kind'], f['index']) for f in quote_findings(text)]
+    assert ('quote_wrong_direction', 18) in kinds and ('quote_wrong_direction', 27) in kinds and ('quote_nested', 36) in kinds
+    fixed = apply_fix(text, 'quote_wrong_direction')
+    assert fixed == '他说：“你总爱想这些有的没的，不好。”\n她没有回答。\n“走吧。”他说。\n“他念道：“天下太平”，然后笑了。”\n'
+    assert [f['kind'] for f in quote_findings(fixed)] == ['quote_nested']            # a quote within a speech: only a note
+    long = '“' + '话' * 120 + '。\n\n' + '她走了。\n'
+    assert [f['kind'] for f in quote_findings(long)] == ['quote_run_on']            # open across a blank line: warned where it opened
+    assert any(f['kind'] == 'quote_wrong_direction' for f in inspect(text)['findings'])

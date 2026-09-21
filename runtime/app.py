@@ -1710,6 +1710,37 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                     settled(sp, blk)
             for u in out:
                 u.pop('habit', None)
+            # A draft asked again on a corrected text (本人 2026-09-21: an unclosed
+            # quotation mark had swallowed the tail; fixing it must not throw the
+            # review away): every new unit whose words are exactly an earlier
+            # unit's takes that unit's state as the reviewer left it — speaker,
+            # kind, renames included — and its decision; only the lines that
+            # changed, and the new ones, are the new model's.
+            carried, earlier = {}, None
+            if body.carry_from:
+                try:
+                    earlier = read_draft(body.carry_from)
+                except ValueError:
+                    earlier = None
+            if earlier and earlier.get('units'):
+                by_text = {}
+                for u in earlier['units']:
+                    if u['text'].strip():
+                        by_text.setdefault(u['text'].strip(), []).append(u)
+                keep = ('kind', 'speaker', 'tier', 'hint', 'suggested', 'basis', 'source', 'stand_in', 'beat', 'silent', 'cast_id')
+                for u in out:
+                    pool = by_text.get(u['text'].strip())
+                    if not pool:
+                        continue
+                    old = pool.pop(0)
+                    for key in keep:
+                        if key in old:
+                            u[key] = old[key]
+                        else:
+                            u.pop(key, None)
+                    d = (earlier.get('decisions') or {}).get(old['id'])
+                    if d:
+                        carried[u['id']] = {**d, 'carried_from': body.carry_from}
             # The cast: every name the draft gave a line, with how it came to be
             # (Astra 2026-09-16: 角色编号独立于名字). A chapter's cast is the
             # book's; a draft made outside a book keeps its own until confirmed.
@@ -1719,7 +1750,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                     book_record = books.get(body.book_id)
                     cast = books.cast_of(book_record, names=sorted(known_names))    # the book's people, confirmed in its other chapters
                 else:
-                    cast = []
+                    cast = [dict(e) for e in (earlier or {}).get('cast') or []]     # renames and aliases the reviewer made on the earlier draft
                 for u in out:
                     if u['kind'] != 'dialogue' or u['blank']:
                         continue
@@ -1734,35 +1765,21 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 labels_of = {m['id']: m['label'] for m in role_engine.installed()} if hasattr(role_engine, 'installed') else {}
                 model_note = ('作者标的，没有用模型' if settled_by_author else
                               (labels_of.get(result.get('model_id'), result.get('model_id') or '本机模型') + ('（默认模型交了白卷，换的）' if fallback_used else '')))
+                from .script_check import quote_findings
                 view = {'draft_id': draft_id, 'notice': notice, 'units': out, 'revision': 1, 'decisions': {}, 'cast': cast,
-                        'model': {'id': result.get('model_id'), 'note': model_note}}
+                        'model': {'id': result.get('model_id'), 'note': model_note},
+                        # Quotation marks the cutter will have read wrongly (本人 2026-09-21): shown on
+                        # the review page so the reviewer knows why a stretch came out as one line.
+                        'warnings': [w for w in quote_findings(body.script) if w['level'] != 'info'][:20]}
                 record.update({'units': out, 'revision': 1, 'decisions': {}, 'book_id': body.book_id, 'cast': None if body.book_id else cast, 'model_note': model_note,
                                'narration_colour': (hint_colours.get('NARRATOR') or [None])[0]})
-                if body.carry_from:
-                    # The reviewer fixed the text (a quotation mark that swallowed a
-                    # page) and asked again: every decision they had made follows
-                    # its line by exact words, first unused match wins; the rest is
-                    # the new draft's (本人 2026-09-21).
-                    try:
-                        earlier = read_draft(body.carry_from)
-                    except ValueError:
-                        earlier = None
-                    if earlier and earlier.get('decisions'):
-                        by_text = {}
-                        for u in earlier.get('units', []):
-                            d = earlier['decisions'].get(u['id'])
-                            if d and u['text'].strip():
-                                by_text.setdefault(u['text'].strip(), []).append(d)
-                        carried = {}
-                        for u in out:
-                            pool = by_text.get(u['text'].strip())
-                            if pool:
-                                carried[u['id']] = {**pool.pop(0), 'carried_from': body.carry_from}
-                        record['decisions'] = carried
-                        record['carried_from'] = body.carry_from
-                        view['decisions'] = carried
-                        view['units'] = apply_decisions(out, carried)
-                        view['notice'] = ((notice + ' ') if notice else '') + f'已按改后的原稿重新识别；你之前改过的 {len(carried)} 句判断按原句找回来了。'
+                if body.carry_from and earlier:
+                    record['decisions'] = carried
+                    record['carried_from'] = body.carry_from
+                    view['decisions'] = carried
+                    view['units'] = apply_decisions(out, carried)
+                    n = sum(1 for u in out if not u['blank'] and u['text'].strip() in {x['text'].strip() for x in earlier['units']})
+                    view['notice'] = ((notice + ' ') if notice else '') + f'已按改后的原稿重新识别：原句没变的 {n} 句沿用你复核过的结果（含 {len(carried)} 处改动），只有改过和新出现的句子是新识别的。'
                 write_draft(record)
             return view
         except ValueError as exc:

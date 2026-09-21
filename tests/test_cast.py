@@ -137,5 +137,12 @@ def test_a_redone_draft_carries_the_decisions_of_the_lines_that_kept_their_words
         r = c.post('/api/attribution/draft', json={'script': fixed, 'language': 'zh', 'carry_from': d['draft_id']}).json()
         new_cat = next(u for u in r['units'] if '猫' in u['text'])
         assert new_cat['speaker'] == '阿宁' and new_cat['decided'] == {'edited': True, 'confirmed': True, 'source': 'person'}
-        assert r['decisions'][new_cat['id']]['carried_from'] == d['draft_id'] and '找回来' in (r['notice'] or '')
+        assert r['decisions'][new_cat['id']]['carried_from'] == d['draft_id'] and '沿用你复核过的结果' in (r['notice'] or '')
         assert c.get('/api/attribution/draft/' + r['draft_id']).json()['decisions'][new_cat['id']]['speaker'] == '阿宁'
+        # A rename made on the earlier draft (stored in its units and cast, not as a decision) survives too.
+        cast_entry = next(e for e in d['cast'] if e['name'] == '王伯')
+        c.patch('/api/attribution/draft/' + r['draft_id'], json={'expected_revision': 1, 'decisions': [], 'rename': {'cast_id': cast_entry['id'], 'name': '王伯伯'}})
+        again = c.post('/api/attribution/draft', json={'script': fixed.replace('账本', '账簿'), 'language': 'zh', 'carry_from': r['draft_id']}).json()
+        wang = next(u for u in again['units'] if '账' in u['text'] and u['kind'] == 'dialogue')
+        assert wang['speaker'] in ('王伯', '王伯伯')                      # the changed line is the model's again
+        assert any(e['name'] == '王伯伯' for e in again['cast']) and next(u for u in again['units'] if '猫' in u['text'])['speaker'] == '阿宁'
