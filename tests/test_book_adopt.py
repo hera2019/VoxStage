@@ -87,8 +87,12 @@ def test_a_chapter_can_be_discarded_at_any_stage_and_a_book_deleted_with_its_cha
         b = c.post('/api/master-books', json={'title': '小店', 'language': 'zh', 'script': '第一章 猫\n陈小雪看着窗外。\n\n第二章 账\n王伯翻开账本。\n\n第三章 雪\n雪停了。\n'}).json()
         first, second, third = b['members']
         r = c.delete(f"/api/master-books/{b['id']}/chapters/{second}?revision={b['revision']}").json()
-        assert r['members'] == [first, third] and c.get('/api/projects/' + second).status_code in (400, 404)
+        assert r['members'] == [first, third] and r['book_deleted'] is False and c.get('/api/projects/' + second).status_code in (400, 404)
         assert c.get('/api/projects/' + third).json()['book']['index'] == 2
+        # discarding the last chapter takes the empty book with it
+        b2 = c.post('/api/master-books', json={'title': '短篇', 'language': 'zh', 'script': '阿宁推门进来。\n'}).json()
+        r = c.delete(f"/api/master-books/{b2['id']}/chapters/{b2['members'][0]}?revision={b2['revision']}").json()
+        assert r['book_deleted'] is True and all(x['id'] != b2['id'] for x in c.get('/api/books').json())
         assert c.delete('/api/master-books/' + b['id']).status_code == 400          # chapters remain: dissolve or delete with them
         assert c.delete('/api/master-books/' + b['id'] + '?with_chapters=true').json()['chapters_deleted'] is True
         assert c.get('/api/projects?include_archived=true').json() == [] and all(x['id'] != b['id'] for x in c.get('/api/books').json())

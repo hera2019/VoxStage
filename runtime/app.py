@@ -1001,9 +1001,12 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             if book.get('revision', 0) != revision:
                 raise RuntimeError('主工程已改变，请刷新后再删。')
             _drop_chapter(book, project_id)
+            if not book['members']:                    # the last chapter gone, the book goes with it (本人 2026-09-21: 子工程全删了，主工程就自动消失)
+                books.delete(book_id)
+                return {'deleted': project_id, 'book_revision': None, 'members': [], 'book_deleted': True}
             book['revision'] = book.get('revision', 0) + 1
             books.save(book)
-            return {'deleted': project_id, 'book_revision': book['revision'], 'members': list(book['members'])}
+            return {'deleted': project_id, 'book_revision': book['revision'], 'members': list(book['members']), 'book_deleted': False}
 
     @app.delete('/api/master-books/{book_id}')
     def delete_master_book(book_id: str, with_chapters: bool = False):
