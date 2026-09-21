@@ -229,6 +229,26 @@ def test_fixed_voice_reuses_preserved_reference_across_edit_retake_and_restart(t
         p=generate(client,restored,segment_id=closing['id'],force=True)
         assert fresh.calls[-1][2]==profile['sha256'] and ref.read_bytes()==original_ref
 
+def test_a_fixed_voice_inherited_without_its_file_is_supplied_by_the_project_that_has_it(tmp_path):
+    """A chapter that took a fixed voice from its book or a sibling (unify,
+    inherit) holds the profile but not the recording; the recording is
+    content-addressed, so the sibling's copy is fetched into the chapter's own
+    folder at first use (2026-09-22, the asset step left open by Sol 三)."""
+    import json
+    engine=ReferenceFixture()
+    with TestClient(create_app(tmp_path,engine),base_url='http://127.0.0.1:8765',headers=HEADERS) as client:
+        a=fix_voice(client,generate(client,create(client,'en')))
+        profile=a['voice_profiles']['Narrator']
+        b=create(client,'en')
+        record=json.loads((tmp_path/b['id']/'project.json').read_text())
+        record['voice_profiles']={'Narrator':profile}                 # the profile without the file
+        (tmp_path/b['id']/'project.json').write_text(json.dumps(record))
+        assert not (tmp_path/b['id']/'references').exists()
+        b=generate(client,client.get('/api/projects/'+b['id']).json())
+        assert all(s['status']=='ready' for s in b['segments']) and engine.calls[-1][2]==profile['sha256']
+        own=tmp_path/b['id']/'references'/(profile['sha256']+'.wav')
+        assert own.read_bytes()==(tmp_path/a['id']/'references'/(profile['sha256']+'.wav')).read_bytes()
+
 def test_fixed_voice_history_voice_change_and_corrupt_reference(tmp_path):
     with TestClient(create_app(tmp_path,ReferenceFixture()),base_url='http://127.0.0.1:8765',headers=HEADERS) as client:
         p=generate(client,create(client,'en'))

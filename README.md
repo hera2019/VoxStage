@@ -30,11 +30,14 @@ needed a correction, so the review is the product, not a formality. A script
 already written as `Speaker: line` skips the draft. Then assign a voice per
 character, generate, and work line by line — listen, redo, split, merge, set
 the pauses — and export. Chinese and English are both supported today; a text
-longer than a chapter is kept as a book and taken one chapter at a time.
+longer than a chapter is kept as a book: one sub-project per chapter, the
+book's voices and settings inherited by every chapter unless a chapter
+overrides them, and the whole book exported in one go.
 
-Output: the full audio; subtitles (SRT and VTT) cut where the voice pauses and
-timed from the actual samples; a timeline; a delivery package of one file per
-line for an editor, with an FCP7 XML timeline; and the content-check report.
+Output: the full audio (WAV, and MP3 when ffmpeg is installed); subtitles (SRT
+and VTT) cut where the voice pauses and timed from the actual samples; a
+timeline; a delivery package of one file per line for an editor, with an FCP7
+XML timeline; and the content-check report.
 
 ## Why not just use a TTS tool
 
@@ -98,7 +101,10 @@ Optional models, each pinned and hash-checked by the same script:
 ```sh
 .venv/bin/python scripts/setup_model.py --model preset-large   # 1.7B preset voices, ~4.2 GB
 .venv/bin/python scripts/setup_model.py --model design         # voice design from a description, ~4.2 GB
-.venv/bin/python scripts/setup_model.py --model base           # zero-shot cloning for the voice library
+.venv/bin/python scripts/setup_model.py --model base           # zero-shot cloning for the voice library, 0.6B
+.venv/bin/python scripts/setup_model.py --model base-large     # 1.7B cloning, ~4.2 GB — chosen 3/3 in a blind listen; new projects use it when installed
+.venv/bin/python scripts/setup_model.py --model role-14b       # speaker draft, Qwen3-14B Q4_K_M, ~8.4 GB
+.venv/bin/python scripts/setup_model.py --model role-30b-a3b   # speaker draft, Qwen3-30B-A3B Q4_K_M, ~17 GB — the default on a 32 GB Mac when installed, 14B its fallback
 ```
 
 New projects use the 1.7B model when it is installed — on the same
@@ -143,7 +149,9 @@ sentence after the author rejected every preset for the part.
 |---|---|
 | Paste unlabelled prose → speaker draft → review → project, in one flow | Built all three samples; the draft's post-rules are measured on human-labelled projects (the citation rule: 0 spoken lines silenced in 376 quoted units across 14 projects, after its first form silenced 21) |
 | A coloured Word manuscript (.docx): each colour asked once, the author's marks used as they are, the model never asked; headings kept and not read | A 76-paragraph, six-colour manuscript: 80 lines in 0.0 s, speakers exactly as coloured |
-| A long text kept as a book, one chapter at a time; the next chapter inherits the last one's voices, lexicon and settings; names and aliases confirmed earlier are known later | 阿Q正传, 22,152 characters into ten chapters, checked in the browser |
+| A long text kept as a book: one sub-project per chapter; voices, models, pauses, lexicon and cast set once on the book and inherited by every chapter unless a chapter overrides them; a name renamed once for the whole book; chapters split, merged, reordered, attached or detached with a plan shown first and the old project kept as a snapshot; names and aliases confirmed earlier are known later | 阿Q正传, 22,152 characters into ten chapters, checked in the browser; the structure operations and the whole-book export verified on a throwaway server with a self-written three-chapter text and the real 30B model |
+| A chapter's speaker draft made in batches sized to the machine and the model, resumable after a failure, then reviewed and confirmed in place | End to end in the browser, 2026-09-21 |
+| The whole book exported at once — MP3, WAV, subtitles, timeline, XML, package, report — with a chosen pause between chapters; the last batch stays downloadable and is marked stale once the book changes | Automated checks pass; a real-book export is the author's next check |
 | Review page in three tiers — named, filled in yellow, orange to choose — with rules beside the model: a speech tag names its speaker (and the person after 对/见/望着 is the one spoken to), a character spoken to is not the speaker, two lines running are seldom one person's, a line that reads like the other sex's is not this speaker's, a speaker the story never names (有的叫道, 旁人问道) gets a stand-in renamed once; rules relay only within one exchange and learn only from lines you settled; a character's sex is set on the voices page, apart from the voice; a settled name re-scores the rest | On a private two-chapter text of the author's, agreement with their own labels went from 25/32 to 31/33; Kong Yiji from raw text: the author's first review changed 13 lines in 21 minutes, and with the rules since, the same text drafts with none orange and none wrong: renaming the three stand-ins once each (众人 and 一个喝酒的人 to 酒客, 某人 to 孔乙己) matches all 35 of the author's labels (three renames, by estimate; not yet re-reviewed by the author) |
 | One character, many voices: a crowd drawn from a tagged pool line by line | Automated checks pass; never the same voice twice running |
 | Colours per character, settings templates, tags on voices, continuous listening | In use by the author |
@@ -243,8 +251,10 @@ is recorded with its scoring and its limits in
 ## Limits
 
 - The speaker draft is a draft. Most scenes in the evaluation needed at least
-  one correction, so the review step cannot be skipped; the draft takes at
-  most 3,000 characters at a time, and a longer text is cut into chapters first.
+  one correction, so the review step cannot be skipped. A chapter is drafted
+  in batches of 3,000 / 6,000 / 12,000 characters on a 16 / 32 / 64 GB Mac
+  (fewer with the 30B model, which is capped at 100 units a batch), and a
+  text longer than a chapter is cut into chapters first.
 - Nine preset voices, two of them English and both male. A voice library lifts
   that ceiling: keep a take you liked under a name, or supply your own recording
   after confirming you may. Either way the reference stays on the machine and

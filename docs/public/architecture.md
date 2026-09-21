@@ -106,3 +106,14 @@ rhythm_check 与 content_check 独立保存；识别失败仍保留成功的声�
 主界面只放入口。剪辑打开后读取方案与预览，显示正在准备/正在保存/已保存/失败状态。新版保留成品停顿线索。当前单轨磁性排列，无任意空隙、重叠混音或视频。
 
 最后更新：2026-09-09 · Astra
+
+
+## Master books: one sub-project per chapter (2026-09-20 → 22)
+
+A long text is a **master book** (`Book`, `master_schema: 1`): `members` in chapter order, one `Project` per chapter, and the book's own `settings` — preset and cloning models, pauses, speech rate, lexicon, colours, sexes, voices, cast and aliases. A chapter keeps only its **overrides**; every read resolves the effective view (`project_settings.effective`: project override → book → application default, with a `sources` map saying where each value came from), and persistence always writes the raw overrides, never the resolved view. Audio fingerprints are taken on the effective values, so a book-level change re-marks exactly the lines it touches.
+
+A chapter starts `unprocessed` (its text whole in the project record) and is drafted in **batches** sized by `capacity.py` — the machine's memory tier and the model's registered ceilings both bind; the 30B mixture model is capped at 100 units a batch because its labels drift on longer lists. Completed batches survive a failure and a restart; the draft then goes through the ordinary review page and is confirmed **in place**, turning the same project `processed`.
+
+Structure changes — split at a sentence, merge two neighbours, reorder, attach a loose project, detach, dissolve — are planned as pure functions (`book_structure.py`: members after, settings conflicts to resolve, same-name cast questions, assets to copy) and applied as a transaction (`book_transactions.py`) that keeps the replaced projects as recovery snapshots and copies audio by fingerprint rather than regenerating it. A cast rename or a setting unified across the book is the same shape: plan, then transaction. Export (`book_export.py`) concatenates chapters in book order with a chosen pause between them, numbers each batch, keeps the last successful one downloadable and marks it stale with reasons once the book changes. Legacy books (chapter text held on the book, projects linked by index) are read-only under the new code and can be adopted in place (`book_adopt.py`, with a backup first); nothing migrates by itself.
+
+最后更新：2026-09-22 · Claude Hera

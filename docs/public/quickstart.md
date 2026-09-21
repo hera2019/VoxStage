@@ -8,21 +8,27 @@ were made with the flow below. New material still needs listening to.
 1. Double-click `Start VoxStage.command` in the project folder. After a
    self-check it opens the browser; keep the terminal window it started.
    If the browser does not open, go to http://127.0.0.1:8765.
-2. Click **＋ 新建工程** (new project) and paste the **unlabelled prose** —
-   up to 3,000 characters. The button changes to 分角色并创建工程: the local
-   model labels each unit narration or dialogue and names the speaker, then
-   hands the result to you for review.
+2. Click **＋ 新建工程** (new project) and paste the **unlabelled prose**.
+   The button changes to 分角色并创建工程: the local model labels each unit
+   narration or dialogue and names the speaker, then hands the result to you
+   for review.
    - A script already written one line per `Speaker: line` imports directly
      ([format](script-format.md)).
-   - **More than 3,000 characters** (a whole novel) is filed as a *book* and
-     cut at its chapter headings — 第X章 or `Chapter 3` — or at paragraph
-     breaks when there are none. A chapter with more dialogue than the draft
-     can take at once (80 quoted units) is cut further at paragraph ends.
-     Start from any chapter. A chapter's project shows 《book》第 N 章 with
-     下一章 →, and the next chapter's project starts with the previous one's
-     settings — the voices of the characters they share, fixed voices, the
-     lexicon, model, pause and speed — so a book is configured once. Names
-     confirmed in earlier chapters are offered as candidates in later ones.
+   - **A whole book**: the 归属 (belongs to) selector in the same dialog
+     offers *build a master book, one chapter per project* — the text is cut
+     at its chapter headings, 第X章 or `Chapter 3` (a text without headings is
+     one chapter), and every chapter becomes an unprocessed sub-project of the
+     book. A text too long for one draft is filed this way by itself. The book
+     opens from the 主工程 list on the left into one workspace: chapters,
+     settings, structure (split, merge, reorder, attach, detach) and export.
+     Voices, models, pauses, lexicon and cast are set once on the book and
+     inherited by every chapter unless the chapter overrides them; a name
+     renamed on the book is renamed in every chapter, and names confirmed in
+     earlier chapters are known in later ones. A chapter is processed from
+     继续处理 (continue): the draft is made in batches sized to the machine and
+     the model, then reviewed and confirmed like any project. The next chapter
+     of an existing book is added with ＋ 新章 in the book's workspace, or by
+     choosing the book under 归属 when creating a project.
 2b. **A coloured Word manuscript** (.docx): give each character a colour in
    Pages or Word, export .docx, choose the file in the new-project dialog.
    The program lists every colour with counts and samples and asks, colour by
@@ -97,7 +103,8 @@ were made with the flow below. New material still needs listening to.
   button beside each voice; two characters may share a colour.
 - **Templates and inheritance**: 存为模板 under 角色音色 keeps voices, colours,
   lexicon, model, pause and speed under a name; 沿用设置 applies a template or
-  another project; a chapter's 下一章 → inherits the previous chapter by itself.
+  another project; a chapter of a master book inherits the book's settings by
+  itself, and its own changes are kept as overrides until 恢复继承 (inherit again).
 - **Crowds**: an unnamed speaker such as 众人 can be a crowd — pick a pool of
   voices and 抽签分配 draws one per line, never the same voice twice running.
 - **Tags** on every voice (老人、男性、威严…) in the settings dialog; the crowd

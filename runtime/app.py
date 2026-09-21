@@ -1127,6 +1127,25 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
         return {**chapter, 'book_id': book['id'], 'book_title': book['title'], 'language': book['language'], 'chapters': len(book['chapters']), 'cut': book.get('cut'),
                 'project_name': f"{book['title']} · {chapter['title']}".strip(' ·'), 'known_names': names, 'existing_project_id': existing}
 
+    def reference_file(project_id, project, sha):
+        """A fixed voice's reference recording for this project. A chapter that
+        inherited the profile from its book, or took it in a book-wide unify,
+        never held the file: it is content-addressed, so the book's asset
+        folder or any sibling chapter that has it supplies the same bytes, and
+        the copy lands in this project's own folder (the project stays whole for
+        export and deletion). The sha is verified again by the engine."""
+        own = store.directory(project_id) / 'references' / (sha + '.wav')
+        if own.is_file():
+            return own
+        book_id = (project.get('book') or {}).get('id')
+        candidates = [books.root / (book_id + '.assets') / 'references' / (sha + '.wav')] if book_id else []
+        candidates += sorted(store.root.glob(f'*/references/{sha}.wav'))
+        for other in candidates:
+            if other.is_file() and hashlib.sha256(other.read_bytes()).hexdigest() == sha:
+                own.parent.mkdir(exist_ok=True); shutil.copy2(other, own)
+                return own
+        return own                                        # missing: the engine reports it
+
     def clone_size(project):
         """The cloning model the project chose, for engines that offer one."""
         return {'size': project.get('clone_model', '0.6B')} if hasattr(engine, 'reference_identity_for') else {}
@@ -1414,7 +1433,26 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                                       'speaker': (hinted[u['id']] or 'UNKNOWN') if hinted.get(u['id'], 'NARRATOR') != 'NARRATOR' else 'NARRATOR', 'certain': True} for u in units],
                           'model_id': None, 'model_sha256': None, 'settled_by': 'manuscript'}
             else:
-                result = annotate_with(role_engine, draft_id+'.log')
+                # A model registered with a unit ceiling (the 30B: labels drift on
+                # lists past 100 units, 实测 25) hands a longer single-shot passage
+                # to its designated fallback instead of answering it badly; the
+                # batch path (capacity.py) already cuts at the same ceiling.
+                too_long_for = None
+                ceiling = ROLE_MODELS.get(getattr(role_engine, 'model_id', None), {}).get('max_units')
+                if (not body.prepared_token and ceiling and sum(1 for u in units if u['text'].strip()) > ceiling
+                        and hasattr(role_engine, 'installed') and hasattr(role_engine, 'select')):
+                    from .attribution import FALLBACK_ROLE_MODELS
+                    installed = {m['id'] for m in role_engine.installed() if m['installed']}
+                    too_long_for = next((m for m in FALLBACK_ROLE_MODELS if m in installed and m != role_engine.model_id), None)
+                if too_long_for:
+                    chosen = role_engine.model_id
+                    try:
+                        role_engine.select(too_long_for)
+                        result = {**annotate_with(role_engine, draft_id+'.log'), 'over_unit_ceiling': {'model_id': chosen, 'ceiling': ceiling}}
+                    finally:
+                        role_engine.select(chosen)
+                else:
+                    result = annotate_with(role_engine, draft_id+'.log')
             # Either model can answer a passage with a draft of nothing: every
             # quoted line narration, or every speaker a word the story never uses
             # (the evaluated model on a chapter with sensitive content; the abliterated one,
@@ -1471,6 +1509,11 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             if fallback_used and not degenerate:
                 labels_of = {m['id']: m['label'] for m in role_engine.installed()}
                 notice = f'「{labels_of.get(role_engine.model_id, role_engine.model_id)}」这次没能分出说话人，已换用「{labels_of.get(fallback_used, fallback_used)}」重来一次；下面是它的草稿。'
+            elif result.get('over_unit_ceiling') and not degenerate:
+                labels_of = {m['id']: m['label'] for m in role_engine.installed()}
+                over = result['over_unit_ceiling']
+                notice = (f"原稿有 {sum(1 for u in units if u['text'].strip())} 个片段，超过「{labels_of.get(over['model_id'], over['model_id'])}」一次能对齐的 {over['ceiling']} 个，"
+                          f"这次改用「{labels_of.get(result.get('model_id'), result.get('model_id'))}」；要用前者，请把原稿建成主工程分批处理。")
             if degenerate:
                 notice = (f'模型这次没有给出角色划分（{len(spoken)} 句引号里的话，{len(silenced)} 句被标成了旁白）。'
                           '已按引号先把对白分出来，说话人留空，请你填写。')
@@ -3096,7 +3139,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                             if len(digest_ref)!=64 or any(c not in '0123456789abcdef' for c in digest_ref):
                                 raise ValueError('固定声线标识无效。')
                             def read(text): return engine.synthesize_reference(text,work['language'],
-                                store.directory(project_id)/'references'/(digest_ref+'.wav'),profile['text'],
+                                reference_file(project_id,work,digest_ref),profile['text'],
                                 260909+work_segment.get('take',0),consent_confirmed=True,expected_sha256=digest_ref,**clone_size(work))
                         elif is_custom(voice_of(work, work_segment)):
                             entry = library.get(custom_id(voice_of(work, work_segment)))

@@ -567,3 +567,37 @@ def test_the_action_after_a_line_names_its_speaker_and_confirms_an_agreeing_gues
         assert rows[0][0] == '阿宁' and rows[0][1] is None and '模型也这么判断' in rows[0][2] + (d['units'][1].get('basis') or '')   # the guess agrees with the text: plain
         line = [u for u in d['units'] if u['kind'] == 'dialogue'][1]
         assert line['speaker'] == '阿宁' and line['tier'] == 'suggested' and '陈小雪' in line['basis']   # the text says 陈小雪: questioned, not renamed
+
+
+def test_a_passage_past_the_models_unit_ceiling_goes_to_its_fallback_in_one_shot(tmp_path, monkeypatch):
+    """The 30B is registered with a ceiling of 100 units because its labels drift
+    on longer lists (实测 25); a single-shot draft past the ceiling is answered by
+    the designated fallback instead, and the notice says so (2026-09-22)."""
+    import json
+    from runtime import attribution, app as app_module
+    monkeypatch.setitem(attribution.ROLE_MODELS, 'big', {'label': 'Big', 'max_units': 4})
+    monkeypatch.setattr(attribution, 'FALLBACK_ROLE_MODELS', ('small',))
+    monkeypatch.setattr(app_module, 'ROLE_MODELS', attribution.ROLE_MODELS)
+    class TwoModels(Roles):
+        model_id = 'big'
+        asked = []
+        def installed(self):
+            return [{'id': 'big', 'label': 'Big', 'installed': True}, {'id': 'small', 'label': 'Small', 'installed': True}]
+        def select(self, model_id):
+            self.model_id = model_id
+        def annotate(self, text, log_path):
+            self.asked.append(self.model_id)
+            return {'labels': [{'id': u['id'], 'kind': 'dialogue' if u['text'].startswith('“') else 'narration',
+                                'speaker': '小雪' if u['text'].startswith('“') else 'NARRATOR', 'certain': True} for u in source_units(text)],
+                    'model_sha256': 'fixture', 'model_id': self.model_id}
+    engine = TwoModels()
+    with TestClient(create_app(tmp_path / 'p', FixtureEngine(), role_engine=engine), base_url='http://127.0.0.1', headers=HEADERS) as c:
+        d = c.post('/api/attribution/draft', json={'script': '小雪说：“来。”\n“好。”\n“走吧。”\n', 'language': 'zh'}).json()
+        assert engine.asked == ['big'] and d['notice'] is None                  # 3 units: under the ceiling
+        engine.asked.clear()
+        long = '小雪说：“来。”\n“好。”\n“走吧。”\n她想了想。\n“就这样。”\n'
+        d = c.post('/api/attribution/draft', json={'script': long, 'language': 'zh'}).json()
+        assert engine.asked == ['small'] and engine.model_id == 'big'           # answered by the fallback, left on the default
+        assert '超过「Big」一次能对齐的 4 个' in d['notice'] and '改用「Small」' in d['notice']
+        record = json.loads((tmp_path / 'p-role-drafts' / (d['draft_id'] + '.json')).read_text())
+        assert record['model_id'] == 'small' and record['over_unit_ceiling'] == {'model_id': 'big', 'ceiling': 4}
