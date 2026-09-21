@@ -96,3 +96,19 @@ def test_a_chapter_can_be_discarded_at_any_stage_and_a_book_deleted_with_its_cha
         assert c.delete('/api/master-books/' + b['id']).status_code == 400          # chapters remain: dissolve or delete with them
         assert c.delete('/api/master-books/' + b['id'] + '?with_chapters=true').json()['chapters_deleted'] is True
         assert c.get('/api/projects?include_archived=true').json() == [] and all(x['id'] != b['id'] for x in c.get('/api/books').json())
+
+
+def test_a_text_with_several_headings_joins_a_book_as_several_chapters_when_asked(tmp_path):
+    """本人 2026-09-22: a whole novel pasted as a 'new chapter' became one
+    769,000-character chapter. With split_headings the text joins as one
+    chapter per author heading, in one transaction, numbered after the
+    existing members; without it, as one chapter as before."""
+    with TestClient(create_app(tmp_path / 'p', FixtureEngine(), role_engine=Never()), base_url='http://127.0.0.1', headers=HEADERS) as c:
+        b = c.post('/api/master-books/empty', json={'title': '小店', 'language': 'zh'}).json()
+        r = c.post(f"/api/master-books/{b['id']}/chapters", json={'revision': b['revision'], 'title': '整本', 'text': '第一章 猫\n陈小雪看着窗外。\n第二章 账\n王伯翻开账本。\n第三章 雪\n雪停了。\n', 'split_headings': True}).json()
+        assert len(r['projects']) == 3 and [p['name'] for p in r['projects']] == ['第一章 猫', '第二章 账', '第三章 雪']
+        assert [p['book']['index'] for p in r['projects']] == [1, 2, 3] and all(p['book']['chapters'] == 3 for p in r['projects'])
+        book = c.get('/api/books/' + b['id']).json()
+        assert len(book['members']) == 3 and book['revision'] == r['book_revision'] == b['revision'] + 1
+        r2 = c.post(f"/api/master-books/{b['id']}/chapters", json={'revision': book['revision'], 'title': '番外', 'text': '第一章 又\n阿宁来了。\n第二章 走\n阿宁走了。\n'}).json()
+        assert r2['project']['book']['index'] == 4 and c.get('/api/projects/' + r['projects'][0]['id']).json()['book']['chapters'] == 4   # no split: one chapter

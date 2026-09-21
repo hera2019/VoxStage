@@ -181,6 +181,83 @@ class ProjectService:
             shutil.rmtree(staging, ignore_errors=True)
         return updated, project
 
+    def append_chapters(self, book_id, revision, chapters, *, copy_from_id=None):
+        """Several chapters at the end of a master book in one transaction —
+        a whole novel pasted as a 'new chapter' (本人 2026-09-22: a novel came in
+        as one 769,000-character chapter). `chapters` are author_chapters()
+        pieces with their marks rebased; every existing member is rewritten
+        once with the new count, not once per chapter. Claude Hera."""
+        book = self.books.get(book_id)
+        if book.get('master_schema') != 1:
+            raise ValueError('旧版书目不能直接加入新版子工程。')
+        if book.get('revision', 0) != revision:
+            raise RuntimeError('主工程已改变，请刷新后再加入章节。')
+        if not chapters:
+            raise ValueError('没有可加入的章节。')
+        source_view = None
+        if copy_from_id:
+            source = self.store.read(copy_from_id)
+            if (source.get('book') or {}).get('id') != book_id:
+                raise ValueError('只能复制同一主工程中子工程的设置。')
+            source_view = self.view(source)
+        updated = deepcopy(book)
+        updated['revision'] = book.get('revision', 0) + 1
+        plans = []
+        for piece in chapters:
+            plan = plan_chapter(piece.get('title') or f"第 {len(updated['members']) + 1} 章", piece['text'], book['language'], book=book,
+                                copy_from=source_view, cut=piece.get('cut'), hints=piece.get('hints'), silent=piece.get('silent'))
+            project = plan['project']
+            updated['members'].append(project['id'])
+            updated['chapters'].append({'index': len(updated['members']), 'title': project['name'],
+                                        'project_id': project['id'], 'chars': len(piece['text'])})
+            plans.append(plan)
+        total = len(updated['members'])
+        for n, plan in enumerate(plans, len(book['members']) + 1):
+            plan['project']['book'].update(index=n, chapters=total)
+        existing, backups = [], {}
+        for index, member_id in enumerate(book['members'], 1):
+            member = self.store.read(member_id)
+            if (member.get('book') or {}).get('id') != book_id:
+                raise ValueError('主工程成员记录不一致，未加入新章节。')
+            if member.get('job', {}).get('status') == 'running':
+                raise RuntimeError('主工程中有子工程正在处理，请完成后再加入章节。')
+            changed = deepcopy(member)
+            changed['book'].update(index=index, chapters=total, title=updated['title'])
+            changed['revision'] = member.get('revision', 0) + 1
+            existing.append(changed)
+            path = self.store.directory(member_id) / 'project.json'
+            backups[path] = path.read_bytes()
+        staging = Path(tempfile.mkdtemp(prefix='.chapters-', dir=self.store.root))
+        book_tmp = self.books.root / ('.' + book_id + '.json.tmp')
+        moved = []
+        try:
+            for plan in plans:
+                folder = staging / plan['project']['id']
+                self._write_json(folder / 'project.json', plan['project'])
+                self._copy_references(plan['reference_copies'], folder)
+            self._write_json(book_tmp, updated)
+            for plan in plans:
+                target = self.store.directory(plan['project']['id'])
+                if target.exists():
+                    raise RuntimeError('新工程编号冲突，章节没有写入。')
+                os.replace(staging / plan['project']['id'], target)
+                moved.append(target)
+            for member in existing:
+                self.store.write(member)
+            os.replace(book_tmp, self.books.root / (book_id + '.json'))
+        except BaseException:
+            book_tmp.unlink(missing_ok=True)
+            for path, content in backups.items():
+                temporary = path.with_suffix('.json.rollback')
+                temporary.write_bytes(content)
+                os.replace(temporary, path)
+            for target in moved:
+                shutil.rmtree(target, ignore_errors=True)
+            raise
+        finally:
+            shutil.rmtree(staging, ignore_errors=True)
+        return updated, [plan['project'] for plan in plans]
+
     @staticmethod
     def _validate_patch(values, inherit):
         values = _settings(values)

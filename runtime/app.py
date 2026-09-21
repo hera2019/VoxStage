@@ -1,6 +1,7 @@
 """Loopback-only API and serial render queue. Astra, 2026-09-09."""
 import argparse
 import hashlib
+from types import SimpleNamespace
 import shutil
 import json
 import logging
@@ -80,6 +81,7 @@ class MasterChapterRequest(BaseModel):
     revision: int = Field(ge=0)
     title: str = Field(default='', max_length=120)
     text: str = Field(min_length=1, max_length=2_000_000)
+    split_headings: bool = False                                   # a text with several author headings joins as several chapters
     copy_settings_from: str | None = Field(default=None, pattern=r'^[a-f0-9]{32}$')
     hints: list[Hint] | None = Field(default=None, max_length=20000)
     silent: list[int] | None = Field(default=None, max_length=5000)
@@ -829,6 +831,13 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
     @app.post('/api/master-books/{book_id}/chapters')
     def create_master_chapter(book_id: str, body: MasterChapterRequest):
         book_export.assert_book_writable(book_id)
+        if body.split_headings:
+            pieces = master_chapters(SimpleNamespace(script=body.text, headings=None, hints=body.hints, silent=body.silent, cut=body.cut))
+            if len(pieces) >= 2:
+                with store.lock:
+                    book, projects = project_service.append_chapters(book_id, body.revision, pieces, copy_from_id=body.copy_settings_from)
+                    return {'book_revision': book['revision'], 'projects': [project_service.public_project(p, engine, checker) for p in projects],
+                            'project': project_service.public_project(projects[0], engine, checker)}
         with store.lock:
             book, project = project_service.create_chapter(
                 book_id, body.revision, body.title, body.text, cut=body.cut,

@@ -74,7 +74,10 @@ def plan_batches(text, cut, limits, *, known_names=(), examples=()):
                     break
         if best is None:
             unit = nonblank[start]
-            raise ValueError(f"片段 {unit['id']} 单独处理也超过当前模型与本机的安全上限。")
+            text = unit.get('text') or ''
+            why = ('多半是一个引号没关上，把后面的正文都卷进来了' if text.strip()[:1] in '“"「『' else '这一段没有换行')
+            raise ValueError(f"第 {start + 1} 个片段有 {len(text):,} 字，单独处理也超过当前模型与本机的安全上限——{why}。"
+                             '请在原稿里补上引号或换行后再处理。')
         best['index'] = len(batches)
         best['status'] = 'pending'
         best['labels'] = None
