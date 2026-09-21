@@ -151,3 +151,4 @@
 .role-inline .role-import.role-page:not(.is-review){flex:none;padding:8px 0 24px}
 .role-inline .role-import.role-page.is-review{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;background:#f8f9f5;border:1px solid #dce4d8;border-radius:14px;color:#283b33}
 @media(max-width:700px){.role-inline .role-import.role-page.is-review{height:auto;max-height:none;overflow:auto}}
+.role-import .cast-table .cast-alias-input{display:inline-block;width:auto;max-width:150px;min-height:24px;margin:0 0 0 6px;padding:2px 6px;font-size:11px;font-weight:400}

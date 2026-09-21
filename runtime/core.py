@@ -340,6 +340,15 @@ class Store:
 
     def write(self, data):
         assert_raw(data)
+        # A chapter's empty role map of its own — `voices: {}` left behind by a
+        # confirm that added nobody, a mute or a colour reset — would stand as an
+        # explicit override and hide the book's whole map (本人 2026-09-22: the
+        # narrator's voice set for the whole book never reached chapter 3). No
+        # one asks for that; the empty map goes, the book's shows through.
+        if data.get('settings_schema') == 1 and data.get('book'):
+            for key in ('voices', 'colors', 'sexes', 'crowds', 'voice_profiles'):
+                if key in data and data[key] == {}:
+                    data.pop(key)
         guard = getattr(self, 'write_guard', None)
         if guard is not None:
             guard(data)

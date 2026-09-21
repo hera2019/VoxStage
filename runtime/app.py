@@ -2478,6 +2478,18 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             if body.alias:
                 entry = C.add_alias(cast, body.alias.cast_id, body.alias.alias, 'person')
                 events.append({'alias': body.alias.alias, 'of': entry['id'] if entry else None})
+                # The lines of this draft that carry the alias are the character's
+                # (本人 2026-09-22: a misprinted name — 王柏 for 王伯 — typed
+                # in as an alias should take every line written under it, here
+                # and in every later chapter's draft).
+                alias_name = body.alias.alias.strip()
+                if entry and alias_name and alias_name != entry['name']:
+                    for u in units.values():
+                        if u['kind'] == 'dialogue' and u['speaker'].strip() == alias_name:
+                            u['speaker'] = entry['name']; u['cast_id'] = entry['id']
+                    for d in decisions.values():
+                        if d.get('speaker', '').strip() == alias_name:
+                            d['speaker'] = entry['name']; d['cast_id'] = entry['id']
             if body.split:
                 entry = C.split(cast, body.split)
                 events.append({'split': body.split, 'entry': entry['id'] if entry else None})

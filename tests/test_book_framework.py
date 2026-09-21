@@ -300,3 +300,19 @@ def test_copying_sibling_settings_copies_and_verifies_fixed_voice_asset(tmp_path
                                copy_from_id=source['id'])
     assert books.get(book['id']) == before
     assert len(list(store.root.glob('*/project.json'))) == 2
+
+
+def test_a_chapters_empty_own_role_map_is_not_kept_as_an_override(tmp_path):
+    """2026-09-22: `voices: {}` left on a chapter by a confirm that added nobody
+    stood as an explicit override and hid the book's map — the narrator's voice
+    set for the whole book never reached that chapter. Writing a chapter drops
+    its empty role maps; a standalone project (frozen defaults) keeps its keys."""
+    store = Store(tmp_path)
+    chapter = {'schema_version': 1, 'id': 'c' * 32, 'name': '章', 'language': 'zh', 'revision': 1, 'source_script': '', 'segments': [], 'history': [], 'future': [],
+               'job': {'status': 'idle'}, 'synthetic_audio': True, 'settings_schema': 1, 'book': {'id': 'b' * 32, 'title': '书'}, 'voices': {}, 'colors': {}, 'sexes': {'阿宁': 'f'}}
+    store.write(chapter)
+    raw = store.read('c' * 32)
+    assert 'voices' not in raw and 'colors' not in raw and raw['sexes'] == {'阿宁': 'f'}
+    loose = {**chapter, 'id': 'd' * 32, 'voices': {}}; loose.pop('book')
+    store.write(loose)
+    assert store.read('d' * 32)['voices'] == {}

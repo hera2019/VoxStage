@@ -187,3 +187,27 @@ def test_a_characters_sex_set_while_reviewing_picks_a_voice_of_that_sex_and_carr
         labels = [{'id': u['id'], 'kind': u['kind'], 'speaker': u['speaker'] if u['speaker'] != 'UNKNOWN' else '王伯'} for u in d2['units']]
         p2 = c.post('/api/attribution/confirm', json={'draft_id': d2['draft_id'], 'name': '二', 'labels': labels, 'book_id': book['id'], 'chapter_index': 2}).json()
         assert p2['voices']['陈小雪'] == p1['voices']['陈小雪'] and p2['sexes'].get('陈小雪') == 'f'
+
+
+def test_an_alias_typed_on_the_cast_takes_the_lines_written_under_it(tmp_path):
+    """本人 2026-09-22: a misprint in the text — 王柏 for 王伯 — typed in as an
+    alias of 王伯 makes every line written under 王柏 his, merges the 王柏 entry
+    into his, and the book remembers the alias for later chapters."""
+    class Typo(Roles):
+        def annotate(self, text, log_path):
+            labels = []
+            for u in source_units(text):
+                if u['text'].startswith('“'):
+                    labels.append({'id': u['id'], 'kind': 'dialogue', 'speaker': '王柏' if '账' in u['text'] else '王伯', 'certain': True})
+                else:
+                    labels.append({'id': u['id'], 'kind': 'narration', 'speaker': 'NARRATOR', 'certain': True})
+            return {'labels': labels, 'model_sha256': 'fixture', 'model_id': 'fixture'}
+    with TestClient(create_app(tmp_path / 'p', FixtureEngine(), role_engine=Typo()), base_url='http://127.0.0.1', headers=HEADERS) as c:
+        d = c.post('/api/attribution/draft', json={'script': '王伯说：“来了。”\n王柏说：“账本呢？”\n“又是账。”\n', 'language': 'zh'}).json()
+        assert {e['name'] for e in d['cast']} >= {'王伯', '王柏'}
+        bo = next(e for e in d['cast'] if e['name'] == '王伯')
+        r = c.patch('/api/attribution/draft/' + d['draft_id'], json={'expected_revision': 1, 'alias': {'cast_id': bo['id'], 'alias': '王柏'}}).json()
+        assert [u['speaker'] for u in r['units'] if u['kind'] == 'dialogue'] == ['王伯', '王伯', '王伯']
+        assert not any(e['name'] == '王柏' for e in r['cast']) and '王柏' in next(e for e in r['cast'] if e['id'] == bo['id'])['aliases']
+        again = c.get('/api/attribution/draft/' + d['draft_id']).json()
+        assert all(u['speaker'] == '王伯' for u in again['units'] if u['kind'] == 'dialogue')
