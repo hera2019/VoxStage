@@ -64,7 +64,7 @@ def test_recovering_an_orphan_group_and_deleting_an_empty_master(tmp_path):
         assert b['master_schema'] == 1 and b['chapters'] == []
         r = c.patch('/api/master-books/' + b['id'], json={'revision': b['revision'], 'title': '空书', 'language': 'en'}).json()
         assert r['language'] == 'en' and r['title'] == '空书'
-        assert c.delete('/api/master-books/' + b['id']).json() == {'deleted': b['id']}
+        assert c.delete('/api/master-books/' + b['id']).json()['deleted'] == b['id']
         assert c.delete('/api/master-books/' + b['id']).status_code in (400, 404)
 
 
@@ -77,3 +77,18 @@ def test_a_master_book_is_archived_and_brought_back_with_its_chapters(tmp_path):
         assert next(x for x in c.get('/api/books').json() if x['id'] == b['id'])['archived'] is True
         r = c.post('/api/master-books/' + b['id'] + '/archive', json={'revision': r['revision'], 'archived': False}).json()
         assert r['archived'] is False and len(c.get('/api/projects').json()) == 2
+
+
+def test_a_chapter_can_be_discarded_at_any_stage_and_a_book_deleted_with_its_chapters(tmp_path):
+    """本人 2026-09-21: unprocessed chapters could not be deleted without being
+    processed first. 舍弃 removes the chapter project whole and renumbers the
+    rest; 连章节一起删除 removes the book and every chapter project."""
+    with TestClient(create_app(tmp_path / 'p', FixtureEngine(), role_engine=Never()), base_url='http://127.0.0.1', headers=HEADERS) as c:
+        b = c.post('/api/master-books', json={'title': '小店', 'language': 'zh', 'script': '第一章 猫\n陈小雪看着窗外。\n\n第二章 账\n王伯翻开账本。\n\n第三章 雪\n雪停了。\n'}).json()
+        first, second, third = b['members']
+        r = c.delete(f"/api/master-books/{b['id']}/chapters/{second}?revision={b['revision']}").json()
+        assert r['members'] == [first, third] and c.get('/api/projects/' + second).status_code in (400, 404)
+        assert c.get('/api/projects/' + third).json()['book']['index'] == 2
+        assert c.delete('/api/master-books/' + b['id']).status_code == 400          # chapters remain: dissolve or delete with them
+        assert c.delete('/api/master-books/' + b['id'] + '?with_chapters=true').json()['chapters_deleted'] is True
+        assert c.get('/api/projects?include_archived=true').json() == [] and all(x['id'] != b['id'] for x in c.get('/api/books').json())

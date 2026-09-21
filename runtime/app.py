@@ -967,17 +967,60 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             books.save(book)
             return {'book_id': book_id, 'archived': body.archived, 'revision': book['revision']}
 
+    def _drop_chapter(book, project_id):
+        """A chapter leaves the book for good: the member list, the projection and
+        the siblings' numbering follow; the project folder is removed whole (its
+        text, audio, exports and the references it fixed). Deliberately allowed
+        at any stage (本人 2026-09-21: 可以在任何阶段选择舍弃), behind a confirm."""
+        project = store.read(project_id)
+        if project.get('job', {}).get('status') in ('queued', 'running'):
+            raise RuntimeError('这一章正在处理，等它完成或取消后再删。')
+        if project_id not in book.get('members', []):
+            raise ValueError('这个工程不是这本书的章节。')
+        book['members'] = [m for m in book['members'] if m != project_id]
+        book['chapters'] = [c for c in book.get('chapters', []) if c.get('project_id') != project_id]
+        for n, c in enumerate(book['chapters'], 1):
+            c['index'] = n
+        shutil.rmtree(store.directory(project_id), ignore_errors=True)
+        for n, member_id in enumerate(book['members'], 1):
+            try:
+                sibling = store.read(member_id)
+            except (OSError, ValueError, KeyError):
+                continue
+            link = sibling.setdefault('book', {'id': book['id'], 'title': book['title']})
+            if link.get('index') != n or link.get('chapters') != len(book['members']):
+                link.update(index=n, chapters=len(book['members'])); store.write(sibling)
+
+    @app.delete('/api/master-books/{book_id}/chapters/{project_id}')
+    def delete_master_chapter(book_id: str, project_id: str, revision: int):
+        book_export.assert_book_writable(book_id)
+        if not re.fullmatch(r'[a-f0-9]{32}', project_id):
+            raise ValueError('找不到这一章。')
+        with store.lock:
+            book = books.get(book_id)
+            if book.get('revision', 0) != revision:
+                raise RuntimeError('主工程已改变，请刷新后再删。')
+            _drop_chapter(book, project_id)
+            book['revision'] = book.get('revision', 0) + 1
+            books.save(book)
+            return {'deleted': project_id, 'book_revision': book['revision'], 'members': list(book['members'])}
+
     @app.delete('/api/master-books/{book_id}')
-    def delete_master_book(book_id: str):
+    def delete_master_book(book_id: str, with_chapters: bool = False):
         """An empty master book is deleted; one with chapters must be dissolved
-        first — nothing here deletes a project or its audio."""
+        first — unless `with_chapters`, which removes every chapter project too."""
         book_export.assert_book_writable(book_id)
         with store.lock:
             book = books.get(book_id)
-            if book.get('members'):
-                raise ValueError('主工程还有章节：先在「结构 → 解散主工程」里把章节变回独立工程，再删除。')
+            if book.get('members') and not with_chapters:
+                raise ValueError('主工程还有章节：先在「结构 → 解散主工程」里把章节变回独立工程，再删除；或者选择连章节一起删除。')
+            for member_id in list(book.get('members', [])):
+                try:
+                    _drop_chapter(book, member_id)
+                except (OSError, ValueError, KeyError):
+                    book['members'] = [m for m in book['members'] if m != member_id]
             books.delete(book_id)
-        return {'deleted': book_id}
+        return {'deleted': book_id, 'chapters_deleted': with_chapters}
 
     @app.get('/api/migration/master-books/preview')
     def preview_master_book_migration():
