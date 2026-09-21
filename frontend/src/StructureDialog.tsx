@@ -13,13 +13,13 @@ type Conflict={key:string;role?:string;left:unknown;right:unknown};
 type Plan={op:string;book_revision:number;members_after:string[];chapters_after:{index:number;title:string;project_id:string}[];
   new_projects:{id:string;name:string;segments?:unknown[]|number}[];retired:string[];assets:{from:string;to:string;required?:boolean}[];
   conflicts:Conflict[];unresolved?:Conflict[];questions:{kind:string;name?:string;note?:string;map?:Record<string,string>}[];snapshot?:{note?:string}};
-type Props={bookId:string;title:string;chapters:Chapter[];loose:Chapter[];request:(path:string,method?:string,data?:unknown)=>Promise<any>;onClose:()=>void;onApplied:()=>void};
+type Props={bookId:string;title:string;chapters:Chapter[];loose:Chapter[];request:(path:string,method?:string,data?:unknown)=>Promise<any>;onClose:()=>void;onApplied:()=>void;inline?:boolean};
 
 const OPS:[string,string][]=[['split','拆分一章'],['merge','合并相邻两章'],['reorder','调整顺序'],['attach','加入独立工程'],['detach','脱离主工程'],['dissolve','解散主工程']];
 const conflictKey=(c:Conflict)=>c.role?`${c.key}:${c.role}`:c.key;
 const show=(v:unknown)=>v===null||v===undefined?'（继承）':typeof v==='object'?JSON.stringify(v):String(v);
 
-export function StructureDialog({bookId,title,chapters,loose,request,onClose,onApplied}:Props){
+export function StructureDialog({bookId,title,chapters,loose,request,onClose,onApplied,inline}:Props){
  const [op,setOp]=useState('split');const [target,setTarget]=useState(chapters[0]?.id??'');const [second,setSecond]=useState(chapters[1]?.id??'');
  const [segments,setSegments]=useState<Segment[]>([]);const [at,setAt]=useState<number|''>('');const [order,setOrder]=useState(chapters.map(c=>c.id));
  const [looseId,setLooseId]=useState(loose[0]?.id??'');const [position,setPosition]=useState(chapters.length);const [inherit,setInherit]=useState(false);
@@ -39,8 +39,8 @@ export function StructureDialog({bookId,title,chapters,loose,request,onClose,onA
  const move=(i:number,d:number)=>{const j=i+d;if(j<0||j>=order.length)return;const next=order.slice();[next[i],next[j]]=[next[j],next[i]];setOrder(next);setPlan(null)};
  const identitiesReady=!plan||plan.questions.every(q=>q.kind!=='same_name'||(identities[q.name!]?.action==='link')||(identities[q.name!]?.action==='rename'&&(identities[q.name!]?.name??'').trim()));
  const ready=op==='split'?!!target&&at!=='':op==='merge'?!!target&&chapters.findIndex(c=>c.id===target)<chapters.length-1:op==='attach'?!!looseId:op==='detach'?!!target:true;
- return <div className="structure-wrap"><div className="structure-dialog" role="dialog" aria-label={`《${title}》的结构`}>
-  <div className="setting-head"><strong>《{title}》的结构</strong><small>先看方案，再执行；原工程保留为恢复快照，声音不重生成。</small><button type="button" aria-label="关闭结构窗口" onClick={onClose}>✕</button></div>
+ return <div className={inline?'structure-inline':'structure-wrap'}><div className={inline?'structure-page':'structure-dialog'} role={inline?undefined:'dialog'} aria-label={`《${title}》的结构`}>
+  <div className="setting-head"><strong>《{title}》的结构</strong><small>先看方案，再执行；原工程保留为恢复快照，声音不重生成。</small>{!inline&&<button type="button" aria-label="关闭结构窗口" onClick={onClose}>✕</button>}</div>
   <div role="tablist" className="setting-tabs">{OPS.map(([k,l])=><button key={k} role="tab" aria-selected={op===k} onClick={()=>{setOp(k);setPlan(null);setResolutions({})}}>{l}</button>)}</div>
   <div className="structure-form">
    {(op==='split'||op==='merge'||op==='detach')&&<label>{op==='merge'?'前一章':'哪一章'}<select value={target} onChange={e=>{setTarget(e.target.value);setPlan(null);setAt('')}}>{chapters.map(c=><option key={c.id} value={c.id}>{c.book?.index?`${c.book.index}. `:''}{c.name}</option>)}</select></label>}

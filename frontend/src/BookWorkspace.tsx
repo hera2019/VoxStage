@@ -1,0 +1,32 @@
+import {useState} from 'react';
+import {ChapterSettings} from './ChapterSettings';
+import {StructureDialog} from './StructureDialog';
+import {BookExport} from './BookExport';
+import type {Listed} from './BookList';
+
+/** A master book opened in the middle of the screen (本人 2026-09-21: 点击主工程，
+ *  直接把中间和右边的界面换掉): its title editable, its chapters with their state
+ *  and a way in, and the book's settings, structure and export as pages of one
+ *  view instead of three buttons squeezed beside the name. */
+type Props={bookId:string;title:string;revision:number;chapters:Listed[];loose:Listed[];current?:string;busy?:boolean;request:(path:string,method?:string,data?:unknown)=>Promise<any>;
+  presetModels?:string[];cloneModels?:string[];onOpenChapter:(id:string)=>void;onContinue:(id:string)=>void;onChapterSettings:(id:string)=>void;onRenamed:(title:string,revision:number)=>void;onChanged:()=>void};
+const PAGES:[string,string][]=[['chapters','章节'],['settings','设置'],['structure','结构'],['export','导出']];
+
+export function BookWorkspace({bookId,title,revision,chapters,loose,current,busy,request,presetModels,cloneModels,onOpenChapter,onContinue,onChapterSettings,onRenamed,onChanged}:Props){
+ const [page,setPage]=useState('chapters');const [name,setName]=useState(title);const [error,setError]=useState('');
+ const rename=async()=>{const t=name.trim();if(!t||t===title)return;try{const r=await request(`/master-books/${bookId}`,'PATCH',{revision,title:t});onRenamed(r.title,r.revision)}catch(e){setError((e as Error).message);setName(title)}};
+ const done=chapters.filter(c=>c.processing_state!=='unprocessed').length;
+ return <section className="book-workspace" aria-label={`主工程《${title}》`}>
+  <div className="book-workspace-head"><small className="eyebrow">主工程 · {chapters.length} 章，已处理 {done} 章{busy?' · 处理中':''}</small>
+   <input className="book-title" aria-label="主工程名称" value={name} maxLength={120} onChange={e=>setName(e.target.value)} onBlur={()=>void rename()} onKeyDown={e=>{if(e.key==='Enter')(e.target as HTMLInputElement).blur()}}/>
+   {error&&<p role="alert" className="line-error">{error}</p>}</div>
+  <div role="tablist" className="setting-tabs">{PAGES.map(([k,l])=><button key={k} role="tab" aria-selected={page===k} onClick={()=>setPage(k)}>{l}</button>)}</div>
+  {page==='chapters'&&<ol className="book-workspace-chapters">{chapters.map(c=>{const fresh=c.processing_state==='unprocessed';return <li key={c.id} className={c.id===current?'current':''}>
+    <span className="chapter-name">{c.book?.index?`${c.book.index}. `:''}{c.name}</span><small>{fresh?'未处理':'已处理'}</small>
+    <button type="button" className={fresh?'primary':''} onClick={()=>fresh?onContinue(c.id):onOpenChapter(c.id)}>{fresh?'继续处理':'打开'}</button>
+    <button type="button" title="本章设置" onClick={()=>onChapterSettings(c.id)}>⚙</button></li>})}</ol>}
+  {page==='settings'&&<ChapterSettings kind="book" id={bookId} request={request} presetModels={presetModels} cloneModels={cloneModels} chapterIds={chapters.map(c=>c.id)} inline onClose={()=>setPage('chapters')}/>}
+  {page==='structure'&&<StructureDialog bookId={bookId} title={title} chapters={chapters} loose={loose} request={request} inline onClose={()=>setPage('chapters')} onApplied={onChanged}/>}
+  {page==='export'&&<BookExport bookId={bookId} title={title} chapters={chapters} request={request} inline onClose={()=>setPage('chapters')}/>}
+ </section>;
+}

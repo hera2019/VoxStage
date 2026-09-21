@@ -29,7 +29,7 @@ from . import readings
 from .core import reads_aloud, Store, fingerprint, spoken_text, inherit_settings, voice_of
 from .pauses import split_at_pauses, join_with_silence
 from .voices import VoiceLibrary, is_custom, custom_id, PREFIX as CUSTOM_PREFIX
-from .script_check import inspect as inspect_script, apply_fix
+from .script_check import inspect as inspect_script, apply_fix, quote_findings
 from .attribution import RoleDraftEngine, ROLE_MODELS, project_segments, source_units, carry_locks
 from .content_check import WhisperChecker, compare_text, file_sha
 from .engines import MlxEngine, FixtureEngine, VOICES
@@ -327,6 +327,10 @@ class BookExportRequest(BaseModel):
     chapters: list[str] = Field(default_factory=list, max_length=5000)
     outputs: list[Literal['wav','mp3','srt','zip','timeline','xml','report']] = Field(default_factory=lambda:['mp3','srt'])
     video_fps: int = Field(default=30, strict=True)
+
+class BookRenameRequest(BaseModel):
+    revision: int = Field(ge=0)
+    title: str = Field(min_length=1, max_length=120)
 
 class BookExportSettingsRequest(BaseModel):
     revision: int = Field(ge=0)
@@ -805,6 +809,31 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             raise ValueError('旧版书目没有主工程设置。')
         return {'book_id': book['id'], 'revision': book.get('revision', 0),
                 'settings': book.get('settings', {})}
+
+    @app.patch('/api/master-books/{book_id}')
+    def rename_master_book(book_id: str, body: BookRenameRequest):
+        """The book's title (本人 2026-09-21: 无法修改主工程名); the members' display copy follows."""
+        book_export.assert_book_writable(book_id)
+        with store.lock:
+            book = books.get(book_id)
+            if book.get('master_schema') != 1:
+                raise ValueError('旧版书目没有主工程名可改。')
+            if book.get('revision', 0) != body.revision:
+                raise RuntimeError('主工程已改变，请刷新后再改名。')
+            title = body.title.strip()[:120]
+            if not title:
+                raise ValueError('主工程名不能为空。')
+            book['title'] = title; book['revision'] = book.get('revision', 0) + 1
+            books.save(book)
+            for member_id in book.get('members', []):
+                try:
+                    project = store.read(member_id)
+                except (OSError, ValueError, KeyError):
+                    continue
+                if (project.get('book') or {}).get('id') == book_id and project['book'].get('title') != title:
+                    project['book']['title'] = title
+                    store.write(project)
+            return {'book_id': book_id, 'title': title, 'revision': book['revision']}
 
     @app.patch('/api/master-books/{book_id}/settings')
     def patch_master_book_settings(book_id: str, body: SettingPatchRequest):
@@ -2146,7 +2175,8 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                     'units': apply_decisions(record['units'], record.get('decisions', {})), 'cast': cast,
                     'model': {'id': record.get('model_id'), 'note': record.get('model_note') or record.get('model_id') or ''},
                     'language': record['language'], 'book_id': record.get('book_id'), 'notice': record.get('notice'),
-                    'target_project_id': record.get('target_project_id'),
+                    'target_project_id': record.get('target_project_id'), 'source_script': record.get('source_script'),
+                    'warnings': [w for w in quote_findings(record.get('source_script') or '') if w['level'] != 'info'][:20],
                     'confirmed_project_id': record.get('confirmed_project_id'), 'abandoned': bool(record.get('abandoned'))}
 
     @app.delete('/api/attribution/draft/{draft_id}')
@@ -2666,6 +2696,12 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
     def check_script(project_id: str, body: ScriptFixRequest | None = None, source_script: str = ''):
         # Rule-based only: no model, no project mutation, safe to call while typing.
         return inspect_script(source_script or (body.source_script if body else ''))
+
+    @app.post('/api/script/fix')
+    def fix_script_text(body: ScriptFixRequest):
+        """The same safe replacement, for a text that is not a project yet (the
+        review page's quotation-mark fix, 本人 2026-09-21)."""
+        return {'source_script': apply_fix(body.source_script, body.kind)}
 
     @app.post('/api/projects/{project_id}/script/fix')
     def fix_script(project_id: str, body: ScriptFixRequest):

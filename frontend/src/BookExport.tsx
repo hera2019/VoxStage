@@ -9,13 +9,13 @@ type Estimate={seconds:number;estimated:boolean;chapters:{project_id:string;name
   silent_chapters:{project_id:string;name:string}[];estimated_sizes?:Record<string,number>;estimated_final_bytes?:number;estimated_temporary_bytes?:number;estimated_required_bytes?:number;free_bytes?:number;
   warnings:string[];blocked:string[];can_export:boolean;implicit_outputs?:string[];chapter_pause_ms:number};
 type Current={status:'none'|'latest'|'stale';batch_id?:string;links:Record<string,string>;stale_reasons?:string[];created_at_local?:string;seconds?:number;selected_chapters?:string[];outputs_requested?:string[]};
-type Props={bookId:string;title:string;chapters:Chapter[];request:(path:string,method?:string,data?:unknown)=>Promise<any>;onClose:()=>void};
+type Props={bookId:string;title:string;chapters:Chapter[];request:(path:string,method?:string,data?:unknown)=>Promise<any>;onClose:()=>void;inline?:boolean};
 
 const OUTPUTS:[string,string][]=[['mp3','完整音频（MP3）'],['wav','完整音频（WAV）'],['srt','句级字幕'],['zip','剪辑交付包（ZIP）'],['timeline','时间轴（JSON）'],['xml','剪辑时间轴（XML）'],['report','检查 / 听稿报告']];
 const clock=(s:number)=>{const h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=Math.round(s%60);return h?`${h} 小时 ${m} 分`:`${m} 分 ${x} 秒`};
 const mb=(b?:number)=>b===undefined?'—':b>=1e9?(b/1e9).toFixed(2)+' GB':Math.round(b/1e6)+' MB';
 
-export function BookExport({bookId,title,chapters,request,onClose}:Props){
+export function BookExport({bookId,title,chapters,request,onClose,inline}:Props){
  const [selected,setSelected]=useState<string[]>(chapters.filter(c=>c.processing_state!=='unprocessed').map(c=>c.id));
  const [outputs,setOutputs]=useState<string[]>(['mp3','srt']);const [pause,setPause]=useState(0);const [revision,setRevision]=useState(0);
  const [estimate,setEstimate]=useState<Estimate|null>(null);const [current,setCurrent]=useState<Current|null>(null);const [busy,setBusy]=useState(false);const [error,setError]=useState('');
@@ -27,8 +27,8 @@ export function BookExport({bookId,title,chapters,request,onClose}:Props){
  const doExport=()=>run(async()=>{await request(`/master-books/${bookId}/export/create`,'POST',{revision,chapters:selected,outputs});await reload();setEstimate(null)});
  const savePause=(v:number)=>run(async()=>{const r=await request(`/master-books/${bookId}/export/settings`,'PATCH',{revision,chapter_pause_ms:v});setPause(r.chapter_pause_ms??v);setRevision(r.revision??revision);setEstimate(null)});
  const label=(n:string)=>OUTPUTS.find(([k])=>n.startsWith(k)||n.includes(k))?.[1]??n;
- return <div className="structure-wrap"><div className="structure-dialog" role="dialog" aria-label={`导出《${title}》`}>
-  <div className="setting-head"><strong>导出《{title}》</strong><small>章节按书的顺序拼接；每批有编号，成功后替换上一批的下载项。</small><button type="button" aria-label="关闭导出窗口" onClick={onClose}>✕</button></div>
+ return <div className={inline?'structure-inline':'structure-wrap'}><div className={inline?'structure-page':'structure-dialog'} role={inline?undefined:'dialog'} aria-label={`导出《${title}》`}>
+  <div className="setting-head"><strong>导出《{title}》</strong><small>章节按书的顺序拼接；每批有编号，成功后替换上一批的下载项。</small>{!inline&&<button type="button" aria-label="关闭导出窗口" onClick={onClose}>✕</button>}</div>
   {error&&<p role="alert" className="line-error">{error}</p>}
   <div className="export-grid">
    <section><strong>导出章节</strong><div className="attach-row"><button type="button" onClick={()=>{setSelected(chapters.map(c=>c.id));setEstimate(null)}}>全选</button><button type="button" onClick={()=>{setSelected([]);setEstimate(null)}}>全不选</button></div>

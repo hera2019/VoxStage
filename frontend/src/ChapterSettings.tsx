@@ -9,7 +9,7 @@ type Source={level:string;id?:string;roles?:Record<string,{level:string;id?:stri
 type Payload={project_id?:string;book_id?:string;project_revision?:number;book_revision?:number|null;revision?:number;
   overrides?:Record<string,unknown>;effective?:Record<string,unknown>;settings?:Record<string,unknown>;sources?:Record<string,Source>};
 type Props={kind:'project'|'book';id:string;request:(path:string,method?:string,data?:unknown)=>Promise<any>;
-  presetModels?:string[];cloneModels?:string[];chapterIds?:string[];onClose:()=>void};
+  presetModels?:string[];cloneModels?:string[];chapterIds?:string[];inline?:boolean;onClose:()=>void};
 
 const PAGES:[string,string[]][]=[['角色声音',['voices','colors','sexes','muted_speakers']],['朗读与停顿',['preset_model','clone_model','speech_rate','pause_ms','ellipsis_pause_ms','color_scope']],['发音',['lexicon']],['导出',[]]];
 const LABELS:Record<string,string>={voices:'角色声音',colors:'角色颜色',sexes:'角色性别',muted_speakers:'不朗读的角色',preset_model:'预设音色模型',clone_model:'固定声线模型',speech_rate:'语速',pause_ms:'句间停顿（毫秒）',ellipsis_pause_ms:'省略号、破折号处停顿',color_scope:'颜色用在',lexicon:'发音词典'};
@@ -17,7 +17,7 @@ const LEVEL:Record<string,string>={project:'本章',local:'本章',book:'主工�
 
 export function whereFrom(s?:Source|{level:string;id?:string}){return s?LEVEL[s.level]??s.level:'—'}
 
-export function ChapterSettings({kind,id,request,presetModels=['0.6B'],cloneModels=['0.6B'],chapterIds=[],onClose}:Props){
+export function ChapterSettings({kind,id,request,presetModels=['0.6B'],cloneModels=['0.6B'],chapterIds=[],inline,onClose}:Props){
  const base=kind==='project'?`/projects/${id}/settings`:`/master-books/${id}/settings`;
  const [data,setData]=useState<Payload|null>(null);const [page,setPage]=useState(0);const [busy,setBusy]=useState(false);const [error,setError]=useState('');
  const [lexiconText,setLexiconText]=useState('');const [pending,setPending]=useState<Record<string,string>>({});
@@ -50,7 +50,7 @@ export function ChapterSettings({kind,id,request,presetModels=['0.6B'],cloneMode
  const roleSource=(k:string,name:string)=>{const s=sources[k];const r=s?.roles?.[name];return r?whereFrom(r):whereFrom(s)};
  const keys=PAGES[page][1];
  return <div className="chapter-settings" role="dialog" aria-label="设置">
-  <div className="setting-head"><strong>{kind==='book'?'主工程默认设置':'本章设置'}</strong><small>{kind==='book'?'改这里会影响仍在「继承」的章节；各章自己改过的项保留。':'继承的项跟着主工程走；改过就只属于本章。'}</small><button type="button" aria-label="关闭设置" onClick={onClose}>✕</button></div>
+  <div className="setting-head"><strong>{kind==='book'?'主工程默认设置':'本章设置'}</strong><small>{kind==='book'?'改这里会影响仍在「继承」的章节；各章自己改过的项保留。':'继承的项跟着主工程走；改过就只属于本章。'}</small>{!inline&&<button type="button" aria-label="关闭设置" onClick={onClose}>✕</button>}</div>
   <div role="tablist" className="setting-tabs">{PAGES.map(([t],i)=><button key={t} role="tab" aria-selected={page===i} onClick={()=>setPage(i)}>{t}</button>)}</div>
   {error&&<p role="alert" className="line-error">{error}</p>}
   {page===0&&<div className="setting-page">

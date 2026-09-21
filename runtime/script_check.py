@@ -55,6 +55,13 @@ def quote_findings(text):
     depth, opened_at, run_on, nested = 0, -1, set(), set()
     for i, ch in enumerate(text):
         if ch == '“':
+            if depth >= 1 and i > 0 and text[i - 1] in '。！？…～?!' and text[i + 1:i + 2] not in ('', '\n', '“', '”'):
+                # Inside a quote, an opening mark right after a full stop with the
+                # story going on (不好。“阿宁轻轻……) is the closing mark turned round.
+                out.append({'kind': 'quote_wrong_direction', 'level': 'warning', 'index': i, 'excerpt': _excerpt(text, i),
+                            'message': '这句话说完了，引号却写成了开引号 “，后面的叙述被吞进了对白；应是 ”。', 'replace': ['“', '”']})
+                depth -= 1
+                continue
             if depth == 0:
                 opened_at = i
             elif depth >= 1:
@@ -185,7 +192,12 @@ def apply_fix(text, kind):
     """Apply every safe replacement of one kind. Explicit, idempotent, reversible."""
     if kind == 'quote_wrong_direction':
         text = re.sub(r'(?<=[。！？…～?!])“(?=[ \t]*(?:\n|$))', '”', text)
-        return re.sub(r'(?m)^([ \t]*)”(?=[^\s”])', r'\1“', text)
+        text = re.sub(r'(?m)^([ \t]*)”(?=[^\s”])', r'\1“', text)
+        # The mid-line shape is found by replaying the quotes; turn each one found.
+        marks = sorted((f['index'] for f in quote_findings(text) if f['kind'] == 'quote_wrong_direction' and text[f['index']] == '“'), reverse=True)
+        for at in marks:
+            text = text[:at] + '”' + text[at + 1:]
+        return text
     if kind == 'ellipsis_dots':
         return re.sub(r'(?<!\.)\.{3,6}(?!\.)', '……', text)
     if kind == 'dash_ascii':
