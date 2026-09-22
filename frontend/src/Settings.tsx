@@ -152,7 +152,8 @@ export function Settings({request,voices,language,speedReady,designReady,roleMod
   </div>
 
   </>}
-  {tab==='library'&&<>  {custom.length>0&&<div className="custom-voices">
+  {tab==='library'&&<>  <p className="hint">默认音色库 14 个声线随程序附带（第一次启动自动装入）。删掉了又想要回来：<button type="button" className="see-lines" disabled={!!waiting} onClick={()=>void run(async()=>{const r=await request('/voices/pack/install','POST',{});await reload();setError(r.installed?.length?'':'默认音色都在，没有需要装回的。')})}>装回默认音色</button></p>
+  {custom.length>0&&<div className="custom-voices">
    <div className="section-label">已保存的音色</div>
    {custom.map(v=><article className="voice-row" key={v.id}>
     <div className="voice-name"><strong>{v.name}</strong>

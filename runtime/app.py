@@ -388,7 +388,7 @@ def _splice_source(project, segment, text):
             other['source_end'] += shift
 
 
-def create_app(data_root=None, engine=None, frontend=None, checker=None, role_engine=None, lan_key=None):
+def create_app(data_root=None, engine=None, frontend=None, checker=None, role_engine=None, lan_key=None, voicepack_dir=None):
     store = Store(data_root or ROOT/'user-data/projects')
     from .books import Books
     from .core import Templates
@@ -453,6 +453,27 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             return json.loads(path.read_text()) if path.is_file() else {}
         except ValueError:
             return {}
+    def install_voicepack(force=False):
+        """The default voice pack into the library, its tags into the settings.
+        Once per pack version; returns the names installed."""
+        from . import voicepack
+        if not voicepack_dir:
+            return []
+        installed = voicepack.install(library, voicepack_dir, marker_root=workspace, force=force)
+        if installed:
+            stored = settings_file()
+            tags = stored.setdefault('voice_tags', {})
+            for entry, words in installed:
+                if words:
+                    tags['custom:' + entry['id']] = list(words)
+            (workspace/'settings.json').write_text(json.dumps(stored, ensure_ascii=False, indent=1))
+        return [entry['name'] for entry, _ in installed]
+    try:
+        first_run_pack = install_voicepack()          # a fresh machine starts with the fourteen default voices
+        if first_run_pack:
+            logging.info('Installed the default voice pack: %s', '、'.join(first_run_pack))
+    except (OSError, ValueError) as exc:
+        logging.warning('Default voice pack not installed: %s', exc)
     if hasattr(role_engine, 'select') and settings_file().get('role_model'):
         try:
             role_engine.select(settings_file()['role_model'])
@@ -658,6 +679,13 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
     @app.get('/api/voices/custom')
     def list_custom_voices():
         return library.list()
+
+    @app.post('/api/voices/pack/install')
+    def reinstall_voicepack():
+        """Put back the default voices a person deleted (the ones still there are left alone)."""
+        with store.lock:
+            names = install_voicepack(force=True)
+        return {'installed': names}
 
     def convert_audio(raw, *, seconds=120):
         """Anything ffmpeg can read (a phone's m4a, an mp3) as mono float samples,
@@ -3895,7 +3923,7 @@ def main():
             print(f'    http://{address}:{args.port}/', flush=True)
         print(f'访问口令：{key}（每台设备输入一次，记住 30 天）', flush=True)
         print('口令存在 user-data/lan-key.txt；换口令用 --lan --new-key。', flush=True)
-    uvicorn.run(create_app(engine=FixtureEngine() if args.fixture else None, lan_key=key),
+    uvicorn.run(create_app(engine=FixtureEngine() if args.fixture else None, lan_key=key, voicepack_dir=ROOT/'voicepack'/'default'),
                 host='0.0.0.0' if args.lan else '127.0.0.1', port=args.port)
 
 if __name__ == '__main__':

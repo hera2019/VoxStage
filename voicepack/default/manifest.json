@@ -1,0 +1,309 @@
+{
+ "pack": "default",
+ "version": 1,
+ "exported": "2026-09-23",
+ "made_with": "Qwen3-TTS 1.7B VoiceDesign (a voice described in words), re-read with the 1.7B Base model on a standard demo line",
+ "licence": "Synthetic speech generated with Apache-2.0 models; no human recording is in this pack.",
+ "voices": [
+  {
+   "file": "01.flac",
+   "sha256": "45486d3cda640e897f27e90dd0c90ebe478edeca943f2fadbe90fbb05574b782",
+   "name": "稳重旁白",
+   "english_name": "Steady Narrator",
+   "language": "zh",
+   "reference_text": "那年的雪下得早，镇口的桥面结了一层薄冰，走在上面能听见细细的裂声，像有人在远处低声说话。",
+   "seconds": 9.44,
+   "tags": [
+    "男性",
+    "中年",
+    "旁白",
+    "沉稳"
+   ],
+   "pack_role": {
+    "sex": "m",
+    "age": "adult",
+    "narrator": true,
+    "rank": 1
+   },
+   "synthetic_audio": true
+  },
+  {
+   "file": "02.flac",
+   "sha256": "6dc985a3b98d85204d55c3061ea692e0e9a2c99dc64a71e5c179da4f63eb94b9",
+   "name": "温暖旁白",
+   "english_name": "Warm Narrator",
+   "language": "zh",
+   "reference_text": "雨点敲着窗子，屋里只剩下钟摆的声音。她把信折好，放回抽屉最里面，像是从没拿出来过。",
+   "seconds": 9.14,
+   "tags": [
+    "女性",
+    "中年",
+    "旁白",
+    "温暖"
+   ],
+   "pack_role": {
+    "sex": "f",
+    "age": "adult",
+    "narrator": true,
+    "rank": 2
+   },
+   "synthetic_audio": true
+  },
+  {
+   "file": "03.flac",
+   "sha256": "f013166bb4129a798ece03fc88e34c8877e346c3dd6d57825b5b23bb1536daea",
+   "name": "青年男声",
+   "english_name": "Young Man",
+   "language": "zh",
+   "reference_text": "「别动它！」她一把按住我的手腕，声音压得很低，「再往前一步，谁也救不了你。」",
+   "seconds": 7.2,
+   "tags": [
+    "男性",
+    "青年",
+    "主角"
+   ],
+   "pack_role": {
+    "sex": "m",
+    "age": "adult",
+    "narrator": false,
+    "rank": 1
+   },
+   "synthetic_audio": true
+  },
+  {
+   "file": "04.flac",
+   "sha256": "bd8cda49f1eb5c35765c11a56eca81194354521da0f728fd732ce0298ef928bb",
+   "name": "青年女声",
+   "english_name": "Young Woman",
+   "language": "zh",
+   "reference_text": "「你先坐，茶还烫着。」他把杯子推过去，又补了一句，「路上冷吧？手都红了。」",
+   "seconds": 7.84,
+   "tags": [
+    "女性",
+    "青年",
+    "主角"
+   ],
+   "pack_role": {
+    "sex": "f",
+    "age": "adult",
+    "narrator": false,
+    "rank": 2
+   },
+   "synthetic_audio": true
+  },
+  {
+   "file": "05.flac",
+   "sha256": "9783d8225311942f58f3dcfb21e813832be77898ba013c4faa4612493289d002",
+   "name": "温和男声",
+   "english_name": "Gentle Man",
+   "language": "zh",
+   "reference_text": "「你先坐，茶还烫着。」他把杯子推过去，又补了一句，「路上冷吧？手都红了。」",
+   "seconds": 7.68,
+   "tags": [
+    "男性",
+    "中年",
+    "温和"
+   ],
+   "pack_role": {
+    "sex": "m",
+    "age": "adult",
+    "narrator": false,
+    "rank": 3
+   },
+   "synthetic_audio": true
+  },
+  {
+   "file": "06.flac",
+   "sha256": "a58653fabdad0afcd8dea0f4211cea65732cf1702569f3be4ec85a80f73a6634",
+   "name": "温和女声",
+   "english_name": "Gentle Woman",
+   "language": "zh",
+   "reference_text": "雨点敲着窗子，屋里只剩下钟摆的声音。她把信折好，放回抽屉最里面，像是从没拿出来过。",
+   "seconds": 8.13,
+   "tags": [
+    "女性",
+    "青年",
+    "温和"
+   ],
+   "pack_role": {
+    "sex": "f",
+    "age": "adult",
+    "narrator": false,
+    "rank": 4
+   },
+   "synthetic_audio": true
+  },
+  {
+   "file": "07.flac",
+   "sha256": "3188f2c155b5d45e111e07e45ddeb5daf5a525510530120f8989fe0b61baf388",
+   "name": "粗嗓男声",
+   "english_name": "Gruff Man",
+   "language": "zh",
+   "reference_text": "「别动它！」她一把按住我的手腕，声音压得很低，「再往前一步，谁也救不了你。」",
+   "seconds": 7.92,
+   "tags": [
+    "男性",
+    "中年",
+    "粗嗓",
+    "市井"
+   ],
+   "pack_role": {
+    "sex": "m",
+    "age": "adult",
+    "narrator": false,
+    "rank": 5
+   },
+   "synthetic_audio": true
+  },
+  {
+   "file": "08.flac",
+   "sha256": "396f369c49c999929b8eb9f14a2f7ec737d4c7f303da3b2dc49095def8eb201e",
+   "name": "爽利女声",
+   "english_name": "Sharp Woman",
+   "language": "zh",
+   "reference_text": "「别动它！」她一把按住我的手腕，声音压得很低，「再往前一步，谁也救不了你。」",
+   "seconds": 7.52,
+   "tags": [
+    "女性",
+    "中年",
+    "爽利",
+    "泼辣"
+   ],
+   "pack_role": {
+    "sex": "f",
+    "age": "adult",
+    "narrator": false,
+    "rank": 6
+   },
+   "synthetic_audio": true
+  },
+  {
+   "file": "09.flac",
+   "sha256": "642c62a25b01518c7fc59d8147ddba96c9db5afaf0474fef4bf0b35718d0a3a9",
+   "name": "冷峻男声",
+   "english_name": "Cold Voice Man",
+   "language": "zh",
+   "reference_text": "「别动它！」她一把按住我的手腕，声音压得很低，「再往前一步，谁也救不了你。」",
+   "seconds": 10.08,
+   "tags": [
+    "男性",
+    "中年",
+    "冷峻",
+    "反派"
+   ],
+   "pack_role": {
+    "sex": "m",
+    "age": "adult",
+    "narrator": false,
+    "rank": 7
+   },
+   "synthetic_audio": true
+  },
+  {
+   "file": "10.flac",
+   "sha256": "2ec2ca724e2ae8afc22cc9dca399ac2216ed5b5bc20e7978d111ba2954b8e800",
+   "name": "冷峻女声",
+   "english_name": "Cold Voice Woman",
+   "language": "zh",
+   "reference_text": "「别动它！」她一把按住我的手腕，声音压得很低，「再往前一步，谁也救不了你。」",
+   "seconds": 8.24,
+   "tags": [
+    "女性",
+    "中年",
+    "冷峻",
+    "反派"
+   ],
+   "pack_role": {
+    "sex": "f",
+    "age": "adult",
+    "narrator": false,
+    "rank": 8
+   },
+   "synthetic_audio": true
+  },
+  {
+   "file": "11.flac",
+   "sha256": "ce03e3f5beb845a73db8a93832b35ae6ae845183edb261610a6fecf83dd4ec9f",
+   "name": "老年男声",
+   "english_name": "Old Man",
+   "language": "zh",
+   "reference_text": "「我今年七十三了，眼睛不中用，耳朵也背，可这屋里少了什么，我一进门就知道。」",
+   "seconds": 8.85,
+   "tags": [
+    "男性",
+    "老人",
+    "沙哑"
+   ],
+   "pack_role": {
+    "sex": "m",
+    "age": "old",
+    "narrator": false,
+    "rank": 9
+   },
+   "synthetic_audio": true
+  },
+  {
+   "file": "12.flac",
+   "sha256": "cbf2e4a9a1f1d49ea9b9c9ffc99e25e3775feac6e6e777d5df27f022ee1437ee",
+   "name": "老年女声",
+   "english_name": "Old Woman",
+   "language": "zh",
+   "reference_text": "「我今年七十三了，眼睛不中用，耳朵也背，可这屋里少了什么，我一进门就知道。」",
+   "seconds": 11.36,
+   "tags": [
+    "女性",
+    "老人",
+    "沙哑"
+   ],
+   "pack_role": {
+    "sex": "f",
+    "age": "old",
+    "narrator": false,
+    "rank": 10
+   },
+   "synthetic_audio": true
+  },
+  {
+   "file": "13.flac",
+   "sha256": "e1aac0f09fa86ae1936c8f0ae5df75b38a2184f7f5ec78603a3f1929b4220941",
+   "name": "男孩",
+   "english_name": "Child Boy",
+   "language": "zh",
+   "reference_text": "「你看你看！它真的飞起来了！」他举着风筝跑过整条街，笑声比风还响。",
+   "seconds": 7.36,
+   "tags": [
+    "儿童",
+    "男孩",
+    "清脆"
+   ],
+   "pack_role": {
+    "sex": "m",
+    "age": "child",
+    "narrator": false,
+    "rank": 11
+   },
+   "synthetic_audio": true
+  },
+  {
+   "file": "14.flac",
+   "sha256": "ee293b8754e0b209d8ddb4e4af5607b322138aa2b8d12f24ee69d15d7feacc1b",
+   "name": "女孩",
+   "english_name": "Child Girl",
+   "language": "zh",
+   "reference_text": "「你看你看！它真的飞起来了！」他举着风筝跑过整条街，笑声比风还响。",
+   "seconds": 7.52,
+   "tags": [
+    "儿童",
+    "女孩",
+    "清脆"
+   ],
+   "pack_role": {
+    "sex": "f",
+    "age": "child",
+    "narrator": false,
+    "rank": 12
+   },
+   "synthetic_audio": true
+  }
+ ]
+}
