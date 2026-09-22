@@ -38,8 +38,16 @@ def custom_id(voice):
 
 
 def _sort_key(name):
-    """Name order with numbers read as numbers (Old Man2 before Old Man10)."""
-    return [int(part) if part.isdigit() else part.lower() for part in re.split(r'(\d+)', name or '')]
+    """Name order as a Chinese reader expects it: by pinyin (粗嗓 before 冷峻
+    before 稳重), Latin letters by themselves, numbers as numbers (Old Man2
+    before Old Man10). So a prefix like Z- files a voice at the end
+    (本人 2026-09-23: 旧声线前面加了 Z-，好区分)."""
+    try:
+        from pypinyin import lazy_pinyin
+        spelled = ' '.join(lazy_pinyin(name or ''))
+    except ImportError:                                # the checker's dependency; without it, plain order
+        spelled = name or ''
+    return [int(part) if part.isdigit() else part.lower() for part in re.split(r'(\d+)', spelled)]
 
 
 class VoiceLibrary:
@@ -117,6 +125,25 @@ class VoiceLibrary:
         entry['name'] = name.strip()
         self._path(voice_id, '.json').write_text(json.dumps(entry, ensure_ascii=False, indent=1))
         return entry
+
+    def set_pack(self, voice_id, pack, role=None):
+        """Mark a voice as one of a shipped pack (本人 2026-09-23: 默认音色库), with
+        what it is for — {'sex': 'm'|'f'|'', 'age': 'adult'|'old'|'child',
+        'narrator': bool} — so a new character can be given one that fits.
+        `pack=None` takes the mark away."""
+        entry = self.get(voice_id)
+        if pack:
+            entry['pack'] = pack
+            entry['pack_role'] = {'sex': (role or {}).get('sex', ''), 'age': (role or {}).get('age', 'adult'),
+                                  'narrator': bool((role or {}).get('narrator')), 'rank': int((role or {}).get('rank', 99))}
+        else:
+            entry.pop('pack', None); entry.pop('pack_role', None)
+        self._path(voice_id, '.json').write_text(json.dumps(entry, ensure_ascii=False, indent=1))
+        return entry
+
+    def pack(self, name='default'):
+        """The voices of a pack, in name order."""
+        return [e for e in self.list() if e.get('pack') == name]
 
     def delete(self, voice_id, in_use_by=()):
         if in_use_by:

@@ -235,3 +235,41 @@ def test_a_phone_recording_is_converted_when_ffmpeg_is_on_the_machine(client, tm
         'name': '不是声音', 'language': 'zh', 'reference_text': '雨点敲着窗。',
         'audio_base64': base64.b64encode(b'not audio at all').decode(), 'consent_confirmed': True})
     assert nonsense.status_code >= 400 and '无法读取' in nonsense.json()['detail']
+
+
+def test_new_characters_draw_from_the_default_pack_when_it_is_installed(tmp_path):
+    """本人 2026-09-23: the model's own voices vary take to take; the default
+    pack's are fixed references. A Chinese project gives its narrator a pack
+    narrator and each character an adult pack voice of the character's sex;
+    old and child voices are never handed out; without the pack, presets."""
+    from runtime.voices import VoiceLibrary
+    from tests.test_attribution_import import Roles
+    from evals.speaker_attribution.source_units import source_units
+    library = VoiceLibrary(tmp_path / 'voices')
+    rate = 24000; pcm = (0.2 * np.sin(2 * np.pi * 180 * np.arange(rate * 3) / rate)).astype(np.float32)
+    def voice(name, **role):
+        e = library.create(name=name, pcm=pcm, rate=rate, reference_text='雨点敲着窗。', language='zh', source='generated', consent_confirmed=True)
+        return library.set_pack(e['id'], 'default', role)['id']
+    narrator = voice('稳重旁白', sex='m', narrator=True, rank=1)
+    young_m = voice('青年男声', sex='m', rank=1); young_f = voice('青年女声', sex='f', rank=2)
+    voice('老年男声', sex='m', age='old', rank=9); voice('男孩', sex='m', age='child', rank=11)
+    class Tagged(Roles):
+        def annotate(self, text, log_path):
+            return {'labels': [{'id': u['id'], 'kind': 'dialogue' if u['text'].startswith('“') else 'narration',
+                                'speaker': ('王伯' if '账' in u['text'] else '小雪') if u['text'].startswith('“') else 'NARRATOR', 'certain': True}
+                               for u in source_units(text)], 'model_sha256': 'fixture'}
+    with TestClient(create_app(tmp_path / 'projects', LongFixtureEngine(), role_engine=Tagged()), base_url='http://127.0.0.1', headers=HEADERS) as c:
+        d = c.post('/api/attribution/draft', json={'script': '王伯说：“账本呢？”\n小雪说：“在这。”\n', 'language': 'zh'}).json()
+        labels = [{'id': u['id'], 'kind': u['kind'], 'speaker': u['speaker']} for u in d['units']]
+        p = c.post('/api/attribution/confirm', json={'draft_id': d['draft_id'], 'name': '店', 'labels': labels}).json()
+        assert p['voices']['旁白'] == 'custom:' + narrator
+        assert {p['voices']['王伯'], p['voices']['小雪']} == {'custom:' + young_m, 'custom:' + young_f}
+        assert all('老年' not in v and '男孩' not in v for v in p['voices'].values())
+    library.set_pack(narrator, None)
+    for e in library.pack():
+        library.set_pack(e['id'], None)
+    with TestClient(create_app(tmp_path / 'projects', LongFixtureEngine(), role_engine=Tagged()), base_url='http://127.0.0.1', headers=HEADERS) as c:
+        d = c.post('/api/attribution/draft', json={'script': '王伯说：“账本呢？”\n', 'language': 'zh'}).json()
+        labels = [{'id': u['id'], 'kind': u['kind'], 'speaker': u['speaker']} for u in d['units']]
+        p = c.post('/api/attribution/confirm', json={'draft_id': d['draft_id'], 'name': '店2', 'labels': labels}).json()
+        assert not any(v.startswith('custom:') for v in p['voices'].values())                  # no pack: the preset rotation

@@ -394,10 +394,24 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
     from .core import Templates
     books = Books(store.root.parent/'books')
     templates = Templates(store.root.parent/'templates')
-    def preset_for(language, sex, used):
-        """A preset voice for a character new to the project: one of the
-        character's sex when that is known (本人: 角色音色按出场顺序轮发，无性别概念),
-        unused by anyone yet if possible; the usual rotation otherwise."""
+    def preset_for(language, sex, used, speaker=None):
+        """A voice for a character new to the project: one of the character's sex
+        when that is known (本人: 角色音色按出场顺序轮发，无性别概念), unused by
+        anyone yet if possible. A Chinese project draws from the default voice
+        pack when it is installed (本人 2026-09-23: the model's own voices vary take
+        to take; the pack's are fixed references) — the narrator from its narrator
+        voices, a character from its adult ones; old and child voices are chosen
+        by the person, never handed out. Otherwise the preset rotation."""
+        if language == 'zh':
+            pack = library.pack()
+            if speaker in ('旁白', 'Narrator'):
+                chosen = [e for e in pack if e['pack_role'].get('narrator')]
+            else:
+                chosen = [e for e in pack if not e['pack_role'].get('narrator') and e['pack_role'].get('age') == 'adult'
+                          and (sex not in ('m', 'f') or e['pack_role'].get('sex') == sex)]
+            ids = ['custom:' + e['id'] for e in sorted(chosen, key=lambda e: e['pack_role'].get('rank', 99))]
+            if ids:
+                return next((v for v in ids if v not in used), ids[len(used) % len(ids)])
         presets = ['Vivian', 'Uncle_Fu', 'Serena', 'Dylan'] if language == 'zh' else ['Ryan', 'Aiden']
         by_sex = {'f': ['Vivian', 'Serena'], 'm': ['Uncle_Fu', 'Dylan', 'Eric']} if language == 'zh' else {'m': ['Ryan', 'Aiden']}
         pool = by_sex.get(sex) or presets
@@ -2747,7 +2761,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 used = set(voices_now.values())
                 for speaker in dict.fromkeys(segment['speaker'] for segment in project['segments']):
                     if speaker not in voices_now:
-                        voice = preset_for(record['language'], cast_sex.get(speaker) or (view_now.get('sexes') or {}).get(speaker), used)
+                        voice = preset_for(record['language'], cast_sex.get(speaker) or (view_now.get('sexes') or {}).get(speaker), used, speaker)
                         project.setdefault('voices', {})[speaker] = voice; voices_now[speaker] = voice; used.add(voice)
                 voice_names = set(voices_now)
                 project['redo'] = {'draft_id': body.draft_id, 'kept_audio': stats.get('kept_audio'), 'fresh': stats.get('fresh')}
@@ -2769,7 +2783,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 used = set(current_view.get('voices', {}).values())
                 for speaker in dict.fromkeys(segment['speaker'] for segment in segments):
                     if speaker not in current_view.get('voices', {}):
-                        voice = preset_for(record['language'], cast_sex.get(speaker) or (current_view.get('sexes') or {}).get(speaker), used)
+                        voice = preset_for(record['language'], cast_sex.get(speaker) or (current_view.get('sexes') or {}).get(speaker), used, speaker)
                         local_voices[speaker] = voice
                         used.add(voice)
                 voice_names = set(project_service.view(project).get('voices', {}))
@@ -2778,10 +2792,11 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                                        preset_model=default_preset(), clone_model=default_clone())
                 if record.get('cut'):
                     project['cut'] = record['cut']          # the lines were cut by the manuscript's colours; a rewrite cuts the same way
-                if any(cast_sex.get(n) for n in project['voices']):   # the cast knows who is a woman and who a man: voices to match
+                if any(cast_sex.get(n) for n in project['voices']) or (record['language'] == 'zh' and library.pack()):
+                    # the cast knows who is a woman and who a man, or the default pack is here: voices to match
                     used = set(); voices = {}
                     for speaker in project['voices']:
-                        voices[speaker] = preset_for(record['language'], cast_sex.get(speaker), used); used.add(voices[speaker])
+                        voices[speaker] = preset_for(record['language'], cast_sex.get(speaker), used, speaker); used.add(voices[speaker])
                     project['voices'] = voices
                 voice_names = set(project['voices'])
             project['cast_ids'] = {e['name']: e['id'] for e in cast if e['name'] in voice_names}
@@ -2941,7 +2956,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                             raise ValueError('角色名需为 1–80 个字符，且不含冒号。')
                         used = set(effective_voices.values())
                         voices = p.setdefault('voices', {})
-                        voices[name] = preset_for(p['language'], body.sex if body.sex in ('f', 'm') else (p.get('sexes') or {}).get(name), used)
+                        voices[name] = preset_for(p['language'], body.sex if body.sex in ('f', 'm') else (p.get('sexes') or {}).get(name), used, name)
                         body.speaker = name
                     s['speaker'] = body.speaker
                 if body.tone is not None:
