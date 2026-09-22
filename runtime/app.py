@@ -32,6 +32,7 @@ from .pauses import split_at_pauses, join_with_silence
 from .voices import VoiceLibrary, is_custom, custom_id, PREFIX as CUSTOM_PREFIX
 from .script_check import inspect as inspect_script, apply_fix, quote_findings
 from .attribution import RoleDraftEngine, ROLE_MODELS, project_segments, source_units, carry_locks
+from .chorus import is_chorus, chorus_voice, chorus_pool
 from .content_check import WhisperChecker, compare_text, file_sha
 from .engines import MlxEngine, FixtureEngine, VOICES
 from .project_settings import application_defaults
@@ -250,6 +251,7 @@ class CrowdRequest(BaseModel):
     speaker: str = Field(min_length=1, max_length=80)
     pool: list[str] = Field(min_length=1, max_length=40)
     seed: int = Field(default=260909, ge=0)
+    together: bool = False                                         # 群口: the pool says every line together, mixed, instead of one voice a line
 
 class ScriptRequest(BaseModel):
     revision: int = Field(ge=0)
@@ -3088,13 +3090,19 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
         def apply(p):
             if body.speaker not in p['voices']:
                 raise ValueError('Select an existing speaker')
+            if (p.get('voice_profiles') or {}).get(body.speaker):
+                raise ValueError('这个角色已固定声线；先解除固定，再设群演或群口。')
             draw = random.Random(body.seed); last = None; n = 0
             for s in p['segments']:
                 if s['speaker'] != body.speaker:
                     continue
-                choices = [v for v in pool if v != last] or pool
-                s['voice'] = draw.choice(choices); s['error'] = None; last = s['voice']; n += 1
-            p.setdefault('crowds', {})[body.speaker] = {'pool': pool, 'seed': body.seed}
+                if body.together:
+                    s['voice'] = chorus_voice(pool)                # 群口: one asset a line, the pool's voices mixed
+                else:
+                    choices = [v for v in pool if v != last] or pool
+                    s['voice'] = draw.choice(choices); last = s['voice']
+                s['error'] = None; n += 1
+            p.setdefault('crowds', {})[body.speaker] = {'pool': pool, 'seed': body.seed, **({'together': True} if body.together else {})}
             if not n:
                 raise ValueError('这个角色没有句子。')
         return store.public(store.edit(project_id, body.revision, apply), engine, checker)
@@ -3259,6 +3267,15 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                             raise ValueError('Cached asset is invalid; generate a new take')
                     else:
                         profile=work.get('voice_profiles',{}).get(work_segment['speaker'])
+                        def read_voice(text, voice):
+                            """One voice's reading of the line: a library voice by its reference, else a preset."""
+                            if is_custom(voice):
+                                entry = library.get(custom_id(voice))
+                                return engine.synthesize_reference(text,work['language'],
+                                    library.audio_path(entry['id']),entry['reference_text'],
+                                    260909+work_segment.get('take',0),consent_confirmed=True,expected_sha256=entry['sha256'],**clone_size(work))
+                            return engine.synthesize(text, voice, work['language'], 260909+work_segment.get('take',0),
+                                **({'size': work.get('preset_model','0.6B')} if hasattr(engine,'identity_for') else {}))
                         if profile:
                             if not profile.get('synthetic_audio') or not profile.get('consent_confirmed'):
                                 raise ValueError('固定声线缺少合成来源或授权记录。')
@@ -3268,15 +3285,14 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                             def read(text): return engine.synthesize_reference(text,work['language'],
                                 reference_file(project_id,work,digest_ref),profile['text'],
                                 260909+work_segment.get('take',0),consent_confirmed=True,expected_sha256=digest_ref,**clone_size(work))
-                        elif is_custom(voice_of(work, work_segment)):
-                            entry = library.get(custom_id(voice_of(work, work_segment)))
-                            def read(text): return engine.synthesize_reference(text,work['language'],
-                                library.audio_path(entry['id']),entry['reference_text'],
-                                260909+work_segment.get('take',0),consent_confirmed=True,expected_sha256=entry['sha256'],**clone_size(work))
+                        elif is_chorus(voice_of(work, work_segment)):
+                            # 本人 2026-09-22: 群口 — the pool's voices say the line together,
+                            # each its own reading, mixed (runtime/chorus.py).
+                            from .chorus import mix
+                            pool = chorus_pool(voice_of(work, work_segment))
+                            def read(text): return mix([read_voice(text, v) for v in pool])
                         else:
-                            def read(text): return engine.synthesize(text,
-                                voice_of(work, work_segment), work['language'], 260909+work_segment.get('take',0),
-                                **({'size': work.get('preset_model','0.6B')} if hasattr(engine,'identity_for') else {}))
+                            def read(text): return read_voice(text, voice_of(work, work_segment))
                         pcm, rate, metrics = read_with_pauses(work, work_segment, read)
                         pcm, meta = process_audio(pcm, rate)
                         # A run-away take: the engine read the line and kept going -- a
