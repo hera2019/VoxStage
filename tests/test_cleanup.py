@@ -60,13 +60,20 @@ def test_a_chorus_reads_a_line_with_the_whole_pool_at_once_as_one_asset(tmp_path
     b = (np.r_[np.zeros(100), np.full(500, .5, dtype=np.float32)], 24000, {'x': 2})
     pcm, rate, metrics = mix([a, b])
     assert rate == 24000 and len(pcm) == max(1100, 600 + int(24000 * .035))     # the second voice starts 35 ms later
-    assert abs(float(np.max(np.abs(pcm))) - .5) < 1e-5 and metrics == {'x': 1, 'chorus_voices': 2}
+    assert abs(float(np.max(np.abs(pcm))) - .5) < 1e-5 and metrics == {'x': 1, 'chorus_voices': 2, 'chorus_mode': 'loose'}
     assert is_chorus(chorus_voice(['Vivian', 'Dylan'])) and chorus_pool('chorus:Vivian+Dylan') == ['Vivian', 'Dylan']
+    # 本人 2026-09-22: tight — an answered order, 万岁 in unison: each take cut to its onset, all on the same beat
+    from runtime.chorus import chorus_mode
+    late = (np.r_[np.zeros(2400), np.full(500, .5, dtype=np.float32)], 24000, {})
+    pcm, _, m = mix([a, late], 'tight')
+    assert m['chorus_mode'] == 'tight' and len(pcm) < 1100 + 2400 and int(np.flatnonzero(np.abs(pcm) > 0)[0]) <= 100 + 15 * 24
+    tight = chorus_voice(['Vivian', 'Dylan'], 'tight')
+    assert tight == 'chorus:tight/Vivian+Dylan' and chorus_mode(tight) == 'tight' and chorus_pool(tight) == ['Vivian', 'Dylan'] and chorus_mode('chorus:Vivian+Dylan') == 'loose'
     with TestClient(create_app(tmp_path, FixtureEngine()), base_url='http://127.0.0.1:8765', headers=HEADERS) as c:
         p = create(c, 'zh')
         speaker = p['segments'][0]['speaker']
         p = c.post('/api/projects/' + p['id'] + '/crowd', json={'revision': p['revision'], 'speaker': speaker, 'pool': ['Vivian', 'Dylan', 'Serena'], 'together': True}).json()
-        assert p['crowds'][speaker] == {'pool': ['Vivian', 'Dylan', 'Serena'], 'seed': 260909, 'together': True}
+        assert p['crowds'][speaker] == {'pool': ['Vivian', 'Dylan', 'Serena'], 'seed': 260909, 'together': True, 'sync': 'loose'}
         assert all(s['voice'] == 'chorus:Vivian+Dylan+Serena' for s in p['segments'] if s['speaker'] == speaker)
         p = generate(c, p)
         line = next(s for s in p['segments'] if s['speaker'] == speaker)

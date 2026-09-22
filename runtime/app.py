@@ -252,6 +252,7 @@ class CrowdRequest(BaseModel):
     pool: list[str] = Field(min_length=1, max_length=40)
     seed: int = Field(default=260909, ge=0)
     together: bool = False                                         # 群口: the pool says every line together, mixed, instead of one voice a line
+    sync: Literal['loose', 'tight'] = 'loose'                      # loose: voices start a little apart (a crowd); tight: all on the same beat (口令、万岁)
 
 class ScriptRequest(BaseModel):
     revision: int = Field(ge=0)
@@ -3119,12 +3120,12 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 if s['speaker'] != body.speaker:
                     continue
                 if body.together:
-                    s['voice'] = chorus_voice(pool)                # 群口: one asset a line, the pool's voices mixed
+                    s['voice'] = chorus_voice(pool, body.sync)     # 群口: one asset a line, the pool's voices mixed
                 else:
                     choices = [v for v in pool if v != last] or pool
                     s['voice'] = draw.choice(choices); last = s['voice']
                 s['error'] = None; n += 1
-            p.setdefault('crowds', {})[body.speaker] = {'pool': pool, 'seed': body.seed, **({'together': True} if body.together else {})}
+            p.setdefault('crowds', {})[body.speaker] = {'pool': pool, 'seed': body.seed, **({'together': True, 'sync': body.sync} if body.together else {})}
             if not n:
                 raise ValueError('这个角色没有句子。')
         return store.public(store.edit(project_id, body.revision, apply), engine, checker)
@@ -3311,9 +3312,9 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                         elif is_chorus(voice_of(work, work_segment)):
                             # 本人 2026-09-22: 群口 — the pool's voices say the line together,
                             # each its own reading, mixed (runtime/chorus.py).
-                            from .chorus import mix
-                            pool = chorus_pool(voice_of(work, work_segment))
-                            def read(text): return mix([read_voice(text, v) for v in pool])
+                            from .chorus import mix, chorus_mode
+                            pool = chorus_pool(voice_of(work, work_segment)); mode = chorus_mode(voice_of(work, work_segment))
+                            def read(text): return mix([read_voice(text, v) for v in pool], mode)
                         else:
                             def read(text): return read_voice(text, voice_of(work, work_segment))
                         pcm, rate, metrics = read_with_pauses(work, work_segment, read)
