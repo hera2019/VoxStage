@@ -104,7 +104,10 @@ class MlxEngine:
     def identity_for(self, size='0.6B'):
         return self.large_identity if size == '1.7B' and self.large_identity else self.identity
 
-    def synthesize(self, text, voice, language, seed=260909, size='0.6B'):
+    def synthesize(self, text, voice, language, seed=260909, size='0.6B', instruct=None):
+        """`instruct`: how to say it — 愤怒，语速加快 — for the preset (CustomVoice)
+        models, which take a free-text instruction (实测 2, 2026-09-13: effective
+        but 2 of 8 ran away; the duration check and the retake catch that now)."""
         if not self.ready:
             raise ValueError('Preset-voice model is not installed. Run the model setup command first.')
         if size == '1.7B' and not self.large_identity:
@@ -131,7 +134,7 @@ class MlxEngine:
         mx.reset_peak_memory()
         parameters = generation_parameters(language)
         results = list(model.generate_custom_voice(text=text, speaker=voice,
-                       language={'zh':'Chinese','en':'English'}[language], **parameters))
+                       language={'zh':'Chinese','en':'English'}[language], **({'instruct': instruct.strip()} if instruct and instruct.strip() else {}), **parameters))
         if not results:
             raise ValueError('Model returned no audio')
         rates = {int(x.sample_rate) for x in results}

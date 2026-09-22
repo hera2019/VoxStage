@@ -425,8 +425,28 @@ def anonymous_tag(before, after='', with_phrase=False):
     return None
 
 
-PRONOUNS = {'他', '她', '它', '我', '你', '您', '他们', '她们', '我们', '你们', '大家', '众人', '有人', '那人', '此人', '这人', '一人', '男人', '女人',
+PRONOUNS = {'他', '她', '它', '我', '你', '您', '他们', '她们', '我们', '你们', '自己', '大家', '众人', '有人', '那人', '此人', '这人', '一人', '男人', '女人',
             '那个', '这个', '对方', '那位', '这位', '两人', '几人', '一个', '那个人', '这个人', '来人', '此人'}
+
+# What a model may write in the speaker field that names nobody: pronouns and
+# demonstratives (那人, 这个) — not 众人/男人/女人, which a text uses as names
+# for people it never names (the gold of 阿Q chapter 5 calls a speaker 男人).
+NOT_SPEAKERS = frozenset({'他', '她', '它', '你', '您', '他们', '她们', '你们', '自己', '那人', '此人', '这人', '那个', '这个', '那位', '这位',
+                          '对方', '一人', '一个', '两人', '几人', '那个人', '这个人', '来人'})       # not 我: a story told in the first person has 我 speaking
+
+def book_name(name):
+    """A name worth telling the model about from a book's other chapters: not a
+    pronoun, not a stand-in the page made (某人, 某人甲, 众人), not a placeholder
+    (角色2, 酒客2) — those belong to one chapter's review, not to the cast."""
+    name = (name or '').strip()
+    if not name or name in NOT_SPEAKERS or (name in PRONOUNS and name not in ('我', '我们')):
+        return False
+    if name.startswith(tuple(STAND_INS.values())) or re.match(r'^(?:角色|人物|说话人|speaker)\s*[0-9０-９一二三四五六七八九十甲乙丙丁]*$', name, re.I):
+        return False
+    if re.search(r'[0-9０-９]$', name):
+        return False
+    return True
+
 
 # Manner words a tag puts before its verb — 陈小雪苦笑道, 王伯喃喃道, 她缓缓道,
 # 微笑着说 — are not part of the name (本人 2026-09-22: 缓缓, 喃喃, 微笑着 and

@@ -75,3 +75,32 @@ def test_a_chorus_reads_a_line_with_the_whole_pool_at_once_as_one_asset(tmp_path
         single = next(s for s in p['segments'] if s['speaker'] != speaker)
         solo = sf.info(tmp_path / p['id'] / 'audio' / (single['audio']['fingerprint'] + '.wav'))
         assert info.frames > solo.frames                      # two extra voices start 35 ms later each: longer than one voice's take
+
+
+def test_a_lines_tone_reaches_the_preset_engine_and_the_fingerprint_but_not_a_cloned_voice(tmp_path):
+    """本人 2026-09-22: 语气 — a free-text instruction per line for the preset
+    models (实测 2: effective, run-aways caught by the duration check). Setting
+    it changes the take; clearing it returns to the plain take; a cloned voice
+    ignores it, so its take is unchanged."""
+    from runtime.core import fingerprint
+    class Listening(FixtureEngine):
+        identity_for = lambda self, size='0.6B': 'fixture-' + size
+        seen = []
+        def synthesize(self, text, voice, language, seed=260909, size='0.6B', instruct=None):
+            self.seen.append(instruct); return FixtureEngine.synthesize(self, text, voice, language, seed)
+    engine = Listening()
+    with TestClient(create_app(tmp_path, engine), base_url='http://127.0.0.1:8765', headers=HEADERS) as c:
+        p = generate(c, create(c, 'zh'))
+        line = p['segments'][0]; plain = line['audio']['fingerprint']
+        q = c.patch('/api/projects/' + p['id'], json={'revision': p['revision'], 'segment_id': line['id'], 'tone': '愤怒，语速快'}).json()
+        assert q['segments'][0]['tone'] == '愤怒，语速快' and q['segments'][0]['status'] == 'pending'
+        q = generate(c, q)
+        assert q['segments'][0]['audio']['fingerprint'] != plain and engine.seen[-1] == '愤怒，语速快'
+        q = c.patch('/api/projects/' + p['id'], json={'revision': q['revision'], 'segment_id': line['id'], 'tone': ''}).json()
+        assert 'tone' not in q['segments'][0] and q['segments'][0]['status'] == 'pending'
+        assert generate(c, q)['segments'][0]['audio']['fingerprint'] == plain                   # the plain take comes back from the cache
+        raw = json.loads((tmp_path / p['id'] / 'project.json').read_text())
+        seg = raw['segments'][0]; seg['tone'] = '低声'
+        assert fingerprint(raw, seg, engine) != fingerprint({**raw}, {**seg, 'tone': ''}, engine)
+        raw['voice_profiles'] = {seg['speaker']: {'sha256': 'a' * 64, 'text': 'x', 'synthetic_audio': True, 'consent_confirmed': True}}
+        assert fingerprint(raw, seg, engine) == fingerprint(raw, {**seg, 'tone': ''}, engine)     # a fixed voice: the tone is not in the take

@@ -29,13 +29,20 @@ from runtime.voices import VoiceLibrary, is_custom, custom_id           # noqa: 
 
 
 def engines_for(spec, qwen):
-    kind, _, size = spec.partition(':')
-    if kind == 'qwen' and size in ('', '0.6B', '1.7B'):
-        return qwen, size or '0.6B', f'Qwen3-TTS {size or "0.6B"}'
-    raise SystemExit('引擎写法：qwen:0.6B / qwen:1.7B')
+    """qwen:SIZE, or qwen:SIZE:tone=愤怒，语速快 — the same preset model reading with
+    that instruction (语气, 2026-09-22: the same line, same voice, same seed,
+    one side told how to say it; preset voices only)."""
+    kind, _, rest = spec.partition(':')
+    size, _, option = rest.partition(':')
+    tone = option[5:] if option.startswith('tone=') else None
+    if kind == 'qwen' and size in ('', '0.6B', '1.7B') and (not option or tone is not None):
+        return qwen, {'size': size or '0.6B', 'tone': tone}, f'Qwen3-TTS {size or "0.6B"}' + (f'（语气：{tone}）' if tone else '（无语气）' if option == 'tone=' else '')
+    raise SystemExit('引擎写法：qwen:0.6B / qwen:1.7B / qwen:1.7B:tone=愤怒，语速快')
 
 
-def read(engine, size, project, segment, library):
+def read(engine, side, project, segment, library):
+    size = side['size'] if isinstance(side, dict) else side
+    tone = side.get('tone') if isinstance(side, dict) else None
     text = spoken_text(project, segment); voice = voice_of(project, segment); seed = 260909 + segment.get('take', 0)
     profile = (project.get('voice_profiles') or {}).get(segment['speaker'])
     if profile:
@@ -49,7 +56,7 @@ def read(engine, size, project, segment, library):
     else:
         if not hasattr(engine, 'synthesize'):
             raise SystemExit(f'{segment["speaker"]} 用的是预设音色（{voice}），这个引擎只能读参考音克隆的句子。')
-        pcm, rate, _ = engine.synthesize(text, voice, project['language'], seed, size=size)
+        pcm, rate, _ = engine.synthesize(text, voice, project['language'], seed, size=size, **({'instruct': tone} if tone else {}))
         how = '预设音色 ' + voice
     pcm, _ = process_audio(pcm, rate)
     return pcm, rate, how, text
@@ -58,8 +65,12 @@ def read(engine, size, project, segment, library):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--a', default='qwen:0.6B'); ap.add_argument('--b', default='qwen:1.7B')
+    ap.add_argument('--tone', default=None, help='语气对听：--a 不带语气、--b 带这个语气（同一模型）；与 --a/--b 里的 tone= 写法等价')
     ap.add_argument('lines', nargs='+', help='工程 id:句号')
     args = ap.parse_args()
+    if args.tone is not None:
+        base = args.b.split(':tone=')[0]
+        args.a, args.b = base + ':tone=', base + ':tone=' + (args.tone or '按句')      # --tone "" : each line brings its own after "="
     store = Store(ROOT / 'user-data/projects'); library = VoiceLibrary(ROOT / 'user-data/voices')
     qwen = MlxEngine(ROOT / 'user-data/models/qwen-customvoice')
     sides = [engines_for(args.a, qwen), engines_for(args.b, qwen)]
@@ -72,12 +83,15 @@ def main():
     key, notes = {'a': args.a, 'b': args.b, 'pairs': {}}, []
     rng = random.SystemRandom()
     for n, item in enumerate(args.lines, 1):
+        item, _, line_tone = item.partition('=')                   # PROJECT:14=愤怒，语速快 — this line's own instruction (语气对听)
         pid, _, number = item.partition(':')
         project = store.read(pid); segment = project['segments'][int(number) - 1]
         takes = []
-        for engine, size, name in sides:
+        for engine, side, name in sides:
             started = time.time()
-            pcm, rate, how, text = read(engine, size, project, segment, library)
+            if isinstance(side, dict) and side.get('tone') is not None and line_tone:
+                side = {**side, 'tone': line_tone if side['tone'] else None}; name = name.split('（')[0] + (f'（语气：{line_tone}）' if side['tone'] else '（无语气）')
+            pcm, rate, how, text = read(engine, side, project, segment, library)
             takes.append((name, pcm, rate, round(time.time() - started, 1)))
         order = [0, 1]; rng.shuffle(order)
         for label, k in zip('甲乙', order):
@@ -88,8 +102,9 @@ def main():
         notes.append(f"对{n}：《{project['name']}》第 {number} 句 · {segment['speaker']}（{how}）\n    {text.strip()[:80]}"
                      + (f"\n    你标的问题：{issue.get('kind')} — {issue.get('note', '')}" if issue else ''))
         print(f'对{n}', {t[0]: t[3] for t in takes}, flush=True)
-    (out / '说明.txt').write_text('每对两个文件，甲/乙顺序随机；同一句、同一声线、同一种子，只换引擎/模型。听完只说每对选甲还是乙（或听不出差别）。\n\n'
-                                  + '\n\n'.join(notes) + '\n', encoding='utf-8')
+    intro = ('每对两个文件，甲/乙顺序随机；同一句、同一声线、同一种子，一边不带语气、一边带语气。听完只说每对选甲还是乙（或听不出差别）。\n\n'
+             if args.tone is not None else '每对两个文件，甲/乙顺序随机；同一句、同一声线、同一种子，只换引擎/模型。听完只说每对选甲还是乙（或听不出差别）。\n\n')
+    (out / '说明.txt').write_text(intro + '\n\n'.join(notes) + '\n', encoding='utf-8')
     (keys / f'{stamp}.json').write_text(json.dumps(key, ensure_ascii=False, indent=1), encoding='utf-8')
     print('wrote', out, '\nkey', keys / f'{stamp}.json')
 

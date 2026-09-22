@@ -191,6 +191,8 @@ def fingerprint(project, segment, engine, library=None):
     gap = int(project.get('ellipsis_pause_ms') or 0)
     if gap and len(split_at_pauses(data['text'])) > 1:
         data['ellipsis_pause_ms'] = gap
+    if segment.get('tone') and not custom_id(voice_of(project, segment)) and not (project.get('voice_profiles') or {}).get(segment['speaker']):
+        data['tone'] = segment['tone']            # 语气 changes a preset take; a cloned voice ignores it, so its take is unchanged
     # A library voice is a reference like a fixed profile is, so its identity has
     # to reach the fingerprint: renaming may not invalidate audio, but pointing a
     # character at different reference audio must.

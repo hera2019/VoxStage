@@ -270,6 +270,7 @@ class EditRequest(BaseModel):
     segment_id: str | None = None
     text: str | None = Field(default=None, max_length=500)
     spoken_as: str | None = Field(default=None, max_length=500)
+    tone: str | None = Field(default=None, max_length=80)          # 语气: how to say the line (愤怒，语速快); preset voices only; '' clears
     speaker: str | None = Field(default=None, min_length=1, max_length=80)
     voice: str | None = None
     pause_ms: int | None = Field(default=None, ge=0, le=2000)
@@ -1309,14 +1310,20 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
             # Names the story uses: in this passage, or confirmed in the book's
             # other chapters — a chapter that never spells a name still has it.
             known_names = set(); aliases = {}
+            from . import habits
             if body.book_id:
                 with store.lock:
                     book_record = books.get(body.book_id)
                     aliases = dict(book_record.get('aliases') or {})
                     for sibling in book_projects(book_record):
-                        known_names.update(sp for sp in sibling.get('voices', {}) if sp not in ('旁白', 'Narrator', 'NARRATOR'))
+                        # A sibling's stand-ins and placeholders (某人甲, 角色2, 我) are
+                        # not the book's people: told to the model as its cast they
+                        # mislead it (2026-09-22: a test book of five copies of one
+                        # story — 孔乙己 3 → 9 to fix with 角色2 and 某人甲 in the list).
+                        real = [sp for sp in sibling.get('voices', {}) if sp not in ('旁白', 'Narrator', 'NARRATOR') and habits.book_name(sp)]
+                        known_names.update(real)
                         for sp, voice in sibling.get('voices', {}).items():
-                            if sp in ('旁白', 'Narrator', 'NARRATOR') or any(n.startswith(sp) for n in names_for_model):
+                            if sp not in real or any(n.startswith(sp) for n in names_for_model):
                                 continue
                             # The cast with the sex of each character — as the
                             # book says (settings), else as the voice suggests:
@@ -1388,7 +1395,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 name_present = bool(english_support) if body.language == 'en' else speaker in body.script
                 if label['kind'] == 'dialogue' and speaker.upper() not in ('', 'UNKNOWN', 'NARRATOR') and (
                         (not name_present and speaker not in known_names) or len(speaker) > (80 if body.language == 'en' else 12) or any(c in speaker for c in '，。！？～“”"：')
-                        or speaker in habits.NOT_NAMES or speaker in habits.PRONOUNS):
+                        or speaker in habits.NOT_NAMES or speaker in habits.NOT_SPEAKERS):
                     # Not a name the story uses — invented, translated, or the
                     # line itself pasted into the speaker field.
                     return {'kind': 'dialogue', 'speaker': 'UNKNOWN', 'suggested': speaker[:20]}
@@ -1765,6 +1772,12 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                     before['text'] if before and before['kind'] == 'narration' else '',
                     after['text'] if after and after['kind'] == 'narration' else '', mentions)
                 if tagged:
+                    if u['speaker'].strip() != tagged and len(tagged) >= 2 and tagged in u['speaker'].strip() and u['speaker'].strip() in cast:
+                        # 七爷 in the tag, 赵七爷 from the model: the same person by his
+                        # fuller name (风波, 2026-09-22) — agreement, not a rename.
+                        u['basis'] = '旁边的叙述点了这个名字（简称），模型给的是全名'; u.pop('tier', None); u.pop('hint', None)
+                        u['source'] = 'tag'; settled(u['speaker'].strip(), blk)
+                        continue
                     if u['speaker'].strip() != tagged:
                         u.update({'speaker': tagged, 'basis': '旁边的叙述点了这个名字'}); u.pop('tier', None); u.pop('hint', None)
                     elif u.get('tier') == 'suggested' and u.get('basis') == '模型按上下文推断的':
@@ -2857,6 +2870,15 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                         voices[name] = preset_for(p['language'], body.sex if body.sex in ('f', 'm') else (p.get('sexes') or {}).get(name), used)
                         body.speaker = name
                     s['speaker'] = body.speaker
+                if body.tone is not None:
+                    # 语气 (本人 2026-09-22): a free-text instruction the preset models
+                    # take; it reaches the fingerprint only when set, so clearing it
+                    # returns to the plain take. A run-away take is caught by the
+                    # duration check like any other.
+                    s['tone'] = body.tone.strip()
+                    if not s['tone']:
+                        s.pop('tone', None)
+                    s['error'] = None
                 if any(getattr(body, field) is not None for field in ('text', 'spoken_as', 'speaker')):
                     s['error'] = None
             if body.speaker_muted is not None:
@@ -3275,7 +3297,8 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                                     library.audio_path(entry['id']),entry['reference_text'],
                                     260909+work_segment.get('take',0),consent_confirmed=True,expected_sha256=entry['sha256'],**clone_size(work))
                             return engine.synthesize(text, voice, work['language'], 260909+work_segment.get('take',0),
-                                **({'size': work.get('preset_model','0.6B')} if hasattr(engine,'identity_for') else {}))
+                                **({'size': work.get('preset_model','0.6B')} if hasattr(engine,'identity_for') else {}),
+                                **({'instruct': work_segment['tone']} if work_segment.get('tone') and hasattr(engine,'identity_for') else {}))
                         if profile:
                             if not profile.get('synthetic_audio') or not profile.get('consent_confirmed'):
                                 raise ValueError('固定声线缺少合成来源或授权记录。')
