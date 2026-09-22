@@ -184,13 +184,15 @@ function App(){
       const opened=(id:string)=>{try{return Number(localStorage.getItem('voxstage-book-opened-'+id))||0}catch{return 0}};
       const entries=[...books.entries()].concat(emptyBooks.filter(e=>!books.has(e.id)).map(e=>[e.id,{title:e.title,chapters:[] as typeof live}] as [string,{title:string;chapters:typeof live}]))
        .sort((a,b)=>Math.max(opened(b[0]),...b[1].chapters.map(c=>(c.updated_at??0)*1000))-Math.max(opened(a[0]),...a[1].chapters.map(c=>(c.updated_at??0)*1000)));
-      const archived=projects.filter(x=>x.archived);
+      // Archived work folds the same way (本人 2026-09-23: 已归档的子工程暴露着——万一把网络小说归档就惨了): a book is one entry.
+      const shelved=groupByBook(projects.filter(x=>x.archived));
+      const archived=shelved.loose;
       const here=p&&p.book?.id&&books.has(p.book.id)?p:null;
       return <>
        {here&&!openBook&&<option value={here.id}>正在看：《{here.book?.title}》{here.book?.index?`第 ${here.book.index} 章`:''}</option>}
        {entries.length>0&&<optgroup label="主工程（打开后在章节页选章）">{entries.map(([id,b])=><option key={id} value={'book:'+id}>《{b.title}》 · {b.chapters.length} 章{b.chapters.some(c=>c.processing_state==='unprocessed')?`，未处理 ${b.chapters.filter(c=>c.processing_state==='unprocessed').length}`:''}</option>)}</optgroup>}
        {loose.length>0&&<optgroup label="独立工程">{loose.slice().sort((a,b)=>(b.updated_at??0)-(a.updated_at??0)).map(x=><option key={x.id} value={x.id}>{x.name}{x.processing_state==='unprocessed'?' · 未处理':''}</option>)}</optgroup>}
-       {archived.length>0&&<optgroup label="已归档">{archived.map(x=><option key={x.id} value={x.id}>{x.name}</option>)}</optgroup>}
+       {(archived.length>0||shelved.books.size>0)&&<optgroup label="已归档">{[...shelved.books.entries()].filter(([id])=>!books.has(id)).map(([id,b])=><option key={id} value={'book:'+id}>《{b.title}》 · {b.chapters.length} 章</option>)}{archived.map(x=><option key={x.id} value={x.id}>{x.name}</option>)}</optgroup>}
       </>})()}
      </select></label></div>
     <div aria-live="polite">{error&&!(marking||importing||(p&&!openBook&&!roleImporting))&&<div className="message error" role="alert">{error}<button onClick={()=>setError('')}>关闭</button></div>}{notice&&<div className="notice">{notice}</div>}</div>
