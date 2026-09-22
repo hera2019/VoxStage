@@ -9,23 +9,41 @@ OFFSET_MS = 35          # loose: each voice starts a little after the one before
 MODES = ('loose', 'tight')   # tight (本人 2026-09-22: 军队应答口令、群臣山呼万岁): every voice starts on the same sample, leading silence trimmed
 
 
-def chorus_voice(pool, mode='loose'):
-    return PREFIX + ('tight/' if mode == 'tight' else '') + '+'.join(pool)
+LAYER_SEED_STEP = 7919   # each extra layer of the same voice is another take: a different seed, the same timbre
+
+
+def chorus_voice(pool, mode='loose', layers=1):
+    """`layers` > 1 (本人 2026-09-22: 同一个声音多次叠加): every voice in the pool
+    is read that many times with different seeds and the takes are mixed."""
+    return PREFIX + ('tight/' if mode == 'tight' else '') + (f'x{int(layers)}/' if int(layers) > 1 else '') + '+'.join(pool)
 
 
 def is_chorus(voice):
     return isinstance(voice, str) and voice.startswith(PREFIX)
 
 
+def _parts(voice):
+    rest = voice[len(PREFIX):]
+    mode, layers = 'loose', 1
+    while True:
+        if rest.startswith('tight/'):
+            mode, rest = 'tight', rest[len('tight/'):]
+        elif rest.startswith('x') and '/' in rest and rest[1:rest.index('/')].isdigit():
+            layers, rest = int(rest[1:rest.index('/')]), rest[rest.index('/') + 1:]
+        else:
+            return mode, layers, [v for v in rest.split('+') if v]
+
+
 def chorus_mode(voice):
-    return 'tight' if voice[len(PREFIX):].startswith('tight/') else 'loose'
+    return _parts(voice)[0]
+
+
+def chorus_layers(voice):
+    return _parts(voice)[1]
 
 
 def chorus_pool(voice):
-    rest = voice[len(PREFIX):]
-    if rest.startswith('tight/'):
-        rest = rest[len('tight/'):]
-    return [v for v in rest.split('+') if v]
+    return _parts(voice)[2]
 
 
 def _onset(pcm, rate, floor=0.02, keep_ms=15):

@@ -253,6 +253,7 @@ class CrowdRequest(BaseModel):
     seed: int = Field(default=260909, ge=0)
     together: bool = False                                         # 群口: the pool says every line together, mixed, instead of one voice a line
     sync: Literal['loose', 'tight'] = 'loose'                      # loose: voices start a little apart (a crowd); tight: all on the same beat (口令、万岁)
+    layers: int = Field(default=1, ge=1, le=4)                     # 群口: each voice read this many times (different seeds) and layered — one voice doubled or tripled
 
 class ScriptRequest(BaseModel):
     revision: int = Field(ge=0)
@@ -3110,6 +3111,10 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
         for v in pool:
             if v not in VOICES and not (is_custom(v) and library.label(v)):
                 raise ValueError(f'没有这个音色：{v}')
+        if body.together and len(pool) * body.layers < 2:
+            raise ValueError('群口至少要两条声音：勾两个音色，或一个音色叠两次以上。')
+        if not body.together and len(pool) < 2:
+            raise ValueError('群演至少要勾两个音色。')
         def apply(p):
             if body.speaker not in p['voices']:
                 raise ValueError('Select an existing speaker')
@@ -3120,12 +3125,12 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 if s['speaker'] != body.speaker:
                     continue
                 if body.together:
-                    s['voice'] = chorus_voice(pool, body.sync)     # 群口: one asset a line, the pool's voices mixed
+                    s['voice'] = chorus_voice(pool, body.sync, body.layers)     # 群口: one asset a line, the pool's voices mixed
                 else:
                     choices = [v for v in pool if v != last] or pool
                     s['voice'] = draw.choice(choices); last = s['voice']
                 s['error'] = None; n += 1
-            p.setdefault('crowds', {})[body.speaker] = {'pool': pool, 'seed': body.seed, **({'together': True, 'sync': body.sync} if body.together else {})}
+            p.setdefault('crowds', {})[body.speaker] = {'pool': pool, 'seed': body.seed, **({'together': True, 'sync': body.sync, 'layers': body.layers} if body.together else {})}
             if not n:
                 raise ValueError('这个角色没有句子。')
         return store.public(store.edit(project_id, body.revision, apply), engine, checker)
@@ -3290,14 +3295,15 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                             raise ValueError('Cached asset is invalid; generate a new take')
                     else:
                         profile=work.get('voice_profiles',{}).get(work_segment['speaker'])
-                        def read_voice(text, voice):
+                        def read_voice(text, voice, seed_shift=0):
                             """One voice's reading of the line: a library voice by its reference, else a preset."""
+                            seed = 260909 + work_segment.get('take', 0) + seed_shift
                             if is_custom(voice):
                                 entry = library.get(custom_id(voice))
                                 return engine.synthesize_reference(text,work['language'],
                                     library.audio_path(entry['id']),entry['reference_text'],
-                                    260909+work_segment.get('take',0),consent_confirmed=True,expected_sha256=entry['sha256'],**clone_size(work))
-                            return engine.synthesize(text, voice, work['language'], 260909+work_segment.get('take',0),
+                                    seed,consent_confirmed=True,expected_sha256=entry['sha256'],**clone_size(work))
+                            return engine.synthesize(text, voice, work['language'], seed,
                                 **({'size': work.get('preset_model','0.6B')} if hasattr(engine,'identity_for') else {}),
                                 **({'instruct': work_segment['tone']} if work_segment.get('tone') and hasattr(engine,'identity_for') else {}))
                         if profile:
@@ -3312,9 +3318,10 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                         elif is_chorus(voice_of(work, work_segment)):
                             # 本人 2026-09-22: 群口 — the pool's voices say the line together,
                             # each its own reading, mixed (runtime/chorus.py).
-                            from .chorus import mix, chorus_mode
-                            pool = chorus_pool(voice_of(work, work_segment)); mode = chorus_mode(voice_of(work, work_segment))
-                            def read(text): return mix([read_voice(text, v) for v in pool], mode)
+                            from .chorus import mix, chorus_mode, chorus_layers, LAYER_SEED_STEP
+                            chorus = voice_of(work, work_segment)
+                            pool, mode, layers = chorus_pool(chorus), chorus_mode(chorus), chorus_layers(chorus)
+                            def read(text): return mix([read_voice(text, v, k * LAYER_SEED_STEP) for v in pool for k in range(layers)], mode)
                         else:
                             def read(text): return read_voice(text, voice_of(work, work_segment))
                         pcm, rate, metrics = read_with_pauses(work, work_segment, read)

@@ -73,7 +73,7 @@ def test_a_chorus_reads_a_line_with_the_whole_pool_at_once_as_one_asset(tmp_path
         p = create(c, 'zh')
         speaker = p['segments'][0]['speaker']
         p = c.post('/api/projects/' + p['id'] + '/crowd', json={'revision': p['revision'], 'speaker': speaker, 'pool': ['Vivian', 'Dylan', 'Serena'], 'together': True}).json()
-        assert p['crowds'][speaker] == {'pool': ['Vivian', 'Dylan', 'Serena'], 'seed': 260909, 'together': True, 'sync': 'loose'}
+        assert p['crowds'][speaker] == {'pool': ['Vivian', 'Dylan', 'Serena'], 'seed': 260909, 'together': True, 'sync': 'loose', 'layers': 1}
         assert all(s['voice'] == 'chorus:Vivian+Dylan+Serena' for s in p['segments'] if s['speaker'] == speaker)
         p = generate(c, p)
         line = next(s for s in p['segments'] if s['speaker'] == speaker)
@@ -111,3 +111,24 @@ def test_a_lines_tone_reaches_the_preset_engine_and_the_fingerprint_but_not_a_cl
         assert fingerprint(raw, seg, engine) != fingerprint({**raw}, {**seg, 'tone': ''}, engine)
         raw['voice_profiles'] = {seg['speaker']: {'sha256': 'a' * 64, 'text': 'x', 'synthetic_audio': True, 'consent_confirmed': True}}
         assert fingerprint(raw, seg, engine) == fingerprint(raw, {**seg, 'tone': ''}, engine)     # a fixed voice: the tone is not in the take
+
+
+def test_one_voice_layered_is_a_chorus_of_its_own_takes(tmp_path):
+    """本人 2026-09-22: 同一个声音多次叠加 — one voice read three times with
+    different seeds and layered; a pool of one with one layer is refused."""
+    class Seeds(FixtureEngine):
+        seen = []
+        def synthesize(self, text, voice, language, seed=260909):
+            self.seen.append((voice, seed)); return FixtureEngine.synthesize(self, text, voice, language, seed)
+    engine = Seeds()
+    with TestClient(create_app(tmp_path, engine), base_url='http://127.0.0.1:8765', headers=HEADERS) as c:
+        p = create(c, 'zh'); speaker = p['segments'][0]['speaker']
+        bad = c.post('/api/projects/' + p['id'] + '/crowd', json={'revision': p['revision'], 'speaker': speaker, 'pool': ['Vivian'], 'together': True})
+        assert bad.status_code == 400
+        p = c.post('/api/projects/' + p['id'] + '/crowd', json={'revision': p['revision'], 'speaker': speaker, 'pool': ['Vivian'], 'together': True, 'layers': 3}).json()
+        assert p['crowds'][speaker]['layers'] == 3 and all(s['voice'] == 'chorus:x3/Vivian' for s in p['segments'] if s['speaker'] == speaker)
+        engine.seen.clear(); p = generate(c, p)
+        line = next(s for s in p['segments'] if s['speaker'] == speaker)
+        assert line['status'] == 'ready'
+        seeds = [sd for v, sd in engine.seen if v == 'Vivian']
+        assert len(set(seeds)) >= 3 and len(seeds) % 3 == 0                # three different seeds a line

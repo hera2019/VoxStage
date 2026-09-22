@@ -324,3 +324,12 @@ main>footer audio{height:34px}
 /* 中间栏页面（本人 2026-09-22：导入、复核、章节处理不再是弹窗） */
 .role-import.role-page{width:100%;max-width:none;background:transparent;padding:0;box-shadow:none;border-radius:0;max-height:none;overflow:visible}
 .structure-inline .chapter-start{padding:8px 0 24px}.structure-page.chapter-start .setting-head button{display:inline-block}
+
+/* 群演/群口的操作行（本人 2026-09-22：按钮被挤成竖条） */
+.crowd-actions{display:flex;flex-direction:column;gap:6px;margin:.35rem 0}
+.crowd-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.crowd-row>strong{flex:0 0 auto;font-size:12px;color:#5d6d61;min-width:32px}
+.crowd-row>button{flex:0 0 auto;padding:6px 10px;white-space:nowrap}
+.crowd-row>select{flex:0 1 auto;width:auto;min-height:32px;padding:2px 6px;font-size:12px;margin:0}
+.crowd-layers{display:inline-flex;align-items:center;gap:4px;font-size:12px;margin:0;white-space:nowrap}
+.crowd-layers input{width:46px;min-height:30px;padding:2px 6px;margin:0;font-size:12px}
