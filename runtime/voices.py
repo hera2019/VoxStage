@@ -37,6 +37,11 @@ def custom_id(voice):
     return voice[len(PREFIX):] if is_custom(voice) else None
 
 
+def _sort_key(name):
+    """Name order with numbers read as numbers (Old Man2 before Old Man10)."""
+    return [int(part) if part.isdigit() else part.lower() for part in re.split(r'(\d+)', name or '')]
+
+
 class VoiceLibrary:
     def __init__(self, root):
         self.root = Path(root)
@@ -47,6 +52,7 @@ class VoiceLibrary:
         return self.root / (voice_id + suffix)
 
     def list(self):
+        """Every kept voice, by name."""
         out = []
         for path in sorted(self.root.glob('*.json')) if self.root.is_dir() else []:
             try:
@@ -55,7 +61,10 @@ class VoiceLibrary:
                 continue
             if (self.root / (entry.get('id', '') + '.wav')).is_file():
                 out.append(entry)
-        out.sort(key=lambda e: e.get('created_at', 0), reverse=True)
+        # By name (本人 2026-09-23: 建议使用名称排序，好找) — a library of fifty
+        # voices is looked through by name, not by when it was made; digits sort
+        # as numbers so 声线2 follows 声线, not 声线10.
+        out.sort(key=lambda e: _sort_key(e.get('name', '')))
         return out
 
     def get(self, voice_id):
