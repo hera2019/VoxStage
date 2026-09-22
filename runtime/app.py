@@ -520,7 +520,12 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
         signed_in = from_here or (lan_key and lan.accepts(request.cookies.get(lan.COOKIE), lan_key))
         if not from_here and not lan_key:
             return JSONResponse({'detail':'Local access only'}, status_code=403)
-        if request.headers.get('sec-fetch-site') == 'cross-site' or (origin and origin != f'http://{host}'):
+        # Opening the page by a link or a typed address is allowed from anywhere —
+        # it is only a page, and every write still needs the same origin and the
+        # local header (本人 2026-09-22: 本机第一次打开 /lan 被拒). Anything that is
+        # not a top-level page load keeps the strict rule.
+        navigating = request.method in ('GET', 'HEAD') and request.headers.get('sec-fetch-mode') == 'navigate'
+        if (request.headers.get('sec-fetch-site') == 'cross-site' and not navigating) or (origin and origin != f'http://{host}'):
             return JSONResponse({'detail':'Cross-origin access denied'}, status_code=403)
         if not signed_in and path != '/lan':
             if path.startswith('/api/'):

@@ -63,3 +63,19 @@ def test_the_key_is_kept_between_runs_and_can_be_replaced(tmp_path):
     assert second != first and lan.load_or_create_key(tmp_path) == second
     assert lan.accepts(lan.cookie_value(second), second) and not lan.accepts(lan.cookie_value(first), second)
     assert lan.is_loopback('127.0.0.1') and lan.is_loopback('localhost') and not lan.is_loopback('192.168.0.4')
+
+
+def test_a_link_from_elsewhere_may_open_the_page_but_not_call_the_api(tmp_path):
+    """本人 2026-09-22: opening http://<LAN ip>:8765/lan from a page on another
+    origin answered 'Cross-origin access denied'. A top-level page load is
+    allowed from anywhere; anything else cross-site is not, and writes still
+    need the local header."""
+    app = create_app(tmp_path / 'projects', FixtureEngine(), lan_key='test-key-123')
+    from_a_link = {'sec-fetch-site': 'cross-site', 'sec-fetch-mode': 'navigate'}
+    with TestClient(app, base_url=ELSEWHERE) as c:
+        page = c.get('/lan', headers=from_a_link)
+        assert page.status_code == 200 and '访问口令' in page.text
+        fetched = c.get('/api/health', headers={'sec-fetch-site': 'cross-site', 'sec-fetch-mode': 'cors'})
+        assert fetched.status_code == 403 and fetched.json()['detail'] == 'Cross-origin access denied'
+        posted = c.post('/lan', data={'key': 'test-key-123'}, headers={'sec-fetch-site': 'cross-site', 'sec-fetch-mode': 'navigate'})
+        assert posted.status_code == 403                                   # a form posted from another page is not a page load

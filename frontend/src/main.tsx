@@ -175,7 +175,23 @@ function App(){
    {visibleProjects.length?visibleProjects.map(x=><button className={'project-link '+(focusId===x.id?'active':'')} disabled={!!blocked} key={x.id} title={x.processing_state==='unprocessed'?'还没处理：点开分批处理':undefined} onClick={()=>{if(x.processing_state==='unprocessed'){setOpenBook(null);setStartFor(x.id)}else void action(()=>open(x.id))}}>{x.name}{x.processing_state==='unprocessed'&&<small> · 未处理 · 继续</small>}<span>↗</span></button>):<p className="muted">{showArchived?'没有归档工程。':'从一份短剧本开始。'}</p>}
    <div className="engine"><div className="section-label">声音引擎</div><strong>{config?.engine??'正在连接…'}</strong><p>{config?.ready?'已就绪 · 合成音频':'模型未就绪，请先完成本地设置'}</p></div></aside>
    <main><div className="main-scroll">
-    <div className="mobile-projects"><label>切换工程<select aria-label="切换工程" disabled={!!blocked} value={p?.id??''} onChange={e=>{if(e.target.value)void action(()=>open(e.target.value))}}><option value="">选择工程</option>{projects.map(x=><option key={x.id} value={x.id}>{x.archived?'[归档] ':''}{x.name}</option>)}</select></label></div>
+    <div className="mobile-projects"><label>切换工程<select aria-label="切换工程" disabled={!!blocked} value={openBook?'book:'+openBook:(p?.id??'')} onChange={e=>{const v=e.target.value;if(!v)return;if(v.startsWith('book:')){const id=v.slice(5);setRoleImporting(false);setImporting(false);setStartFor(null);setOpenBook(id);void api('/books/'+id).then((b:{title:string;revision?:number})=>setBookRevisions(x=>({...x,[id]:{title:b.title,revision:b.revision??0}}))).catch(()=>{})}else void action(()=>open(v))}}>
+     {/* 本人 2026-09-22 (手机上「大家都在一起，没个顺序」)：按主工程分组，章节按书里的顺序，散工程按最近改动，归档的放最后。 */}
+     <option value="">选择工程</option>
+     {(()=>{const live=projects.filter(x=>!x.archived);const {books,loose}=groupByBook(live);
+      const opened=(id:string)=>{try{return Number(localStorage.getItem('voxstage-book-opened-'+id))||0}catch{return 0}};
+      const entries=[...books.entries()].concat(emptyBooks.filter(e=>!books.has(e.id)).map(e=>[e.id,{title:e.title,chapters:[] as typeof live}] as [string,{title:string;chapters:typeof live}]))
+       .sort((a,b)=>Math.max(opened(b[0]),...b[1].chapters.map(c=>(c.updated_at??0)*1000))-Math.max(opened(a[0]),...a[1].chapters.map(c=>(c.updated_at??0)*1000)));
+      const archived=projects.filter(x=>x.archived);
+      return <>
+       {entries.map(([id,b])=><optgroup key={id} label={`《${b.title}》 ${b.chapters.length} 章`}>
+        <option value={'book:'+id}>打开主工程（章节 · 设置 · 导出）</option>
+        {b.chapters.map(c=><option key={c.id} value={c.id}>{c.book?.index?`${c.book.index}. `:''}{c.name}{c.processing_state==='unprocessed'?' · 未处理':''}</option>)}
+       </optgroup>)}
+       {loose.length>0&&<optgroup label="独立工程">{loose.slice().sort((a,b)=>(b.updated_at??0)-(a.updated_at??0)).map(x=><option key={x.id} value={x.id}>{x.name}{x.processing_state==='unprocessed'?' · 未处理':''}</option>)}</optgroup>}
+       {archived.length>0&&<optgroup label="已归档">{archived.map(x=><option key={x.id} value={x.id}>{x.name}</option>)}</optgroup>}
+      </>})()}
+     </select></label></div>
     <div aria-live="polite">{error&&!(marking||importing||(p&&!openBook&&!roleImporting))&&<div className="message error" role="alert">{error}<button onClick={()=>setError('')}>关闭</button></div>}{notice&&<div className="notice">{notice}</div>}</div>
     {/* 本人 2026-09-22: importing, the speaker review and a chapter's start page are pages of the middle column, not
         windows over it — the list on the left stays usable, so a review can be left for another chapter and resumed. */}
