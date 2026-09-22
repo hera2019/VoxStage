@@ -371,7 +371,10 @@ class RoleDraftEngine:
         key = uuid.uuid4().hex
         # 80 units × ~26 tokens each once the certain flag is in the answer:
         # 2,048 cut Kong Yiji's 68-unit answer off mid-JSON (本人 2026-09-15).
-        settings = {'temperature':0,'seed':260909,'max_tokens':limits['max_tokens'],'top_p':1,'frequency_penalty':0,'presence_penalty':0}
+        # Greedy by default. The consistency measurement (plan step 3) samples instead —
+        # at temperature 0 another seed changes nothing — through two environment overrides.
+        settings = {'temperature':float(os.environ.get('VOXSTAGE_ROLE_TEMPERATURE', 0)),'seed':int(os.environ.get('VOXSTAGE_ROLE_SEED', 260909)),
+                    'max_tokens':limits['max_tokens'],'top_p':1,'frequency_penalty':0,'presence_penalty':0}
         def request(path, payload=None, timeout=180):
             req = urllib.request.Request(f'http://127.0.0.1:{port}'+path,
                 data=None if payload is None else json.dumps(payload,ensure_ascii=False).encode(),
