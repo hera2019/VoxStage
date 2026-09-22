@@ -1,15 +1,17 @@
-# 数字写法与片段合并
+# Number forms and merging lines
 
-中文文字复核将可解析的整数数字写法按数值比较，中文难例样例中的“三百二 / 320”和“一千零八十 / 1080”也使用此规则。兼容项保留两种写法，标为“数字写法”；原稿和识别原文不被改写。不同数值仍作为差异显示。
+*[中文](number-and-merge-zh.md). English translation of Astra's note of 2026-09-11; the Chinese text is the original.*
 
-**数值相同不代表发音相同。**“一千八十”和“一千零八十”都会按 1080 比较，因此可能掩盖漏读“零”。兼容项不能替代试听。
+The Chinese content check compares integers it can parse by their value, so 三百二 and 320, or 一千零八十 and 1080 — both in the Chinese hard-case sample — are treated as the same. The equivalence keeps both forms and is labelled "number form"; neither the script nor the recogniser's text is rewritten. Different values are still shown as a difference.
 
-范围限于零到九千九百九十九的可解析整数；序号（如“第三”）、含万/亿的量级、混写、无法确定的串及小数等沿用原比较方式。英文不启用数字转换。识别器分块产生的空白沿用既有忽略规则，例如分行的“3 / 20”仍按数字串 320 比较。
+**The same value is not the same reading.** 一千八十 and 一千零八十 both compare as 1080, so a dropped 零 can be hidden. The equivalence is no substitute for listening.
 
-检查规则更新后，已有文字检查可能显示“需重查”；这不会让音频变成待生成，也不会自动确认声音质量。
+It covers parsable integers from zero to 九千九百九十九; ordinals (第三), magnitudes with 万 or 亿, mixed forms, strings that cannot be resolved and decimals are compared as before. English does not convert numbers. Spaces the recogniser inserts between chunks are ignored as before, so a 3 / 20 split across lines still compares as 320.
 
-自动分角色导入、原稿编辑并确认重新切分时，会合并相邻且角色、类型相同的片段，合并后不超过中文 60 字符或英文 240 字符。原文及来源位置保留，不跨角色或类型合并。
+After the check rules change, an existing content check may show "needs re-checking"; this does not mark the audio for regeneration and does not confirm its quality.
 
-已有工程在打开时不会自动重新切分。用户确认重新切分后，合并改变正文的句子需要重新生成；未变化的句子沿用原有音频，旧音频文件保留。重新切分界面会显示沿用与需重生成的句数。
+When a speaker draft is imported, or an edited script is re-cut after confirmation, adjacent lines with the same character and the same kind are merged, up to 60 Chinese or 240 English characters. The source text and its positions are kept; lines of different characters or kinds are never merged.
 
-最后更新：2026-09-11 · Astra
+An existing project is not re-cut when it is opened. When the person confirms a re-cut, lines whose text the merge changed need generating again; unchanged lines keep their audio, and old audio files are kept. The re-cut view shows how many lines are kept and how many need regenerating.
+
+Original: Astra, 2026-09-11 · English translation: Claude Hera, 2026-09-23

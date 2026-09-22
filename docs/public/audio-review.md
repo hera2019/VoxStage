@@ -1,95 +1,97 @@
-# 声音复核与局部节奏调整
+# Listening review and in-line timing
 
-检查点应来自实际问题，并记录样本与当前检测能力。自动标记是试听线索，不能替代人耳验收；没有标记不等于没有问题。
+*[中文](audio-review-zh.md). English translation of Astra's notes of 2026-09-09; the Chinese text is the original.*
 
-| 检查点 | 当前处理 | 局限与下一步 |
+Each check point should come from a problem actually heard, recorded with the sample and with what the current detection can and cannot do. An automatic mark is a lead for listening, not a substitute for the ear: no mark does not mean no problem.
+
+| Check point | What happens now | Limits and next step |
 | --- | --- | --- |
-| 漏字、多字、读错 | 本地回读后比较朗读文本，保留原识别文字 | 识别本身可能错；数字和多音字仍需复核 |
-| 中文同音字误报 | 带声调拼音与有限助词规则兼容 | 不是完整语法分析，保留具体兼容项 |
-| 句中不自然停顿 | 原音中至少 0.35 秒低能量区间标橙，可点选附近试听 | 逗号、换气和情感停顿也可能被标出；不自动删除 |
-| 前快后慢／前慢后快 | 用识别的粗略时间信息比较前后半段文字密度，差异足够大时标记 | 当前真实样本漏检，仍须人工复核；不是精确逐字对齐 |
-| 奇怪尾音、拖音 | 人工听稿检查点及问题标记，支持单句重做 | 目前没有可靠自动检测 |
-| 同一角色声音不一致 | 人工听稿检查点；已支持固定合成参考声线 | 尚未提供自动声音身份判定 |
+| Missing, extra or misread words | The take is transcribed on this machine and compared with the reading text; the transcript is kept as heard | The recogniser can be wrong itself; numbers and characters with several readings still need a listen |
+| False alarms on Chinese homophones | Toned pinyin and a small set of particle rules are accepted as equivalent | Not a grammar; each accepted equivalence is kept visible |
+| An unnatural pause inside a line | A low-energy stretch of at least 0.35 s in the take is marked orange and can be played around | Commas, breaths and expressive pauses may be marked too; nothing is removed automatically |
+| Fast first half, slow second (or the reverse) | The recogniser's rough timing compares the text density of the two halves and marks a large enough difference | Missed on the real sample so far, so it still needs a listen; not word-level alignment |
+| Odd endings, dragged syllables | A listening check point and an issue mark; one line can be redone | No reliable automatic detection yet |
+| One character sounding like two people | A listening check point; a fixed synthetic reference voice is supported | No automatic voice-identity judgement yet |
 
-后续发现问题时，保留原音版本、症状、位置、语言、调速设置、识别输出和能否复现。先加入已知问题清单，再以正例和正常反例验证检测规则；无法可靠检测的项目明确保留人工复核，不填假“通过”。样本保存在本机忽略目录，公开报告不得包含私人材料。
+When a new problem is found, keep the original take, the symptom, where it is, the language, the speed setting, the recogniser's output and whether it can be reproduced. Add it to the list of known problems first, then test any detection rule on examples that have the problem and on normal ones that do not. What cannot be detected reliably stays a listening task, never a fake "pass". Samples stay in an ignored folder on this machine; public reports may not contain private material.
 
-## 怎么调一句里的前后速度
+## Changing the speed within one line
 
-1. 选中已生成的一句，打开“声音时间线”。橙色是可疑停顿，蓝色是已保存的局部调速范围。
-2. 在原音波形上拖选，或输入开始、结束秒数。尽量选在词语之间或停顿内，避免在发音中途设置边界。
-3. 用“选区速度”滑块设置 0.5–2.0 倍，点击“应用选区速度”。建议先小幅改变；极端速度可能失真。
-4. “试听调整后整句”检查成品，“对照原音”播放原始版本；点击疑点按钮只播放原音附近。
-5. 已保存的范围点“调整”后可更新；也可移除、清除全部局部调速或撤销。
+1. Select a generated line and open the timeline. Orange marks a suspect pause; blue marks a saved local speed range.
+2. Drag over the original waveform, or type start and end seconds. Put the edges between words or inside a pause, not in the middle of a sound.
+3. Set the range speed (0.5–2.0×) and apply it. Change a little at a time; extreme speeds distort.
+4. Play the adjusted line to check the result, or the original to compare; a suspect-point button plays only the original around it.
+5. A saved range can be adjusted, removed, all ranges cleared, or the change undone.
 
-局部倍速是绝对值。例如作品 1.1 倍、后半句 1.35 倍，后半句按 1.35 倍播放，不相乘。未单独调速的部分沿用作品速度。选区至少 0.2 秒、不可重叠，每句最多 20 个；范围始终绑定原音时间和版本。
+A local speed is absolute: with the work at 1.1× and the second half of a line at 1.35×, the second half plays at 1.35×, not 1.1 × 1.35. Parts without their own speed follow the work's. A range is at least 0.2 s, ranges cannot overlap, and a line holds at most 20; a range is always bound to the original take's timing and version.
 
-试听与导出使用同一处理流程，保持原音文件和固定声线参考。重新生成后旧选区停用，需为新音频重新选区；撤销可恢复对应设置。字幕和导出时间轴按实际成品长度重建，选区时长提示只作估计。
+Preview and export go through the same processing and keep the original file and any fixed reference voice. After a new take is generated the old ranges are switched off and the new audio needs its own; undo brings the matching settings back. Subtitles and the exported timeline are rebuilt from the real length of the result; the length shown while selecting is an estimate.
 
-## 本轮真实证据与已知限制
+## Evidence from this round and known limits
 
-2026-09-09：此前“不少”附近的旧音频低能量区间 5.79–6.19 秒被检出。当前原音有多处较长停顿，但不能由波形单独判定哪些违反句意。
+2026-09-09: in the older take, the low-energy stretch at 5.79–6.19 s near 不少 was detected. The current take has several long pauses, but the waveform alone cannot tell which of them go against the sense of the sentence.
 
-本人反馈 1.2 倍整体可用、仍有前快后慢。当前前后半段文字密度估计比值约 1.02，未触发 1.5 的初始阈值。这是已知漏检，不能用该估计反驳本人听感，也不据一个例子随意调低阈值制造“检出”。尾音及声线仍由人工检查。
+The author found 1.2× overall usable, with the first half still faster than the second. The estimated density ratio of the two halves is about 1.02, below the initial threshold of 1.5. This is a known miss: the estimate is not used to argue with what the author heard, and one example is no reason to lower the threshold to manufacture a detection. Endings and voice consistency stay with the ear.
 
-独立样例“句内节奏调整 · 试用”将前 5.88 秒设为 1.1 倍，其后 1.35 倍；切点位于原音的低能量区间。原音实际 12.0 秒，成品实际约 9.893 秒。该设置是供本人比较的候选，尚无本人听感验收。
+A separate sample line was set to 1.1× for its first 5.88 s and 1.35× after, cut inside a low-energy stretch; the original is 12.0 s and the result about 9.893 s. It is a candidate for the author to compare, not yet accepted by ear.
 
-证据：results/timeline-integration、timeline-english、timeline-browser、workflow-checks（各有 Markdown/JSON）。
+Evidence: results/timeline-integration, timeline-english, timeline-browser, workflow-checks (each in Markdown and JSON).
 
-最后更新：2026-09-09 · Astra
-
-
-## 独立精细剪辑（2026-09-09）
-
-点“打开精细剪辑”进入全屏视图，“返回工作台”或 Esc 退出。播放／暂停旁显示原音坐标，红色播放线跟随声音；点击波形定位，空格可在波形获得焦点时播放／暂停，方向键以 0.05 秒移动定位。变速时仍对应原音，剪切时跨过已移除区域。
-
-拖动选区两端改变范围，拖中间整体移动范围。查看比例支持 1/2/4/8 倍放大，可“放大选区”并平移查看，也可输入起止秒数。缩放只影响视图；范围选择后，调速需要点击应用。
-
-“剪去选区”仅从成品移除选中范围，原音不改；红色显示已剪去的范围。可恢复某一段、恢复全部剪切，或撤销／重做。剪切至少 0.02 秒，整句至少保留 0.2 秒且不能只剩无声输出；不能留下无法处理的极短碎片。重新生成后旧调速和剪切停用。
-
-剪切可能移除字音，字幕正文和原音文字检查均不会自动改写；请重新核对成品内容与字幕。当前是单句剪辑，没有多轨混音或片段重排。真实页面和音频证据见 results/editor-integration.md/json。
-
-最后更新：2026-09-09 · Astra
+Original: Astra, 2026-09-09
 
 
-## 更新：以独立区块直接剪辑（2026-09-09）
+## Fine editing in its own view (2026-09-09)
 
-主界面只保留整段语速和“打开精细剪辑”，原内嵌选区编辑已被独立区块界面替代。旧剪切和调速可以直接打开；首次区块操作才保存新区块格式，原音不变，历史仍可撤销。
+"Open fine editing" enters a full-screen view; "back to the workspace" or Esc leaves it. Play/pause shows the position in the original; a red playhead follows the sound. Click the waveform to place it; with the waveform focused, Space plays or pauses and the arrow keys move by 0.05 s. With a speed change the playhead still refers to the original; across a cut it skips the removed part.
 
-- **拖区块中间**：手形拖动调整顺序，相邻区块自动接上。
-- **拖左右边缘**：改变整个区块时长，全部源内容保留；拉长变慢、缩短变快，后面的时间线随之变化。0.5–2.0 倍，松手后处理并保存。
-- **切割线**：点击时间线定位，或输入成品秒数，然后点“在播放线切开”；分成两个独立区块。
-- **删除与恢复**：选中区块后删除；撤销/重做恢复。需要剪掉句中一小段时，先在两端切开，再删中间区块。
-- **保存**：拖动松手、切割、删除和前移/后移后自动保存；等待出现“已保存到本机”。失败会显示原因，之前的版本保留。查看缩放、定位播放线和选择区块本身不修改声音。
+Drag the ends of a range to resize it, the middle to move it. The view zooms 1/2/4/8×, can zoom to the range and pan, and accepts typed start and end seconds. Zooming changes only the view; a speed change on a range needs to be applied.
 
-时间线现在以成品秒数显示。拖动中的宽度是估计，保存后刷新为真实音频时长；切割可能让音频处理窗口略有变化。薄蓝线是视觉边缘，透明命中区域在各自区块内部，不覆盖相邻区块。播放成品与对照原音明确分开；编辑后试听使用成品。
+"Cut the range" removes it from the result only; the original is not changed, and cut ranges show in red. One cut or all of them can be restored, or undone and redone. A cut is at least 0.02 s; a line keeps at least 0.2 s and cannot be left as silence only, and no unprocessable splinter may be left. A new take switches old speed ranges and cuts off.
 
-当前是单句、单轨、自动衔接的编辑器，不能自由叠放、多轨混音或编辑视频。切割、删除、伸缩和重排在网页上已实际验证；极端变速质量仍受音频算法限制。成品较长停顿可在“成品复核线索”定位试听，尾音和声音一致性仍需人工复核。
+A cut can remove sounds of words; the subtitle text and the check against the original text are not rewritten, so check the result and its subtitles again. This is single-line editing, without multitrack mixing or clip reordering. Page and audio evidence: results/editor-integration.md/json.
 
-真实证据见 results/blocks-integration.md/json。本人确认此前剪切成功；此次速度无效的精确旧操作未复现，不推定根因。新版以真实输出时长变化验证生效。
-
-最后更新：2026-09-09 · Astra
+Original: Astra, 2026-09-09
 
 
-## 时间尺与旧剪辑兼容修复（2026-09-09）
+## Update: editing with blocks (2026-09-09)
 
-时间刻度移至波形上方，下方为原生横向滚动条。修复旧速度边界紧贴剪切边界产生的 5 毫秒碎片，避免整条时间线保存失败；相连碎片并入邻块，未剪内容保留。保存完成时同步更新区块与新音频映射，避免短暂回弹。版本冲突可用“重新载入已保存版本”恢复，随后重试操作。
+The main view keeps only the whole-line speed and the entry to fine editing; the earlier in-place range editing is replaced by the blocks view. Old cuts and speed ranges open directly; the new block format is saved only on the first block edit, the original is unchanged and history can still be undone.
 
-Chrome 和内置浏览器均已实际验证拖边缘、切割、删除、滚动；Chrome 刷新后修改保留。112 项自动检查通过，实际导出对应句的 PCM 与预览一致。完整证据见 results/browser-editor-fixes.md 与同名 JSON。孤立且不足 20 毫秒的小片仍受最短区块限制，不会静默丢弃。
+- **Drag the middle of a block** to reorder; neighbours close up automatically.
+- **Drag a block's edge** to change its duration with all of its content kept: longer is slower, shorter is faster, and the rest of the timeline moves with it. 0.5–2.0×, processed and saved on release.
+- **Split**: place the playhead by clicking or typing the result's seconds, then split there into two blocks.
+- **Delete and restore**: delete a selected block; undo and redo restore it. To cut a short stretch out of a line, split at both ends and delete the middle block.
+- **Saving**: releasing a drag, splitting, deleting and moving a block save automatically; wait for "saved on this machine". A failure says why and the previous version stays. Zooming, placing the playhead and selecting a block do not change the sound.
 
-最后更新：2026-09-09 · Astra
+The timeline shows seconds of the result. Widths while dragging are estimates and are replaced by the real duration after saving; a split can shift the audio processing window slightly. The thin blue line is the visual edge; each block's hit area lies inside it and does not cover the neighbour. Playing the result and playing the original are kept apart; after an edit, preview plays the result.
+
+This is a single-line, single-track editor with blocks that butt together: no free placement, no multitrack mixing, no video. Splitting, deleting, stretching and reordering were exercised on the page; extreme speed changes are still limited by the audio algorithm. A long pause in the result can be found and played from the result's review leads; endings and voice consistency still need a listen.
+
+Evidence: results/blocks-integration.md/json. The author confirmed that the earlier cut worked; the exact earlier operation in which a speed change did not take effect was not reproduced, and no cause is assumed. The new version is verified by a real change in output duration.
+
+Original: Astra, 2026-09-09
 
 
-## 精细剪辑工作区与快捷操作（2026-09-09）
+## Time ruler and old-edit compatibility fixes (2026-09-09)
 
-播放、回到开头、原音对照、撤销和重做集中在波形下方一排。上方显示当前句和角色，缩放与刻度靠近波形；下方集中区块操作与可折叠的检查说明。窄屏工具条可横向滚动。
+The time scale moved above the waveform, with a native horizontal scrollbar below. A 5 ms splinter left where an old speed edge met a cut edge made the whole timeline fail to save; it is fixed — adjoining splinters join their neighbour and nothing uncut is lost. When a save completes the blocks and the new audio mapping update together, so nothing snaps back. A version conflict is recovered with "reload the saved version" and then retrying.
 
-- 区块下拉框可快速选中难以点击的小片段，“放大选中区块”便于细调。
-- 区块速度支持直接输入 0.5–2.0 倍，点“应用速度”或按 Enter 保存；也可拖边缘。
-- “循环试听”重复当前区块，点“停止循环”结束；关闭精细剪辑也会停止循环。
-- 时间线快捷键：空格播放/暂停，← → 移动 0.1 秒，Shift + 方向键移动 1 秒，S 切割，Delete 删除。⌘Z 撤销、⌘⇧Z 重做，Windows 使用 Ctrl。输入框不触发这些剪辑操作。
-- “导出这句 WAV”下载当前已保存成品；处理期间不可下载旧版本。
-- 主界面“复制工程”保留当前稿件、声音、固定声线与剪辑，创建独立副本，不再生成声音。副本从当前状态开始，撤销历史清空；这不是异地备份。
+Dragging edges, splitting, deleting and scrolling were verified in Chrome and in the built-in browser; in Chrome the changes survive a reload. 112 automatic checks passed, and the exported PCM of the line matches the preview. Full evidence: results/browser-editor-fixes.md and the JSON beside it. An isolated piece shorter than 20 ms is still bound by the minimum block length and is never dropped silently.
 
-验证工程为“剪辑工作区 · 试用”。自动回归 116 项通过，Chrome 与内置浏览器已进行实际操作测试，结果见 results/editor-workspace.md/json。音质仍以本人试听为准。
+Original: Astra, 2026-09-09
 
-最后更新：2026-09-09 · Astra
+
+## Fine-editing workspace and shortcuts (2026-09-09)
+
+Play, back to the start, compare with the original, undo and redo sit in one row under the waveform. The current line and its character are shown above, with zoom and scale beside the waveform; block actions and the collapsible notes on checks are below. On a narrow screen the toolbar scrolls sideways.
+
+- A block list selects small blocks that are hard to click; "zoom to the selected block" helps fine adjustment.
+- A block's speed can be typed (0.5–2.0×) and saved with "apply speed" or Enter, or set by dragging its edge.
+- "Loop" repeats the current block until stopped; closing fine editing stops it too.
+- Timeline shortcuts: Space play/pause, ← → move 0.1 s, Shift + arrows move 1 s, S split, Delete delete; ⌘Z undo, ⌘⇧Z redo (Ctrl on Windows). They do not fire while typing in a field.
+- "Export this line as WAV" downloads the saved result; an old version cannot be downloaded while processing.
+- "Copy project" in the main view keeps the script, voices, fixed voices and edits as an independent copy without generating anything again. The copy starts from the current state with an empty undo history; it is not an off-site backup.
+
+The project used for verification was the fine-editing trial. 116 automatic regression checks passed and the actions were exercised in Chrome and the built-in browser; results in results/editor-workspace.md/json. Sound quality is still judged by the author's ear.
+
+Original: Astra, 2026-09-09 · English translation: Claude Hera, 2026-09-23

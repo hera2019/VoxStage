@@ -71,41 +71,41 @@ Chinese comparison uses pypinyin 0.55.0 tone-number readings and a versioned gra
 最后更新：2026-09-09 · Astra
 
 
-## 单句局部节奏与复核线索
+## Local timing within one line and review leads
 
-新增 segment.tempo_edit：source_fingerprint、audio_sha256、audio_stat、按原音秒数排序的不重叠 regions(start/end/speed)。局部速度覆盖作品速度，范围 0.5–2.0，默认无覆盖。设置进入既有撤销历史但不改变 TTS 指纹；换生成版本后旧选区停用。试听缓存身份包含源 SHA、生成指纹、有效编辑、全局速度及处理版本，避免同内容新 take 误用旧变速缓存。
+`segment.tempo_edit` holds `source_fingerprint`, `audio_sha256`, `audio_stat` and non-overlapping `regions` (start / end / speed) ordered by seconds of the original take. A local speed overrides the work's speed, 0.5–2.0, with no override by default. The setting enters the ordinary undo history but does not change the TTS fingerprint; a new take switches the old ranges off. The preview cache identity includes the source SHA, the generation fingerprint, the effective edit, the global speed and the processing version, so a new take with the same content never reuses an old speed-changed cache.
 
-prepare_segment 是预览和导出的共同入口；分段 atempo 后，接缝添加约 3 ms 渐变减少不连续，不删除原音样本。合并结果再次计算发声边界，导出记录实际源音→成品映射。映射用于选区试听位置近似定位，不构成逐字对齐。
+`prepare_segment` is the one entry for preview and export. After per-range `atempo`, a fade of about 3 ms is added at each seam to reduce discontinuities; no source samples are removed. The joined result's voiced edges are measured again, and the export records the real mapping from source to result. The mapping is used to place range previews approximately; it is not word-level alignment.
 
-rhythm_check 与 content_check 独立保存；识别失败仍保留成功的声学停顿分析，重做/改朗读文本后旧分析失效。较长低能量标记使用 10 ms 帧、相对 RMS 阈值及 0.35 s 最短时长；排除首尾留白。ASR 额外返回粗略文本时间，初始规则在至少 4 s、两半各至少 6 个文字单位时，按两半文字密度比≥1.5 提示语速变化。未校准，不可作为质量阈值；当前真实样本已漏检。
+`rhythm_check` and `content_check` are stored separately; when recognition fails, a successful acoustic pause analysis is kept, and redoing a line or changing its reading text invalidates the old analysis. Long low-energy marks use 10 ms frames, a relative RMS threshold and a minimum of 0.35 s, excluding leading and trailing silence. The recogniser also returns rough text timing; the initial rule, for lines of at least 4 s with at least six text units in each half, flags a speed change when the density ratio of the halves is ≥ 1.5. It is uncalibrated, not a quality threshold, and it has already missed the real sample.
 
-导出报告带原音文字/节奏检查、人工问题及局部变速状态。timeline.json 另带最终各句音频的低能量检测，时间为该句成品秒数；语速变化仍须试听。波形读取无需额外模型。所有处理本机执行。
+The export report carries the content and rhythm checks of the original take, the person's issue marks and the local speed state. `timeline.json` also carries low-energy detection on each line's final audio, in seconds of the result; speed changes still need a listen. Reading the waveform needs no extra model. All processing runs on this machine.
 
-最后更新：2026-09-09 · Astra
-
-
-## 非破坏性剪切与编辑器播放线
-
-沿用 tempo_edit，新增可选 cuts 数组（原音 start/end 秒数）。空数组兼容旧工程；旧客户端未提供 cuts 时保留当前有效剪切。剪切与速度覆盖允许交叉，由统一源边界划分保留音频。相同速率只合并源上连续的范围，不能跨剪切合并。保存前实际验证处理输出，拒绝剪空、只剩无声和极短碎片，失败不推进版本。处理版本 local-editor-v3 进入试听缓存。
-
-播放线将音频 currentTime 反向映射到原音坐标，分段边界采用后段优先以跳过剪切空洞；原音对照使用原音时间。映射函数有实际执行的前端测试。预览/导出共用处理函数；字幕时间重算，字幕正文不自动删字。导出报告标明 edited_content_requires_review，避免把原音文字匹配当作剪后成品验收。
-
-精细剪辑为同一网页中的独立全屏视图，复用工程版本和播放器；避免多窗口状态冲突。源波形增加至最多 3200 个峰值，SVG 路径缓存，播放线单独随帧更新。
-
-最后更新：2026-09-09 · Astra
+Original: Astra, 2026-09-09
 
 
-## 有序区块与成品时间轴（替代旧选区交互）
+## Non-destructive cuts and the editor's playhead
 
-新增 tempo_edit.clips（有序数组）：id、source_start、source_end、speed（null 继承作品速度）。仍以原音 SHA、指纹和文件状态绑定；旧 cuts/regions 只读转换为区块，首次编辑才写入 clips。可撤销回到旧格式。新区块接口与旧 tempo 接口分开，已有 clips 时拒绝旧选区写入，避免破坏顺序。
+`tempo_edit` gains an optional `cuts` array (start / end in seconds of the original). An empty array is compatible with old projects; an older client that sends no `cuts` keeps the effective cuts. Cuts and speed overrides may overlap; one set of source boundaries divides the audio that is kept. Ranges at the same speed merge only when contiguous in the source, never across a cut. Before saving, the processing is actually run and verified; an edit that empties the line, leaves silence only or leaves a tiny splinter is refused and the version is not advanced. Processing version `local-editor-v3` enters the preview cache.
 
-数组顺序决定成品顺序，不按原音坐标排序。源范围不能重复，保留 1–40 块，每块原音至少 0.02 秒，整句源内容至少 0.2 秒。独立速率为 0.5–2.0 倍，保存前校验和真实处理，失败不提交版本。render_clips 与既有 prepare_segment 相接，预览和导出保持一致。缓存版本 ordered-clips-v4，映射增加 clip_id。
+The playhead maps the audio's `currentTime` back to source coordinates; at a boundary the later segment wins, so the gap of a cut is skipped. Comparing with the original uses the original's time. The mapping function has front-end tests that actually execute. Preview and export share the processing function; subtitle timing is recomputed, subtitle text is never trimmed automatically, and the export report marks `edited_content_requires_review` so that a match against the original text is never taken as acceptance of the cut result.
 
-编辑器坐标改为成品时间：移动对应重排，边缘伸缩按原音长度/目标时长计算速度并限制范围。拖动坐标锁定按下时的视图比例，避免实时宽度变化反馈导致失控。拖动中的波形按现有成品形状近似拉伸；保存后加载真实处理后波形和时长。播放线直接使用成品 currentTime，不再借源顺序反查；原音对照单独标注。
+Fine editing is a separate full-screen view in the same page, reusing the project version and the player, so there is no state conflict between windows. The source waveform has up to 3200 peaks, the SVG path is cached, and the playhead updates on its own each frame.
 
-主界面只放入口。剪辑打开后读取方案与预览，显示正在准备/正在保存/已保存/失败状态。新版保留成品停顿线索。当前单轨磁性排列，无任意空隙、重叠混音或视频。
+Original: Astra, 2026-09-09
 
-最后更新：2026-09-09 · Astra
+
+## Ordered blocks and a result timeline (replacing the earlier range interaction)
+
+`tempo_edit.clips` is an ordered array: `id`, `source_start`, `source_end`, `speed` (null inherits the work's speed). It stays bound to the original's SHA, fingerprint and file state; old `cuts` / `regions` are converted to blocks read-only and `clips` is written only on the first edit, which can be undone back to the old format. The block interface is separate from the old tempo interface, which refuses writes once `clips` exists, so the order cannot be broken.
+
+Array order is output order, not source order. Source ranges may not repeat; 1–40 blocks, each at least 0.02 s of source, the whole line at least 0.2 s of source. Each block's speed is 0.5–2.0, validated and actually processed before saving; a failure does not commit a version. `render_clips` joins the existing `prepare_segment`, so preview and export stay the same. Cache version `ordered-clips-v4`; the mapping gains `clip_id`.
+
+Editor coordinates are seconds of the result: moving a block reorders, and stretching an edge sets the speed as source length over target duration, within limits. Drag coordinates lock the zoom at the moment of pressing, so a live width change cannot feed back into the drag. While dragging, the waveform is stretched approximately from the current result; after saving, the real processed waveform and duration load. The playhead uses the result's `currentTime` directly; comparing with the original is labelled separately.
+
+The main view holds only the entry. Opened, the editor reads the plan and the preview and shows preparing / saving / saved / failed. The result's pause leads are kept. It is a single magnetic track: no free gaps, no overlapping mix, no video.
+
+Original: Astra, 2026-09-09 · English translation: Claude Hera, 2026-09-23 · [中文原文](architecture-zh.md)
 
 
 ## Master books: one sub-project per chapter (2026-09-20 → 22)
