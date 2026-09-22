@@ -394,7 +394,7 @@ def speech_tag(before, after, mentions):
 _VERB_ALT = _VERB_ALT_ALL
 _GROUP = (r'(?:有的人?|旁人|他们|她们|众人|人们|大家伙?儿?|别人|别的人|其他人|其余的人|旁边的人|周围的人|那些人|这些人|一些人|'
           r'几个人|一群[^，。！？：；、]{0,4}?|大伙儿?|看客们?|人群|所有[^，。！？：；、]{0,6}?人|有几个人?)')
-_ONE = (r'(?:有人|有个人|有一个人|某人|那人|那个人|这人|一个人|一人|不知是?谁|有谁|一个声音|有个声音|'
+_ONE = (r'(?:有人|有个人|有一个人|某人|那人|那个人|这人|这个人|此人|来人|一个人|一人|不知是?谁|有谁|一个声音|有个声音|'
         r'一个[^，。！？：；、]{1,6}?(?:人|声音)|一位[^，。！？：；、]{1,4}?)')
 _ANON_TAG = re.compile(r'(?:^|[，。！？：；、])(?:(?P<group>' + _GROUP + r')|(?P<one>' + _ONE + r'))[^，。！？：；、]{0,8}?(?:' + _VERB_ALT + r')[：:，,]?$')
 _ANON_HEAD = re.compile(r'^(?:(?P<group>' + _GROUP + r')|(?P<one>' + _ONE + r'))[^，。！？：；、]{0,8}?(?:' + _VERB_ALT + ')')
@@ -425,9 +425,16 @@ def anonymous_tag(before, after='', with_phrase=False):
     return None
 
 
-PRONOUNS = {'他', '她', '它', '我', '你', '您', '他们', '她们', '我们', '你们', '大家', '众人', '有人', '那人', '此人', '一人', '男人', '女人',
-            '那个', '这个', '对方', '那位', '这位', '两人', '几人', '一个'}
-_TAG_TAIL = re.compile(r'(?:^|[，。！？：；、])([^，。！？：；、“”"\s]{1,4}?)(' + _VERB_ALT_ALL + r')[：:，,]?$')
+PRONOUNS = {'他', '她', '它', '我', '你', '您', '他们', '她们', '我们', '你们', '大家', '众人', '有人', '那人', '此人', '这人', '一人', '男人', '女人',
+            '那个', '这个', '对方', '那位', '这位', '两人', '几人', '一个', '那个人', '这个人', '来人', '此人'}
+
+# Manner words a tag puts before its verb — 陈小雪苦笑道, 王伯喃喃道, 她缓缓道,
+# 微笑着说 — are not part of the name (本人 2026-09-22: 缓缓, 喃喃, 微笑着 and
+# 王伯苦 had become people). A candidate loses them from its tail; one
+# that was nothing but manner is no name.
+_MANNER_TAIL = re.compile(r'(?:苦笑|冷笑|微笑|干笑|大笑|轻笑|讪笑|狞笑|惨笑|嗤笑|嘿嘿|哈哈|嘻嘻|呵呵|缓缓|喃喃|淡淡|轻轻|慢慢|冷冷|悠悠|徐徐|幽幽|微微|默默|暗暗|连连|急急|忙忙|'
+                          r'沉声|低声|高声|大声|小声|轻声|厉声|朗声|柔声|怒|笑|哭|叹|点头|摇头|皱眉|沉吟|喘息|苦|冷|微|干|轻|讪|狞|急|忙)?(?:着|地|了)?$')
+_TAG_TAIL = re.compile(r'(?:^|[，。！？：；、])([^，。！？：；、“”"\s]{1,7}?)(' + _VERB_ALT_ALL + r')[：:，,]?$')   # room for a manner word after the name (阿宁冷冷地说)
 
 
 FUNCTION_STARTS = ('又', '便', '就', '才', '也', '都', '却', '忙', '正', '只', '还', '再', '一', '有的', '有人', '别人', '旁人', '对', '向', '朝', '跟', '和',
@@ -456,6 +463,13 @@ def names_from_tags(narrations, whole_text=''):
         # 阿宁又说 / 陈小雪便道: the adverb between the name and the verb is not part of the name.
         while len(name) >= 3 and name[-1] in '又便就也都才却忙再还正只先':
             name = name[:-1]
+        stripped = _MANNER_TAIL.sub('', name)
+        if stripped != name:
+            name = stripped
+            while len(name) >= 3 and name[-1] in '又便就也都才却忙再还正只先':
+                name = name[:-1]
+        if len(name) > 4:
+            continue                         # a clause, not a name (陈小雪看着窗外说)
         if len(name) < 2 or name in SPEECH_VERBS or any(v in name for v in ('说', '道', '问', '答')):
             continue
         if name in PRONOUNS or any(name.startswith(pro) and len(name) - len(pro) <= 1 for pro in PRONOUNS):

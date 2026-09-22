@@ -345,6 +345,10 @@ class EmptyBookRequest(BaseModel):
     title: str = Field(min_length=1, max_length=120)
     language: Literal['zh','en'] = 'zh'
 
+class CleanupRequest(BaseModel):
+    revision: int = Field(ge=0)
+    include_undo: bool = False                                     # also the takes only undo/redo still point at; the stack is then cleared
+
 class BookArchiveRequest(BaseModel):
     revision: int = Field(ge=0)
     archived: bool = True
@@ -1382,7 +1386,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 name_present = bool(english_support) if body.language == 'en' else speaker in body.script
                 if label['kind'] == 'dialogue' and speaker.upper() not in ('', 'UNKNOWN', 'NARRATOR') and (
                         (not name_present and speaker not in known_names) or len(speaker) > (80 if body.language == 'en' else 12) or any(c in speaker for c in '，。！？～“”"：')
-                        or speaker in habits.NOT_NAMES):
+                        or speaker in habits.NOT_NAMES or speaker in habits.PRONOUNS):
                     # Not a name the story uses — invented, translated, or the
                     # line itself pasted into the speaker field.
                     return {'kind': 'dialogue', 'speaker': 'UNKNOWN', 'suggested': speaker[:20]}
@@ -3127,6 +3131,52 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
     def delete_template(template_id: str):
         templates.delete(template_id)
         return {'deleted': template_id}
+
+    @app.get('/api/projects/{project_id}/cleanup')
+    def cleanup_preview(project_id: str):
+        """What the project folder holds that nothing needs: takes no line uses
+        (and those only undo points at), audition previews, export batches older
+        than the latest, check work-dirs, stray files. Read-only."""
+        from . import cleanup
+        with store.lock:
+            return cleanup.plan(store.read(project_id), store.directory(project_id))
+
+    @app.post('/api/projects/{project_id}/cleanup')
+    def cleanup_project(project_id: str, body: CleanupRequest):
+        from . import cleanup
+        with store.lock:
+            p = store.read(project_id)
+            if p['revision'] != body.revision:
+                raise RuntimeError('工程已改变，请刷新后再清理。')
+            if p.get('job', {}).get('status') in ('queued', 'running'):
+                raise RuntimeError('工程正在处理，等它完成再清理。')
+            result = cleanup.apply(p, store.directory(project_id), include_undo=body.include_undo)
+            if result['undo_cleared']:
+                p['revision'] += 1; store.write(p)
+            result['revision'] = p['revision']
+            return result
+
+    @app.post('/api/master-books/{book_id}/cleanup')
+    def cleanup_master_book(book_id: str, body: CleanupRequest):
+        """Every chapter of the book, the same way; `revision` is the book's."""
+        from . import cleanup
+        with store.lock:
+            book = books.get(book_id)
+            if book.get('revision', 0) != body.revision:
+                raise RuntimeError('主工程已改变，请刷新后再清理。')
+            freed, chapters = 0, []
+            for member_id in book.get('members', []):
+                try:
+                    p = store.read(member_id)
+                except (OSError, ValueError, KeyError):
+                    continue
+                if p.get('job', {}).get('status') in ('queued', 'running'):
+                    raise RuntimeError('有章节正在处理，等它完成再清理。')
+                result = cleanup.apply(p, store.directory(member_id), include_undo=body.include_undo)
+                if result['undo_cleared']:
+                    p['revision'] += 1; store.write(p)
+                freed += result['freed_bytes']; chapters.append({'project_id': member_id, 'freed_bytes': result['freed_bytes']})
+            return {'book_id': book_id, 'freed_bytes': freed, 'chapters': chapters}
 
     @app.delete('/api/projects/{project_id}')
     def delete_project(project_id: str, revision: int):

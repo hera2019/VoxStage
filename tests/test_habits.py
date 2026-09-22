@@ -654,3 +654,14 @@ def test_a_short_bare_quoted_word_inside_prose_is_cited_not_spoken():
     assert not habits.quoted_citation('“好”', '他抬头', '，王伯说。')
     assert not habits.quoted_citation('“老Q”', '\n\n', '，赵太爷怯怯的迎着低声的叫。')
     assert not habits.quoted_citation('“过瘾！”', '他觉得很', '。')
+
+
+def test_manner_words_in_a_tag_are_not_part_of_the_name_and_pronouns_are_not_names():
+    """本人 2026-09-22: 缓缓, 喃喃, 微笑着 and a name with 苦 glued on (from
+    X苦笑道) had become characters. The word before 道/说 loses its manner
+    tail; a tag that was nothing but manner names nobody; 这人/那人 are
+    stand-ins, never names."""
+    from runtime import habits
+    tags = ['陈小雪苦笑道：', '，微笑着说：', '她缓缓道：', '王伯喃喃道：', '这人道：', '阿宁冷冷地说：', '陈小雪笑着说：', '王伯点头道：', '阿宁哈哈笑道：', '缓缓道：', '陈小雪看着窗外说：', '赵太爷说：']
+    assert habits.names_from_tags(tags) == ['陈小雪', '王伯', '阿宁', '赵太爷']
+    assert '这人' in habits.PRONOUNS and habits.anonymous_tag('这人道：') == habits.STAND_INS['one']
