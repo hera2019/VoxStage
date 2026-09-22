@@ -176,18 +176,19 @@ function App(){
    <div className="engine"><div className="section-label">声音引擎</div><strong>{config?.engine??'正在连接…'}</strong><p>{config?.ready?'已就绪 · 合成音频':'模型未就绪，请先完成本地设置'}</p></div></aside>
    <main><div className="main-scroll">
     <div className="mobile-projects"><label>切换工程<select aria-label="切换工程" disabled={!!blocked} value={openBook?'book:'+openBook:(p?.id??'')} onChange={e=>{const v=e.target.value;if(!v)return;if(v.startsWith('book:')){const id=v.slice(5);setRoleImporting(false);setImporting(false);setStartFor(null);setOpenBook(id);void api('/books/'+id).then((b:{title:string;revision?:number})=>setBookRevisions(x=>({...x,[id]:{title:b.title,revision:b.revision??0}}))).catch(()=>{})}else void action(()=>open(v))}}>
-     {/* 本人 2026-09-22 (手机上「大家都在一起，没个顺序」)：按主工程分组，章节按书里的顺序，散工程按最近改动，归档的放最后。 */}
+     {/* 本人 2026-09-22/23 (手机上「大家都在一起，没个顺序」「网络小说 169 章，没有折叠，要命了」)：
+         a native list cannot fold, so a book is one entry that opens its workspace (the chapters are listed there);
+         the chapter being worked on is shown on its own at the top; loose projects by latest change; archived last. */}
      <option value="">选择工程</option>
      {(()=>{const live=projects.filter(x=>!x.archived);const {books,loose}=groupByBook(live);
       const opened=(id:string)=>{try{return Number(localStorage.getItem('voxstage-book-opened-'+id))||0}catch{return 0}};
       const entries=[...books.entries()].concat(emptyBooks.filter(e=>!books.has(e.id)).map(e=>[e.id,{title:e.title,chapters:[] as typeof live}] as [string,{title:string;chapters:typeof live}]))
        .sort((a,b)=>Math.max(opened(b[0]),...b[1].chapters.map(c=>(c.updated_at??0)*1000))-Math.max(opened(a[0]),...a[1].chapters.map(c=>(c.updated_at??0)*1000)));
       const archived=projects.filter(x=>x.archived);
+      const here=p&&p.book?.id&&books.has(p.book.id)?p:null;
       return <>
-       {entries.map(([id,b])=><optgroup key={id} label={`《${b.title}》 ${b.chapters.length} 章`}>
-        <option value={'book:'+id}>打开主工程（章节 · 设置 · 导出）</option>
-        {b.chapters.map(c=><option key={c.id} value={c.id}>{c.book?.index?`${c.book.index}. `:''}{c.name}{c.processing_state==='unprocessed'?' · 未处理':''}</option>)}
-       </optgroup>)}
+       {here&&!openBook&&<option value={here.id}>正在看：《{here.book?.title}》{here.book?.index?`第 ${here.book.index} 章`:''}</option>}
+       {entries.length>0&&<optgroup label="主工程（打开后在章节页选章）">{entries.map(([id,b])=><option key={id} value={'book:'+id}>《{b.title}》 · {b.chapters.length} 章{b.chapters.some(c=>c.processing_state==='unprocessed')?`，未处理 ${b.chapters.filter(c=>c.processing_state==='unprocessed').length}`:''}</option>)}</optgroup>}
        {loose.length>0&&<optgroup label="独立工程">{loose.slice().sort((a,b)=>(b.updated_at??0)-(a.updated_at??0)).map(x=><option key={x.id} value={x.id}>{x.name}{x.processing_state==='unprocessed'?' · 未处理':''}</option>)}</optgroup>}
        {archived.length>0&&<optgroup label="已归档">{archived.map(x=><option key={x.id} value={x.id}>{x.name}</option>)}</optgroup>}
       </>})()}

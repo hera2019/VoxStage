@@ -13,6 +13,8 @@ type Props={bookId:string;title:string;revision:number;chapters:Listed[];loose:L
 const PAGES:[string,string][]=[['chapters','章节'],['settings','设置'],['structure','结构'],['export','导出']];
 
 export function BookWorkspace({bookId,title,revision,chapters,loose,current,busy,request,presetModels,cloneModels,voiceName,onOpenChapter,onContinue,onChapterSettings,onRenamed,onChanged,onDelete,onDeleteChapter,archived,onArchive,onNewChapter}:Props){
+ // A long book (本人 2026-09-23: 网络小说 169 章): find a chapter by its number or words of its title, or show only what is left to process.
+ const [query,setQuery]=useState('');const [onlyTodo,setOnlyTodo]=useState(false);
  const [page,setPage]=useState('chapters');const [name,setName]=useState(title);const [error,setError]=useState('');
  const rename=async()=>{const t=name.trim();if(!t||t===title)return;try{const r=await request(`/master-books/${bookId}`,'PATCH',{revision,title:t});onRenamed(r.title,r.revision)}catch(e){setError((e as Error).message);setName(title)}};
  const done=chapters.filter(c=>c.processing_state!=='unprocessed').length;
@@ -21,7 +23,8 @@ export function BookWorkspace({bookId,title,revision,chapters,loose,current,busy
    <input className="book-title" aria-label="主工程名称" value={name} maxLength={120} onChange={e=>setName(e.target.value)} onBlur={()=>void rename()} onKeyDown={e=>{if(e.key==='Enter')(e.target as HTMLInputElement).blur()}}/>
    {error&&<p role="alert" className="line-error">{error}</p>}</div>
   <div role="tablist" className="setting-tabs">{PAGES.map(([k,l])=><button key={k} role="tab" aria-selected={page===k} onClick={()=>setPage(k)}>{l}</button>)}</div>
-  {page==='chapters'&&<ol className="book-workspace-chapters">{chapters.map(c=>{const fresh=c.processing_state==='unprocessed';return <li key={c.id} className={c.id===current?'current':''}>
+  {page==='chapters'&&chapters.length>12&&<div className="chapter-filter"><input type="search" aria-label="找章节" placeholder="找章节：输入章号或标题里的字" value={query} onChange={e=>setQuery(e.target.value)}/><label><input type="checkbox" checked={onlyTodo} onChange={e=>setOnlyTodo(e.target.checked)}/>只看未处理（{chapters.filter(c=>c.processing_state==='unprocessed').length}）</label></div>}
+  {page==='chapters'&&<ol className="book-workspace-chapters">{chapters.filter(c=>(!onlyTodo||c.processing_state==='unprocessed')&&(!query.trim()||(/^\d+$/.test(query.trim())?String(c.book?.index??'')===query.trim():c.name.includes(query.trim())))).map(c=>{const fresh=c.processing_state==='unprocessed';return <li key={c.id} className={c.id===current?'current':''}>
     <span className="chapter-name">{c.book?.index?`${c.book.index}. `:''}{c.name}</span><small>{fresh?'未处理':'已处理'}</small>
     <button type="button" className={fresh?'primary':''} onClick={()=>fresh?onContinue(c.id):onOpenChapter(c.id)}>{fresh?'继续处理':'打开'}</button>
     <button type="button" title="本章设置" onClick={()=>onChapterSettings(c.id)}>⚙</button>{onDeleteChapter&&<button type="button" className="danger inline" title="舍弃这一章：原文、声音一起删，主工程少一章" onClick={()=>onDeleteChapter(c.id,c.name)}>舍弃</button>}</li>})}{chapters.length===0&&<li className="muted">还没有章节：点下面「＋ 新章」贴原稿或选文件——整本书也可以，有「第X章」这样的标题会按标题分成多章；或到「结构 → 加入独立工程」加入已有工程。</li>}</ol>}
