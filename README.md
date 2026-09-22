@@ -263,7 +263,11 @@ is recorded with its scoring and its limits in
   not forced alignment.
 - Peak normalisation, not loudness-standard compliance.
 - Cancellation takes effect between sentences.
-- Mac only. No LAN pairing, mobile access, installer signing or updates.
+- Mac only; no installer signing or updates. The service listens on this
+  machine alone unless started with `--lan`, which opens it to the local
+  network behind a key typed once per device (the browser keeps it); recording
+  from a phone is not possible over plain HTTP, so a phone supplies a
+  recording as a file instead.
 - Content-check matching ignores ordinary punctuation and case but keeps
   negation, numbers and meaningful symbols. Homophone and number-wording
   differences cause false alarms. **No accuracy percentage is claimed** — it has

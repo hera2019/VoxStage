@@ -152,7 +152,19 @@ def stop_child(child):
             child.wait()
 
 
-def launch(port=8765, root=ROOT, browser=True, startup_timeout=45):
+def print_lan(port, root=ROOT):
+    """Where a phone or an iPad on the same network opens it, and with what key
+    (本人 2026-09-22). The service prints this too; the launcher hides the
+    service's output in a log, so it is repeated where the person can see it."""
+    from . import lan
+    key = lan.load_or_create_key(Path(root)/'user-data')
+    print('局域网访问已开启。同一 WiFi 的设备上打开：', flush=True)
+    for address in lan.addresses() or ['<这台 Mac 的局域网地址>']:
+        print(f'    http://{address}:{port}/', flush=True)
+    print(f'访问口令：{key}（每台设备输入一次，记住 30 天；换口令：.venv/bin/python -m runtime.app --lan --new-key）', flush=True)
+
+
+def launch(port=8765, root=ROOT, browser=True, startup_timeout=45, network=False):
     root = Path(root)
     state = service_state(port, root)
     if state == 'ours':
@@ -177,13 +189,15 @@ def launch(port=8765, root=ROOT, browser=True, startup_timeout=45):
     child = None
     try:
         with log_path.open('w') as log:
-            child = subprocess.Popen([sys.executable, '-m', 'runtime.app', '--port', str(port)],
+            child = subprocess.Popen([sys.executable, '-m', 'runtime.app', '--port', str(port)] + (['--lan'] if network else []),
                                      cwd=root, env=env, stdout=log, stderr=subprocess.STDOUT,
                                      start_new_session=True)
             deadline = time.monotonic()+startup_timeout
             while child.poll() is None and time.monotonic() < deadline:
                 if service_state(port, root, expected_pid=child.pid) == 'ours':
                     open_page(port, browser)
+                    if network:
+                        print_lan(port, root)
                     print('保持此窗口开启。按 Ctrl+C 停止；稿件和已保存声音留在本机。', flush=True)
                     code = child.wait()
                     if code:
@@ -208,6 +222,7 @@ def main():
     parser.add_argument('--check', action='store_true', help='只检查环境，不启动服务')
     parser.add_argument('--no-browser', action='store_true')
     parser.add_argument('--port', type=int, default=8765)
+    parser.add_argument('--lan', action='store_true', help='同一局域网的手机/iPad 也能访问，需要访问口令')
     args = parser.parse_args()
     if not 1 <= args.port <= 65535:
         parser.error('端口必须在 1–65535 之间。')
@@ -216,7 +231,7 @@ def main():
         print_report(report)
         print('环境报告：'+str(save_report(report)))
         return 0 if report['ready'] else 1
-    return launch(args.port, browser=not args.no_browser)
+    return launch(args.port, browser=not args.no_browser, network=args.lan)
 
 
 def interrupted(signum, frame):

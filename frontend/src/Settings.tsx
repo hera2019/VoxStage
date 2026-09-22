@@ -94,16 +94,16 @@ export function Settings({request,voices,language,speedReady,designReady,roleMod
     <p className="muted">录音只留在这台 Mac，不进版本库，也不上传。生成的声音会标注为合成语音，不得用于冒充他人。</p>
     <label className="consent"><input type="checkbox" checked={consent} onChange={e=>setConsent(e.target.checked)}/>
      我拥有这段声音的使用权，或已获得本人明确授权。</label>
-    <input ref={file} type="file" accept="audio/wav,audio/x-wav,.wav" aria-label="参考声音文件" disabled={!consent||!newName.trim()}
+    <input ref={file} type="file" accept="audio/*,.wav,.m4a,.mp3,.aac,.caf,.flac,.ogg" aria-label="参考声音文件" disabled={!consent||!newName.trim()}
      onChange={e=>{const f=e.target.files?.[0];if(!f)return;
-      if(f.size>8_000_000){setError('文件过大，请提供 1.5–60 秒的 WAV。');return}
+      if(f.size>8_000_000){setError('文件过大，请提供 1.5–60 秒的录音。');return}
       void run(async()=>{const buffer=await f.arrayBuffer();
         let binary='';const bytes=new Uint8Array(buffer);
         for(let i=0;i<bytes.length;i+=8192)binary+=String.fromCharCode(...bytes.subarray(i,i+8192));
         await request('/voices/custom','POST',{name:newName,language,reference_text:text,
           audio_base64:btoa(binary),consent_confirmed:consent});
         setNewName('');if(file.current)file.current.value='';await reload()})}}/>
-    <small>参考文字请填上面「试听文字」框里那句——必须与录音实际说的一致。</small>
+    <small>参考文字请填上面「试听文字」框里那句——必须与录音实际说的一致。手机录的 m4a、mp3 也可以，程序会转成 WAV（需要本机装了 FFmpeg）。</small>
    </details>
   </div>
 

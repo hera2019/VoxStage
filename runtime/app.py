@@ -1,6 +1,7 @@
 """Loopback-only API and serial render queue. Astra, 2026-09-09."""
 import argparse
 import hashlib
+import hmac
 from types import SimpleNamespace
 import shutil
 import json
@@ -9,6 +10,8 @@ import time
 import os
 import random
 import re
+import subprocess
+import tempfile
 import threading
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import asynccontextmanager
@@ -17,7 +20,7 @@ from typing import Literal
 
 import soundfile as sf
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 from .launcher import workspace_id
@@ -385,7 +388,7 @@ def _splice_source(project, segment, text):
             other['source_end'] += shift
 
 
-def create_app(data_root=None, engine=None, frontend=None, checker=None, role_engine=None):
+def create_app(data_root=None, engine=None, frontend=None, checker=None, role_engine=None, lan_key=None):
     store = Store(data_root or ROOT/'user-data/projects')
     from .books import Books
     from .core import Templates
@@ -505,15 +508,28 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
 
     @app.middleware('http')
     async def local_only(request: Request, call_next):
+        from . import lan
         host = request.headers.get('host','')
         hostname = host.split(':')[0]
         origin = request.headers.get('origin')
-        if hostname not in ('127.0.0.1','localhost'):
+        path = request.url.path
+        # Another machine on the same network (本人 2026-09-22): allowed only when
+        # the service was started with --lan, and only with the key — typed once
+        # on /lan, kept in a cookie. This Mac itself never needs it.
+        from_here = lan.is_loopback(hostname)
+        signed_in = from_here or (lan_key and lan.accepts(request.cookies.get(lan.COOKIE), lan_key))
+        if not from_here and not lan_key:
             return JSONResponse({'detail':'Local access only'}, status_code=403)
         if request.headers.get('sec-fetch-site') == 'cross-site' or (origin and origin != f'http://{host}'):
             return JSONResponse({'detail':'Cross-origin access denied'}, status_code=403)
+        if not signed_in and path != '/lan':
+            if path.startswith('/api/'):
+                return JSONResponse({'detail':'请先在这台设备上输入访问口令：打开 http://' + host + '/lan'}, status_code=401)
+            return HTMLResponse(lan.login_page(), status_code=401)
         if request.method not in ('GET','HEAD'):
-            if request.headers.get('x-voxstage') != '1':
+            # The sign-in form is a plain browser POST and cannot set the header;
+            # everything else still must (it is what keeps other pages out).
+            if request.headers.get('x-voxstage') != '1' and path != '/lan':
                 return JSONResponse({'detail':'Missing local request header'}, status_code=403)
             # A whole novel pasted in is a few megabytes; a coloured .docx up to 20 MB
             # base64 (本人 2026-09-22: a long paste met the old 400 KB ceiling as a bare 413).
@@ -537,6 +553,31 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
     @app.exception_handler(RuntimeError)
     async def conflict(request, exc):
         return JSONResponse({'detail':str(exc)}, status_code=409)
+
+    @app.get('/lan')
+    def lan_page():
+        """Where a phone or an iPad on the same network signs in."""
+        from . import lan
+        if not lan_key:
+            return JSONResponse({'detail':'这台 Mac 上的 VoxStage 没有开局域网访问。'}, status_code=403)
+        return HTMLResponse(lan.login_page())
+
+    @app.post('/lan')
+    async def lan_sign_in(request: Request):
+        from . import lan
+        if not lan_key:
+            return JSONResponse({'detail':'这台 Mac 上的 VoxStage 没有开局域网访问。'}, status_code=403)
+        # The form is urlencoded; parsed here rather than pulling in a multipart library.
+        from urllib.parse import parse_qs
+        body = (await request.body())[:4096].decode('utf-8', 'replace')
+        given = (parse_qs(body).get('key') or [''])[0].strip()
+        if not hmac.compare_digest(given, lan_key):
+            time.sleep(.5)                                  # a wrong key is not worth guessing at speed
+            return HTMLResponse(lan.login_page('口令不对，请再试一次。'), status_code=401)
+        response = RedirectResponse('/', status_code=303)
+        response.set_cookie(lan.COOKIE, lan.cookie_value(lan_key), max_age=lan.COOKIE_DAYS * 86400,
+                            httponly=True, samesite='strict', path='/')
+        return response
 
     @app.get('/api/health')
     def health():
@@ -599,6 +640,23 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
     def list_custom_voices():
         return library.list()
 
+    def convert_audio(raw, *, seconds=120):
+        """Anything ffmpeg can read (a phone's m4a, an mp3) as mono float samples,
+        or None when there is no ffmpeg or it refuses the file."""
+        import io
+        ffmpeg = ffmpeg_path()
+        if not ffmpeg:
+            return None
+        with tempfile.TemporaryDirectory() as folder:
+            source = Path(folder) / 'supplied'
+            source.write_bytes(raw)
+            target = Path(folder) / 'converted.wav'
+            done = subprocess.run([ffmpeg, '-nostdin', '-v', 'error', '-t', str(seconds), '-i', str(source),
+                                   '-ac', '1', '-c:a', 'pcm_s16le', str(target)], capture_output=True, timeout=120)
+            if done.returncode or not target.is_file():
+                return None
+            return sf.read(target, dtype='float32')
+
     @app.post('/api/voices/custom')
     def create_custom_voice(body: VoiceSaveRequest):
         """Keep a voice: either one the model just produced, or one supplied.
@@ -659,9 +717,18 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                 import base64, io
                 try:
                     raw = base64.b64decode(body.audio_base64 or '', validate=True)
+                except ValueError as exc:
+                    raise ValueError('无法读取这段声音。') from exc
+                try:
                     pcm, rate = sf.read(io.BytesIO(raw), dtype='float32')
-                except (ValueError, RuntimeError, sf.LibsndfileError) as exc:
-                    raise ValueError('无法读取这段声音；请提供 WAV 等常见未压缩格式。') from exc
+                except (RuntimeError, sf.LibsndfileError) as exc:
+                    # A recording made on a phone is m4a/mp3, not WAV (本人 2026-09-22:
+                    # 用户上传录音文件). With ffmpeg on the machine it is converted here;
+                    # without it, the person is told what to supply.
+                    converted = convert_audio(raw)
+                    if converted is None:
+                        raise ValueError('无法读取这段声音。请提供 WAV，或安装 FFmpeg 后再上传手机录音（m4a、mp3）。') from exc
+                    pcm, rate = converted
                 if getattr(pcm, 'ndim', 1) > 1:
                     pcm = pcm.mean(axis=1)
                 entry = library.create(name=body.name, pcm=pcm, rate=rate,
@@ -3795,9 +3862,21 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--port', type=int, default=8765)
     parser.add_argument('--fixture', action='store_true', help='Explicit test tones, never real speech')
+    parser.add_argument('--lan', action='store_true', help='同一局域网的手机/iPad 也能访问，需要访问口令')
+    parser.add_argument('--new-key', action='store_true', help='换一个局域网访问口令（各设备需重新输入）')
     args = parser.parse_args()
     import uvicorn
-    uvicorn.run(create_app(engine=FixtureEngine() if args.fixture else None), host='127.0.0.1', port=args.port)
+    from . import lan as lan_module
+    key = lan_module.load_or_create_key(ROOT/'user-data', new=args.new_key) if args.lan else None
+    if key:
+        where = lan_module.addresses() or ['<这台 Mac 的局域网地址>']
+        print('局域网访问已开启。在同一 WiFi 的设备上打开：', flush=True)
+        for address in where:
+            print(f'    http://{address}:{args.port}/', flush=True)
+        print(f'访问口令：{key}（每台设备输入一次，记住 30 天）', flush=True)
+        print('口令存在 user-data/lan-key.txt；换口令用 --lan --new-key。', flush=True)
+    uvicorn.run(create_app(engine=FixtureEngine() if args.fixture else None, lan_key=key),
+                host='0.0.0.0' if args.lan else '127.0.0.1', port=args.port)
 
 if __name__ == '__main__':
     main()

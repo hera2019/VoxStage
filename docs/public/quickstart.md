@@ -8,6 +8,14 @@ were made with the flow below. New material still needs listening to.
 1. Double-click `Start VoxStage.command` in the project folder. After a
    self-check it opens the browser; keep the terminal window it started.
    If the browser does not open, go to http://127.0.0.1:8765.
+   VoxStage listens on this machine only. To open it from a phone or an iPad
+   on the same network, start it with `--lan`
+   (`.venv/bin/python -m runtime.launcher --lan`): the terminal prints the
+   network address and an access key; each device types the key once and the
+   browser keeps it for 30 days. This Mac itself never needs the key; replace
+   it with `.venv/bin/python -m runtime.app --lan --new-key`. A phone cannot
+   record over plain HTTP, but it can supply a recording as a file under
+   设置 → 音色库 (m4a, mp3 or WAV).
 2. Click **＋ 新建工程** (new project) and paste the **unlabelled prose**.
    The button changes to 分角色并创建工程: the local model labels each unit
    narration or dialogue and names the speaker, then hands the result to you

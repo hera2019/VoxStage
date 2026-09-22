@@ -205,3 +205,33 @@ def test_each_audition_is_a_new_take_and_keeping_one_keeps_exactly_the_take_hear
     assert sf.read(io.BytesIO(kept))[0].tolist() == sf.read(io.BytesIO(heard))[0].tolist()
     assert client.post('/api/voices/custom', json={'name': 'x', 'language': 'zh', 'reference_text': '雨', 'from_audition': '0000000000000000.wav'}).status_code == 400
     assert client.post('/api/voices/custom', json={'name': 'x', 'language': 'zh', 'reference_text': '雨', 'from_audition': '../project.json'}).status_code == 400
+
+
+def test_a_phone_recording_is_converted_when_ffmpeg_is_on_the_machine(client, tmp_path):
+    """本人 2026-09-22: 用户上传录音文件就好 — a phone records m4a, not WAV.
+    With ffmpeg the file is converted on the way in; the consent gate is
+    unchanged, and without ffmpeg the person is told what to supply."""
+    import shutil, subprocess
+    from runtime.tempo import ffmpeg_path
+    ffmpeg = ffmpeg_path()
+    if not ffmpeg:
+        pytest.skip('这台机器没有 FFmpeg')
+    rate = 24000
+    t = np.arange(int(rate * 3.0), dtype=np.float32) / rate
+    source = tmp_path / 'voice.wav'
+    sf.write(source, (0.2 * np.sin(2 * np.pi * 200 * t)).astype(np.float32), rate)
+    m4a = tmp_path / 'voice.m4a'
+    subprocess.run([ffmpeg, '-nostdin', '-v', 'error', '-i', str(source), '-c:a', 'aac', str(m4a)], check=True, timeout=120)
+    entry = client.post('/api/voices/custom', json={
+        'name': '手机录的', 'language': 'zh', 'reference_text': '雨点敲着窗。',
+        'audio_base64': base64.b64encode(m4a.read_bytes()).decode(), 'consent_confirmed': True}).json()
+    assert entry['source'] == 'provided' and entry['consent_confirmed'] is True and entry['synthetic_audio'] is False
+    assert 2.5 <= entry['seconds'] <= 3.5
+    refused = client.post('/api/voices/custom', json={
+        'name': '没授权的', 'language': 'zh', 'reference_text': '雨点敲着窗。',
+        'audio_base64': base64.b64encode(m4a.read_bytes()).decode(), 'consent_confirmed': False})
+    assert refused.status_code >= 400 and '授权' in refused.json()['detail']
+    nonsense = client.post('/api/voices/custom', json={
+        'name': '不是声音', 'language': 'zh', 'reference_text': '雨点敲着窗。',
+        'audio_base64': base64.b64encode(b'not audio at all').decode(), 'consent_confirmed': True})
+    assert nonsense.status_code >= 400 and '无法读取' in nonsense.json()['detail']

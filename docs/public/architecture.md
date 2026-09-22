@@ -117,3 +117,12 @@ A chapter starts `unprocessed` (its text whole in the project record) and is dra
 Structure changes — split at a sentence, merge two neighbours, reorder, attach a loose project, detach, dissolve — are planned as pure functions (`book_structure.py`: members after, settings conflicts to resolve, same-name cast questions, assets to copy) and applied as a transaction (`book_transactions.py`) that keeps the replaced projects as recovery snapshots and copies audio by fingerprint rather than regenerating it. A cast rename or a setting unified across the book is the same shape: plan, then transaction. Export (`book_export.py`) concatenates chapters in book order with a chosen pause between them, numbers each batch, keeps the last successful one downloadable and marks it stale with reasons once the book changes. Legacy books (chapter text held on the book, projects linked by index) are read-only under the new code and can be adopted in place (`book_adopt.py`, with a backup first); nothing migrates by itself.
 
 最后更新：2026-09-22 · Claude Hera
+
+
+## Reaching it from another device on the same network (2026-09-22)
+
+The service binds to loopback and refuses any request whose `Host` is not this machine — that is the default and it does not change. Started with `--lan` it binds every interface and admits other addresses on one condition: a key, generated once and kept in `user-data/lan-key.txt` (mode 600), typed on a small sign-in page and then held in an `HttpOnly`, `SameSite=Strict` cookie whose value is a hash of the key, not the key. Requests from 127.0.0.1 are never asked for it. Everything else stays as it was: the same-origin check, the `x-voxstage: 1` header on every write (a cookie says which device, the header is what keeps another page on that device from posting), the 30 MB body ceiling, the content-security policy. There is no account system: one person, one machine, one key, replaceable with `--lan --new-key`.
+
+Recording from a phone would need a secure context, which plain HTTP on a home network is not; rather than install a self-signed certificate on every device, a phone supplies a recording as a file. The voice library's existing consent gate is unchanged, and a phone's m4a or an mp3 is converted with the machine's ffmpeg on the way in.
+
+最后更新：2026-09-22 · Claude Hera
