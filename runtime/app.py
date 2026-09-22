@@ -216,14 +216,14 @@ class TemplateRequest(BaseModel):
 
 class AuditionRequest(BaseModel):
     voice: str = Field(max_length=40)
-    text: str = Field(min_length=1, max_length=120)
+    text: str = Field(min_length=1, max_length=200)      # a demo line of 5–10 seconds; English needs the room (本人 2026-09-22)
     language: Literal['zh','en'] = 'zh'
     rate: float = Field(default=1.0, ge=0.5, le=2.0, allow_inf_nan=False)
     seed: int | None = Field(default=None, ge=0, le=2**31 - 1)   # omitted: a fresh take each time
 
 class VoiceDesignRequest(BaseModel):
     description: str = Field(min_length=1, max_length=300)
-    text: str = Field(min_length=1, max_length=120)
+    text: str = Field(min_length=1, max_length=200)
     language: Literal['zh','en'] = 'zh'
     seed: int | None = Field(default=None, ge=0, le=2**31 - 1)   # omitted: a fresh one each time
 

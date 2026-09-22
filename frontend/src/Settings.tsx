@@ -3,6 +3,26 @@ type Custom={id:string;name:string;language:string;source:string;seconds:number;
 type Props={request:(path:string,method?:string,data?:unknown)=>Promise<any>;voices:Record<string,string>;
  language:'zh'|'en';speedReady:boolean;designReady?:boolean;roleModels?:{id:string;label:string;installed:boolean}[];roleModel?:string;onClose:()=>void;onPick?:(voice:string)=>void;pickFor?:string};
 const SAMPLES={zh:'雨点轻轻敲着窗，她回头看了一眼。',en:'Rain tapped against the window, and she looked back once.'};
+// 本人 2026-09-22: 试听框里再放几组有针对性的演示文字，5–10 秒。All written for this
+// project — a calm narration, a quiet line, an urgent one, names and numbers, an
+// old voice, a young one — so one voice can be judged on what it will actually read.
+const DEMOS:Record<'zh'|'en',[string,string][]>={zh:[
+ ['旁白 · 平缓','雨点敲着窗子，屋里只剩下钟摆的声音。她把信折好，放回抽屉最里面，像是从没拿出来过。'],
+ ['旁白 · 写景长句','那年的雪下得早，镇口的桥面结了一层薄冰，走在上面能听见细细的裂声，像有人在远处低声说话。'],
+ ['对白 · 温和','「你先坐，茶还烫着。」他把杯子推过去，又补了一句，「路上冷吧？手都红了。」'],
+ ['对白 · 急切','「别动它！」她一把按住我的手腕，声音压得很低，「再往前一步，谁也救不了你。」'],
+ ['名字与数字','三月十七日，第二十九号房的客人退了房，只留下一封写着「陈小雪亲启」的信和四百二十块钱。'],
+ ['老人','「我今年七十三了，眼睛不中用，耳朵也背，可这屋里少了什么，我一进门就知道。」'],
+ ['少年','「你看你看！它真的飞起来了！」他举着风筝跑过整条街，笑声比风还响。'],
+],en:[
+ ['Narration · calm','Rain tapped at the window, and the house held nothing but the sound of the clock. She folded the letter and put it back.'],
+ ['Narration · long','The snow came early that year. A thin sheet of ice lay over the bridge, and it cracked softly underfoot, like someone talking far away.'],
+ ['Dialogue · warm','"Sit down, the tea is still hot." He pushed the cup across the table. "Cold out there? Your hands are red."'],
+ ['Dialogue · urgent','"Don\u2019t touch it!" She caught my wrist and lowered her voice. "One step further and nobody can help you."'],
+ ['Names and numbers','On the seventeenth of March the guest in room twenty-nine checked out, leaving a letter for Miss Chen and four hundred pounds.'],
+ ['Old','"I am seventy-three. My eyes are no good and my ears are worse, but I know the moment I walk in when something is missing."'],
+ ['Young','"Look, look! It is really flying!" He ran the whole length of the street with the kite, laughing louder than the wind.'],
+]};
 
 export function Settings({request,voices,language,speedReady,designReady,roleModels,roleModel,onClose,onPick,pickFor}:Props){
  const [role,setRole]=useState(roleModel??'');const [roleNote,setRoleNote]=useState('');const [autoplay,setAutoplay]=useState(()=>{try{return localStorage.getItem('voxstage-autoplay')!=='0'}catch{return true}});
@@ -53,7 +73,12 @@ export function Settings({request,voices,language,speedReady,designReady,roleMod
 
   {tab!=='models'&&<>  {pickFor&&<p className="hint">正在为「{pickFor}」挑选音色。选定后点「用于此角色」。</p>}
 
-  <label>试听文字<textarea rows={2} maxLength={120} value={text} onChange={e=>setText(e.target.value)}/></label>
+  <label>试听文字 <small>换一段：不同类型的句子最能听出一个声线合不合适（每段 5–10 秒）</small>
+   <select aria-label="换一段试听文字" value={DEMOS[language].find(([,line])=>line===text)?.[0]??''} onChange={e=>{const found=DEMOS[language].find(([name])=>name===e.target.value);if(found)setText(found[1])}}>
+    <option value="">{DEMOS[language].some(([,line])=>line===text)?'— 换一段 —':'（自己写的）'}</option>
+    {DEMOS[language].map(([name])=><option key={name} value={name}>{name}</option>)}
+   </select>
+   <textarea rows={2} maxLength={200} value={text} onChange={e=>setText(e.target.value)}/></label>
   <audio ref={player} controls preload="none"/>
   <label className="audition-rate">试听语速 <small>只影响这里的试听，不改变生成出来的声音；正式作品的语速在工作区设置。</small>
    <div className="rate-row">
