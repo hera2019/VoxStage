@@ -450,7 +450,7 @@ def book_name(name):
 
 # Manner words a tag puts before its verb — 陈小雪苦笑道, 王伯喃喃道, 她缓缓道,
 # 微笑着说 — are not part of the name (本人 2026-09-22: 缓缓, 喃喃, 微笑着 and
-# 王伯苦 had become people). A candidate loses them from its tail; one
+# 王伯苦 (from 王伯苦笑道) had become people). A candidate loses them from its tail; one
 # that was nothing but manner is no name.
 _MANNER_TAIL = re.compile(r'(?:苦笑|冷笑|微笑|干笑|大笑|轻笑|讪笑|狞笑|惨笑|嗤笑|嘿嘿|哈哈|嘻嘻|呵呵|缓缓|喃喃|淡淡|轻轻|慢慢|冷冷|悠悠|徐徐|幽幽|微微|默默|暗暗|连连|急急|忙忙|'
                           r'沉声|低声|高声|大声|小声|轻声|厉声|朗声|柔声|怒|笑|哭|叹|点头|摇头|皱眉|沉吟|喘息|苦|冷|微|干|轻|讪|狞|急|忙)?(?:着|地|了)?$')
