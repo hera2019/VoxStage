@@ -8,7 +8,7 @@ import {useEffect,useState} from 'react';
 type Source={level:string;id?:string;roles?:Record<string,{level:string;id?:string}>};
 type Payload={project_id?:string;book_id?:string;project_revision?:number;book_revision?:number|null;revision?:number;
   overrides?:Record<string,unknown>;effective?:Record<string,unknown>;settings?:Record<string,unknown>;sources?:Record<string,Source>};
-type Props={kind:'project'|'book';id:string;request:(path:string,method?:string,data?:unknown)=>Promise<any>;
+type Props={kind:'project'|'book';id:string;request:(path:string,method?:string,data?:unknown)=>Promise<any>;voiceName?:(id:string|undefined)=>string;
   presetModels?:string[];cloneModels?:string[];chapterIds?:string[];inline?:boolean;onClose:()=>void};
 
 const PAGES:[string,string[]][]=[['角色声音',['voices','colors','sexes','muted_speakers']],['朗读与停顿',['preset_model','clone_model','speech_rate','pause_ms','ellipsis_pause_ms','color_scope']],['发音',['lexicon']],['导出',[]]];
@@ -17,7 +17,7 @@ const LEVEL:Record<string,string>={project:'本章',local:'本章',book:'主工�
 
 export function whereFrom(s?:Source|{level:string;id?:string}){return s?LEVEL[s.level]??s.level:'—'}
 
-export function ChapterSettings({kind,id,request,presetModels=['0.6B'],cloneModels=['0.6B'],chapterIds=[],inline,onClose}:Props){
+export function ChapterSettings({kind,id,request,presetModels=['0.6B'],cloneModels=['0.6B'],chapterIds=[],inline,voiceName=(v:string|undefined)=>String(v??''),onClose}:Props){
  const base=kind==='project'?`/projects/${id}/settings`:`/master-books/${id}/settings`;
  const [data,setData]=useState<Payload|null>(null);const [page,setPage]=useState(0);const [busy,setBusy]=useState(false);const [error,setError]=useState('');
  const [lexiconText,setLexiconText]=useState('');const [pending,setPending]=useState<Record<string,string>>({});
@@ -60,7 +60,7 @@ export function ChapterSettings({kind,id,request,presetModels=['0.6B'],cloneMode
   {page===0&&<div className="setting-page">
    {kind==='book'&&cast.length>0&&<div className="setting-cast"><strong>人物表</strong>{cast.map(c=><span key={c.id} className="setting-cast-row">{c.name}{c.aliases?.length?<small>（又称 {c.aliases.join('、')}）</small>:null}<button type="button" disabled={busy} title="全书改名：各章的句子、设置和标签一起改，声音不重生成" onClick={()=>void rename(c)}>改名…</button></span>)}</div>}
    {roles.length===0&&cast.length===0&&<p className="muted">还没有角色：处理过章节后角色会出现在这里。</p>}
-   {roles.map(name=><div key={name} className="setting-role"><strong>{name}</strong><small>声音 {String((effective.voices as Record<string,string>)[name])} · 来自{roleSource('voices',name)}{kind==='project'&&bookId&&sources.voices?.roles?.[name]?.level!=='book'&&<> <button type="button" className="see-lines" disabled={busy} title="这个角色的声音写进主工程，每一章都用它" onClick={()=>void unifyRole(name,String((effective.voices as Record<string,string>)[name]))}>整本都用这个声音</button></>}</small>
+   {roles.map(name=><div key={name} className="setting-role"><strong>{name}</strong><small>声音 {voiceName((effective.voices as Record<string,string>)[name])} · 来自{roleSource('voices',name)}{kind==='project'&&bookId&&sources.voices?.roles?.[name]?.level!=='book'&&<> <button type="button" className="see-lines" disabled={busy} title="这个角色的声音写进主工程，每一章都用它" onClick={()=>void unifyRole(name,String((effective.voices as Record<string,string>)[name]))}>整本都用这个声音</button></>}</small>
      <span className="dot" style={{background:((effective.colors as Record<string,string>)??{})[name]??'#ccc'}}/><small>性别 {({m:'男',f:'女'} as Record<string,string>)[((effective.sexes as Record<string,string>)??{})[name]]??'按音色'} · 来自{roleSource('sexes',name)}</small>
      <label><input type="checkbox" disabled={busy} checked={((effective.muted_speakers as string[])??[]).includes(name)} onChange={e=>{const cur=((effective.muted_speakers as string[])??[]).filter(x=>x!==name);void save({muted_speakers:e.target.checked?[...cur,name]:cur})}}/>不朗读</label></div>)}
    {keys.filter(k=>k!=='voices'&&k!=='colors'&&k!=='sexes').map(k=><p key={k} className="muted">{LABELS[k]}：{owned(k)?'本章设置':`继承 · 来自${origin(k)}`}</p>)}

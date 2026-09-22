@@ -3294,36 +3294,41 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                         if info.frames != meta['samples'] or info.samplerate != meta['sample_rate']:
                             raise ValueError('Cached asset is invalid; generate a new take')
                     else:
-                        profile=work.get('voice_profiles',{}).get(work_segment['speaker'])
-                        def read_voice(text, voice, seed_shift=0):
-                            """One voice's reading of the line: a library voice by its reference, else a preset."""
-                            seed = 260909 + work_segment.get('take', 0) + seed_shift
-                            if is_custom(voice):
-                                entry = library.get(custom_id(voice))
-                                return engine.synthesize_reference(text,work['language'],
-                                    library.audio_path(entry['id']),entry['reference_text'],
-                                    seed,consent_confirmed=True,expected_sha256=entry['sha256'],**clone_size(work))
-                            return engine.synthesize(text, voice, work['language'], seed,
-                                **({'size': work.get('preset_model','0.6B')} if hasattr(engine,'identity_for') else {}),
-                                **({'instruct': work_segment['tone']} if work_segment.get('tone') and hasattr(engine,'identity_for') else {}))
-                        if profile:
-                            if not profile.get('synthetic_audio') or not profile.get('consent_confirmed'):
-                                raise ValueError('固定声线缺少合成来源或授权记录。')
-                            digest_ref=profile['sha256']
-                            if len(digest_ref)!=64 or any(c not in '0123456789abcdef' for c in digest_ref):
-                                raise ValueError('固定声线标识无效。')
-                            def read(text): return engine.synthesize_reference(text,work['language'],
-                                reference_file(project_id,work,digest_ref),profile['text'],
-                                260909+work_segment.get('take',0),consent_confirmed=True,expected_sha256=digest_ref,**clone_size(work))
-                        elif is_chorus(voice_of(work, work_segment)):
-                            # 本人 2026-09-22: 群口 — the pool's voices say the line together,
-                            # each its own reading, mixed (runtime/chorus.py).
-                            from .chorus import mix, chorus_mode, chorus_layers, LAYER_SEED_STEP
-                            chorus = voice_of(work, work_segment)
-                            pool, mode, layers = chorus_pool(chorus), chorus_mode(chorus), chorus_layers(chorus)
-                            def read(text): return mix([read_voice(text, v, k * LAYER_SEED_STEP) for v in pool for k in range(layers)], mode)
-                        else:
-                            def read(text): return read_voice(text, voice_of(work, work_segment))
+                        def reader_for(work, work_segment):
+                            """How this line is read — fixed voice, 群口, library voice or preset —
+                            as one function of the current take, so a retake reads the same way."""
+                            profile=work.get('voice_profiles',{}).get(work_segment['speaker'])
+                            def read_voice(text, voice, seed_shift=0):
+                                """One voice's reading of the line: a library voice by its reference, else a preset."""
+                                seed = 260909 + work_segment.get('take', 0) + seed_shift
+                                if is_custom(voice):
+                                    entry = library.get(custom_id(voice))
+                                    return engine.synthesize_reference(text,work['language'],
+                                        library.audio_path(entry['id']),entry['reference_text'],
+                                        seed,consent_confirmed=True,expected_sha256=entry['sha256'],**clone_size(work))
+                                return engine.synthesize(text, voice, work['language'], seed,
+                                    **({'size': work.get('preset_model','0.6B')} if hasattr(engine,'identity_for') else {}),
+                                    **({'instruct': work_segment['tone']} if work_segment.get('tone') and hasattr(engine,'identity_for') else {}))
+                            if profile:
+                                if not profile.get('synthetic_audio') or not profile.get('consent_confirmed'):
+                                    raise ValueError('固定声线缺少合成来源或授权记录。')
+                                digest_ref=profile['sha256']
+                                if len(digest_ref)!=64 or any(c not in '0123456789abcdef' for c in digest_ref):
+                                    raise ValueError('固定声线标识无效。')
+                                def read(text): return engine.synthesize_reference(text,work['language'],
+                                    reference_file(project_id,work,digest_ref),profile['text'],
+                                    260909+work_segment.get('take',0),consent_confirmed=True,expected_sha256=digest_ref,**clone_size(work))
+                            elif is_chorus(voice_of(work, work_segment)):
+                                # 本人 2026-09-22: 群口 — the pool's voices say the line together,
+                                # each its own reading, mixed (runtime/chorus.py).
+                                from .chorus import mix, chorus_mode, chorus_layers, LAYER_SEED_STEP
+                                chorus = voice_of(work, work_segment)
+                                pool, mode, layers = chorus_pool(chorus), chorus_mode(chorus), chorus_layers(chorus)
+                                def read(text): return mix([read_voice(text, v, k * LAYER_SEED_STEP) for v in pool for k in range(layers)], mode)
+                            else:
+                                def read(text): return read_voice(text, voice_of(work, work_segment))
+                            return read
+                        read = reader_for(work, work_segment)
                         pcm, rate, metrics = read_with_pauses(work, work_segment, read)
                         pcm, meta = process_audio(pcm, rate)
                         # A run-away take: the engine read the line and kept going -- a
@@ -3344,9 +3349,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                                 digest = fingerprint(work, work_segment, engine, library)
                                 path = folder/(digest+'.wav'); meta_path = folder/(digest+'.json')
                                 store.write(p)
-                            pcm, rate, metrics = engine.synthesize(spoken_text(work,work_segment),
-                                voice_of(work, work_segment), work['language'], 260909+work_segment.get('take',0),
-                                **({'size': work.get('preset_model','0.6B')} if hasattr(engine,'identity_for') else {}))
+                            pcm, rate, metrics = read_with_pauses(work, work_segment, reader_for(work, work_segment))   # the same way, next seed (2026-09-22: a 群口 line's retake had hit the engine with the raw pool string)
                             pcm, meta = process_audio(pcm, rate)
                             metrics = {**metrics, 'auto_retake': True, 'first_take_seconds': round(spoken_seconds, 2)}
                         meta.update({'fingerprint':digest, 'engine':(engine.reference_identity_for(work.get('clone_model','0.6B')) if hasattr(engine,'reference_identity_for') else getattr(engine,'reference_identity',engine.identity)) if (work.get('voice_profiles',{}).get(work_segment['speaker']) or is_custom(voice_of(work, work_segment))) else engine.identity, **metrics})
