@@ -1,5 +1,13 @@
 import {useEffect,useRef,useState} from 'react';
-type Custom={id:string;name:string;language:string;source:string;seconds:number;derived_from:string|null;consent_confirmed:boolean};
+type Custom={id:string;name:string;language:string;source:string;seconds:number;derived_from:string|null;consent_confirmed:boolean;reference_text?:string};
+// Where a library voice was designed: its description, seed and the line it was designed on,
+// following one copy step (a voice re-read from a designed one). Older designs kept no seed.
+function designOrigin(v:Custom,all:Custom[]):{description:string;seed:number;text?:string}|null{
+ const from=v.derived_from??'';
+ const m=/^design:(.*) · seed (\d+)$/.exec(from);
+ if(m)return {description:m[1],seed:Number(m[2]),text:v.reference_text};
+ const source=from.startsWith('custom:')?all.find(x=>x.id===from.slice(7)):undefined;
+ return source&&source!==v&&!source.derived_from?.startsWith('custom:')?designOrigin(source,all):null}
 type Props={request:(path:string,method?:string,data?:unknown)=>Promise<any>;voices:Record<string,string>;
  language:'zh'|'en';speedReady:boolean;designReady?:boolean;roleModels?:{id:string;label:string;installed:boolean}[];roleModel?:string;onClose:()=>void;onPick?:(voice:string)=>void;pickFor?:string};
 const SAMPLES={zh:'雨点轻轻敲着窗，她回头看了一眼。',en:'Rain tapped against the window, and she looked back once.'};
@@ -29,7 +37,10 @@ export function Settings({request,voices,language,speedReady,designReady,roleMod
  const [tab,setTab]=useState<'voices'|'design'|'library'|'models'>('voices');
  const [text,setText]=useState(SAMPLES[language]);
  const [rate,setRate]=useState(1);
- const [design,setDesign]=useState('');const [designs,setDesigns]=useState<{file:string;url:string;seconds:number;seed:number}[]>([]);const [designed,setDesigned]=useState<{file:string;seconds:number}|null>(null);const [designName,setDesignName]=useState('');
+ const [design,setDesign]=useState('');const [designs,setDesigns]=useState<{file:string;url:string;seconds:number;seed:number;description:string}[]>([]);const [designed,setDesigned]=useState<{file:string;seconds:number;seed:number}|null>(null);
+ // Keep the voice, change the words (本人 2026-09-23: 差一点点，下次生成又偏到很远): the seed stays,
+ // so the description tweaks a voice instead of drawing a new one (ai-lab 实测 32).
+ const [lock,setLock]=useState<{seed:number;from:string}|null>(null);const [designName,setDesignName]=useState('');
  const [favourites,setFavourites]=useState<string[]>([]);const [tags,setTags]=useState<Record<string,string[]>>({});const [tagEditing,setTagEditing]=useState<string|null>(null);
  // Tags describe a voice for choosing and for drawing a crowd from a pool: 老人、男性、威严.
  // Presets start from what their label says; anything can be edited.
@@ -137,18 +148,20 @@ export function Settings({request,voices,language,speedReady,designReady,roleMod
    <div className="section-label">设计一个新声线</div>
    <p className="muted">用一句话描述你要的声音——年龄、性别、嗓音、语气。听到满意的再保存，存下的就是你听到的这一段。
     {designReady?'':'（声音设计模型未安装：运行 scripts/setup_model.py --model design）'}</p>
-   <textarea aria-label="声音描述" rows={2} maxLength={300} disabled={!designReady||!!waiting} placeholder="例如：一位六十多岁的男性，声音沙哑苍老，说话慢，带着旧式读书人的腔调" value={design} onChange={e=>{setDesign(e.target.value);setDesigns([]);setDesigned(null)}}/>
+   <textarea aria-label="声音描述" rows={2} maxLength={300} disabled={!designReady||!!waiting} placeholder="例如：一位六十多岁的男性，声音沙哑苍老，说话慢，带着旧式读书人的腔调" value={design} onChange={e=>setDesign(e.target.value)}/>
    <div className="keep-row">
     <button disabled={!designReady||!design.trim()||!!waiting} onClick={()=>void (async()=>{setWaiting('design');setError('');
-      try{const r=await request('/voices/design','POST',{description:design,text,language});const v={file:r.file,url:r.url,seconds:r.seconds,seed:r.seed};setDesigns(list=>[v,...list].slice(0,8));setDesigned({file:v.file,seconds:v.seconds});setPlaying('');
+      try{const r=await request('/voices/design','POST',{description:design,text,language,...(lock?{seed:lock.seed}:{})});const v={file:r.file,url:r.url,seconds:r.seconds,seed:r.seed,description:design.trim()};setDesigns(list=>[v,...list.filter(x=>x.file!==v.file)].slice(0,8));setDesigned({file:v.file,seconds:v.seconds,seed:v.seed});setPlaying('');
         const audio=player.current;if(audio){audio.src=r.url;await audio.play().catch(()=>setError('请点击播放按钮试听。'))}}
-      catch(e){setError((e as Error).message)}finally{setWaiting('')}})()}>{waiting==='design'?'正在设计…':designs.length?'再来一版':'按描述生成并试听'}</button>
+      catch(e){setError((e as Error).message)}finally{setWaiting('')}})()}>{waiting==='design'?'正在设计…':lock?'按描述生成（保持声音）':designs.length?'再来一版':'按描述生成并试听'}</button>
     <input aria-label="设计声线名称" maxLength={40} placeholder="满意了就起个名字" value={designName} disabled={!designed} onChange={e=>setDesignName(e.target.value)}/>
     <button disabled={!designed||!designName.trim()||!!saving} onClick={()=>void run(async()=>{setSaving('design');
-      try{await request('/voices/custom','POST',{name:designName,language,reference_text:text,from_design:designed!.file});setDesignName('');setDesigned(null);setDesigns([]);await reload()}finally{setSaving('')}})}>{saving==='design'?'保存中…':'保存选中的这版'}</button>
+      try{await request('/voices/custom','POST',{name:designName,language,reference_text:text,from_design:designed!.file});setDesignName('');setDesigned(null);setDesigns([]);setLock(null);await reload()}finally{setSaving('')}})}>{saving==='design'?'保存中…':'保存选中的这版'}</button>
    </div>
-   {designs.length>0&&<ul className="design-versions" aria-label="已生成的版本">{designs.map((v,i)=><li key={v.file}><button className={designed?.file===v.file?'active':''} aria-pressed={designed?.file===v.file} onClick={()=>{setDesigned({file:v.file,seconds:v.seconds});setPlaying('');const audio=player.current;if(audio){audio.src=v.url;void audio.play().catch(()=>setError('请点击播放按钮试听。'))}}}>▶ 第 {designs.length-i} 版 · {v.seconds.toFixed(1)} 秒 <small>种子 {v.seed}</small></button></li>)}</ul>}
-   {designs.length>0&&<p className="muted">同一段描述每点一次出一版不同的声音，最多留 8 版；点哪版就听哪版，保存的就是它。改了描述会重新开始。</p>}
+   {designs.length>0&&<ul className="design-versions" aria-label="已生成的版本">{designs.map((v,i)=><li key={v.file}><button className={designed?.file===v.file?'active':''} aria-pressed={designed?.file===v.file} onClick={()=>{setDesigned({file:v.file,seconds:v.seconds,seed:v.seed});setPlaying('');const audio=player.current;if(audio){audio.src=v.url;void audio.play().catch(()=>setError('请点击播放按钮试听。'))}}}>▶ 第 {designs.length-i} 版 · {v.seconds.toFixed(1)} 秒 <small>{v.description} · 种子 {v.seed}</small></button></li>)}</ul>}
+   {lock?<p className="design-lock">保持声音：以「{lock.from}」为底（种子 {lock.seed}）。改描述再生成，声音会接近它；加「，语气严厉」之类可做语气版本，嗓音粗细可能跟着变一点。<button type="button" className="see-lines" onClick={()=>setLock(null)}>不再保持</button></p>
+    :designed&&<p className="design-lock"><button type="button" onClick={()=>{const i=designs.findIndex(x=>x.file===designed.file);setLock({seed:designed.seed,from:'第 '+(designs.length-i)+' 版'})}}>以选中的这版为底微调</button> <small className="muted">差一点点就合适时用：保持这个声音，只改描述。</small></p>}
+   {designs.length>0&&<p className="muted">不保持声音时，每点一次出一版不同的声音；最多留 8 版，点哪版就听哪版，保存的就是它。</p>}
   </div>
 
   </>}
@@ -159,6 +172,7 @@ export function Settings({request,voices,language,speedReady,designReady,roleMod
     <div className="voice-name"><strong>{v.name}</strong>
      <small>{v.source==='generated'?`合成自 ${v.derived_from??'预设'}`:'提供的录音 · 已确认授权'} · {v.seconds.toFixed(1)} 秒</small>{tagEditing==='custom:'+v.id?<input autoFocus className="tag-input" aria-label={v.name+' 的标签'} defaultValue={tagsOf('custom:'+v.id,v.derived_from??'').join('、')} placeholder="标签，顿号分隔：老人、男性、威严" onBlur={e=>void saveTags('custom:'+v.id,e.target.value,v.derived_from??'')} onKeyDown={e=>{if(e.key==='Enter')void saveTags('custom:'+v.id,(e.target as HTMLInputElement).value,v.derived_from??'');if(e.key==='Escape')setTagEditing(null)}}/>:<button type="button" className="tags" title="改标签" onClick={()=>setTagEditing('custom:'+v.id)}>{tagsOf('custom:'+v.id,v.derived_from??'').map(t=><span key={t}>{t}</span>)}<span className="tag-edit">✎</span></button>}</div>
     <button onClick={()=>{const a=player.current;if(a){a.src='/api/voices/custom/'+v.id+'/audio';void a.play().catch(()=>{})}}}>听参考</button>
+    {designReady&&(()=>{const o=designOrigin(v,custom);return o&&<button title={'以它为底改描述：'+o.description} onClick={()=>{setTab('design');setDesign(o.description);if(o.text)setText(o.text);setDesigns([]);setDesigned(null);setLock({seed:o.seed,from:v.name})}}>微调</button>})()}
     <button onClick={()=>void run(async()=>{const name=prompt('新的名称',v.name);if(name){await request('/voices/custom/'+v.id,'PATCH',{name});await reload()}})}>改名</button>
     <button className="danger" onClick={()=>void run(async()=>{if(confirm(`删除音色「${v.name}」？参考声音会一并删除。`)){await request('/voices/custom/'+v.id,'DELETE');await reload()}})}>删除</button>
     {onPick&&<button className="primary" onClick={()=>onPick('custom:'+v.id)}>用于此角色</button>}
