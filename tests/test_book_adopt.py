@@ -112,3 +112,22 @@ def test_a_text_with_several_headings_joins_a_book_as_several_chapters_when_aske
         assert len(book['members']) == 3 and book['revision'] == r['book_revision'] == b['revision'] + 1
         r2 = c.post(f"/api/master-books/{b['id']}/chapters", json={'revision': book['revision'], 'title': '番外', 'text': '第一章 又\n阿宁来了。\n第二章 走\n阿宁走了。\n'}).json()
         assert r2['project']['book']['index'] == 4 and c.get('/api/projects/' + r['projects'][0]['id']).json()['book']['chapters'] == 4   # no split: one chapter
+
+
+def test_an_unprocessed_chapters_text_can_be_read_and_edited_before_processing(tmp_path):
+    """本人 2026-09-23: 没处理的章节无法查看原文——要让用户永远有机会修改或查看原稿.
+    Before processing the text is edited in place; the book's size projection
+    follows; a processed chapter is sent to the script editor instead."""
+    with TestClient(create_app(tmp_path / 'p', FixtureEngine(), role_engine=Never()), base_url='http://127.0.0.1', headers=HEADERS) as c:
+        b = c.post('/api/master-books', json={'title': '小店', 'language': 'zh', 'script': '第一章 猫\n陈小雪看着窗外。\n\n第二章 账\n王伯翻开账本。\n'}).json()
+        first = c.get('/api/projects/' + b['members'][0]).json()
+        assert first['processing_state'] == 'unprocessed' and '陈小雪看着窗外' in first['source_script']
+        new_text = '第一章 猫\n陈小雪看着窗外，雨停了。\n'
+        r = c.patch(f"/api/projects/{first['id']}/source", json={'revision': first['revision'], 'source_script': new_text})
+        assert r.status_code == 200 and r.json()['source_script'] == new_text and r.json()['revision'] == first['revision'] + 1
+        assert next(ch for ch in c.get('/api/books/' + b['id']).json()['chapters'] if ch['project_id'] == first['id'])['chars'] == len(new_text)
+        stale = c.patch(f"/api/projects/{first['id']}/source", json={'revision': first['revision'], 'source_script': '别的'})
+        assert stale.status_code == 409
+        loose = c.post('/api/projects', json={'name': '已处理', 'language': 'zh', 'script': '旁白：雨停了。\n'}).json()
+        refused = c.patch(f"/api/projects/{loose['id']}/source", json={'revision': loose['revision'], 'source_script': '旁白：雪停了。\n'})
+        assert refused.status_code == 400 and '原稿编辑' in refused.json()['detail']

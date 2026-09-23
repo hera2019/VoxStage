@@ -263,6 +263,10 @@ class ScriptRequest(BaseModel):
     source_script: str = Field(min_length=1, max_length=2_000_000)
     labels: list[RoleLabel] | None = Field(default=None, max_length=5000)
 
+class SourceRequest(BaseModel):
+    revision: int = Field(ge=0)
+    source_script: str = Field(min_length=1, max_length=2_000_000)
+
 class ScriptFixRequest(BaseModel):
     source_script: str = Field(min_length=1, max_length=12000)
     kind: str = Field(max_length=40)
@@ -3142,6 +3146,48 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
     @app.post('/api/projects/{project_id}/script/fix')
     def fix_script(project_id: str, body: ScriptFixRequest):
         return {'source_script': apply_fix(body.source_script, body.kind)}
+
+    @app.patch('/api/projects/{project_id}/source')
+    def edit_unprocessed_source(project_id: str, body: SourceRequest):
+        """The text of a chapter not yet processed, edited in place (本人 2026-09-23:
+        没处理的章节无法查看原文——要让用户永远有机会修改或查看原稿). Only
+        before processing: a processed project changes its text through the
+        script editor, which re-cuts and carries its lines. Work done on the old
+        text — completed batches, a draft waiting for review — no longer fits and
+        is let go, so processing starts from the new text."""
+        with store.lock:
+            project = store.read(project_id)
+            if project['revision'] != body.revision:
+                raise RuntimeError('工程已改变，请刷新后再改原稿。')
+            if project.get('processing_state') != 'unprocessed':
+                raise ValueError('这一章已经处理过了：请用「原稿编辑」修改，已有的句子和声音会尽量保留。')
+            if project.get('job', {}).get('status') in ('queued', 'running'):
+                raise RuntimeError('这一章正在处理，先取消再改原稿。')
+            report = inspect_script(body.source_script)
+            if report['blocking']:
+                raise ValueError(report['findings'][0]['message'])
+            if body.source_script == project.get('source_script'):
+                return project_service.public_project(project, engine, checker)
+            project['source_script'] = body.source_script
+            dropped = bool(project.get('attribution_batch'))
+            project['attribution_batch'] = None
+            if project.get('job', {}).get('status') in ('completed', 'failed', 'interrupted', 'cancelled'):
+                project['job'] = {'status': 'idle'}
+            project['revision'] += 1
+            store.write(project)
+            book_id = (project.get('book') or {}).get('id')
+            if book_id:
+                try:
+                    book = books.get(book_id)
+                    for chapter in book.get('chapters', []):
+                        if chapter.get('project_id') == project_id:
+                            chapter['chars'] = len(body.source_script)      # the book's projection of its size
+                    books.save(book)
+                except ValueError:
+                    pass
+            result = project_service.public_project(project, engine, checker)
+            result['batches_dropped'] = dropped
+            return result
 
     @app.post('/api/projects/{project_id}/script')
     def rewrite_script(project_id: str, body: ScriptRequest):
