@@ -409,3 +409,13 @@ main>footer audio{height:34px}
   .line-actions .edit-actions button{padding:6px 8px;font-size:12px;min-height:0}
   .line-actions{margin:0 0 8px}
 }
+/* 标题占满到按钮为止；左栏头部避开收起按钮（本人 2026-09-23） */
+.project-heading>div:first-child{flex:1 1 auto;min-width:0}
+.project-heading .history{flex:0 1 auto;justify-content:flex-end}
+.project-heading .project-title{width:100%}
+.mark{flex:none}
+.workspace .sidebar .local{margin:0 0 8px;padding-left:14px}
+.workspace .sidebar .brand{margin:0 0 4px}
+.workspace .sidebar .section-label.sidebar-first{margin-top:12px}
+.project-heading{flex-wrap:wrap}
+.project-heading>div:first-child{flex:1 1 260px}
