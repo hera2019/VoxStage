@@ -422,3 +422,21 @@ main>footer audio{height:34px}
 /* 未处理章节的原稿，处理前可看可改（本人 2026-09-23） */
 .chapter-source{display:flex;flex-direction:column;gap:4px;margin:10px 0 6px}
 .chapter-source textarea{width:100%;box-sizing:border-box;min-height:220px;font-size:14px;line-height:1.8;resize:vertical}
+/* 中间栏页面不要外框（本人 2026-09-23：从弹窗搬进主界面后留下的一圈框架） */
+.structure-inline{margin-top:0}
+.structure-inline>.structure-page{background:none;border:0;border-radius:0;padding:0}
+.book-workspace .chapter-settings{background:none;box-shadow:none;border-radius:0;width:auto;max-height:none;overflow:visible;padding:0}
+.top-notice{margin:0 0 6px}
+/* 未处理章节：操作在上，一行说明，原稿占满余下的高度 */
+.structure-inline:has(.chapter-start){height:100%;display:flex;flex-direction:column}
+.structure-page.chapter-start{flex:1;min-height:0;display:flex;flex-direction:column;padding:4px 0 8px}
+.start-head{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:0 0 4px}
+.start-head>strong{font-size:17px;flex:1 1 auto;min-width:0}
+.start-actions{display:flex;flex-wrap:wrap;gap:6px}
+.start-actions button{padding:6px 12px;font-size:13px}
+.start-facts{margin:0 0 6px;font-size:12px;color:#6d7a69}
+.start-status{margin:0 0 6px;font-size:13px}
+.start-source-head{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin:4px 0 4px;font-size:12px;color:#627058}
+.start-source-head button{padding:4px 10px;font-size:12px}
+.start-source{flex:1;min-height:240px;width:100%;box-sizing:border-box;font-size:14px;line-height:1.8;resize:none;margin:0}
+.start-source-head .help-btn,.start-actions .help-btn{padding:0;font-size:10px}
