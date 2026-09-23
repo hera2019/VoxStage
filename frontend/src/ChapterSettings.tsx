@@ -15,6 +15,11 @@ const PAGES:[string,string[]][]=[['角色声音',['voices','colors','sexes','mut
 const LABELS:Record<string,string>={voices:'角色声音',colors:'角色颜色',sexes:'角色性别',muted_speakers:'不朗读的角色',preset_model:'预设音色模型',clone_model:'固定声线模型',speech_rate:'语速',pause_ms:'句间停顿（毫秒）',ellipsis_pause_ms:'省略号、破折号处停顿',color_scope:'颜色用在',lexicon:'发音词典'};
 const LEVEL:Record<string,string>={project:'本章',local:'本章',book:'主工程',master:'主工程',default:'应用默认',app:'应用默认',machine:'本机默认'};
 
+// The same dictionary format as the project page (本人 2026-09-23: 两套格式，不能直接复制粘贴):
+// one entry a line, 写法→读法 (-> and => accepted too).
+export const lexiconToText=(lexicon:Record<string,string>|undefined)=>Object.entries(lexicon??{}).map(([a,b])=>a+'→'+b).join('\n');
+export function textToLexicon(text:string){const out:Record<string,string>={};for(const line of text.split('\n')){const m=line.split(/→|->|=>/);if(m.length>=2&&m[0].trim()&&m[1].trim())out[m[0].trim()]=m[1].trim()}return out}
+
 export function whereFrom(s?:Source|{level:string;id?:string}){return s?LEVEL[s.level]??s.level:'—'}
 
 export function ChapterSettings({kind,id,request,presetModels=['0.6B'],cloneModels=['0.6B'],chapterIds=[],inline,voiceName=(v:string|undefined)=>String(v??''),onClose}:Props){
@@ -31,7 +36,7 @@ export function ChapterSettings({kind,id,request,presetModels=['0.6B'],cloneMode
  const loadCast=()=>{if(kind!=='book')return;void request('/books/'+id).then((b:{cast?:{id:string;name:string;aliases?:string[]}[];revision?:number})=>{setCast(b.cast??[]);setBookRevision(b.revision??0)}).catch(()=>{})};
  useEffect(()=>{loadCast()},[kind,id]);   // eslint-disable-line react-hooks/exhaustive-deps
  useEffect(()=>{if(kind!=='book'||!chapterIds.length){setOverridden(null);return}let stop=false;void Promise.all(chapterIds.map(c=>request(`/projects/${c}/settings`).catch(()=>null))).then(list=>{if(stop)return;const n:Record<string,number>={};for(const d of list)for(const k of Object.keys(d?.overrides??{}))n[k]=(n[k]??0)+1;setOverridden(n)});return()=>{stop=true}},[kind,id,chapterIds.join(',')]);   // eslint-disable-line react-hooks/exhaustive-deps
- const load=async()=>{const d=await request(base);setData(d);setLexiconText(JSON.stringify((kind==='project'?d.effective?.lexicon:d.settings?.lexicon)??{},null,1))};
+ const load=async()=>{const d=await request(base);setData(d);setLexiconText(lexiconToText((kind==='project'?d.effective?.lexicon:d.settings?.lexicon)??{}))};
  useEffect(()=>{void load().catch(e=>setError((e as Error).message))},[id,kind]);   // eslint-disable-line react-hooks/exhaustive-deps
  if(error&&!data)return <div className="chapter-settings"><p role="alert" className="line-error">{error}</p><button onClick={onClose}>关闭</button></div>;
  if(!data)return <div className="chapter-settings"><p className="muted">读取设置…</p></div>;
@@ -72,7 +77,7 @@ export function ChapterSettings({kind,id,request,presetModels=['0.6B'],cloneMode
    {sel('ellipsis_pause_ms',[['500','停一拍（半秒）'],['300','短停（0.3 秒）'],['0','不处理']])}
    {sel('color_scope',[['name','角色名'],['text','说话的文字'],['both','角色名和文字']])}
   </div>}
-  {page===2&&<div className="setting-page"><Row k="lexicon"><textarea rows={8} disabled={busy} value={lexiconText} onChange={e=>setLexiconText(e.target.value)} onBlur={()=>{try{const v=JSON.parse(lexiconText||'{}');if(JSON.stringify(v)!==JSON.stringify(effective.lexicon??{}))void save({lexicon:v})}catch{setError('词典要写成 {"原词":"读法"} 的 JSON。')}}}/></Row><p className="muted">整项替换：本章设了词典就不再用主工程的；空的 {'{}'} 表示本章不用词典。</p></div>}
+  {page===2&&<div className="setting-page"><Row k="lexicon"><textarea rows={8} disabled={busy} placeholder={"偸→偷\n儍→傻\n干活→干[gan4]活"} value={lexiconText} onChange={e=>setLexiconText(e.target.value)} onBlur={()=>{const v=textToLexicon(lexiconText);if(JSON.stringify(v)!==JSON.stringify(effective.lexicon??{}))void save({lexicon:v})}}/></Row><p className="muted">每行一条：写法→读法，和工程页的发音词典同一个格式，可以直接复制粘贴。多音字写成 干活→干[gan4]活。整项替换：本章设了词典就不再用主工程的；清空表示本章不用词典。</p></div>}
   {page===3&&<div className="setting-page"><p className="muted">导出选项（选章、输出格式、批次）在 Sol 四 / Opus 三 接入后出现在这里。</p></div>}
  </div>;
 }

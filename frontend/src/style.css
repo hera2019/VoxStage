@@ -339,3 +339,73 @@ main>footer audio{height:34px}
 .chapter-filter input[type=search]{flex:1 1 220px;min-width:0;margin:0}
 .chapter-filter label{display:inline-flex;align-items:center;gap:6px;font-size:13px;margin:0;white-space:nowrap}
 .chapter-filter input[type=checkbox]{width:14px;height:14px;margin:0}
+
+/* ── 紧凑布局（本人 2026-09-23：界面疏松、滚动多；给主体内容留出空间）──────────── */
+.help{display:inline}
+.help-btn{display:inline-grid;place-items:center;width:16px;height:16px;min-height:0;padding:0;margin:0 0 0 5px;border-radius:50%;
+  border:1px solid #c9d0c0;background:#fff;color:#627058;font-size:10px;line-height:1;vertical-align:middle;cursor:pointer}
+.help.open .help-btn{background:#344e3d;color:#fff;border-color:#344e3d}
+.help-pop{display:block;margin:4px 0 2px;padding:6px 8px;background:#fffef6;border:1px solid #e3e1cf;border-radius:6px;
+  font-size:11px;line-height:1.6;color:#5d6a5a;font-weight:400;letter-spacing:0;text-transform:none;white-space:normal}
+.more-menu{position:relative;display:inline-block}
+.more-menu>summary{list-style:none;cursor:pointer;border:1px solid #d9dccf;border-radius:7px;padding:5px 9px;font-size:12px;background:#fffefa;color:#344e3d;user-select:none}
+.more-menu>summary::-webkit-details-marker{display:none}
+.more-menu[open]>summary{background:#e9ede2}
+.more-items{position:absolute;right:0;top:calc(100% + 4px);z-index:20;display:flex;flex-direction:column;gap:4px;min-width:150px;
+  padding:6px;background:#fffefa;border:1px solid #d9dccf;border-radius:9px;box-shadow:0 8px 24px #24352a22}
+.more-items button{width:100%;text-align:left}
+.line-tools{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;margin:0 0 8px}
+.line-tools .book-line{margin:0}
+.line-tools .line-filter{margin:0}
+.line-tools .line-filter label{flex-direction:row;align-items:center;gap:6px;margin:0;min-width:0}
+.line-tools .line-filter select{min-height:28px;padding:2px 6px;font-size:12px;margin:0;width:auto}
+.footer-label{flex:none;font-size:11px}
+.footer-status{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;color:#4f6552;text-align:right}
+.voice-bar .voice{flex-direction:row;flex-wrap:wrap;align-items:center;gap:4px 6px;padding:6px 8px;margin:0;min-width:0}
+.voice-bar .voice>strong{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.voice-bar .voice>select{order:10;flex:1 1 55%;min-width:0;margin:0;min-height:28px;padding:2px 6px;font-size:12px}
+.voice-bar .voice>.color-cell{order:5}
+.voice-bar .voice>.sex-label{order:11;flex:0 0 auto;display:inline-flex;flex-direction:row;align-items:center;gap:4px;margin:0;font-size:11px}
+.voice-bar .voice .sex-select{min-height:28px;padding:2px 4px;font-size:12px;margin:0;width:auto}
+.voice-bar{gap:6px}
+
+@media(min-width:851px){
+  .sidebar{padding:14px 12px}
+  .brand{margin-bottom:2px}
+  .local{margin:0 0 10px}
+  .sidebar .section-label.space{margin-top:4px}
+  .new-project{margin:6px 0 2px;padding:7px}
+  main{padding:10px 18px 12px}
+  main>footer{margin:0 -18px -12px;min-height:42px;padding:5px 14px;gap:10px}
+  main>footer audio{height:30px;width:260px;flex:none}
+  .project-heading{margin:2px 0 6px;gap:8px;align-items:flex-end}
+  .project-heading .eyebrow{margin-bottom:0}
+  .project-title{font-size:19px;padding:2px 6px;margin-bottom:0}
+  .history{gap:5px;flex-wrap:wrap;align-items:center}
+  .history button,.history .gear{padding:5px 9px;font-size:12px;min-height:0}
+  .script{gap:5px}
+  .line-main{padding:8px 12px;gap:10px}
+  .line .play,.line>button:last-child{padding:6px 10px}
+  .message{padding:8px 10px}
+  .inspector{padding:0}
+  .panel-body{padding:10px 12px 18px}
+  .panel-tabs button{padding:9px 4px}
+  .panel-body label{margin:0 0 10px;gap:4px}
+  .panel-body .section-label{margin:4px 0 8px}
+  .panel-body .group-label{margin-top:14px}
+  .panel-body textarea{min-height:0}
+  .edit-actions{margin:4px 0}
+  .content-check{margin:.6rem 0;padding-top:.6rem}
+  .content-check h4{margin:0 0 6px}
+  .content-check p{margin:0 0 6px}
+  .check-bar{margin:0 0 10px;padding:10px;gap:8px}
+  .render-bar{margin:10px -12px 0;padding:10px 12px 12px}
+  .render-bar p{margin:4px 0}
+  .panel-count{margin:0 0 6px}
+  .hint{margin-top:12px;padding-top:10px}
+  .book-workspace{padding:4px 0 16px}
+}
+@media(min-width:851px){
+  .line-actions .edit-actions button{padding:6px 8px;font-size:12px;min-height:0}
+  .line-actions{margin:0 0 8px}
+}
