@@ -665,3 +665,32 @@ def test_manner_words_in_a_tag_are_not_part_of_the_name_and_pronouns_are_not_nam
     tags = ['陈小雪苦笑道：', '，微笑着说：', '她缓缓道：', '王伯喃喃道：', '这人道：', '阿宁冷冷地说：', '陈小雪笑着说：', '王伯点头道：', '阿宁哈哈笑道：', '缓缓道：', '陈小雪看着窗外说：', '赵太爷说：']
     assert habits.names_from_tags(tags) == ['陈小雪', '王伯', '阿宁', '赵太爷']
     assert '这人' in habits.PRONOUNS and habits.anonymous_tag('这人道：') == habits.STAND_INS['one']
+
+
+def test_a_rare_spelling_of_a_name_becomes_the_one_the_story_uses():
+    """本人 2026-09-24: in one reviewed chapter 18 of 20 fixes were a name the
+    text misspells once (a character of the same reading) and the model copied.
+    Same reading with tones, one character apart, the usual spelling at least
+    five times as common — or a name of the book's cast. Names that only share
+    a character, or read differently, stay apart."""
+    from runtime import habits
+    text = '陈晓雪推门进来。' + '陈小雪说：“走吧。”' * 6
+    assert habits.usual_spelling('陈晓雪', text) == '陈小雪'
+    assert habits.usual_spelling('陈小雪', text) is None                         # already the usual one
+    assert habits.usual_spelling('陈晓雪', '陈晓雪推门进来。陈小雪说：“走。”') is None   # not common enough to tell
+    assert habits.usual_spelling('陈晓雪', '陈晓雪来了。', known_names=['陈小雪']) == '陈小雪'
+    assert habits.usual_spelling('王柏', '王柏来了。' + '王伯说：“坐。”' * 6) is None    # bǎi / bó: two people
+    assert habits.usual_spelling('阿宁', '阿宇来了。' + '阿宇说：“坐。”' * 6) is None    # different reading
+    assert habits.usual_spelling('老板娘', '老板娘笑了。' * 3 + '老板狼' * 20) is None   # the name is common itself
+
+
+def test_the_draft_writes_the_usual_spelling_for_a_rare_one(tmp_path):
+    class Rare(Roles):
+        def annotate(self, text, log_path):
+            return {'labels': [{'id': u['id'], 'kind': 'dialogue' if u['text'].startswith('“') else 'narration',
+                                'speaker': '陈晓雪' if u['text'].startswith('“') else 'NARRATOR', 'certain': True} for u in source_units(text)],
+                    'model_sha256': 'fixture'}
+    script = '陈晓雪推门进来。\n' + '陈小雪坐下。\n“走吧，第%d回。”\n' * 6 % tuple(range(6))
+    with TestClient(create_app(tmp_path / 'p', FixtureEngine(), role_engine=Rare()), base_url='http://127.0.0.1', headers=HEADERS) as c:
+        d = c.post('/api/attribution/draft', json={'script': script, 'language': 'zh'}).json()
+    assert {u['speaker'] for u in d['units'] if u['kind'] == 'dialogue' and not u['blank']} == {'陈小雪'}

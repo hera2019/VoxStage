@@ -1499,6 +1499,11 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                     same = habits.name_in_letters_for(speaker, candidates, body.script)
                     if same:
                         speaker = aliases.get(same, same)
+                if body.language == 'zh' and label['kind'] == 'dialogue':
+                    # 陈晓雪 where the story nearly always writes 陈小雪: the usual spelling.
+                    usual = habits.usual_spelling(speaker, body.script, known_names)
+                    if usual:
+                        speaker = aliases.get(usual, usual)
                 if quoted and label['kind'] == 'dialogue' and not unit['text'].lstrip().startswith(('“', '"', '「', '『')):
                     return {'kind': 'narration', 'speaker': 'NARRATOR', 'suggested': speaker}
                 if body.language == 'zh' and label['kind'] == 'dialogue' and cites_rather_than_speaks(unit):

@@ -622,6 +622,39 @@ def name_in_letters_for(latin, candidates, text=''):
     return next(iter(found)) if len(found) == 1 else None
 
 
+
+def usual_spelling(name, text, known_names=()):
+    """The spelling the story uses for a name the model wrote in a rare one: the
+    same name with one character swapped for another of the same reading —
+    陈晓雪 once in a chapter, 陈小雪 twenty-seven times (本人 2026-09-24: 18 of the
+    20 fixes in one reviewed chapter were this). A name of the book's cast wins;
+    otherwise the text's own spelling must be at least five times as common and
+    the rare one at most twice. Readings compare with tones and each character's
+    usual reading only, so 王伯 and 王柏 (bó / bǎi) or 人物甲 and 人物乙 stay two
+    people. None when there is no such spelling, or more than one."""
+    if not name or len(name) < 2 or not re.fullmatch('[一-鿿]+', name):
+        return None
+    from pypinyin import pinyin, Style
+    def sound(ch):
+        return pinyin(ch, style=Style.TONE3, heteronym=False)[0][0]
+    def variants(pool):
+        return {v for v in pool if len(v) == len(name) and v != name
+                and sum(a != b for a, b in zip(v, name)) == 1
+                and all(sound(a) == sound(b) for a, b in zip(v, name) if a != b)}
+    if name not in known_names:
+        cast = variants(known_names)
+        if len(cast) == 1:
+            return next(iter(cast))
+    clean = STRIP.sub('', text or '')
+    rare = clean.count(name)
+    if rare > 2:
+        return None
+    seen = set()
+    for i in range(len(name)):
+        seen |= set(re.findall(re.escape(name[:i]) + '[一-鿿]' + re.escape(name[i + 1:]), clean))
+    usual = {v for v in variants(seen) if clean.count(v) >= max(3, 5 * rare)}
+    return next(iter(usual)) if len(usual) == 1 else None
+
 # Where one exchange ends and another begins: narration long enough to carry
 # the reader elsewhere, or that opens with a change of time or place. A short
 # beat between two lines (他笑了笑。/ 阿宁说：) keeps the exchange going.
