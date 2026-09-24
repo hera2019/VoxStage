@@ -98,6 +98,21 @@ build/
 !examples/pride-and-prejudice-ch1/full.mp3
 !examples/zh-hard-cases/full.mp3
 !examples/kong-yiji/full.mp3
+# 默认音色库（本人 2026-09-23 选定、打包供人下载）：只放这 14 个合成声线，逐个列出，别的声音不会被带进来。
+!voicepack/default/01.flac
+!voicepack/default/02.flac
+!voicepack/default/03.flac
+!voicepack/default/04.flac
+!voicepack/default/05.flac
+!voicepack/default/06.flac
+!voicepack/default/07.flac
+!voicepack/default/08.flac
+!voicepack/default/09.flac
+!voicepack/default/10.flac
+!voicepack/default/11.flac
+!voicepack/default/12.flac
+!voicepack/default/13.flac
+!voicepack/default/14.flac
 /docs/handover-2026-09-11.md
 /docs/pre-publication-checklist.md
 /docs/gap-review-2026-09-11.md
