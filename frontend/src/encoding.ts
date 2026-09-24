@@ -1,11 +1,16 @@
-/** Text files that are not UTF-8 (本人 2026-09-22: a GB-coded TXT came in as
+
+import {tr} from './i18n';/** Text files that are not UTF-8 (本人 2026-09-22: a GB-coded TXT came in as
+ *  mojibake; 香港台湾繁体、日文的老格式 likewise). The bytes are tried as
+ *  UTF-8 first — strictly, so a GB file cannot pass — then as the old East
+ *  Asian encodings, and the reading with the most everyday characters and the
+ *  fewest impossible ones wins. The choice is shown and can be overridden. *//** Text files that are not UTF-8 (本人 2026-09-22: a GB-coded TXT came in as
  *  mojibake; 香港台湾繁体、日文的老格式 likewise). The bytes are tried as
  *  UTF-8 first — strictly, so a GB file cannot pass — then as the old East
  *  Asian encodings, and the reading with the most everyday characters and the
  *  fewest impossible ones wins. The choice is shown and can be overridden. */
 export const ENCODINGS: [string, string][] = [
-  ['utf-8', 'UTF-8'], ['gb18030', 'GB18030（简体 GB2312 / GBK）'], ['big5', 'Big5（港台繁体）'],
-  ['shift_jis', 'Shift_JIS（日文）'], ['euc-jp', 'EUC-JP（日文）'], ['euc-kr', 'EUC-KR（韩文）'], ['utf-16le', 'UTF-16 LE'], ['utf-16be', 'UTF-16 BE']];
+  ['utf-8', 'UTF-8'], ['gb18030', tr("GB18030（简体 GB2312 / GBK）")], ['big5', tr("Big5（港台繁体）")],
+  ['shift_jis', tr("Shift_JIS（日文）")], ['euc-jp', tr("EUC-JP（日文）")], ['euc-kr', tr("EUC-KR（韩文）")], ['utf-16le', 'UTF-16 LE'], ['utf-16be', 'UTF-16 BE']];
 
 // Everyday characters: the wrong decoder of a GB / Big5 / Shift_JIS file still
 // yields CJK characters, but rarely these.
@@ -32,6 +37,8 @@ export function decodeBytes(buffer: ArrayBuffer, encoding: string): string {
   const bytes = new Uint8Array(buffer);
   return new TextDecoder(encoding).decode(bytes);                // BOMs of that encoding are stripped by the decoder
 }
+
+/** The text and the encoding it was read in; `sure` when a BOM or strict UTF-8 settled it. */
 
 /** The text and the encoding it was read in; `sure` when a BOM or strict UTF-8 settled it. */
 export function decodeText(buffer: ArrayBuffer): { text: string; encoding: string; sure: boolean } {
