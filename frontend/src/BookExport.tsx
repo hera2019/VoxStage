@@ -42,18 +42,18 @@ export function BookExport({bookId,title,chapters,request,onClose,inline}:Props)
    <section><strong>{tr("输出内容")}</strong><ul className="export-list">{OUTPUTS.map(([k,l])=><li key={k}><label><input type="checkbox" checked={outputs.includes(k)} onChange={()=>toggle(outputs,setOutputs,k)}/>{l}</label></li>)}</ul>
     <label className="attach-row">{tr("章节之间停顿（毫秒）")}<input type="number" min={0} max={10000} step={50} defaultValue={pause} key={pause} onBlur={e=>{const v=Number(e.target.value);if(Number.isFinite(v)&&v!==pause)void savePause(v)}}/></label><small className="muted">{tr("上一章末句自己的停顿之外再加这么多；最后一章后面不加。")}</small></section>
   </div>
-  <div className="buttons"><button type="button" className="primary" disabled={busy||!selected.length||!outputs.length} onClick={()=>void doEstimate()}>{busy?'…':tr("估算")}</button>{estimate&&<button type="button" className="primary" disabled={busy||!estimate.can_export} title={estimate.blocked.join(tr("；"))} onClick={()=>{if(confirm(tr("开始导出 {0} 章，预计 {1}？成功后会替换上一批的下载项。",selected.length,clock(estimate.seconds))))void doExport()}}>{tr("导出")}</button>}</div>
+  <div className="buttons"><button type="button" className="primary" disabled={busy||!selected.length||!outputs.length} onClick={()=>void doEstimate()}>{busy?'…':tr("估算")}</button>{estimate&&<button type="button" className="primary" disabled={busy||!estimate.can_export} title={estimate.blocked.map(x=>tr(x)).join(tr("；"))} onClick={()=>{if(confirm(tr("开始导出 {0} 章，预计 {1}？成功后会替换上一批的下载项。",selected.length,clock(estimate.seconds))))void doExport()}}>{tr("导出")}</button>}</div>
   {estimate&&<div className="structure-plan">
    <p>{tr("所选 ")}{estimate.chapters.length}{tr(" 章 · ")}{estimate.estimated?tr("预计"):tr("实际")} {clock(estimate.seconds)}{estimate.estimated_final_bytes!==undefined&&<>{tr(" · 成品约 {0}，临时空间约 {1}，磁盘剩余 {2}",mb(estimate.estimated_final_bytes),mb(estimate.estimated_temporary_bytes),mb(estimate.free_bytes))}</>}</p>
    {estimate.estimated_sizes&&<p className="muted">{Object.entries(estimate.estimated_sizes).map(([k,v])=>`${label(k)} ≈ ${mb(v)}`).join(' · ')}</p>}
-   {estimate.warnings.map((w,i)=><p key={i} className="line-warning">⚠ {w}</p>)}
-   {estimate.blocked.map((w,i)=><p key={i} role="alert" className="line-error">✕ {w}</p>)}
+   {estimate.warnings.map((w,i)=><p key={i} className="line-warning">⚠ {tr(w)}</p>)}
+   {estimate.blocked.map((w,i)=><p key={i} role="alert" className="line-error">✕ {tr(w)}</p>)}
    {estimate.waiting.length>0&&<p className="muted">{tr("还有 {0} 句没有生成声音（{1}）。",estimate.waiting.length,[...new Set(estimate.waiting.map(w=>w.project_id))].map(id=>chapters.find(c=>c.id===id)?.name).filter(Boolean).join(tr("、")))}</p>}
    {estimate.silent_chapters.length>0&&<p className="muted">{tr("没有可朗读内容的章：{0}。",estimate.silent_chapters.map(c=>c.name).join(tr("、")))}</p>}
    <ul className="export-list">{estimate.chapters.map(c=><li key={c.project_id}>{c.name} · {c.estimated?tr("预计"):''}{clock(c.seconds)}{c.waiting?tr(" · {0} 句待生成",c.waiting):''}</li>)}</ul>
   </div>}
   {current&&current.status!=='none'&&<div className="structure-plan"><strong>{current.status==='latest'?tr("最新导出 · 与当前工程一致"):tr("上次导出 · 导出后工程已有改动")}</strong><small className="muted">{tr(" 批次 {0}{1}",current.batch_id,current.created_at_local?` · ${current.created_at_local}`:'')}</small>
-   {current.status==='stale'&&<p className="line-warning">{tr("⚠ 这是上次导出的版本，导出后工程已有改动：{0}。仍可下载；要当前内容请重新导出。",(current.stale_reasons??[]).join(tr("；")))}</p>}
+   {current.status==='stale'&&<p className="line-warning">{tr("⚠ 这是上次导出的版本，导出后工程已有改动：{0}。仍可下载；要当前内容请重新导出。",(current.stale_reasons??[]).map(x=>tr(x)).join(tr("；")))}</p>}
    <div className="export-links">{Object.entries(current.links).map(([name,url])=><a key={name} href={url} download>↓ {label(name)}</a>)}</div></div>}
  </div></div>;
 }

@@ -49,7 +49,7 @@ class BookTransactions:
     def _assert_idle(projects):
         busy = [p['name'] for p in projects if (p.get('job') or {}).get('status') in RUNNING]
         if busy:
-            raise RuntimeError('主工程中有章节正在处理：' + '、'.join(busy[:5]) + '。请完成或取消后再操作。')
+            raise RuntimeError(f"主工程中有章节正在处理：{'、'.join(busy[:5])}。请完成或取消后再操作。")
 
     def _snapshot(self, book, projects, reason, *, created=()):
         stamp = time.strftime('%Y%m%d-%H%M%S')

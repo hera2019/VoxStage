@@ -570,7 +570,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
         if not signed_in and path != '/lan':
             if path.startswith('/api/'):
                 return JSONResponse({'detail':'请先在这台设备上输入访问口令：打开 http://' + host + '/lan'}, status_code=401)
-            return HTMLResponse(lan.login_page(), status_code=401)
+            return HTMLResponse(lan.login_page(language=lan.page_language(request.headers.get('accept-language'))), status_code=401)
         if request.method not in ('GET','HEAD'):
             # The sign-in form is a plain browser POST and cannot set the header;
             # everything else still must (it is what keeps other pages out).
@@ -600,12 +600,12 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
         return JSONResponse({'detail':str(exc)}, status_code=409)
 
     @app.get('/lan')
-    def lan_page():
+    def lan_page(request: Request):
         """Where a phone or an iPad on the same network signs in."""
         from . import lan
         if not lan_key:
             return JSONResponse({'detail':'这台 Mac 上的 VoxStage 没有开局域网访问。'}, status_code=403)
-        return HTMLResponse(lan.login_page())
+        return HTMLResponse(lan.login_page(language=lan.page_language(request.headers.get('accept-language'))))
 
     @app.post('/lan')
     async def lan_sign_in(request: Request):
@@ -618,7 +618,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
         given = (parse_qs(body).get('key') or [''])[0].strip()
         if not hmac.compare_digest(given, lan_key):
             time.sleep(.5)                                  # a wrong key is not worth guessing at speed
-            return HTMLResponse(lan.login_page('口令不对，请再试一次。'), status_code=401)
+            return HTMLResponse(lan.login_page('wrong', lan.page_language(request.headers.get('accept-language'))), status_code=401)
         response = RedirectResponse('/', status_code=303)
         response.set_cookie(lan.COOKIE, lan.cookie_value(lan_key), max_age=lan.COOKIE_DAYS * 86400,
                             httponly=True, samesite='strict', path='/')

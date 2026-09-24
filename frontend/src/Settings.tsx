@@ -1,6 +1,6 @@
 import {useEffect,useRef,useState} from 'react';
-import {tr,lang,setLang} from './i18n';
-type Custom={id:string;name:string;language:string;source:string;seconds:number;derived_from:string|null;consent_confirmed:boolean;reference_text?:string};
+import {tr,lang,setLang,voiceTitle} from './i18n';
+type Custom={pack?:string|null;id:string;name:string;language:string;source:string;seconds:number;derived_from:string|null;consent_confirmed:boolean;reference_text?:string};
 // Where a library voice was designed: its description, seed and the line it was designed on,
 // following one copy step (a voice re-read from a designed one). Older designs kept no seed.
 function designOrigin(v:Custom,all:Custom[]):{description:string;seed:number;text?:string}|null{
@@ -168,7 +168,7 @@ export function Settings({request,voices,language,speedReady,designReady,roleMod
   {custom.length>0&&<div className="custom-voices">
    <div className="section-label">{tr("已保存的音色")}</div>
    {custom.map(v=><article className="voice-row" key={v.id}>
-    <div className="voice-name"><strong>{v.name}</strong>
+    <div className="voice-name"><strong>{voiceTitle(v)}</strong>
      <small>{tr("{0} · {1} 秒",v.source==='generated'?tr("合成自 {0}",v.derived_from??tr("预设")):tr("提供的录音 · 已确认授权"),v.seconds.toFixed(1))}</small>{tagEditing==='custom:'+v.id?<input autoFocus className="tag-input" aria-label={v.name+tr(" 的标签")} defaultValue={tagsOf('custom:'+v.id,v.derived_from??'').join(tr("、"))} placeholder={tr("标签，顿号分隔：老人、男性、威严")} onBlur={e=>void saveTags('custom:'+v.id,e.target.value,v.derived_from??'')} onKeyDown={e=>{if(e.key==='Enter')void saveTags('custom:'+v.id,(e.target as HTMLInputElement).value,v.derived_from??'');if(e.key==='Escape')setTagEditing(null)}}/>:<button type="button" className="tags" title={tr("改标签")} onClick={()=>setTagEditing('custom:'+v.id)}>{tagsOf('custom:'+v.id,v.derived_from??'').map(t=><span key={t}>{t}</span>)}<span className="tag-edit">✎</span></button>}</div>
     <button onClick={()=>{const a=player.current;if(a){a.src='/api/voices/custom/'+v.id+'/audio';void a.play().catch(()=>{})}}}>{tr("听参考")}</button>
     {designReady&&(()=>{const o=designOrigin(v,custom);return o&&<button title={tr("以它为底改描述：")+o.description} onClick={()=>{setTab('design');setDesign(o.description);if(o.text)setText(o.text);setDesigns([]);setDesigned(null);setLock({seed:o.seed,from:v.name})}}>{tr("微调")}</button>})()}
@@ -186,7 +186,7 @@ export function Settings({request,voices,language,speedReady,designReady,roleMod
    <div className="section-label">{tr("分角色模型")}</div>
    <p className="muted">{tr("新建工程时给原文分旁白/对白、点出说话人的本机模型。每个都按 SHA-256 校验；草稿记录里写着是哪个模型答的。")}</p>
    <select aria-label={tr("分角色模型")} value={role} disabled={!!waiting} onChange={e=>{const id=e.target.value;setRole(id);setRoleNote('');void (async()=>{try{await request('/settings','POST',{role_model:id});setRoleNote(tr("已切换，下一次生成角色草稿起生效。"))}catch(err){setRoleNote((err as Error).message);setRole(roleModel??'')}})()}}>
-    {roleModels.map(m=><option key={m.id} value={m.id} disabled={!m.installed}>{m.label}{m.installed?'':tr("（未安装：scripts/setup_model.py --model role-abliterated）")}</option>)}
+    {roleModels.map(m=><option key={m.id} value={m.id} disabled={!m.installed}>{tr(m.label)}{m.installed?'':tr("（未安装：scripts/setup_model.py --model role-abliterated）")}</option>)}
    </select>
    {roleNote&&<p className="muted">{roleNote}</p>}
   </div>}

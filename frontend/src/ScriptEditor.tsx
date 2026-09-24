@@ -43,7 +43,7 @@ export function ScriptEditor({project,request,onUpdated,onClose,limit=3000}:Prop
    {report.characters}{tr(" 字 · 预计 ")}{report.units} {tr("个切片")}
    {!report.findings.length&&tr(" · 未发现问题")}
    {report.findings.map((f,i)=><p key={i} className={f.level==='error'?'line-error':'muted'}>
-    {f.level==='error'?tr("必须处理："):tr("建议：")}{f.message}<br/><code>{f.excerpt}</code>
+    {f.level==='error'?tr("必须处理："):tr("建议：")}{tr(f.message)}<br/><code>{f.excerpt}</code>
     {f.replace&&fixable[f.kind]&&<> <button disabled={waiting} onClick={()=>void run(async()=>{const r=await request(base+'/fix','POST',{source_script:text,kind:f.kind});edit(r.source_script)})}>{fixable[f.kind]}</button></>}
    </p>)}
   </div>}

@@ -629,7 +629,7 @@ class BookExportService:
             busy = [raw['name'] for raw in all_members
                     if (raw.get('job') or {}).get('status') in ('queued', 'running')]
             if busy:
-                raise RuntimeError('同一主工程有章节正在处理：' + '、'.join(busy[:6]) + '。请完成后再导出。')
+                raise RuntimeError(f"同一主工程有章节正在处理：{'、'.join(busy[:6])}。请完成后再导出。")
             with self._active_lock:
                 if self.active_books:
                     raise RuntimeError('已有整书导出正在进行。第一版一次只运行一个大型导出任务。')

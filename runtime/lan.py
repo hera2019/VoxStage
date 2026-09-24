@@ -66,9 +66,9 @@ def addresses():
     return found
 
 
-PAGE = """<!doctype html><html lang="zh"><meta charset="utf-8">
+PAGE = """<!doctype html><html lang="{lang}"><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VoxStage · 局域网访问</title>
+<title>{title}</title>
 <style>
  body{{font:16px/1.7 -apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;color:#26302f;background:#f6f5f1;margin:0;display:grid;place-items:center;min-height:100dvh;padding:24px}}
  form{{background:#fff;border:1px solid #dfe1d8;border-radius:14px;padding:24px;max-width:360px;width:100%;box-shadow:0 10px 40px #24352a14}}
@@ -79,15 +79,33 @@ PAGE = """<!doctype html><html lang="zh"><meta charset="utf-8">
 </style>
 <form method="post" action="/lan">
  <h1>VoxStage</h1>
- <p>这台 Mac 上的 VoxStage。输入启动时显示的访问口令；这台设备记住 30 天。</p>
- <input type="password" name="key" autocomplete="current-password" autofocus aria-label="访问口令" placeholder="访问口令">
- <button type="submit">进入</button>
+ <p>{intro}</p>
+ <input type="password" name="key" autocomplete="current-password" autofocus aria-label="{key}" placeholder="{key}">
+ <button type="submit">{enter}</button>
  {message}
 </form>
 """
 
 
-def login_page(message=''):
-    return PAGE.format(message=f'<p class="bad">{html.escape(message)}</p>' if message else '')
+WORDS = {
+    'zh': {'lang': 'zh', 'title': 'VoxStage · 局域网访问', 'intro': '这台 Mac 上的 VoxStage。输入启动时显示的访问口令；这台设备记住 30 天。',
+           'key': '访问口令', 'enter': '进入', 'wrong': '口令不对，请再试一次。'},
+    'en': {'lang': 'en', 'title': 'VoxStage · network access', 'intro': 'VoxStage on this Mac. Enter the access key shown when it started; this device remembers it for 30 days.',
+           'key': 'Access key', 'enter': 'Enter', 'wrong': 'That key is not right; please try again.'},
+}
+
+
+def page_language(accept_language):
+    """The login page comes before the app and its language switch, so it
+    follows the browser: Chinese when the browser asks for it first."""
+    return 'zh' if (accept_language or '').strip().lower().startswith('zh') else 'en'
+
+
+def login_page(message='', language='zh'):
+    """`message` is 'wrong' for a key that did not match."""
+    words = WORDS[language]
+    note = words.get(message, message)
+    return PAGE.format(message=f'<p class="bad">{html.escape(note)}</p>' if note else '',
+                       **{k: html.escape(v) for k, v in words.items() if k != 'wrong'})
 
 # 最后更新：2026-09-22 · Claude Hera

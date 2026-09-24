@@ -28,10 +28,10 @@ def test_with_a_key_another_address_signs_in_once_and_then_works(tmp_path):
         r = c.get('/api/health')
         assert r.status_code == 401 and '口令' in r.json()['detail']
         page = c.get('/index.html')
-        assert page.status_code == 401 and '访问口令' in page.text          # a page request gets the sign-in page
+        assert page.status_code == 401 and 'name="key"' in page.text          # a page request gets the sign-in page
         assert c.get('/lan').status_code == 200
         bad = c.post('/lan', data={'key': 'wrong'})
-        assert bad.status_code == 401 and '口令不对' in bad.text and not c.cookies.get(lan.COOKIE)
+        assert bad.status_code == 401 and 'not right' in bad.text and not c.cookies.get(lan.COOKIE)
         ok = c.post('/lan', data={'key': 'test-key-123'}, follow_redirects=False)
         assert ok.status_code == 303 and ok.headers['location'] == '/'
         assert c.cookies.get(lan.COOKIE) == lan.cookie_value('test-key-123')
@@ -74,8 +74,16 @@ def test_a_link_from_elsewhere_may_open_the_page_but_not_call_the_api(tmp_path):
     from_a_link = {'sec-fetch-site': 'cross-site', 'sec-fetch-mode': 'navigate'}
     with TestClient(app, base_url=ELSEWHERE) as c:
         page = c.get('/lan', headers=from_a_link)
-        assert page.status_code == 200 and '访问口令' in page.text
+        assert page.status_code == 200 and 'name="key"' in page.text
         fetched = c.get('/api/health', headers={'sec-fetch-site': 'cross-site', 'sec-fetch-mode': 'cors'})
         assert fetched.status_code == 403 and fetched.json()['detail'] == 'Cross-origin access denied'
         posted = c.post('/lan', data={'key': 'test-key-123'}, headers={'sec-fetch-site': 'cross-site', 'sec-fetch-mode': 'navigate'})
         assert posted.status_code == 403                                   # a form posted from another page is not a page load
+
+
+def test_the_sign_in_page_follows_the_browser_language():
+    """It comes before the app and its language switch (本人 2026-09-24: 英文界面)."""
+    from runtime import lan
+    assert '访问口令' in lan.login_page(language=lan.page_language('zh-CN,zh;q=0.9,en;q=0.8'))
+    assert 'Access key' in lan.login_page(language=lan.page_language('en-GB,en;q=0.9'))
+    assert '口令不对' in lan.login_page('wrong', 'zh') and 'not right' in lan.login_page('wrong', 'en')

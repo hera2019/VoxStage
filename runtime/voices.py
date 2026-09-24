@@ -147,7 +147,7 @@ class VoiceLibrary:
 
     def delete(self, voice_id, in_use_by=()):
         if in_use_by:
-            raise ValueError('这个音色仍被工程使用：' + '、'.join(sorted(in_use_by)[:5]) + '。请先改用其它音色。')
+            raise ValueError(f"这个音色仍被工程使用：{'、'.join(sorted(in_use_by)[:5])}。请先改用其它音色。")
         self.get(voice_id)
         self._path(voice_id, '.wav').unlink(missing_ok=True)
         self._path(voice_id, '.json').unlink(missing_ok=True)
