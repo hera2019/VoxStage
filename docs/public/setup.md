@@ -127,6 +127,14 @@ what to do.
 The first time the service starts, the default voice pack (fourteen synthetic
 voices, `voicepack/`) is added to the voice library.
 
+**Language**: the interface is in English or Chinese, chosen by the browser's
+language at first; switch it with the 中文 / English button at the bottom of
+the sidebar, or under Settings → Models and options. It is a preference of
+that browser only — a project's own language (the language of its text and
+voices) does not change. The terminal follows the Mac's language;
+`VOXSTAGE_LANG=en` or `zh` sets it. Exported reports and editing notes are
+still in Chinese.
+
 **From a phone or tablet on the same Wi-Fi**: double-click
 `Start VoxStage (局域网).command`. The terminal prints the address and an
 access key; each device types the key once. It is off by default.

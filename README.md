@@ -96,7 +96,8 @@ npm --prefix frontend ci && npm --prefix frontend run build
 .venv/bin/python -m runtime.launcher
 ```
 
-Then [the first run](docs/public/quickstart.md): from a passage of prose to a
+The interface is in English or Chinese (the switch is at the bottom of the
+sidebar). Then [the first run](docs/public/quickstart.md): from a passage of prose to a
 multi-voice recording. Every model is Apache-2.0 and pinned to a revision;
 nothing leaves the Mac.
 
