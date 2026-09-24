@@ -284,9 +284,20 @@ def speaker_pattern(text):
     return "^([A-Za-z][A-Za-z .'\\-]{0,30}|UNKNOWN|NARRATOR)$"
 
 
+def role_server():
+    """The llama.cpp server that runs the speaker model: VOXSTAGE_ROLE_SERVER, the
+    development machine's own build, or one on the PATH (Homebrew's llama.cpp)."""
+    import shutil
+    candidates = [os.environ.get('VOXSTAGE_ROLE_SERVER'),
+                  ROOT.parent/'AI-Lab/qwen3-14b-llamacpp/worktrees/llama.cpp/build-release-metal/bin/llama-server',
+                  shutil.which('llama-server'), '/opt/homebrew/bin/llama-server', '/usr/local/bin/llama-server']
+    found = next((Path(c) for c in candidates if c and Path(c).is_file() and os.access(c, os.X_OK)), None)
+    return found or Path(candidates[0] or candidates[1])
+
+
 class RoleDraftEngine:
     def __init__(self, model_id=None):
-        self.server = Path(os.environ.get('VOXSTAGE_ROLE_SERVER', ROOT.parent/'AI-Lab/qwen3-14b-llamacpp/worktrees/llama.cpp/build-release-metal/bin/llama-server'))
+        self.server = role_server()
         self.select(model_id or default_role_model())
 
     @staticmethod

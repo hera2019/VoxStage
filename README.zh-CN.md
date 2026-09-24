@@ -46,7 +46,7 @@
 
 在配置好的 Mac 上双击 **Start VoxStage.command**。用 **Check VoxStage.command** 查看环境报告，它不下载任何东西。
 
-详细步骤：[第一次试用](docs/public/quickstart-zh.md) · [环境与模型准备](docs/public/setup-zh.md)
+新的 Mac 请按 **[安装 VoxStage](docs/public/setup-zh.md)**：需要什么机器（Apple 芯片；小模型 16 GB，推荐 32 GB）、装哪些工具、按内存选哪些模型、怎么启动。装好后看[第一次试用](docs/public/quickstart-zh.md)：从一段小说到多角色录音。
 
 ## 三份完整样例
 

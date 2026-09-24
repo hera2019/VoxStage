@@ -95,6 +95,17 @@ def inspect_environment(root=ROOT, dependency_probe=True):
                 ['model.safetensors', 'config.json', 'speech_tokenizer/model.safetensors'])
     add('固定角色声线', 'ok' if ready else 'warning', '模型文件在位，首次生成时核验权重。' if ready else
         '模型未备齐或链接失效。请按 README 安装 Base 模型；预设声音仍可使用。')
+    from .attribution import ROLE_MODELS, role_server
+    server = role_server()
+    role_ready = [m for m, spec in ROLE_MODELS.items() if any(Path(x).is_file() for x in spec.get('paths', []))]
+    add('分角色模型', 'ok' if server.is_file() and role_ready else 'warning',
+        '识别说话人的模型和 llama-server 在位。' if server.is_file() and role_ready else
+        ('缺少 llama-server（brew install llama.cpp）。' if not server.is_file() else '') +
+        ('尚未安装分角色模型（scripts/setup_model.py --model role-14b）。' if not role_ready else '') +
+        '没有它也能导入已标好说话人的剧本。')
+    from .tempo import ffmpeg_path
+    add('FFmpeg', 'ok' if ffmpeg_path() else 'warning', '在位：可调语速，可导入 mp3/m4a 录音。' if ffmpeg_path() else
+        '未找到（brew install ffmpeg）：语速只能原速，录音只收 WAV。')
     settings_path = root/'user-data/asr-settings.json'
     if not settings_path.exists():
         add('文字检查', 'warning', '尚未设置；生成与试听仍可使用。请按 README 设置本地识别。')

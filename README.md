@@ -82,43 +82,23 @@ to plug in the same way rather than be built in.
 On a configured Mac, double-click **Start VoxStage.command**. Use
 **Check VoxStage.command** for an environment report that downloads nothing.
 
-Step-by-step walkthroughs:
-[first run](docs/public/quickstart.md) ·
-[environment and models](docs/public/setup.md)
-
-From a fresh checkout (Python 3.12, uv and Node.js required):
+On a new Mac, follow **[Installing VoxStage](docs/public/setup.md)**: what
+the Mac needs (Apple Silicon; 16 GB for the small models, 32 GB recommended),
+the tools, which models to download for your memory, and how to start. In
+short:
 
 ```sh
+brew install python@3.12 uv node git ffmpeg llama.cpp
 uv venv --python 3.12
 uv pip install --python .venv/bin/python -r requirements.lock.txt
-cd frontend && npm ci && npm run build && cd ..
-.venv/bin/python scripts/setup_model.py      # 0.6B preset voices, ~2.5 GB, pinned revision
+npm --prefix frontend ci && npm --prefix frontend run build
+.venv/bin/python scripts/setup_model.py      # built-in voices, ~2.5 GB; the guide lists the rest
 .venv/bin/python -m runtime.launcher
 ```
 
-Optional models, each pinned and hash-checked by the same script:
-
-```sh
-.venv/bin/python scripts/setup_model.py --model preset-large   # 1.7B preset voices, ~4.2 GB
-.venv/bin/python scripts/setup_model.py --model design         # voice design from a description, ~4.2 GB
-.venv/bin/python scripts/setup_model.py --model base           # zero-shot cloning for the voice library, 0.6B
-.venv/bin/python scripts/setup_model.py --model base-large     # 1.7B cloning, ~4.2 GB — chosen 3/3 in a blind listen; new projects use it when installed
-.venv/bin/python scripts/setup_model.py --model role-14b       # speaker draft, Qwen3-14B Q4_K_M, ~8.4 GB
-.venv/bin/python scripts/setup_model.py --model role-30b-a3b   # speaker draft, Qwen3-30B-A3B Q4_K_M, ~17 GB — the default on a 32 GB Mac when installed, 14B its fallback
-```
-
-New projects use the 1.7B model when it is installed — on the same
-lines the author judged it more natural. It is not immune to run-away
-takes: on a full 93-line run it produced five in 69 preset lines, each
-caught by the duration check and re-rolled before anyone heard it. Peak
-memory is about 8 GB against 7.4 with one model resident (17.7 GB with
-all four loaded); a 16 GB Mac should stay on 0.6B, which every project
-can select. Every model is Apache-2.0.
-
-For the content check, install a compatible `whisper-cli`, then
-`scripts/setup_asr.py --cli <path>` (~547 MiB, SHA-256 verified).
-
-This is a developer setup, not a consumer installer.
+Then [the first run](docs/public/quickstart.md): from a passage of prose to a
+multi-voice recording. Every model is Apache-2.0 and pinned to a revision;
+nothing leaves the Mac.
 
 ## Three finished samples
 

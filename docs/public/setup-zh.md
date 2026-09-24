@@ -1,94 +1,128 @@
-# 在另一台 Mac 准备 VoxStage
+# 安装 VoxStage
 
-目前是开发预览的安装流程，还不是签名安装包。本机已经配置好，日常使用直接双击 Start VoxStage.command，无需重复安装。
+*[English](setup.md)*
 
-## 准备基础工具
+VoxStage 整个跑在一台 Mac 上：稿件、模型、音频都留在本机。这一页讲怎么从零装好。这是开发者安装方式：要用终端，大约半小时，大部分时间在下载模型；还不是签名的安装包。
 
-目标为 Apple Silicon Mac。先安装 Python 3.12、uv 和 Node.js。当前锁定的前端构建工具要求 Node 20.19 以上的 20.x，或 Node 22.12 及以上；使用原生 Apple Silicon 环境。
+已经装好的 Mac 不需要看这页，双击 `Start VoxStage.command` 即可。
 
-取得项目文件后，在项目根目录依次执行：
+## 需要什么
+
+| | 最低 | 推荐 |
+| --- | --- | --- |
+| 电脑 | Apple 芯片的 Mac（M1 及以后） | M 系列、32 GB 内存 |
+| 内存 | 16 GB：只用小的声音模型 | 32 GB：大声音模型和分角色模型 |
+| 空余磁盘 | 约 5 GB | 约 30 GB（加最大的分角色模型约 45 GB） |
+| 系统 | 较新的 macOS，装有 Homebrew | 同左 |
+
+不支持 Intel Mac：声音模型跑在 MLX 上（让 AI 模型利用 Apple 芯片计算的框架）。
+
+## 1. 工具
+
+没有 [Homebrew](https://brew.sh) 先装它，然后：
 
 ```sh
+brew install python@3.12 uv node git ffmpeg llama.cpp
+```
+
+- **python@3.12、uv**：服务用的 Python，以及按锁定版本安装依赖的工具。
+- **node**：生成一次网页（Node 20.19 以上，或 22.12 以上）。
+- **ffmpeg**：1.0× 以外的语速，以及 mp3/m4a 格式的录音。可选；没有它只能原速，录音只收 WAV。
+- **llama.cpp**：运行分角色模型（把小说分成旁白和对白、点出说话人）。可选；没有它就导入已标好说话人的剧本（`名字：台词`）。
+
+## 2. 代码和依赖
+
+```sh
+git clone https://github.com/hera2019/VoxStage.git
+cd VoxStage
 uv venv --python 3.12
 uv pip install --python .venv/bin/python -r requirements.lock.txt
 npm --prefix frontend ci
 npm --prefix frontend run build
 ```
 
-这些步骤用于新环境。已有工程请先关闭 VoxStage，并备份整个 user-data 目录，再维护依赖；不要用新环境覆盖现有用户资料。
+## 3. 模型
 
-## 按需要准备声音模型
+每个模型都从 Hugging Face 按固定版本下载，登记前用 SHA-256 校验；已完整的模型不会重复下载。全部是 Apache-2.0 许可。选一套：
 
-基础预设声音：
+**最低**（16 GB Mac，约 2.5 GB）：模型自带的 9 个音色。
 
 ```sh
 .venv/bin/python scripts/setup_model.py
 ```
 
-要使用“固定为此角色声线”，再准备固定声线模型：
+**推荐**（32 GB Mac，另需约 21 GB）：
 
 ```sh
-.venv/bin/python scripts/setup_model.py --model base
+.venv/bin/python scripts/setup_model.py --model base-large     # 克隆：默认音色库和你自己的声线，约 4.2 GB
+.venv/bin/python scripts/setup_model.py --model preset-large   # 更大的自带音色模型，约 4.2 GB
+.venv/bin/python scripts/setup_model.py --model design         # 按描述设计新声线，约 4.2 GB
+.venv/bin/python scripts/setup_model.py --model role-14b       # 分角色模型 Qwen3-14B，约 8.4 GB
 ```
 
-更大的预设声音模型（1.7B）。装了它以后，**新建工程默认用它**；已有工程保持原来的模型；
-内存较小（16 GB）的机器可以在「整个作品 → 预设音色模型」里选回 0.6B：
+**可选**，最大的分角色模型（约 17 GB）。装上后在 32 GB Mac 上默认用它，14B 作后备：
 
 ```sh
-.venv/bin/python scripts/setup_model.py --model preset-large
+.venv/bin/python scripts/setup_model.py --model role-30b-a3b
 ```
 
-声音设计——用一句话描述生成一个声线，试听满意后存进音色库：
+各模型的用途：
 
-```sh
-.venv/bin/python scripts/setup_model.py --model design
-```
+- **自带音色**（`preset`、`preset-large`）：用 9 个音色之一读句子；可以给某一句加语气说明（愤怒、低声）。每次生成略有不同。
+- **克隆**（`base`、`base-large`）：用音色库里的声线读句子，包括默认音色库的 14 个、你设计的声线，或你提供并确认授权的录音。默认音色库离不开它：没装时，中文工程改用自带音色。
+- **声线设计**（`design`）：按描述生成新声线，你选中的那版存进音色库。
+- **分角色模型**（`role-14b`、`role-30b-a3b`）：给小说的每一句拟出说话人，供你复核。
 
-也可以一次准备全部：
-
-```sh
-.venv/bin/python scripts/setup_model.py --model all
-```
-
-脚本固定模型版本，校验权重和所需关键文件，再登记。文件齐全时复用已有模型；缺文件会下载，权重损坏时请求重新下载。
-预设模型 0.6B 约 2.5 GB，1.7B 与声音设计各约 4.2 GB；全装约 15 GB，请留足下载与缓存空间。
-实测（2026-09-13，M2 Max 32 GB）：1.7B 生成速度比 0.6B 慢约 15%，峰值内存约 8 GB——这是只驻留一个模型时的数字。
-同日一次 93 句整篇生成，预设、克隆、声音设计四个模型都驻留在内存里：1.7B 实时率 0.61（每秒音频约 0.6 秒生成），峰值 17.7 GB。
-所有模型均为 Apache-2.0。
-
-不想下载或更改文件，只查看完整性：
+不下载、只查看装了什么：
 
 ```sh
 .venv/bin/python scripts/setup_model.py --model all --verify-only
 ```
 
-如果模型目录是指向共享文件的链接，脚本不会覆盖或向链接目标下载。链接失效时先恢复共享模型的位置。复制本项目到另一台 Mac 不会自动复制链接指向的权重；需要在新电脑安装模型。
+## 4. 可选：文字检查
 
-## 可选：本地文字检查
-
-另行准备兼容的 whisper.cpp whisper-cli，然后指定实际程序路径：
+句子生成后，用本机语音识别把听到的内容和稿件对比，标出漏字、错字。
 
 ```sh
-.venv/bin/python scripts/setup_asr.py --cli /path/to/whisper-cli
+brew install whisper-cpp
+.venv/bin/python scripts/setup_asr.py --cli "$(command -v whisper-cli)"
 ```
 
-此步骤下载约 547 MiB 的固定识别模型。没有配置它也能生成、试听和人工标错，只是不能自动做文字检查。现阶段尚未自动安装或编译 whisper.cpp。
+会下载一个固定版本的识别模型，约 547 MiB。没有它照样生成、试听，只是少了自动检查。
 
-## 启动与检查
+## 5. 启动
 
-双击 Check VoxStage.command 查看环境提示，双击 Start VoxStage.command 打开工作台。首次生成或识别还会执行相关模型校验；环境就绪不等于音质已经验收。
+双击 `Start VoxStage.command`（或运行 `.venv/bin/python -m runtime.launcher`）。它先检查环境，再启动服务，并在浏览器打开 http://127.0.0.1:8765。工作时别关终端窗口；按 Ctrl+C 停止。
 
-稿件、生成声音、参考副本、模型与日志都在本地 user-data 下。分享源码时不应把这个目录一起上传。搬家或备份工程时要保留完整工程文件夹，避免只留下导出的音频。
+`Check VoxStage.command` 只输出同样的环境报告、不启动。每一项标「就绪」「提示」（可选部分没装，其余照常）或「需处理」（启动前必须解决），并说明怎么办。
 
-当前证据：本机的两套模型离线校验通过，安装失败/链接保护等分支已用独立夹具验证；尚未在一台全新 Mac 完整安装，不能把本说明当成该项实机验收结果。
+第一次启动时，默认音色库（14 个合成声线，在 `voicepack/`）会装进音色库。
 
-最后更新：2026-09-09 · Astra（模型一节 2026-09-13 随 1.7B / 声音设计更新）
+**同一个 WiFi 下用手机或平板**：双击 `Start VoxStage (局域网).command`。终端会显示地址和访问口令，每台设备输入一次。默认关闭。
 
+## 更新
 
-## 可选：加速试听与导出
+先退出 VoxStage，备份 `user-data/`，然后：
 
-1.1–1.3 倍作品语速需要本机 FFmpeg。默认从环境路径及常见本机安装位置查找，也可用 VOXSTAGE_FFMPEG 指定可执行文件。本机已就绪；脚本不会自动安装该工具。缺少它仍可使用原速生成、试听与导出。
+```sh
+git pull
+uv pip install --python .venv/bin/python -r requirements.lock.txt
+npm --prefix frontend ci && npm --prefix frontend run build
+```
 
-中文同音比较依赖已锁定的 pypinyin 0.55.0，按上面的依赖安装步骤即可获得。
+## 东西放在哪
 
-最后更新：2026-09-09 · Astra
+你做的一切（工程、音频、音色库、模型）都在 `user-data/`，git 不收它。要整个备份；搬工程要搬整个工程文件夹，不能只拿导出的音频。分享代码时千万别上传 `user-data/`。卸载就是删掉整个文件夹。
+
+## 出问题时
+
+- **提示「Preset-voice model is not installed」**：运行第 3 步的第一条命令。
+- **分角色模型未就绪**：`brew install llama.cpp`，再 `setup_model.py --model role-14b`。别处的 `llama-server` 可以用 `VOXSTAGE_ROLE_SERVER=/路径/llama-server` 指定。
+- **内存不够或整机变慢**：16 GB 的机器用 0.6B 模型（每个工程的设置里可选 0.6B 或 1.7B），关掉其他大程序；VoxStage 一次只跑一个模型任务。
+- **端口 8765 被占用**：多半是已经有一个 VoxStage 在跑，启动器会提示并直接打开它。
+
+## 验证到哪一步
+
+开发用的 Mac（M2 Max，32 GB）上已实测：模型可离线校验；1.7B 自带音色、克隆和声线设计在同一次使用中都载入时，内存峰值 17.7 GB。**还没做过：在一台全新的 Mac 上完整安装一遍**；Homebrew 版的 `llama.cpp`、`whisper-cpp` 也没测过（开发机用的是自己编译的版本），属于有来源、待验证。16 GB 机器的内存说法是推算，没有实测。
+
+最后更新：2026-09-24 · Claude Hera（在 2026-09-13 的安装页基础上重写；原稿 Astra 2026-09-09）

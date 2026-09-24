@@ -405,8 +405,9 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
         pack when it is installed (本人 2026-09-23: the model's own voices vary take
         to take; the pack's are fixed references) — the narrator from its narrator
         voices, a character from its adult ones; old and child voices are chosen
-        by the person, never handed out. Otherwise the preset rotation."""
-        if language == 'zh':
+        by the person, never handed out. Otherwise the preset rotation — also on a
+        machine without the cloning model, which the pack's voices need."""
+        if language == 'zh' and getattr(engine, 'reference_ready', False):
             pack = library.pack()
             if speaker in ('旁白', 'Narrator'):
                 chosen = [e for e in pack if e['pack_role'].get('narrator')]

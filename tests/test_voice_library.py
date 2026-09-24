@@ -258,13 +258,20 @@ def test_new_characters_draw_from_the_default_pack_when_it_is_installed(tmp_path
             return {'labels': [{'id': u['id'], 'kind': 'dialogue' if u['text'].startswith('“') else 'narration',
                                 'speaker': ('王伯' if '账' in u['text'] else '小雪') if u['text'].startswith('“') else 'NARRATOR', 'certain': True}
                                for u in source_units(text)], 'model_sha256': 'fixture'}
-    with TestClient(create_app(tmp_path / 'projects', LongFixtureEngine(), role_engine=Tagged()), base_url='http://127.0.0.1', headers=HEADERS) as c:
+    class Cloning(LongFixtureEngine):
+        reference_ready = True                  # the pack's voices are read by the cloning model
+    with TestClient(create_app(tmp_path / 'projects', Cloning(), role_engine=Tagged()), base_url='http://127.0.0.1', headers=HEADERS) as c:
         d = c.post('/api/attribution/draft', json={'script': '王伯说：“账本呢？”\n小雪说：“在这。”\n', 'language': 'zh'}).json()
         labels = [{'id': u['id'], 'kind': u['kind'], 'speaker': u['speaker']} for u in d['units']]
         p = c.post('/api/attribution/confirm', json={'draft_id': d['draft_id'], 'name': '店', 'labels': labels}).json()
         assert p['voices']['旁白'] == 'custom:' + narrator
         assert {p['voices']['王伯'], p['voices']['小雪']} == {'custom:' + young_m, 'custom:' + young_f}
         assert all('老年' not in v and '男孩' not in v for v in p['voices'].values())
+    with TestClient(create_app(tmp_path / 'projects', LongFixtureEngine(), role_engine=Tagged()), base_url='http://127.0.0.1', headers=HEADERS) as c:
+        d = c.post('/api/attribution/draft', json={'script': '王伯说：“账本呢？”\n', 'language': 'zh'}).json()
+        labels = [{'id': u['id'], 'kind': u['kind'], 'speaker': u['speaker']} for u in d['units']]
+        p = c.post('/api/attribution/confirm', json={'draft_id': d['draft_id'], 'name': '店1', 'labels': labels}).json()
+        assert not any(v.startswith('custom:') for v in p['voices'].values())                  # no cloning model: presets, pack or not
     library.set_pack(narrator, None)
     for e in library.pack():
         library.set_pack(e['id'], None)
