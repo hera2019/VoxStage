@@ -164,6 +164,36 @@ def test_book_cast_rename_refuses_existing_other_person_without_writes(tmp_path)
         assert book_path(tmp_path, created['id']).read_bytes() == before
 
 
+def test_a_cast_entry_no_line_uses_can_be_removed_and_one_in_use_cannot(tmp_path):
+    """本人 2026-09-24: a misspelled name corrected line by line stayed in the
+    book's cast. The cast says how many lines each character speaks; one with
+    none can go, with its settings; one still speaking is refused, nothing written."""
+    app = create_app(tmp_path / 'projects', FixtureEngine())
+    with TestClient(app, base_url='http://127.0.0.1', headers=HEADERS) as client:
+        created = make_book(client)
+        ids = [p['id'] for p in created['projects']]
+        entry = seed_cast(app, tmp_path, created['id'], ids)
+        book = read_book(tmp_path, created['id'])
+        stray = cast_model.new_entry('阿柠', 'model')
+        book['cast'].append(stray)
+        book['settings']['voices']['阿柠'] = 'Serena'
+        write_book(tmp_path, book)
+
+        usage = client.get(f"/api/master-books/{created['id']}/cast/usage").json()
+        assert usage['lines'] == {entry['id']: 2, stray['id']: 0}
+
+        before = book_path(tmp_path, created['id']).read_bytes()
+        busy = client.delete(f"/api/master-books/{created['id']}/cast/{entry['id']}?revision={book['revision']}")
+        assert busy.status_code == 400 and '还有句子在用' in busy.json()['detail']
+        assert book_path(tmp_path, created['id']).read_bytes() == before
+
+        done = client.delete(f"/api/master-books/{created['id']}/cast/{stray['id']}?revision={book['revision']}")
+        assert done.status_code == 200, done.text
+        after = read_book(tmp_path, created['id'])
+        assert [c['name'] for c in after['cast']] == ['阿宁']
+        assert '阿柠' not in after['settings']['voices'] and after['revision'] == book['revision'] + 1
+
+
 def test_structure_preview_rejects_member_change_then_reorder_commits_atomically(tmp_path):
     app = create_app(tmp_path / 'projects', FixtureEngine())
     with TestClient(app, base_url='http://127.0.0.1', headers=HEADERS) as client:

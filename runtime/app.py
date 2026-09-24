@@ -1045,6 +1045,17 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
         return book_transactions.rename_cast(
             book_id, body.revision, body.cast_id, body.name)
 
+    @app.get('/api/master-books/{book_id}/cast/usage')
+    def master_cast_usage(book_id: str):
+        return book_transactions.cast_usage(book_id)
+
+    @app.delete('/api/master-books/{book_id}/cast/{cast_id}')
+    def remove_master_cast(book_id: str, cast_id: str, revision: int):
+        book_export.assert_book_writable(book_id)
+        if not re.fullmatch(r'[a-f0-9]{32}', cast_id):
+            raise ValueError('无效的角色编号。')
+        return book_transactions.remove_cast(book_id, revision, cast_id)
+
     @app.post('/api/master-books/{book_id}/structure/plan')
     def plan_master_structure(book_id: str, body: BookStructureRequest):
         return book_transactions.preview_structure(book_id, body.model_dump(exclude_none=True))

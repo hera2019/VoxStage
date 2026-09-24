@@ -553,6 +553,64 @@ class BookTransactions:
                 'snapshot_id': sid, 'updated_projects': list(updates),
             }
 
+    def cast_usage(self, book_id):
+        """How many lines each character of the book's cast speaks, over every chapter."""
+        with self.store.lock:
+            book = self._book(book_id)
+            spoken = {}
+            for raw in self._members(book):
+                for segment in raw.get('segments', []):
+                    spoken[segment.get('speaker')] = spoken.get(segment.get('speaker'), 0) + 1
+            return {'revision': book.get('revision', 0),
+                    'lines': {c['id']: spoken.get(c['name'], 0) for c in book.get('cast', [])}}
+
+    def remove_cast(self, book_id, revision, cast_id):
+        """Drop a character no chapter's lines use any more — a name the model
+        misspelled and the reviewer corrected line by line stays in the cast
+        otherwise (本人 2026-09-24), and is offered to the model for every later
+        chapter. Voice and colour settings kept for the name go with it; the
+        review records of what was confirmed at the time are left as they were."""
+        with self.store.lock:
+            book = self._book(book_id)
+            if book.get('revision', 0) != revision:
+                raise RuntimeError('主工程已改变，请刷新后再删除。')
+            members = self._members(book)
+            self._assert_idle(members)
+            entry = cast_model.by_id(book.get('cast', []), cast_id)
+            if not entry:
+                raise ValueError('找不到这个全书角色。')
+            name = entry['name']
+            using = [raw['name'] for raw in members if any(s.get('speaker') == name for s in raw.get('segments', []))]
+            if using:
+                raise ValueError(f'「{name}」还有句子在用（{"、".join(using[:3])}），不能删除；可以改名或把句子改给别人。')
+            updated_book = deepcopy(book)
+            updated_book['cast'] = [c for c in updated_book.get('cast', []) if c['id'] != cast_id]
+            self._drop_setting_refs(updated_book.setdefault('settings', {}), name)
+            updated_book['aliases'] = cast_model.alias_table(updated_book['cast'])
+            updated_book['revision'] = revision + 1
+            updates = {}
+            for raw in members:
+                changed = deepcopy(raw)
+                self._drop_setting_refs(changed, name)
+                if (changed.get('cast_ids') or {}).get(name) == cast_id:
+                    del changed['cast_ids'][name]
+                if changed != raw:
+                    changed['revision'] = raw.get('revision', 0) + 1
+                    updates[raw['id']] = changed
+            sid = self._commit(book, updated_book, updates, {}, reason=f'cast:remove:{name}')
+            return {'book_revision': updated_book['revision'], 'snapshot_id': sid, 'removed': name,
+                    'updated_projects': list(updates)}
+
+    @staticmethod
+    def _drop_setting_refs(settings, name):
+        for key in ROLE_MAPS:
+            mapping = settings.get(key)
+            if isinstance(mapping, dict):
+                mapping.pop(name, None)
+        muted = settings.get('muted_speakers')
+        if isinstance(muted, list) and name in muted:
+            settings['muted_speakers'] = [x for x in muted if x != name]
+
     def _rename_conflicts(self, book, projects, old, new, cast_id):
         conflicts = []
         if not new or new in ('旁白', 'Narrator', 'NARRATOR', 'UNKNOWN'):
