@@ -10,6 +10,12 @@ from unittest.mock import Mock
 import pytest
 from fastapi.testclient import TestClient
 from runtime import launcher
+
+
+@pytest.fixture(autouse=True)
+def chinese_terminal(monkeypatch):
+    """These checks read the Chinese report; the English one is tested below."""
+    monkeypatch.setenv('VOXSTAGE_LANG', 'zh')
 from runtime.app import ROOT, create_app
 from runtime.engines import FixtureEngine
 
@@ -164,3 +170,13 @@ def test_keyboard_interrupt_cleans_up_owned_child(tmp_path, monkeypatch):
     monkeypatch.setattr(launcher, 'open_page', Mock())
     assert launcher.launch(root=tmp_path, browser=False) == 0
     child.terminate.assert_called_once()
+
+
+def test_the_terminal_speaks_english_on_an_english_mac(monkeypatch, capsys):
+    monkeypatch.setenv('VOXSTAGE_LANG', 'en')
+    launcher.print_report({'checks': [{'name': '网页', 'status': 'error', 'detail': launcher.L('缺少网页文件。', 'The web page is missing.')}]})
+    assert capsys.readouterr().out.strip() == '[must fix] Web page: The web page is missing.'
+    monkeypatch.delenv('VOXSTAGE_LANG'); monkeypatch.setenv('LANG', 'zh_CN.UTF-8')
+    assert not launcher.english()
+    monkeypatch.setenv('LANG', 'en_GB.UTF-8')
+    assert launcher.english()

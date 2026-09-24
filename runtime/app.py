@@ -3978,14 +3978,15 @@ def main():
     args = parser.parse_args()
     import uvicorn
     from . import lan as lan_module
+    from .launcher import L
     key = lan_module.load_or_create_key(ROOT/'user-data', new=args.new_key) if args.lan else None
     if key:
-        where = lan_module.addresses() or ['<这台 Mac 的局域网地址>']
-        print('局域网访问已开启。在同一 WiFi 的设备上打开：', flush=True)
+        where = lan_module.addresses() or [L('<这台 Mac 的局域网地址>', "<this Mac's network address>")]
+        print(L('局域网访问已开启。在同一 WiFi 的设备上打开：', 'Network access is on. On a device on the same Wi-Fi, open:'), flush=True)
         for address in where:
             print(f'    http://{address}:{args.port}/', flush=True)
-        print(f'访问口令：{key}（每台设备输入一次，记住 30 天）', flush=True)
-        print('口令存在 user-data/lan-key.txt；换口令用 --lan --new-key。', flush=True)
+        print(L(f'访问口令：{key}（每台设备输入一次，记住 30 天）', f'Access key: {key} (typed once per device, remembered 30 days)'), flush=True)
+        print(L('口令存在 user-data/lan-key.txt；换口令用 --lan --new-key。', 'The key is kept in user-data/lan-key.txt; --lan --new-key makes a new one.'), flush=True)
     uvicorn.run(create_app(engine=FixtureEngine() if args.fixture else None, lan_key=key, voicepack_dir=ROOT/'voicepack'/'default'),
                 host='0.0.0.0' if args.lan else '127.0.0.1', port=args.port)
 
