@@ -14,7 +14,7 @@ import {Timeline,type Region,type Cut} from './Timeline';
 import {finishWindow,type PlayWindow} from './playback';
 import {sourceToOutput,type PlaybackContext} from './timeMapping';
 import {decodeText,decodeBytes,ENCODINGS} from './encoding';
-import {tr} from './i18n';
+import {tr,lang,setLang} from './i18n';
 
 type ContentCheck={equivalences?:{expected:string;recognized:string;basis:string}[];status:string;expected_text:string;recognized_text?:string;error?:string;reviewed?:boolean;differences?:{kind:string;expected:string;recognized:string}[]};
 const checkLabels:Record<string,string>={not_checked:tr("文字未查"),stale:tr("文字需重查"),match:tr("未发现文字差异"),review:tr("文字待复核"),confirmed:tr("已试听确认"),error:tr("文字检查失败")};
@@ -180,7 +180,7 @@ function App(){
    <BookList projects={projects} current={focusId} busyBooks={busyBooks.size?busyBooks:(p?.job?.status==='running'&&p.book?.id?new Set([p.book.id]):undefined)} disabled={!!blocked} onOpen={id=>void action(()=>open(id))} onSettings={(kind,id)=>setChapterSettings({kind,id})} emptyBooks={emptyBooks} archivedBooks={archivedBooks} showArchived={showArchived} onNewBook={()=>setNewBook({title:'',language:'zh'})} onContinue={startChapter} openBook={openBook} onOpenBook={id=>{if(dirty)return;setRoleImporting(false);setImporting(false);setStartFor(null);setOpenBook(id);void api('/books/'+id).then((b:{title:string;revision?:number})=>setBookRevisions(x=>({...x,[id]:{title:b.title,revision:b.revision??0}}))).catch(()=>{})}}/>
    {oldWork&&<button type="button" className="archive-toggle" title={tr("只读预检：旧书、被删过书的工程组能不能收进主工程；不改任何数据")} onClick={()=>void action(async()=>setMigration(await api('/migration/master-books/preview')))}>{tr("旧工程预检")}</button>}
    {visibleProjects.length?visibleProjects.map(x=><button className={'project-link '+(focusId===x.id?'active':'')} disabled={!!blocked} key={x.id} title={x.processing_state==='unprocessed'?tr("还没处理：点开分批处理"):undefined} onClick={()=>{if(x.processing_state==='unprocessed')startChapter(x.id);else void action(()=>open(x.id))}}>{x.name}{x.processing_state==='unprocessed'&&<small>{tr(" · 未处理 · 继续")}</small>}<span>↗</span></button>):<p className="muted">{showArchived?tr("没有归档工程。"):tr("从一份短剧本开始。")}</p>}
-   <div className="engine"><div className="section-label">{tr("声音引擎")}</div><strong>{config?.engine??tr("正在连接…")}</strong><p>{config?.ready?tr("已就绪 · 合成音频"):tr("模型未就绪，请先完成本地设置")}</p></div></aside>
+   <div className="engine"><div className="section-label">{tr("声音引擎")}</div><strong>{config?.engine??tr("正在连接…")}</strong><p>{config?.ready?tr("已就绪 · 合成音频"):tr("模型未就绪，请先完成本地设置")}</p><button type="button" className="see-lines lang-switch" title={lang==='zh'?'Switch the interface to English':'界面换成中文'} onClick={()=>setLang(lang==='zh'?'en':'zh')}>{lang==='zh'?'English':'中文'}</button></div></aside>
    <main><div className="main-scroll">
     <div className="mobile-projects"><label>{tr("切换工程")}<select aria-label={tr("切换工程")} disabled={!!blocked} value={openBook?'book:'+openBook:(p?.id??'')} onChange={e=>{const v=e.target.value;if(!v)return;if(v.startsWith('book:')){const id=v.slice(5);setRoleImporting(false);setImporting(false);setStartFor(null);setOpenBook(id);void api('/books/'+id).then((b:{title:string;revision?:number})=>setBookRevisions(x=>({...x,[id]:{title:b.title,revision:b.revision??0}}))).catch(()=>{})}else void action(()=>open(v))}}>
      {/* 本人 2026-09-22/23 (手机上「大家都在一起，没个顺序」「网络小说 169 章，没有折叠，要命了」)：

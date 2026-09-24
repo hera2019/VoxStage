@@ -1,5 +1,5 @@
 import {useEffect,useRef,useState} from 'react';
-import {tr} from './i18n';
+import {tr,lang,setLang} from './i18n';
 type Custom={id:string;name:string;language:string;source:string;seconds:number;derived_from:string|null;consent_confirmed:boolean;reference_text?:string};
 // Where a library voice was designed: its description, seed and the line it was designed on,
 // following one copy step (a voice re-read from a designed one). Older designs kept no seed.
@@ -180,6 +180,7 @@ export function Settings({request,voices,language,speedReady,designReady,roleMod
    {custom.length===0&&<p className="muted">{tr("还没有保存的音色。在「自带音色」里试听后「留下这个声音」，或在「声线设计」里设计一个。")}</p>}
   </>}
   {tab==='models'&&<><div className="keep-voice"><div className="section-label">{tr("选项")}</div>
+   <label>{tr("界面语言")}<select aria-label={tr("界面语言")} value={lang} onChange={e=>setLang(e.target.value as 'zh'|'en')}><option value="zh">中文</option><option value="en">English</option></select><small>{tr("只是这台浏览器的偏好；切换后页面重新载入。工程的语言不变。")}</small></label>
    <label className="consent"><input type="checkbox" checked={autoplay} onChange={e=>{setAutoplay(e.target.checked);try{localStorage.setItem('voxstage-autoplay',e.target.checked?'1':'0')}catch{}}}/>{tr("生成语音后自动播放新声音（单句重做播那一句；批量生成播第一句）")}</label>
    <p className="muted">{tr("只是这台浏览器的偏好，不进工程。")}</p></div>  {roleModels&&roleModels.length>0&&<div className="keep-voice role-model" id="role-model-setting">
    <div className="section-label">{tr("分角色模型")}</div>
