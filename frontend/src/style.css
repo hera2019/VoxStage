@@ -454,3 +454,5 @@ main>footer audio{height:34px}
 }
 .setting-cast-row .cast-unused{color:#a06a3c}
 .engine .lang-switch{margin-top:4px;font-size:11px}
+.package-link{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 8px;padding:8px 10px;border:1px solid #cfdcc6;border-radius:8px;background:#eef3e8;font-size:12px}
+.package-link a{font-weight:600;word-break:break-all}

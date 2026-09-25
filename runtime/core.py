@@ -318,11 +318,19 @@ class Store:
         self.resolver = None         # app supplies raw Project -> one effective read view
         for path in self.root.glob('*/project.json'):
             data = json.loads(path.read_text())
-            changed = drop_waveforms(data)
-            if data.get('job',{}).get('status') in ('queued', 'running'):
-                data['job']['status'] = 'interrupted'; changed = True
-            if changed:
+            if self.settle(data):
                 self.write(data)
+
+    @staticmethod
+    def settle(data):
+        """What every stored project goes through when it is loaded — older
+        records brought to the current shape, a job cut off mid-run marked as
+        such. The same for a project restored from a package, so an old package
+        comes back like an old project on disk. Returns whether it changed."""
+        changed = drop_waveforms(data)
+        if data.get('job',{}).get('status') in ('queued', 'running'):
+            data['job']['status'] = 'interrupted'; changed = True
+        return changed
 
     def directory(self, project_id):
         if not re.fullmatch('[a-f0-9]{32}', project_id):

@@ -28,10 +28,20 @@ import zipfile
 from pathlib import Path
 
 from .cleanup import latest_export_revision
-from .project_settings import SETTING_KEYS, VIEW_KEY
+from .book_master import MASTER_SCHEMA
+from .project_settings import SETTINGS_SCHEMA, SETTING_KEYS, VIEW_KEY
 
 FORMAT = 'voxstage-package'
-VERSION = 1
+VERSION = 1                                # the package's own layout
+# The shapes of the records inside, as this program writes them (本人 2026-09-25:
+# 注意打包的版本，将来恢复时，有可能数据结构变了). A package records them; on
+# import a record newer than these is refused, and an older one is brought up by
+# UPGRADES, step by step, then settled like a project loaded from disk.
+DATA = {'project': 1, 'settings': SETTINGS_SCHEMA, 'book': MASTER_SCHEMA, 'voice': 1}
+# (kind, from version) -> function(record) returning the record one version on.
+# Empty while every shape is still at 1; a change to a record's shape adds its
+# step here and a sample package of the old shape to tests/fixtures.
+UPGRADES = {}
 SUFFIX = '.voxstage'
 MAX_BYTES = 8 * 1024 ** 3                  # unpacked; a whole long book with its takes stays far below
 HEX = '[0-9a-f]{32}'
@@ -102,6 +112,45 @@ def _project_files(directory):
                 yield f'exports/{keep}/{f.relative_to(exports / str(keep)).as_posix()}', f
 
 
+def _made_by():
+    """The program that made a package: its commit when it runs from a checkout."""
+    try:
+        import subprocess
+        commit = subprocess.run(['git', 'rev-parse', '--short', 'HEAD'], cwd=Path(__file__).resolve().parent.parent,
+                                capture_output=True, text=True, timeout=5).stdout.strip()
+    except (OSError, ValueError):
+        commit = ''
+    return {'app': 'VoxStage', 'commit': commit or None}
+
+
+def _versions(kind, record):
+    """The shape versions one record carries."""
+    if kind == 'project':
+        return {'project': record.get('schema_version', 1), 'settings': record.get('settings_schema')}
+    if kind == 'book':
+        return {'book': record.get('master_schema')}
+    return {}
+
+
+def upgrade(kind, record):
+    """Bring one record from a package to the shapes this program reads, or
+    refuse one made by a newer program. Older shapes go through UPGRADES."""
+    for key, have in _versions(kind, record).items():
+        if have is None:
+            continue                                        # a legacy record: read as projects on disk are
+        if not isinstance(have, int) or have < 1:
+            raise ValueError('工程包的清单无法读取。')
+        if have > DATA[key]:
+            raise ValueError('这个工程包来自更新的 VoxStage 版本，请先更新再导入。')
+        while have < DATA[key]:
+            step = UPGRADES.get((key, have))
+            if step is None:
+                raise ValueError('这个工程包的数据格式太旧，这个版本无法转换。')
+            record = step(record)
+            have += 1
+    return record
+
+
 def build(out_path, *, kind, projects, book=None, book_assets=None, directory_of, library, drafts_root,
           views=None, reference_file=None):
     """Write a package of `projects` (raw records, as stored) and, for a book, the
@@ -160,7 +209,8 @@ def build(out_path, *, kind, projects, book=None, book_assets=None, directory_of
             path = Path(drafts_root) / f'{did}.json'
             if path.is_file() and did not in drafts:
                 add(f'drafts/{did}.json', path); drafts.append(did)
-    manifest = {'format': FORMAT, 'version': VERSION, 'kind': kind, 'created_at': time.strftime('%Y-%m-%dT%H:%M:%S'),
+    manifest = {'format': FORMAT, 'version': VERSION, 'data': dict(DATA), 'made_by': _made_by(),
+                'kind': kind, 'created_at': time.strftime('%Y-%m-%dT%H:%M:%S'),
                 'title': (book or {}).get('title') if kind == 'book' else projects[0].get('name', ''),
                 'book_id': (book or {}).get('id'), 'projects': listed, 'voices': voices, 'drafts': drafts,
                 'provided_recordings': provided, 'files': files,
@@ -199,7 +249,9 @@ def read(path):
             raise ValueError('工程包的清单无法读取。')
         if manifest.get('format') != FORMAT or manifest.get('kind') not in ('project', 'book'):
             raise ValueError('这不是 VoxStage 工程包（.voxstage）。')
-        if manifest.get('version') != VERSION:
+        if not isinstance(manifest.get('version'), int) or manifest['version'] < 1:
+            raise ValueError('工程包的清单无法读取。')
+        if manifest['version'] > VERSION or any(isinstance(v, int) and v > DATA.get(k, v) for k, v in (manifest.get('data') or {}).items()):
             raise ValueError('这个工程包来自更新的 VoxStage 版本，请先更新再导入。')
         total = 0
         for info in archive.infolist():
@@ -260,7 +312,7 @@ def restore(path, *, store, books, library, drafts_root, as_copy=False, consent=
             with zipfile.ZipFile(path) as archive:
                 book = None
                 if book_id:
-                    book = json.loads(swap(archive.read('book.json').decode('utf-8')))
+                    book = upgrade('book', json.loads(swap(archive.read('book.json').decode('utf-8'))))
                     if as_copy:
                         book['title'] = book.get('title', '') + ('（副本）' if book.get('language') != 'en' else ' (copy)')
                 loose, names = [], []
@@ -274,10 +326,9 @@ def restore(path, *, store, books, library, drafts_root, as_copy=False, consent=
                         target.parent.mkdir(parents=True, exist_ok=True)
                         with archive.open(name) as src, open(target, 'wb') as dst:
                             shutil.copyfileobj(src, dst)
-                    record = json.loads(swap(archive.read(f'projects/{old}/project.json').decode('utf-8')))
+                    record = upgrade('project', json.loads(swap(archive.read(f'projects/{old}/project.json').decode('utf-8'))))
+                    store.settle(record)
                     record['archived'] = False
-                    if (record.get('job') or {}).get('status') in ('queued', 'running'):
-                        record['job']['status'] = 'interrupted'
                     link = record.get('book') or {}
                     if kind == 'project' and link.get('id'):
                         parent = books.root / f"{link['id']}.json"

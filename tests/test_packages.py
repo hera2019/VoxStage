@@ -155,4 +155,51 @@ def test_a_package_that_is_tampered_with_or_reaches_outside_is_refused(tmp_path)
         assert not (tmp_path / 'outside.txt').exists() and not (tmp_path / 'projects' / p['id']).exists()
         assert bring_back(c, b'not a zip').status_code == 400
 
+FIXTURES = __import__('pathlib').Path(__file__).parent / 'fixtures'
+
+
+def test_packages_made_by_the_first_version_still_come_back(tmp_path):
+    """本人 2026-09-25: 注意打包的版本，将来恢复时，有可能数据结构变了. These two
+    packages were made by the first version of the format (test tones, not
+    speech) and are never regenerated: if a change to a record's shape stops
+    them restoring, it needs its step in packages.UPGRADES — not a new sample."""
+    with client_for(tmp_path) as c:
+        one = bring_back(c, (FIXTURES / 'package-v1-project.voxstage').read_bytes())
+        assert one.status_code == 200, one.text
+        p = c.get('/api/projects/' + one.json()['projects'][0]).json()
+        assert p['name'] == '雨夜样本' and [s['text'] for s in p['segments']] == ['雨点敲着窗。', '走吧。']
+        assert p['voices']['陈小雪'].startswith('custom:') and one.json()['voices_added'] == 1
+        book = bring_back(c, (FIXTURES / 'package-v1-book.voxstage').read_bytes())
+        assert book.status_code == 200, book.text
+        assert c.get('/api/books/' + book.json()['book_id']).json()['title'] == '雨夜样本书'
+        assert len(book.json()['projects']) == 2
+
+
+def test_a_package_from_a_newer_program_is_refused_and_an_older_shape_is_brought_up(tmp_path, monkeypatch):
+    from runtime import packages
+    data = (FIXTURES / 'package-v1-project.voxstage').read_bytes()
+
+    def with_manifest(change):
+        out = io.BytesIO()
+        with zipfile.ZipFile(io.BytesIO(data)) as src, zipfile.ZipFile(out, 'w') as dst:
+            for name in src.namelist():
+                body = src.read(name)
+                if name == 'manifest.json':
+                    m = json.loads(body); change(m); body = json.dumps(m).encode()
+                dst.writestr(name, body)
+        return out.getvalue()
+
+    with client_for(tmp_path) as c:
+        for change in (lambda m: m.update(version=packages.VERSION + 1), lambda m: m['data'].update(project=packages.DATA['project'] + 1)):
+            r = bring_back(c, with_manifest(change))
+            assert r.status_code == 400 and '更新的 VoxStage' in r.json()['detail']
+        # A future shape 2: the step from 1 runs on the old record before it is kept.
+        monkeypatch.setitem(packages.DATA, 'project', 2)
+        monkeypatch.setitem(packages.UPGRADES, ('project', 1), lambda record: {**record, 'schema_version': 2, 'upgraded': True})
+        back = bring_back(c, data)
+        assert back.status_code == 200, back.text
+        stored = json.loads((tmp_path / 'projects' / back.json()['projects'][0] / 'project.json').read_text())
+        assert stored['schema_version'] == 2 and stored['upgraded']
+
+
 # 最后更新：2026-09-25 · Claude Hera

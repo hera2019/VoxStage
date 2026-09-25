@@ -403,6 +403,7 @@
 "这个子工程没有正在等待或运行的角色归属。": "This sub-project has no speaker assignment queued or running.",
 "这个工程不是这本书的章节。": "This project is not a chapter of this book.",
 "这个工程包来自更新的 VoxStage 版本，请先更新再导入。": "This package comes from a newer VoxStage; update before importing it.",
+"这个工程包的数据格式太旧，这个版本无法转换。": "This package's data format is too old for this version to convert.",
 "这个工程属于另一本主工程，先从那本书脱离。": "This project belongs to another book; detach it from that one first.",
 "这个工程已经在这本书里。": "This project is already in this book.",
 "这个工程正在处理，等它完成再确认。": "This project is processing; confirm once it finishes.",

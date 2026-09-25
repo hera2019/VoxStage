@@ -154,7 +154,8 @@ as a real person. A phone cannot reach the Mac by opening its own localhost.
 book** at the bottom of a book's chapter page — puts the work into one
 `.voxstage` file — on this Mac it is saved under `user-data/packages` and
 shown in Finder (Chrome does not trust a download from a plain-HTTP network
-address); from another device it downloads: the script with its undo history, every
+address); from another device it downloads, and a link to it stays at the top of the
+page until closed, for when the browser holds the download back: the script with its undo history, every
 take, the fixed voices' references, the latest export, an unfinished speaker
 review, and the library voices it reads with. Previews and check work files
 are left out; they are made again when needed. Every file is listed with its
@@ -169,6 +170,13 @@ longer lists it returns as a separate project with the settings it had in the
 book; put it back with the book's *Structure → Add a project*. A package that
 holds a recording you supplied asks you to confirm the consent again before it
 is restored — and such a package is yours alone: do not share it.
+
+A package records the version of its layout, the shape version of each kind
+of record inside and the program that made it. A package from a newer
+VoxStage is refused with a clear message; an older one is brought up step by
+step to the current shapes and then treated like an old project on disk. Two
+sample packages of the first version live in `tests/fixtures`; the tests
+restore them with the current code every time.
 
 Checked in the tests (project, copy, book, lone chapter, consent, a tampered
 package, a path reaching outside) and in the browser on a test server.
