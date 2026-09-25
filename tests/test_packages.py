@@ -44,6 +44,7 @@ def test_a_deleted_project_comes_back_with_its_takes_and_its_library_voice(tmp_p
         assert all(s['status'] == 'ready' for s in p['segments'])
         made = c.post(f"/api/projects/{p['id']}/package").json()
         assert made['projects'] == 1 and made['voices'] == 1 and made['provided_recordings'] == []
+        assert made['local'] is False                                            # a browser elsewhere downloads it
         data = fetch(c, made)
         remove_project(c, p)
         assert c.delete(f"/api/voices/custom/{voice['id']}").status_code == 200

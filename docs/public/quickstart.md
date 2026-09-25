@@ -152,7 +152,9 @@ as a real person. A phone cannot reach the Mac by opening its own localhost.
 
 **Package project** in a project's **More ▾** menu — or **Package the whole
 book** at the bottom of a book's chapter page — puts the work into one
-`.voxstage` file and downloads it: the script with its undo history, every
+`.voxstage` file — on this Mac it is saved under `user-data/packages` and
+shown in Finder (Chrome does not trust a download from a plain-HTTP network
+address); from another device it downloads: the script with its undo history, every
 take, the fixed voices' references, the latest export, an unfinished speaker
 review, and the library voices it reads with. Previews and check work files
 are left out; they are made again when needed. Every file is listed with its

@@ -3363,20 +3363,31 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
 
     def package_file(title):
         """Where a new package goes: the work's name, readable, plus the time.
-        Only the three newest packages stay; they are copies of what is here."""
+        Kept until the person moves or deletes it — a package is a backup."""
         package_dir.mkdir(parents=True, exist_ok=True)
-        for old in sorted(package_dir.glob('*' + packages.SUFFIX), key=lambda f: f.stat().st_mtime)[:-2]:
-            old.unlink(missing_ok=True)
         safe = re.sub(r'[\\/:*?"<>|\x00-\x1f]', '_', (title or 'VoxStage').strip())[:60].strip(' .') or 'VoxStage'
         return package_dir / f"{safe}-{time.strftime('%Y%m%d-%H%M%S')}{packages.SUFFIX}"
 
-    def package_result(path, manifest):
+    def on_this_mac(request):
+        """Is the browser on the Mac that runs VoxStage? Then the package is
+        shown in Finder instead of downloaded (本人 2026-09-25: Chrome blocked the
+        download from http://192.168.x.x — a plain-HTTP address that is not
+        localhost is not trusted for downloads)."""
+        from . import lan
+        host = (request.client.host if request.client else '') or ''
+        return host in ('127.0.0.1', '::1', 'localhost') or host in lan.addresses()
+
+    def package_result(path, manifest, request):
+        local = on_this_mac(request)
+        if local and shutil.which('open') and not os.environ.get('PYTEST_CURRENT_TEST'):
+            subprocess.run(['open', '-R', str(path)], check=False, timeout=10)
         return {'url': '/api/packages/' + urllib.parse.quote(path.name), 'file': path.name, 'bytes': path.stat().st_size,
+                'local': local, 'folder': str(path.parent),
                 'projects': len(manifest['projects']), 'voices': len(manifest['voices']),
                 'provided_recordings': manifest['provided_recordings'], 'files': len(manifest['files'])}
 
     @app.post('/api/projects/{project_id}/package')
-    def package_project(project_id: str):
+    def package_project(project_id: str, request: Request):
         """One project — a chapter too — as a package that can bring it back."""
         with store.lock:
             raw = store.read(project_id)
@@ -3385,10 +3396,10 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
         manifest = packages.build(path, kind='project', projects=[raw], directory_of=store.directory, library=library,
                                   drafts_root=drafts, views={project_id: view},
                                   reference_file=lambda project, sha: reference_file(project['id'], project, sha))
-        return package_result(path, manifest)
+        return package_result(path, manifest, request)
 
     @app.post('/api/master-books/{book_id}/package')
-    def package_master_book(book_id: str):
+    def package_master_book(book_id: str, request: Request):
         """A whole book: its record, its asset folder and every chapter."""
         with store.lock:
             book = books.get(book_id)
@@ -3398,7 +3409,7 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
         path = package_file(book.get('title'))
         manifest = packages.build(path, kind='book', projects=members, book=book, book_assets=books.root / (book_id + '.assets'),
                                   directory_of=store.directory, library=library, drafts_root=drafts)
-        return package_result(path, manifest)
+        return package_result(path, manifest, request)
 
     @app.get('/api/packages/{name}')
     def package_download(name: str):
