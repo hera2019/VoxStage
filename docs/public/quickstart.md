@@ -148,4 +148,27 @@ or a recording **you have the right to use and have explicitly confirmed**.
 Everything generated is marked as synthetic speech and must not be passed off
 as a real person. A phone cannot reach the Mac by opening its own localhost.
 
-Last updated: 2026-09-15 · Claude Hera (English edition of quickstart-zh.md)
+## Packaging a project, and bringing it back
+
+**Package project** in a project's **More ▾** menu — or **Package the whole
+book** at the bottom of a book's chapter page — puts the work into one
+`.voxstage` file and downloads it: the script with its undo history, every
+take, the fixed voices' references, the latest export, an unfinished speaker
+review, and the library voices it reads with. Previews and check work files
+are left out; they are made again when needed. Every file is listed with its
+SHA-256.
+
+To bring it back, choose the file under **＋ New project → Or restore a
+package**. Deleted work returns as it was, takes included, with nothing to
+regenerate; library voices that were deleted too come back with it. Nothing is
+ever overwritten: if the project or book is still here, you are asked whether
+to restore a copy under new ids. A chapter packaged on its own whose book no
+longer lists it returns as a separate project with the settings it had in the
+book; put it back with the book's *Structure → Add a project*. A package that
+holds a recording you supplied asks you to confirm the consent again before it
+is restored — and such a package is yours alone: do not share it.
+
+Checked in the tests (project, copy, book, lone chapter, consent, a tampered
+package, a path reaching outside) and in the browser on a test server.
+
+Last updated: 2026-09-25 · Claude Hera (English edition of quickstart-zh.md; packages added)

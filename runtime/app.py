@@ -13,6 +13,8 @@ import re
 import subprocess
 import tempfile
 import threading
+import urllib.parse
+import uuid
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -30,6 +32,7 @@ from .clips import clip_plan, validate_clips
 from .fcp7 import timeline_xml, IMPORT_GUIDE
 from .rhythm import analyze_file, analyze, duration_marker, VERSION as RHYTHM_VERSION
 from . import readings
+from . import packages
 from .core import reads_aloud, Store, fingerprint, spoken_text, inherit_settings, voice_of
 from .pauses import split_at_pauses, join_with_silence
 from .voices import VoiceLibrary, is_custom, custom_id, PREFIX as CUSTOM_PREFIX
@@ -3354,6 +3357,80 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
         from . import cleanup
         with store.lock:
             return cleanup.plan(store.read(project_id), store.directory(project_id))
+
+    # ── Project packages (本人 2026-09-25: 打包，删掉后导入可以恢复) ──
+    package_dir = workspace / 'packages'
+
+    def package_file(title):
+        """Where a new package goes: the work's name, readable, plus the time.
+        Only the three newest packages stay; they are copies of what is here."""
+        package_dir.mkdir(parents=True, exist_ok=True)
+        for old in sorted(package_dir.glob('*' + packages.SUFFIX), key=lambda f: f.stat().st_mtime)[:-2]:
+            old.unlink(missing_ok=True)
+        safe = re.sub(r'[\\/:*?"<>|\x00-\x1f]', '_', (title or 'VoxStage').strip())[:60].strip(' .') or 'VoxStage'
+        return package_dir / f"{safe}-{time.strftime('%Y%m%d-%H%M%S')}{packages.SUFFIX}"
+
+    def package_result(path, manifest):
+        return {'url': '/api/packages/' + urllib.parse.quote(path.name), 'file': path.name, 'bytes': path.stat().st_size,
+                'projects': len(manifest['projects']), 'voices': len(manifest['voices']),
+                'provided_recordings': manifest['provided_recordings'], 'files': len(manifest['files'])}
+
+    @app.post('/api/projects/{project_id}/package')
+    def package_project(project_id: str):
+        """One project — a chapter too — as a package that can bring it back."""
+        with store.lock:
+            raw = store.read(project_id)
+            view = store.resolver(raw)
+        path = package_file(raw.get('name'))
+        manifest = packages.build(path, kind='project', projects=[raw], directory_of=store.directory, library=library,
+                                  drafts_root=drafts, views={project_id: view},
+                                  reference_file=lambda project, sha: reference_file(project['id'], project, sha))
+        return package_result(path, manifest)
+
+    @app.post('/api/master-books/{book_id}/package')
+    def package_master_book(book_id: str):
+        """A whole book: its record, its asset folder and every chapter."""
+        with store.lock:
+            book = books.get(book_id)
+            if not book.get('master_schema'):
+                raise ValueError('旧版书目不能打包，请先收进主工程。')
+            members = [store.read(pid) for pid in book.get('members', [])]
+        path = package_file(book.get('title'))
+        manifest = packages.build(path, kind='book', projects=members, book=book, book_assets=books.root / (book_id + '.assets'),
+                                  directory_of=store.directory, library=library, drafts_root=drafts)
+        return package_result(path, manifest)
+
+    @app.get('/api/packages/{name}')
+    def package_download(name: str):
+        path = package_dir / name
+        if '/' in name or '\\' in name or not name.endswith(packages.SUFFIX) or not path.is_file():
+            raise ValueError('工程包已清理，请重新打包。')
+        return FileResponse(path, filename=name, media_type='application/zip')
+
+    @app.post('/api/packages/import')
+    async def package_import(request: Request, copy: bool = False, consent: bool = False):
+        """Bring a package back. The file comes as the request body (no form
+        library needed); it is written to disk as it arrives, then checked whole."""
+        package_dir.mkdir(parents=True, exist_ok=True)
+        incoming = package_dir / f'.incoming-{uuid.uuid4().hex}{packages.SUFFIX}'
+        size = 0
+        try:
+            with incoming.open('wb') as out:
+                async for chunk in request.stream():
+                    size += len(chunk)
+                    if size > packages.MAX_BYTES:
+                        raise ValueError('工程包超过 8 GB，拒绝导入。')
+                    out.write(chunk)
+            try:
+                result = packages.restore(incoming, store=store, books=books, library=library, drafts_root=drafts,
+                                          as_copy=copy, consent=consent)
+            except packages.Conflict as exc:
+                return JSONResponse({'detail': {'message': f'「{exc}」还在这台 Mac 上；要恢复一份副本吗？', 'conflict': exc.names}}, status_code=409)
+            except packages.NeedsConsent as exc:
+                return JSONResponse({'detail': {'message': f'工程包里有提供的录音做成的声线：{exc}。导入前需要确认拥有使用权或已获授权。', 'consent': exc.names}}, status_code=409)
+            return result
+        finally:
+            incoming.unlink(missing_ok=True)
 
     @app.post('/api/projects/{project_id}/cleanup')
     def cleanup_project(project_id: str, body: CleanupRequest):

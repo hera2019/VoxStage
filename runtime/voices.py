@@ -118,6 +118,30 @@ class VoiceLibrary:
         self._path(voice_id, '.json').write_text(json.dumps(entry, ensure_ascii=False, indent=1))
         return entry
 
+    def adopt(self, entry, audio, *, consent_confirmed=False):
+        """Take in a voice that arrived in a project package, under its own id so
+        the project's `custom:` references resolve again. Nothing happens when the
+        library already holds that id. A recording a person supplied comes in only
+        with the consent confirmed again here, by whoever imports it (D5: the gate
+        is in code). Returns the entry kept, or None when it was already there."""
+        voice_id = entry.get('id')
+        target = self._path(voice_id, '.json')
+        if target.exists():
+            return None
+        if not NAME_PATTERN.match((entry.get('name') or '').strip()):
+            raise ValueError('音色名称需为 1–40 个字符，且不含斜杠或控制字符。')
+        if entry.get('source') not in ('generated', 'provided'):
+            raise ValueError('未知的音色来源。')
+        if entry['source'] == 'provided' and not (consent_confirmed and entry.get('consent_confirmed')):
+            raise ValueError('使用他人或本人录音建立音色前，必须确认拥有该声音的使用权或已获授权。')
+        if hashlib.sha256(audio).hexdigest() != entry.get('sha256'):
+            raise ValueError('音色参考文件已改变；请重新建立这个音色。')
+        self.root.mkdir(parents=True, exist_ok=True)
+        kept = {**entry, 'synthetic_audio': entry['source'] == 'generated'}
+        self._path(voice_id, '.wav').write_bytes(audio)
+        target.write_text(json.dumps(kept, ensure_ascii=False, indent=1))
+        return kept
+
     def rename(self, voice_id, name):
         if not NAME_PATTERN.match((name or '').strip()):
             raise ValueError('音色名称需为 1–40 个字符，且不含斜杠或控制字符。')
