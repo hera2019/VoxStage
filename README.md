@@ -265,6 +265,12 @@ is recorded with its scoring and its limits in
 - Generated audio is never presented as a real person.
 - Scripts you supply remain your responsibility with respect to content rights.
 
+**Responsible use.** Obey the laws where you are and respect other people's
+privacy and likeness. Do not use VoxStage to make sexual content involving
+minors, intimate or sexual material of anyone without their consent,
+fraudulent impersonation, harassment, extortion, or anything else unlawful.
+You are responsible for how you use the models and what you generate.
+
 ## Checks
 
 ```sh
@@ -275,9 +281,14 @@ HF_HUB_OFFLINE=1 .venv/bin/python tests/real_model_check.py   # writes local aud
 
 ## Licence
 
-[Apache-2.0](LICENSE). The speech model's licence is separate and is recorded
-next to the downloaded weights — do not infer this application's licence from
-it, or the reverse.
+Copyright © 2026 Houjun Co., Ltd. VoxStage is available under the
+[GNU AGPL-3.0](LICENSE) (AGPL-3.0-only) or, for closed-source or hosted use
+that cannot meet it, under a commercial licence — see
+[LICENSING.md](LICENSING.md); contact support@houjun.dev. Contributions:
+[CONTRIBUTING.md](CONTRIBUTING.md). The speech and language models are
+downloaded separately and keep their own licences (Apache-2.0), recorded next
+to the weights — do not infer this application's licence from them, or the
+reverse.
 
 ---
 

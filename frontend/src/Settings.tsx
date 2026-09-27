@@ -190,6 +190,9 @@ export function Settings({request,voices,language,speedReady,designReady,roleMod
    </select>
    {roleNote&&<p className="muted">{roleNote}</p>}
   </div>}
+  <div className="keep-voice about-voxstage"><div className="section-label">{tr("关于 VoxStage")}</div>
+   <p className="muted">{tr("版权所有 © 2026 Houjun Co., Ltd.。以 GNU AGPL-3.0 开源；闭源或服务化使用可购买商业授权（support@houjun.dev）。语音与语言模型各有自己的许可。")}</p>
+   <p className="muted"><strong>{tr("使用规范")}</strong> {tr("请遵守当地法律并尊重他人的隐私与肖像权。不得将本工具用于制作涉及未成年人的色情内容、未经本人同意的私密或色情影像、欺诈性冒充、骚扰、勒索或其他违法用途。用户对自己使用模型和生成内容的方式负责。")}</p></div>
   </>}
   <p className="muted">{tr("试听是本机即时合成的，不会写进任何工程；语速在合成之后处理。")}</p>
   {error&&<p role="alert" className="line-error">{error}</p>}
