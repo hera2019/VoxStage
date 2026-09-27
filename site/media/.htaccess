@@ -1,0 +1,27 @@
+# /voxstage/media/ — the site's images and audio, nothing else.
+# Security headers (nosniff, CSP, HSTS…) are inherited from /voxstage/.htaccess;
+# rewrite rules are not, so the protections are repeated here (as in /mcf/manage/).
+Options -Indexes
+
+<IfModule mod_headers.c>
+  # Stable files: a changed image or recording gets a new file name.
+  <FilesMatch "\.(jpe?g|png|webp)$">
+    Header always set Cache-Control "public, max-age=2592000"
+  </FilesMatch>
+  <FilesMatch "\.mp3$">
+    Header always set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+</IfModule>
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /voxstage/media/
+
+  # Dot files (.DS_Store and the like).
+  RewriteRule (^|/)\. - [F,L]
+
+  # Only the kinds of file the pages use; anything else uploaded here by
+  # mistake is refused.
+  RewriteCond %{REQUEST_URI} !\.(jpe?g|png|webp|mp3)$ [NC]
+  RewriteRule ^ - [F,L]
+</IfModule>

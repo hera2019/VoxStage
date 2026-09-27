@@ -77,6 +77,8 @@ reaches the generation fingerprint, pinned by hash and chosen in settings; the
 draft model is already switchable, and a second engine or recogniser is meant
 to plug in the same way rather than be built in.
 
+Website: <https://houjun.dev/voxstage/>
+
 ## Quick start
 
 On a configured Mac, double-click **Start VoxStage.command**. Use

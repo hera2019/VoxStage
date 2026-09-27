@@ -1,0 +1,18 @@
+# /voxstage/.well-known/ — security.txt only (RFC 9116), served as plain text.
+# Rewrite rules of /voxstage/.htaccess do not reach here, so this folder
+# decides for itself: one file is allowed, everything else is refused.
+Options -Indexes
+
+<IfModule mod_headers.c>
+  <Files "security.txt">
+    Header always set Content-Type "text/plain; charset=utf-8"
+    Header always set Cache-Control "no-cache, must-revalidate"
+  </Files>
+</IfModule>
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /voxstage/.well-known/
+  RewriteRule ^security\.txt$ - [L]
+  RewriteRule ^ - [F,L]
+</IfModule>

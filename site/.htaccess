@@ -30,16 +30,21 @@
 </IfModule>
 
 # ── 3. Nothing private is served ────────────────────────────────
+# Note (from /mcf/): rewrite rules are not inherited by a subdirectory that has
+# its own .htaccess — media/ and .well-known/ repeat what they need.
 Options -Indexes
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /voxstage/
-  RewriteRule ^\.well-known/security\.txt$ - [L]
+
+  # Standard files that must stay reachable.
   RewriteRule ^sitemap\.xml$ - [L]
+
   # Internal files, even if uploaded by mistake.
-  RewriteRule \.(md|markdown|txt|log|bak|old|orig|sql|yml|yaml|json|py|sh|local)$ - [NC,F,L]
-  # Dot files other than .well-known: .DS_Store, .env, .git, .htaccess.
-  RewriteRule (^|/)\.(?!well-known/) - [F,L]
+  RewriteRule \.(md|markdown|txt|log|bak|old|orig|sql|yml|yaml|json|py|sh|local|map)$ - [NC,F,L]
+
+  # Dot files: .DS_Store, .env, .git, .htaccess. (.well-known/ has its own rules.)
+  RewriteRule (^|/)\. - [F,L]
 </IfModule>
 
 # ── 4. A real 404 ───────────────────────────────────────────────
