@@ -1,5 +1,12 @@
 # VoxStage
 
+**Offline AI audiobook maker and multi-voice text to speech for Mac.** Turn a
+story or a script into narrated audio with a voice for every character —
+audiobooks, video voice-overs, audio dramas and podcasts — entirely on your own
+computer. Free and open source.
+
+**Website: <https://houjun.dev/voxstage/>** · *[中文说明](README.zh-CN.md)*
+
 A local script-to-voice workstation for Apple Silicon Macs. Paste prose as
 it is written — a chapter, no speaker labels — and get a multi-character
 reading you can audition line by line, correct, redo and export, with every
@@ -10,9 +17,49 @@ guaranteed intact.
 > product, and listening review covers specific things and not others — see
 > [What listening has covered](#what-listening-has-covered).
 
-*Also available in Chinese: [中文说明](README.zh-CN.md)*
-
 ---
+
+## What you can make with it
+
+- **Audiobooks** — a novel, a short story or a whole book as a narrated,
+  multi-voice audiobook: a narrator plus a voice for every character, chapter by
+  chapter, exported as MP3 or WAV with subtitles.
+- **Video voice-overs and narration** — voice a script for YouTube, explainers,
+  documentaries or social video; export line subtitles and an editing timeline
+  you can import into DaVinci Resolve with every line in place.
+- **Audio dramas and podcasts** — cast a radio play or a fiction podcast from one
+  script: many characters, crowds that speak together, pauses and pace set line
+  by line.
+- **Courses and training** — narrate lessons and walkthroughs, and regenerate
+  only the line you changed when the material is updated.
+- **Language learning** — listening material in English or Chinese with clear,
+  consistent voices; the optional text check flags a misread number or a
+  character with several readings.
+- **Hearing your own writing** — authors and screenwriters can listen to a
+  manuscript or a scene read aloud by its cast before it goes to an editor or an
+  actor.
+- **Game and animation drafts** — placeholder voices for animatics, prototypes
+  and pitches.
+- **Your own voice** — design a new voice from a description, or clone your own
+  from a recording to narrate your work, with your consent confirmed in the app.
+
+## Your material stays on your computer
+
+VoxStage is built for work you cannot or will not hand to a cloud service: an
+unpublished manuscript, a client's script, a product that is not announced yet,
+your own voice.
+
+- **From first line to finished file**, the text you paste, the voices you design
+  or clone, every take, the edits and the exported audio are stored in one folder
+  on your Mac. Nothing is uploaded at any step.
+- **Local AI, not a cloud API.** The speech and speaker models run on your Mac's
+  own chip. After setup VoxStage needs no internet: the launcher holds the model
+  libraries offline.
+- **No account, no telemetry.** Nothing to sign up for, nothing reported back: no
+  usage data, no analytics, no crash reports.
+- **Nothing leaks through the tool.** Using VoxStage does not expose your product
+  information, unreleased content or personal data to us or to anyone else.
+  Share a file only when you choose to.
 
 ## What it does
 
@@ -76,8 +123,6 @@ engine and the recogniser are each behind an interface with an identity that
 reaches the generation fingerprint, pinned by hash and chosen in settings; the
 draft model is already switchable, and a second engine or recogniser is meant
 to plug in the same way rather than be built in.
-
-Website: <https://houjun.dev/voxstage/>
 
 ## Quick start
 
