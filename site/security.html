@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Security · VoxStage</title>
+<meta name="description" content="How VoxStage keeps your work safe on your Mac, and how to report a security problem.">
+<link rel="canonical" href="https://houjun.dev/voxstage/security.html">
+<meta name="theme-color" content="#344e3d">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top"><div class="wrap">
+  <a class="brand" href="./"><span class="mark" aria-hidden="true">v</span>VoxStage</a>
+  <nav aria-label="Site"><a href="./">Home</a><a href="security.html" aria-current="page">Security</a><a href="privacy.html">Privacy</a></nav>
+</div></header>
+<main id="main" class="wrap doc">
+  <div class="eyebrow">Security</div>
+  <h1>Security</h1>
+
+  <h2>Report a problem</h2>
+  <p>Found a vulnerability? Please write to
+    <a href="mailto:support@houjun.dev?subject=VoxStage%20security">support@houjun.dev</a> with
+    the subject “VoxStage security” before telling anyone else, and do not open a public issue
+    for it. Say what you found, how to reproduce it and which version (commit) you used. We will
+    acknowledge your report, keep you informed, and credit you when it is fixed if you wish.
+    There is no bug bounty.</p>
+  <p>Machine-readable contact: <a href=".well-known/security.txt">security.txt</a>; this page
+    is the policy it points to.</p>
+
+  <h2>How VoxStage is built to be safe</h2>
+  <ul>
+    <li><strong>Local by default.</strong> The service listens on this Mac only
+      (127.0.0.1). Nothing is exposed to the network unless you start it in network access mode.</li>
+    <li><strong>Network access mode is locked.</strong> Other devices need an access key; the
+      browser keeps only a hash of it, and requests from other sites are refused, so a web page
+      you visit cannot drive VoxStage.</li>
+    <li><strong>Every request is checked.</strong> Requests must carry VoxStage's own header;
+      project and voice ids are checked against a fixed shape before they touch a file.</li>
+    <li><strong>Packages cannot reach outside.</strong> A <code>.voxstage</code> package is
+      checked as a whole before anything is written: its paths against a fixed list of shapes,
+      its size, links, and every file's SHA-256. It never overwrites existing work.</li>
+    <li><strong>Models are verified.</strong> Each model is pinned to a revision and checked by
+      SHA-256 before it is used.</li>
+    <li><strong>Consent is enforced in code.</strong> A voice from a recording someone supplied
+      is refused unless consent is confirmed — when it is added, and again when a package brings
+      it in.</li>
+  </ul>
+
+  <h2>This website</h2>
+  <p>Static pages over HTTPS with a strict content security policy: no scripts, no third-party
+    resources, no cookies.</p>
+  <p class="updated">Last updated 28 September 2026.</p>
+</main>
+<footer><div class="wrap">
+  <span>© 2026 Houjun Co., Ltd.</span>
+  <nav aria-label="Legal"><a href="responsible-use.html">Responsible use</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="security.html">Security</a><a href="license.html">Licence</a></nav>
+  <span class="legal"><a href="mailto:support@houjun.dev">support@houjun.dev</a></span>
+</div></footer>
+</body>
+</html>

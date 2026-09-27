@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VoxStage · Every character, its own voice</title>
+<meta name="description" content="VoxStage turns a story into a multi-voice recording on your own Mac. It drafts who says each line, gives every character a voice, and exports audio and subtitles — offline, with local AI models.">
+<link rel="canonical" href="https://houjun.dev/voxstage/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="VoxStage">
+<meta property="og:url" content="https://houjun.dev/voxstage/">
+<meta property="og:title" content="VoxStage · Every character, its own voice">
+<meta property="og:description" content="A Mac workstation that turns a story into a multi-voice recording — offline, with local AI models.">
+<meta property="og:image" content="https://houjun.dev/voxstage/media/og-card.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#344e3d">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<!-- Only facts that are true today: free (AGPL-3.0), macOS on Apple Silicon. No ratings, no download counts. -->
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"VoxStage","url":"https://houjun.dev/voxstage/",
+ "applicationCategory":"MultimediaApplication","operatingSystem":"macOS on Apple Silicon",
+ "offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"license":"https://www.gnu.org/licenses/agpl-3.0.html",
+ "publisher":{"@type":"Organization","name":"Houjun Co., Ltd."}}
+</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top"><div class="wrap">
+  <a class="brand" href="./"><span class="mark" aria-hidden="true">v</span>VoxStage</a>
+  <nav aria-label="Site">
+    <a href="#how">How it works</a><a href="#listen">Listen</a><a href="#features">Features</a>
+    <a href="#install">Install</a><a href="license.html">Licence</a>
+  </nav>
+</div></header>
+
+<main id="main">
+<div class="wrap">
+  <div class="hero">
+    <div class="eyebrow">Script → Voice · on your Mac</div>
+    <h1>Every character,<br><em>its own voice.</em></h1>
+    <p class="lead">VoxStage turns a story into a multi-voice recording. It drafts who says
+      each line, gives every character a voice, lets you check and fix every sentence, and
+      exports audio and subtitles — all on your own Mac, with local AI models. Nothing is uploaded.</p>
+    <div class="cta">
+      <a class="button" href="https://github.com/hera2019/VoxStage">Get it on GitHub</a>
+      <a class="button ghost" href="#listen">Listen to a sample</a>
+      <span class="note">Free and open source (AGPL-3.0) · macOS on Apple Silicon</span>
+    </div>
+  </div>
+  <figure class="shot"><img src="media/editor.jpg" width="1440" height="900" alt="The VoxStage workspace: the chapter's lines with their speakers on the left, the selected line's speaker, text, reading and pause settings on the right."></figure>
+  <figcaption>The workspace on the first chapter of <i>Pride and Prejudice</i> (public domain), every line generated on the Mac.</figcaption>
+</div>
+
+<section id="how"><div class="wrap">
+  <h2>How it works</h2>
+  <p class="sub">Four steps from a text to a finished recording. You stay in charge at each one.</p>
+  <ol class="steps">
+    <li><h3>Paste the story</h3><p class="note">Plain prose, a marked script, a TXT, Markdown or Word file — or a whole book, cut into chapters by its headings.</p></li>
+    <li><h3>Review the speakers</h3><p class="note">A local language model drafts who says each line. You confirm or correct it; uncertain lines are marked for you.</p></li>
+    <li><h3>Give each character a voice</h3><p class="note">Fourteen designed voices come with it; design new ones from a description, or use a recording you have the right to use.</p></li>
+    <li><h3>Generate, check, export</h3><p class="note">Listen line by line, fix a word or a pause, then export WAV or MP3, subtitles and an editing timeline.</p></li>
+  </ol>
+</div></section>
+
+<section id="listen"><div class="wrap">
+  <h2>Listen</h2>
+  <p class="sub">Unedited output of the local models, from public-domain or self-written text. Nothing here was touched up afterwards.</p>
+  <div class="pair">
+    <div class="listen"><h3>Pride and Prejudice, chapter 1</h3>
+      <p>English · narrator and the Bennets · built-in voices</p>
+      <audio controls preload="none" src="media/pride-and-prejudice-ch1.mp3"></audio></div>
+    <div class="listen"><h3>Hard cases in Chinese</h3>
+      <p>Numbers, names and characters with several readings — the lines a TTS usually gets wrong</p>
+      <audio controls preload="none" src="media/zh-hard-cases.mp3"></audio></div>
+  </div>
+</div></section>
+
+<section id="features"><div class="wrap">
+  <h2>What is in it</h2>
+  <p class="sub">A workstation for the whole job, not a text box with a voice.</p>
+  <div class="grid">
+    <div class="card"><h3>Speaker drafts you can trust to check</h3><p>The text is never rewritten: the model only labels who speaks. Tags beside a line, habits and turn-taking back it up, and every uncertain answer is marked for review.</p></div>
+    <div class="card"><h3>A voice library</h3><p>Fourteen designed voices — narrators, adults, old and young — installed with the app. Design a voice from a sentence, keep the take you like, fine-tune it by changing only the words.</p></div>
+    <div class="card"><h3>Books, not just chapters</h3><p>A long text becomes a book of chapters that share voices, cast and settings, processed in batches that fit the Mac's memory.</p></div>
+    <div class="card"><h3>Fix one sentence at a time</h3><p>Regenerate a line, change its reading or pause, split or merge lines, or cut and stretch parts of a take in the fine editor — without touching the rest.</p></div>
+    <div class="card"><h3>A second pair of ears</h3><p>A local speech recogniser compares what was said with the script and flags missing or misread words and odd pauses — as leads for listening, never as a pass.</p></div>
+    <div class="card"><h3>Ready for editing</h3><p>WAV or MP3, line subtitles, a sample-accurate timeline and an XML timeline for DaVinci Resolve. Package a project or a whole book into one file and restore it later.</p></div>
+    <div class="card"><h3>Private by design</h3><p>Everything runs on the Mac. No account, no telemetry, no cloud. A phone or tablet on the same Wi-Fi can join with an access key, only when you turn it on.</p></div>
+    <div class="card"><h3>English and Chinese</h3><p>The interface is in English or Chinese; projects are English or Chinese, each with voices of its language.</p></div>
+  </div>
+  <div class="pair spaced">
+    <figure class="shot"><img src="media/voices.jpg" width="1440" height="900" loading="lazy" alt="Character voices: each character with its voice, colour and sex."></figure>
+    <figure class="shot"><img src="media/library.jpg" width="1440" height="900" loading="lazy" alt="The voice library with the default pack's voices and their tags."></figure>
+  </div>
+</div></section>
+
+<section id="honest"><div class="wrap">
+  <h2>What it does not do (yet)</h2>
+  <ul class="limits">
+    <li>The speaker draft is a draft. On our reviewed test texts it still needs a person to check the dialogue; plan on reviewing every chapter.</li>
+    <li>It needs an Apple Silicon Mac. 32 GB of memory is recommended for the larger voices and the speaker model; 16 GB runs the small voices only (estimated, not measured).</li>
+    <li>It is a developer install for now — a terminal and about half an hour, most of it downloading models. There is no signed installer yet.</li>
+    <li>Only English and Chinese projects. The voices are synthetic; they are good, not a replacement for a skilled human narrator.</li>
+  </ul>
+</div></section>
+
+<section id="install"><div class="wrap">
+  <h2>Install</h2>
+  <p class="sub">On an Apple Silicon Mac with <a href="https://brew.sh">Homebrew</a>:</p>
+  <pre class="card code">brew install python@3.12 uv node git ffmpeg llama.cpp
+git clone https://github.com/hera2019/VoxStage.git &amp;&amp; cd VoxStage
+uv venv --python 3.12
+uv pip install --python .venv/bin/python -r requirements.lock.txt
+npm --prefix frontend ci &amp;&amp; npm --prefix frontend run build
+.venv/bin/python scripts/setup_model.py      # built-in voices, ~2.5 GB
+.venv/bin/python -m runtime.launcher</pre>
+  <p class="note">The <a href="https://github.com/hera2019/VoxStage/blob/main/docs/public/setup.md">install guide</a> lists which models to download for your Mac's memory. The models (Qwen3-TTS, Qwen3) are downloaded from their publishers under their own licences.</p>
+</div></section>
+
+<section id="licence"><div class="wrap">
+  <h2>Licence</h2>
+  <p class="sub">VoxStage is free and open source under the <a href="license.html">GNU AGPL-3.0</a>. Building it into a closed-source product or a hosted service? A <a href="license.html#commercial">commercial licence</a> is available from Houjun Co., Ltd.</p>
+  <div class="callout"><strong>Responsible use.</strong> Obey the laws where you are and respect other people's privacy and likeness. Do not use VoxStage for sexual content involving minors, intimate or sexual material of anyone without their consent, fraudulent impersonation, harassment, extortion or anything else unlawful. <a href="responsible-use.html">Read more</a>.</div>
+</div></section>
+</main>
+
+<footer><div class="wrap">
+  <span>© 2026 Houjun Co., Ltd.</span>
+  <nav aria-label="Legal">
+    <a href="responsible-use.html">Responsible use</a><a href="privacy.html">Privacy</a>
+    <a href="terms.html">Terms</a><a href="security.html">Security</a><a href="license.html">Licence</a>
+  </nav>
+  <span class="legal"><a href="mailto:support@houjun.dev">support@houjun.dev</a></span>
+</div></footer>
+</body>
+</html>

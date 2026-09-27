@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy · VoxStage</title>
+<meta name="description" content="VoxStage runs on your Mac: no account, no telemetry, nothing uploaded. This site sets no cookies and runs no analytics.">
+<link rel="canonical" href="https://houjun.dev/voxstage/privacy.html">
+<meta name="theme-color" content="#344e3d">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top"><div class="wrap">
+  <a class="brand" href="./"><span class="mark" aria-hidden="true">v</span>VoxStage</a>
+  <nav aria-label="Site"><a href="./">Home</a><a href="privacy.html" aria-current="page">Privacy</a><a href="security.html">Security</a></nav>
+</div></header>
+<main id="main" class="wrap doc">
+  <div class="eyebrow">Privacy</div>
+  <h1>Your work stays on your Mac</h1>
+
+  <h2>The VoxStage software</h2>
+  <ul>
+    <li><strong>No account, no telemetry.</strong> VoxStage does not collect usage data, crash
+      reports or analytics, and has nowhere to send them.</li>
+    <li><strong>Nothing is uploaded.</strong> Scripts, recordings, voices, generated audio and
+      exports are stored in the <code>user-data</code> folder of your copy and never leave the
+      Mac unless you move them.</li>
+    <li><strong>What does use the network:</strong> the setup scripts download the models from
+      their publishers (Hugging Face), and the dependency tools (Homebrew, uv, npm) download
+      software. After setup VoxStage runs offline: the launcher starts it with the model
+      libraries held offline (<code>HF_HUB_OFFLINE=1</code>).</li>
+    <li><strong>Network access mode</strong> is off by default. When you turn it on, other
+      devices on the same Wi-Fi can open VoxStage after typing an access key; the key stays in
+      <code>user-data/lan-key.txt</code> on your Mac. It is plain HTTP inside your own network, so
+      use it only on a network you trust.</li>
+    <li><strong>Packages</strong> you make hold the whole project, including any recording you
+      supplied. Keep them to yourself unless everyone whose voice is in them agrees.</li>
+  </ul>
+
+  <h2>This website</h2>
+  <ul>
+    <li>It is a set of static pages: no cookies, no analytics, no tracking pixels, no forms and
+      no third-party scripts or fonts.</li>
+    <li>Our web host keeps standard server logs (such as IP address, time and page requested)
+      for security and operation, under its own policy.</li>
+    <li>If you write to us, we use your email only to answer you.</li>
+  </ul>
+
+  <h2>Questions</h2>
+  <p>Write to <a href="mailto:support@houjun.dev?subject=VoxStage%20privacy">support@houjun.dev</a>.</p>
+  <p class="updated">Last updated 28 September 2026.</p>
+</main>
+<footer><div class="wrap">
+  <span>© 2026 Houjun Co., Ltd.</span>
+  <nav aria-label="Legal"><a href="responsible-use.html">Responsible use</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="security.html">Security</a><a href="license.html">Licence</a></nav>
+  <span class="legal"><a href="mailto:support@houjun.dev">support@houjun.dev</a></span>
+</div></footer>
+</body>
+</html>

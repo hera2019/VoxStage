@@ -1,0 +1,47 @@
+# /voxstage/ — VoxStage's static site (https://houjun.dev/voxstage/).
+# Modelled on /mcf/.htaccess. This folder does not go through WordPress, so the
+# root site's security plugins do not cover it: the headers are set here.
+
+# ── 1. Security headers ─────────────────────────────────────────
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=(), usb=()"
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+  # The site runs no scripts at all (the structured data block is JSON, not
+  # script), no third-party resources, no inline styles.
+  Header always set Content-Security-Policy "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; script-src 'none'; style-src 'self'; img-src 'self' data:; media-src 'self'; font-src 'self'; connect-src 'self'; upgrade-insecure-requests"
+</IfModule>
+
+# ── 2. Caching ──────────────────────────────────────────────────
+# File names carry no content hash: HTML and CSS are revalidated every time.
+# Images and audio are stable; when one changes, change its file name.
+<IfModule mod_headers.c>
+  <FilesMatch "\.(html|css|txt|xml)$">
+    Header always set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
+  <FilesMatch "\.(png|jpe?g|svg|ico|webp)$">
+    Header always set Cache-Control "public, max-age=2592000"
+  </FilesMatch>
+  <FilesMatch "\.(mp3|m4a|ogg)$">
+    Header always set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+</IfModule>
+
+# ── 3. Nothing private is served ────────────────────────────────
+Options -Indexes
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /voxstage/
+  RewriteRule ^\.well-known/security\.txt$ - [L]
+  RewriteRule ^sitemap\.xml$ - [L]
+  # Internal files, even if uploaded by mistake.
+  RewriteRule \.(md|markdown|txt|log|bak|old|orig|sql|yml|yaml|json|py|sh|local)$ - [NC,F,L]
+  # Dot files other than .well-known: .DS_Store, .env, .git, .htaccess.
+  RewriteRule (^|/)\.(?!well-known/) - [F,L]
+</IfModule>
+
+# ── 4. A real 404 ───────────────────────────────────────────────
+# Absolute path: the page is rendered at any depth.
+ErrorDocument 404 /voxstage/404.html
