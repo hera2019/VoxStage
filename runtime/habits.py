@@ -630,7 +630,7 @@ def usual_spelling(name, text, known_names=()):
     20 fixes in one reviewed chapter were this). A name of the book's cast wins;
     otherwise the text's own spelling must be at least five times as common and
     the rare one at most twice. Readings compare with tones and each character's
-    usual reading only, so 王伯 and 王柏 (bó / bǎi) or 人物甲 and 人物乙 stay two
+    usual reading only, so 王伯 and 王柏 (bó / bǎi) stay two
     people. None when there is no such spelling, or more than one."""
     if not name or len(name) < 2 or not re.fullmatch('[一-鿿]+', name):
         return None

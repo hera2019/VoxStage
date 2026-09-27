@@ -198,7 +198,7 @@ function App(){
    <main><div className="main-scroll">
     {packageLink&&<p className="package-link">{tr("工程包：")}<a href={packageLink.url} download={packageLink.file}>{packageLink.file}</a><small>{tr(" 没有开始下载，就点这个链接；浏览器提示不安全时选「保留」。")}</small><button type="button" className="see-lines" onClick={()=>setPackageLink(null)}>{tr("关闭")}</button></p>}
     <div className="mobile-projects"><label>{tr("切换工程")}<select aria-label={tr("切换工程")} disabled={!!blocked} value={openBook?'book:'+openBook:(p?.id??'')} onChange={e=>{const v=e.target.value;if(!v)return;if(v.startsWith('book:')){const id=v.slice(5);setRoleImporting(false);setImporting(false);setStartFor(null);setOpenBook(id);void api('/books/'+id).then((b:{title:string;revision?:number})=>setBookRevisions(x=>({...x,[id]:{title:b.title,revision:b.revision??0}}))).catch(()=>{})}else void action(()=>open(v))}}>
-     {/* 本人 2026-09-22/23 (手机上「大家都在一起，没个顺序」「网络小说 169 章，没有折叠，要命了」)：
+     {/* 本人 2026-09-22/23 (手机上「大家都在一起，没个顺序」「169 章的网络小说，没有折叠，要命了」)：
          a native list cannot fold, so a book is one entry that opens its workspace (the chapters are listed there);
          the chapter being worked on is shown on its own at the top; loose projects by latest change; archived last. */}
      <option value="">{tr("选择工程")}</option>
@@ -206,7 +206,7 @@ function App(){
       const opened=(id:string)=>{try{return Number(localStorage.getItem('voxstage-book-opened-'+id))||0}catch{return 0}};
       const entries=[...books.entries()].concat(emptyBooks.filter(e=>!books.has(e.id)).map(e=>[e.id,{title:e.title,chapters:[] as typeof live}] as [string,{title:string;chapters:typeof live}]))
        .sort((a,b)=>Math.max(opened(b[0]),...b[1].chapters.map(c=>(c.updated_at??0)*1000))-Math.max(opened(a[0]),...a[1].chapters.map(c=>(c.updated_at??0)*1000)));
-      // Archived work folds the same way (本人 2026-09-23: 已归档的子工程暴露着——万一把网络小说归档就惨了): a book is one entry.
+      // Archived work folds the same way (本人 2026-09-23: 已归档的子工程暴露着——万一把整本书归档就惨了): a book is one entry.
       const shelved=groupByBook(projects.filter(x=>x.archived));
       const archived=shelved.loose;
       const here=p&&p.book?.id&&books.has(p.book.id)?p:null;

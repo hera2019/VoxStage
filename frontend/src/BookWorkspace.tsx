@@ -19,7 +19,7 @@ type Props={bookId:string;title:string;revision:number;chapters:Listed[];loose:L
 const PAGES:[string,string][]=[['chapters',tr("章节")],['settings',tr("设置")],['structure',tr("结构")],['export',tr("导出")]];
 
 export function BookWorkspace({bookId,title,revision,chapters,loose,current,busy,request,presetModels,cloneModels,voiceName,onOpenChapter,onContinue,onChapterSettings,onRenamed,onChanged,onDelete,onDeleteChapter,archived,onArchive,onNewChapter,onPackage}:Props){
- // A long book (本人 2026-09-23: 网络小说 169 章): find a chapter by its number or words of its title, or show only what is left to process.
+ // A long book (本人 2026-09-23: 一本 169 章的网络小说): find a chapter by its number or words of its title, or show only what is left to process.
  const [query,setQuery]=useState('');const [onlyTodo,setOnlyTodo]=useState(false);
  const [page,setPage]=useState('chapters');const [name,setName]=useState(title);const [error,setError]=useState('');
  const rename=async()=>{const t=name.trim();if(!t||t===title)return;try{const r=await request(`/master-books/${bookId}`,'PATCH',{revision,title:t});onRenamed(r.title,r.revision)}catch(e){setError((e as Error).message);setName(title)}};

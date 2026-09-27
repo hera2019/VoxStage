@@ -334,7 +334,7 @@ main>footer audio{height:34px}
 .crowd-layers{display:inline-flex;align-items:center;gap:4px;font-size:12px;margin:0;white-space:nowrap}
 .crowd-layers input{width:46px;min-height:30px;padding:2px 6px;margin:0;font-size:12px}
 
-/* 长书的章节筛选（本人 2026-09-23：网络小说 169 章） */
+/* 长书的章节筛选（本人 2026-09-23：一本 169 章的网络小说） */
 .chapter-filter{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin:8px 0 10px}
 .chapter-filter input[type=search]{flex:1 1 220px;min-width:0;margin:0}
 .chapter-filter label{display:inline-flex;align-items:center;gap:6px;font-size:13px;margin:0;white-space:nowrap}
