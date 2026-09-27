@@ -120,23 +120,23 @@ the service and opens http://127.0.0.1:8765 in the browser. Keep the
 terminal window open while you work; Ctrl+C stops it.
 
 `Check VoxStage.command` prints the same environment report without
-starting anything. Each item is marked 就绪 (ready), 提示 (an optional part
-is missing; the rest works) or 需处理 (must be fixed before starting), with
-what to do.
+starting anything. Each item is marked ready, note (an optional part is
+missing; the rest works) or must fix (must be fixed before starting), with what
+to do — 就绪 / 提示 / 需处理 on a Mac set to Chinese.
 
 The first time the service starts, the default voice pack (fourteen synthetic
 voices, `voicepack/`) is added to the voice library.
 
-**Language**: the interface is in English or Chinese, chosen by the browser's
-language at first; switch it with the 中文 / English button at the bottom of
+**Language**: the interface is in English, or in Chinese when the browser's
+language is Chinese; switch it with the 中文 / English button at the bottom of
 the sidebar, or under Settings → Models and options. It is a preference of
-that browser only — a project's own language (the language of its text and
-voices) does not change. The terminal follows the Mac's language;
-`VOXSTAGE_LANG=en` or `zh` sets it. Exported reports and editing notes are
-still in Chinese.
+that browser only. A new project starts in the interface's language; a
+project's own language (its text and voices) never changes with the
+interface. The terminal follows the Mac's language; `VOXSTAGE_LANG=en` or
+`zh` sets it. Notes that go out with exports are in both languages.
 
 **From a phone or tablet on the same Wi-Fi**: double-click
-`Start VoxStage (局域网).command`. The terminal prints the address and an
+`Start VoxStage (LAN).command`. The terminal prints the address and an
 access key; each device types the key once. It is off by default.
 
 ## Updating

@@ -463,7 +463,7 @@ class BookExportService:
                         'tempo_mapping': mapping, 'delivery_file': delivery_file,
                         'processed_checks': {
                             **{k: v for k, v in analyze(pcm, rate).items() if k != 'waveform'},
-                            'notice': '成品低能量检查；时间为该句成品秒数，不代表自然度通过。',
+                            'notice': 'A low-energy check of the result; times are seconds in this line\'s result and are no pass for naturalness. / 成品低能量检查；时间为该句成品秒数，不代表自然度通过。',
                         },
                     }
                     entries.append(entry)
@@ -610,7 +610,7 @@ class BookExportService:
             'project_revisions': snapshot['project_revisions'],
             'selected_chapters': snapshot['selected_chapters'],
             'synthetic_audio': True, 'chapters': chapters,
-            'notice': '报告属于本次导出快照；之后的工程修改不会改写这份报告。',
+            'notice': 'This report belongs to this export\'s snapshot; later changes to the project do not rewrite it. / 报告属于本次导出快照；之后的工程修改不会改写这份报告。',
         }
 
     def create(self, book_id, revision, chapter_ids, outputs, fps):

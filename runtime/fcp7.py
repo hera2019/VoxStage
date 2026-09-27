@@ -88,7 +88,39 @@ def timeline_xml(manifest: dict, fps: int = 30) -> bytes:
     return ET.tostring(root, encoding='utf-8', xml_declaration=True)
 
 
-IMPORT_GUIDE = """VoxStage 剪辑时间轴导入说明
+IMPORT_GUIDE = """VoxStage · importing the editing timeline
+
+1. From the same export, download the XML and the editing package (ZIP), and
+   unzip the ZIP. Put the XML next to the unzipped delivery folder. Move or
+   rename them together. Never mix an old ZIP with an XML exported after edits.
+2. In DaVinci Resolve choose File → Import → Timeline and pick the XML. In the
+   import dialog check that the frame rate matches your video project and the
+   start timecode is 00:00:00:00.
+3. If it says media is missing, choose Yes, select delivery/audio in the folder
+   tree and click OK (the path field of the file picker may not accept typing).
+   Resolve may ask you to relink by hand; the XML uses relative paths and
+   records nothing about your computer.
+4. Line subtitles are downloaded separately; import the SRT with
+   File → Import → Subtitle.
+
+Resolve shows the audio file name on the timeline, not the clip-name field of
+the XML (measured on 21.0.4; rewriting the name field has no effect). So each
+file in the package is named with its line, like 0004_Name_the-words.wav, cut
+by bytes when long. The XML's clip-name field carries the line too, for other
+software. The sound is the finished audio from the package, with speed, fine
+edits and pauses between lines applied; nothing is generated again.
+The XML counts in video frames: each line's start and end are rounded to the
+nearest frame independently, so edges may shift by up to half a frame and
+clip lengths or gaps change with the rounding. The WAVs and the package's
+JSON/CSV keep sample positions; the zero-sample reassembly promise holds for
+the package, not for the XML. Whole frame rates 24, 25, 30, 50 and 60 are
+supported. A clip shorter than a frame that rounds to zero length stops the
+XML export; use the WAV or the package instead. Other editing software,
+fractional frame rates and the final render after import need their own checks.
+
+────────────────────────────────────────
+
+VoxStage 剪辑时间轴导入说明
 
 1. 同一次导出中下载 XML 和剪辑交付包（ZIP），将 ZIP 解压。
    把 XML 放在解压后的 delivery 文件夹旁边。文件可整体搬走或改名。
@@ -113,4 +145,4 @@ JSON/CSV 仍按采样记录，零采样复原约定适用于交付包，不适�
 其他剪辑软件、非整数帧率和导入后的最终渲染须另行验证。
 """
 
-# 最后更新：2026-09-11 · Astra
+# 最后更新：2026-09-11 · Astra；英文说明 2026-09-27 · Claude Hera

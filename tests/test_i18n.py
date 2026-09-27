@@ -11,6 +11,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 CJK = re.compile('[㐀-鿿＀-￯　-〿]')
 SLOTS = re.compile(r'\{\d+\}')
+# Lists the page shows item by item: why an export is blocked, what changed since it.
+DISPLAY_LISTS = {'blocked', 'warnings', 'stale_reasons', 'reasons'}
 DISPLAY_KEYS = {'basis', 'detail', 'message', 'reason', 'label', 'note', 'warning', 'hint', 'title', 'summary', 'error',
                 'notice', 'description', 'stale_reasons', 'blocked', 'problem'}
 
@@ -43,7 +45,7 @@ def server_messages():
     def pieces(node):
         if isinstance(node, (ast.Constant, ast.JoinedStr)):
             text = template(node)
-            if text and CJK.search(text):
+            if text and CJK.search(text) and not re.match(r'[A-Za-z].* / ', text):   # 'English. / 中文' is bilingual already
                 yield text
         elif isinstance(node, ast.BinOp):
             yield from pieces(node.left)
@@ -67,6 +69,10 @@ def server_messages():
         for node in ast.walk(ast.parse(path.read_text(encoding='utf-8'))):
             if isinstance(node, ast.Raise) and isinstance(node.exc, ast.Call):
                 for arg in node.exc.args:
+                    found.update(pieces(arg))
+            if (isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute) and node.func.attr == 'append'
+                    and isinstance(node.func.value, ast.Name) and node.func.value.id in DISPLAY_LISTS):
+                for arg in node.args:
                     found.update(pieces(arg))
             if isinstance(node, ast.Dict):
                 for key, value in zip(node.keys, node.values):
