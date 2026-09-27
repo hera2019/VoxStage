@@ -3,14 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>VoxStage · Every character, its own voice</title>
-<meta name="description" content="VoxStage turns a story into a multi-voice recording on your own Mac. It drafts who says each line, gives every character a voice, and exports audio and subtitles — offline, with local AI models.">
+<title>VoxStage · Offline AI audiobook maker and multi-voice text to speech for Mac</title>
+<meta name="description" content="VoxStage is a free, open-source AI audiobook maker for Mac: multi-voice text to speech that turns a story or script into narrated audio with a voice for every character — for audiobooks, video voice-overs, podcasts and audio dramas. Runs offline; your text, voices and audio never leave your computer.">
+<meta name="keywords" content="audiobook maker, AI audiobook, text to speech, TTS, multi-voice TTS, offline text to speech, local AI voice, AI voice generator, voice-over, video narration, dubbing, audio drama, podcast, voice cloning, voice design, Mac, Apple Silicon, private, open source, Chinese text to speech, 有声书, 配音">
 <link rel="canonical" href="https://houjun.dev/voxstage/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="VoxStage">
 <meta property="og:url" content="https://houjun.dev/voxstage/">
-<meta property="og:title" content="VoxStage · Every character, its own voice">
-<meta property="og:description" content="A Mac workstation that turns a story into a multi-voice recording — offline, with local AI models.">
+<meta property="og:title" content="VoxStage · Offline AI audiobook maker for Mac">
+<meta property="og:description" content="Turn a story or script into a multi-voice recording — audiobooks, voice-overs, podcasts, audio dramas. Free, open source, and fully offline: nothing leaves your Mac.">
 <meta property="og:image" content="https://houjun.dev/voxstage/media/og-card.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -20,10 +21,21 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <!-- Only facts that are true today: free (AGPL-3.0), macOS on Apple Silicon. No ratings, no download counts. -->
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"SoftwareApplication","name":"VoxStage","url":"https://houjun.dev/voxstage/",
- "applicationCategory":"MultimediaApplication","operatingSystem":"macOS on Apple Silicon",
- "offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"license":"https://www.gnu.org/licenses/agpl-3.0.html",
- "publisher":{"@type":"Organization","name":"Houjun Co., Ltd."}}
+{"@context":"https://schema.org","@graph":[
+ {"@type":"SoftwareApplication","name":"VoxStage","url":"https://houjun.dev/voxstage/",
+  "description":"Offline AI audiobook maker and multi-voice text to speech for Mac. Turns stories and scripts into narrated audio with a voice for every character; everything stays on your computer.",
+  "applicationCategory":"MultimediaApplication","operatingSystem":"macOS on Apple Silicon",
+  "offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"license":"https://www.gnu.org/licenses/agpl-3.0.html",
+  "inLanguage":["en","zh"],
+  "featureList":["Multi-voice text to speech","Automatic speaker drafts for dialogue","Voice library and voice design","Voice cloning from recordings you have the right to use","Audiobook chapters and whole books","Line-by-line editing and fine editing","Subtitles (SRT, VTT) and editing timeline export","Runs offline on your Mac; no upload, no account, no telemetry"],
+  "publisher":{"@type":"Organization","name":"Houjun Co., Ltd."}},
+ {"@type":"FAQPage","mainEntity":[
+  {"@type":"Question","name":"Does VoxStage upload my text or audio?","acceptedAnswer":{"@type":"Answer","text":"No. VoxStage runs entirely on your Mac with local AI models. Your scripts, voices, recordings and finished audio stay in a folder on your computer; there is no account, no cloud service and no telemetry."}},
+  {"@type":"Question","name":"Can I make an audiobook with VoxStage?","acceptedAnswer":{"@type":"Answer","text":"Yes. Paste a story or a whole book; VoxStage drafts who says each line, gives every character a voice, and exports MP3 or WAV with subtitles, chapter by chapter."}},
+  {"@type":"Question","name":"Is VoxStage free?","acceptedAnswer":{"@type":"Answer","text":"Yes. It is free and open source under the GNU AGPL-3.0. A commercial licence is available for closed-source or hosted use."}},
+  {"@type":"Question","name":"Which languages does it support?","acceptedAnswer":{"@type":"Answer","text":"English and Chinese projects, with an English or Chinese interface."}},
+  {"@type":"Question","name":"What computer do I need?","acceptedAnswer":{"@type":"Answer","text":"A Mac with Apple Silicon (M1 or later). 32 GB of memory is recommended; 16 GB runs the smaller voice models."}}]}
+]}
 </script>
 </head>
 <body>
@@ -31,7 +43,7 @@
 <header class="top"><div class="wrap">
   <a class="brand" href="./"><span class="mark" aria-hidden="true">v</span>VoxStage</a>
   <nav aria-label="Site">
-    <a href="#how">How it works</a><a href="#listen">Listen</a><a href="#features">Features</a>
+    <a href="#uses">What you can make</a><a href="#how">How it works</a><a href="#listen">Listen</a><a href="#private">Privacy</a>
     <a href="#install">Install</a><a href="license.html">Licence</a>
   </nav>
 </div></header>
@@ -39,7 +51,7 @@
 <main id="main">
 <div class="wrap">
   <div class="hero">
-    <div class="eyebrow">Script → Voice · on your Mac</div>
+    <div class="eyebrow">Offline AI audiobook maker · multi-voice text to speech for Mac</div>
     <h1>Every character,<br><em>its own voice.</em></h1>
     <p class="lead">VoxStage turns a story into a multi-voice recording. It drafts who says
       each line, gives every character a voice, lets you check and fix every sentence, and
@@ -53,6 +65,21 @@
   <figure class="shot"><img src="media/editor.jpg" width="1440" height="900" alt="The VoxStage workspace: the chapter's lines with their speakers on the left, the selected line's speaker, text, reading and pause settings on the right."></figure>
   <figcaption>The workspace on the first chapter of <i>Pride and Prejudice</i> (public domain), every line generated on the Mac.</figcaption>
 </div>
+
+<section id="uses"><div class="wrap">
+  <h2>What you can make with it</h2>
+  <p class="sub">Anything where written words need to become voices — several of them, each one a character — without sending your material anywhere.</p>
+  <div class="grid">
+    <div class="card"><h3>Audiobooks</h3><p>Turn a novel, a short story or a whole book into a narrated, multi-voice audiobook: a narrator plus a voice for every character, chapter by chapter, exported as MP3 or WAV with subtitles.</p></div>
+    <div class="card"><h3>Video voice-overs and narration</h3><p>Voice a script for YouTube, explainers, documentaries or social video. Export line subtitles and an editing timeline you can import into DaVinci Resolve with every line in place.</p></div>
+    <div class="card"><h3>Audio dramas and podcasts</h3><p>Cast a radio play or a fiction podcast from one script: dialogue for many characters, crowds that speak together, pauses and pace set line by line.</p></div>
+    <div class="card"><h3>Courses and training</h3><p>Narrate e-learning modules, lessons and product walkthroughs in a steady voice — and regenerate just the line you changed when the material is updated.</p></div>
+    <div class="card"><h3>Language learning</h3><p>Make listening material in English or Chinese with clear, consistent voices; the optional text check flags a misread number or a character with several readings.</p></div>
+    <div class="card"><h3>Hear your own writing</h3><p>Authors and screenwriters: listen to your manuscript or scene read aloud with its cast, to catch what the eye misses — before it goes to an editor or an actor.</p></div>
+    <div class="card"><h3>Games and animation drafts</h3><p>Give characters placeholder voices for animatics, prototypes and pitch decks, and swap in the final performance later.</p></div>
+    <div class="card"><h3>Your own voice, your own way</h3><p>Design a new voice from a description, or clone your own voice from a recording to narrate your work — with your consent confirmed in the app.</p></div>
+  </div>
+</div></section>
 
 <section id="how"><div class="wrap">
   <h2>How it works</h2>
@@ -76,6 +103,18 @@
       <p>Numbers, names and characters with several readings — the lines a TTS usually gets wrong</p>
       <audio controls preload="none" src="media/zh-hard-cases.mp3"></audio></div>
   </div>
+</div></section>
+
+<section id="private"><div class="wrap">
+  <h2>Your material stays on your computer. All of it. Always.</h2>
+  <p class="sub">VoxStage is built for work you cannot or will not hand to a cloud service: an unpublished manuscript, a client's script, a product that is not announced yet, your own voice.</p>
+  <div class="grid two">
+    <div class="card"><h3>From first line to finished file</h3><p>The text you paste, the voices you design or clone, every take, the edits and the exported audio are stored in one folder on your Mac. Nothing is uploaded at any step.</p></div>
+    <div class="card"><h3>Local AI, not a cloud API</h3><p>The speech and speaker models run on your Mac's own chip. After setup VoxStage needs no internet: the launcher holds the model libraries offline.</p></div>
+    <div class="card"><h3>No account, no telemetry</h3><p>There is nothing to sign up for and nothing is reported back: no usage data, no analytics, no crash reports. We never see what you make.</p></div>
+    <div class="card"><h3>Nothing leaks through the tool</h3><p>Using VoxStage does not expose your product information, your unreleased content or any personal data to us or to anyone else. Share a file only when you choose to.</p></div>
+  </div>
+  <p class="note">Details in the <a href="privacy.html">privacy</a> and <a href="security.html">security</a> pages. The only downloads are the models and tools during setup.</p>
 </div></section>
 
 <section id="features"><div class="wrap">
@@ -118,6 +157,18 @@ npm --prefix frontend ci &amp;&amp; npm --prefix frontend run build
 .venv/bin/python scripts/setup_model.py      # built-in voices, ~2.5 GB
 .venv/bin/python -m runtime.launcher</pre>
   <p class="note">The <a href="https://github.com/hera2019/VoxStage/blob/main/docs/public/setup.md">install guide</a> lists which models to download for your Mac's memory. The models (Qwen3-TTS, Qwen3) are downloaded from their publishers under their own licences.</p>
+</div></section>
+
+<section id="faq"><div class="wrap">
+  <h2>Questions</h2>
+  <div class="grid">
+    <div class="card"><h3>Does VoxStage upload my text or audio?</h3><p>No. Everything runs on your Mac with local AI models; your scripts, voices and finished audio stay in a folder on your computer. No account, no cloud, no telemetry.</p></div>
+    <div class="card"><h3>Can I make an audiobook with it?</h3><p>Yes — that is what it was built for. Paste a story or a whole book, review who speaks, and export MP3 or WAV with subtitles, chapter by chapter.</p></div>
+    <div class="card"><h3>Is it free?</h3><p>Yes, free and open source under the GNU AGPL-3.0. A <a href="license.html#commercial">commercial licence</a> is available for closed-source or hosted use.</p></div>
+    <div class="card"><h3>Which languages?</h3><p>English and Chinese projects, each with voices of its language, and an English or Chinese interface.</p></div>
+    <div class="card"><h3>Can it use my own voice?</h3><p>Yes, from a recording you have the right to use; the app asks you to confirm it. See <a href="responsible-use.html">responsible use</a>.</p></div>
+    <div class="card"><h3>What Mac do I need?</h3><p>Apple Silicon (M1 or later). 32 GB of memory is recommended; 16 GB runs the smaller voice models.</p></div>
+  </div>
 </div></section>
 
 <section id="licence"><div class="wrap">

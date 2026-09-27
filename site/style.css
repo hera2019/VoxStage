@@ -85,3 +85,5 @@ footer .legal{margin-left:auto}
 @media (max-width:640px){.top nav{margin-left:0;width:100%;padding-bottom:10px}.hero{padding-top:44px}footer .legal{margin-left:0}}
 .spaced{margin-top:28px}
 .code{overflow:auto;font:14px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;white-space:pre}
+.grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (max-width:720px){.grid.two{grid-template-columns:1fr}}
