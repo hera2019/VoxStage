@@ -13,8 +13,11 @@ reading you can audition line by line, correct, redo and export, with every
 line transcribed back and checked against its text, and the source text
 guaranteed intact.
 
-> **Development preview.** The workflow runs end to end. It is not a released
-> product, and listening review covers specific things and not others — see
+> **VoxStage 1.0.** The whole workflow — import, speaker review, voices,
+> generation, checks, editing, export and packages — is complete and covered by
+> 574 automated tests. Installation has so far been verified on the development
+> Mac only; if the [install guide](docs/public/setup.md) fails on yours, please
+> open an issue. Listening review covers specific things and not others — see
 > [What listening has covered](#what-listening-has-covered).
 
 ---
@@ -291,6 +294,9 @@ is recorded with its scoring and its limits in
   not forced alignment.
 - Peak normalisation, not loudness-standard compliance.
 - Cancellation takes effect between sentences.
+- Installation has been verified on the development Mac only (M2 Max, 32 GB);
+  a complete install on a fresh Mac, and Homebrew's llama.cpp and whisper.cpp
+  builds, are not yet verified.
 - Mac only; no installer signing or updates. The service listens on this
   machine alone unless started with `--lan`, which opens it to the local
   network behind a key typed once per device (the browser keeps it); recording

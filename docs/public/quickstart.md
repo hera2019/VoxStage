@@ -1,6 +1,6 @@
 # First run
 
-This is a working development preview. All three samples under `examples/`
+This is VoxStage 1.0. All three samples under `examples/`
 were made with the flow below. New material still needs listening to.
 
 ## From a passage of prose to a multi-voice recording
