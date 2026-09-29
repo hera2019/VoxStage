@@ -1,5 +1,6 @@
 import {useEffect,useMemo,useRef,useState,type RefObject} from 'react';
 import {layoutClips,stretchClip,splitClip,type Clip,type Block} from './clipEditing';
+import {randomUuid} from './localId';
 import type {PlaybackContext,TimePiece} from './timeMapping';
 import {tr} from './i18n';
 export type Region={start:number;end:number;speed:number};export type Cut={start:number;end:number};
@@ -54,7 +55,7 @@ export function Timeline(props:Props){
  setDraft(d.next);setMessage(d.kind==='move'?tr("松开后保存新顺序"):tr("松开后保存新时长（0.5–2.0 倍）"))}
  function up(e:React.PointerEvent<SVGSVGElement>){const d=drag.current;drag.current=null;if(e.currentTarget.hasPointerCapture(e.pointerId))e.currentTarget.releasePointerCapture(e.pointerId);if(d?.moved&&JSON.stringify(d.next)!==JSON.stringify(d.base))void save(d.next);else{setDraft(null);setMessage(tr("已保存到本机"))}}
  async function toggle(){if(playing){props.player.current?.pause();return}if(!blocked)await props.onPlay(cursor>=duration-.02?0:cursor,undefined,false,true)}
- function split(){if(blocked||!playbackBlock||clips.length>=40)return;try{void save(splitClip(clips,playbackBlock,cursor,crypto.randomUUID()))}catch(e){setError((e as Error).message)}}
+ function split(){if(blocked||!playbackBlock||clips.length>=40)return;try{void save(splitClip(clips,playbackBlock,cursor,randomUuid()))}catch(e){setError((e as Error).message)}}
  function selectBlock(id:string){const b=actual.find(b=>b.id===id);if(!b)return;props.player.current?.pause();setSelected(id);setCursor(b.start);setViewStart(Math.max(0,b.start-span*.1))}
  function applySpeed(){const speed=Number(speedInput);if(!speedInput.trim()||!Number.isFinite(speed)||speed<.5||speed>2){setError(tr("请输入 0.5–2.0 之间的速度。"));return}if(chosen)void save(clips.map(c=>c.id===chosen.id?{...c,speed}:c))}
  function shortcut(e:React.KeyboardEvent<HTMLElement>){

@@ -2,6 +2,7 @@ import {useEffect,useRef,useState,type ReactNode} from 'react';
 import {rememberDraft,forgetDraft,abandonDraft,silentLines,type DraftResume} from './draftResume';
 import './review.css';
 import {tr} from './i18n';
+import {randomUuid} from './localId';
 type Unit={id:string;text:string;kind:'narration'|'dialogue';speaker:string;blank?:boolean;suggested?:string;tier?:'suggested';basis?:string;hint?:string;edited?:boolean;certain?:boolean;typing?:boolean;stand_in?:boolean;block?:number;para?:number;source?:'tag'|'model'|'mark';silent?:boolean;cast_id?:string;decided?:{edited:boolean;confirmed:boolean;source:string}};
 type Cast={id:string;name:string;aliases:string[];colours:string[];sex:string;source:string;introduced?:{draft_id?:string;unit_id?:string}|null;split_from?:string};
 type Decision={speaker:string;kind:'narration'|'dialogue';cast_id?:string|null;edited:boolean;confirmed:boolean;source:string};
@@ -66,7 +67,7 @@ export function RoleImport({request,onCreated,onClose,onAbandoned,seed,resume,so
  function jumpReview(kind:'unknown'|'suggested',step=0){const list=kind==='unknown'?unknownUnits:suggestedUnits;if(!list.length)return;const current=Math.min(reviewCursor[kind],list.length-1);const next=step===0?current:(current+step+list.length)%list.length;setReviewCursor(c=>({...c,[kind]:next}));showUnit(list[next].id)}
  async function run(task:()=>Promise<void>){setWaiting(true);setError('');try{await task()}catch(e){setError((e as Error).message)}finally{setWaiting(false)}}
  useEffect(()=>{if(debugBox.current){debugBox.current.scrollTop=debugBox.current.scrollHeight}},[debugText]);
- async function createDraft(data:Record<string,unknown>){const debugId=crypto.randomUUID().replace(/-/g,'');setDebugText(tr("[VoxStage] 正在启动本地模型…"));const pull=async()=>{try{const r=await request('/attribution/debug/'+debugId);setDebugText(r.text||tr("[VoxStage] 暂无输出…"))}catch{}};const timer=window.setInterval(()=>void pull(),600);try{return await request('/attribution/draft','POST',{...data,debug_id:debugId})}finally{window.clearInterval(timer);await pull()}}
+ async function createDraft(data:Record<string,unknown>){const debugId=randomUuid().replace(/-/g,'');setDebugText(tr("[VoxStage] 正在启动本地模型…"));const pull=async()=>{try{const r=await request('/attribution/debug/'+debugId);setDebugText(r.text||tr("[VoxStage] 暂无输出…"))}catch{}};const timer=window.setInterval(()=>void pull(),600);try{return await request('/attribution/draft','POST',{...data,debug_id:debugId})}finally{window.clearInterval(timer);await pull()}}
  function change(id:string,values:Partial<Unit>){setDraft(d=>d&&({...d,units:d.units.map(u=>u.id===id?{...u,...values}:u)}))}
  // Learn as the reviewer works: once a name is settled by hand, every line still
  // yellow or orange is scored again against the settled ones (plus the book's
