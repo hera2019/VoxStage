@@ -3587,10 +3587,13 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                             elif is_chorus(voice_of(work, work_segment)):
                                 # 本人 2026-09-22: 群口 — the pool's voices say the line together,
                                 # each its own reading, mixed (runtime/chorus.py).
-                                from .chorus import mix, chorus_mode, chorus_layers, LAYER_SEED_STEP
+                                from .chorus import mix, synchronized_layers, chorus_mode, chorus_layers, LAYER_SEED_STEP
                                 chorus = voice_of(work, work_segment)
                                 pool, mode, layers = chorus_pool(chorus), chorus_mode(chorus), chorus_layers(chorus)
-                                def read(text): return mix([read_voice(text, v, k * LAYER_SEED_STEP) for v in pool for k in range(layers)], mode)
+                                if mode == 'tight' and len(pool) == 1 and layers > 1:
+                                    def read(text): return synchronized_layers(read_voice(text, pool[0]), layers)
+                                else:
+                                    def read(text): return mix([read_voice(text, v, k * LAYER_SEED_STEP) for v in pool for k in range(layers)], mode)
                             else:
                                 def read(text): return read_voice(text, voice_of(work, work_segment))
                             return read

@@ -3,18 +3,23 @@ crowd (群演) drawn from the same pool, but all at once instead of one a line.
 A line's `voice` then names the pool, so the fingerprint, the cache and the
 export treat the mix as one asset like any other take. Claude Hera."""
 import numpy as np
+from scipy.signal import istft, resample, stft
 
 PREFIX = 'chorus:'
 OFFSET_MS = 35          # loose: each voice starts a little after the one before — a crowd never starts on the same sample
 MODES = ('loose', 'tight')   # tight (本人 2026-09-22: 军队应答口令、群臣山呼万岁): every voice starts on the same sample, leading silence trimmed
 
 
-LAYER_SEED_STEP = 7919   # each extra layer of the same voice is another take: a different seed, the same timbre
+LAYER_SEED_STEP = 7919   # loose mode and mixed voice pools still render separate takes
+SHARED_TAKE_VERSION = 'shared-take-v2'
 
 
 def chorus_voice(pool, mode='loose', layers=1):
-    """`layers` > 1 (本人 2026-09-22: 同一个声音多次叠加): every voice in the pool
-    is read that many times with different seeds and the takes are mixed."""
+    """Encode the pool and its layering policy in the segment's voice id.
+
+    A single voice in tight mode shares one reading across its layers. Other
+    combinations render separate takes, as before.
+    """
     return PREFIX + ('tight/' if mode == 'tight' else '') + (f'x{int(layers)}/' if int(layers) > 1 else '') + '+'.join(pool)
 
 
@@ -84,5 +89,76 @@ def mix(takes, mode='loose'):
     metrics = dict(longest[2] or {})
     metrics['chorus_voices'] = len(takes); metrics['chorus_mode'] = mode
     return out, rate, metrics
+
+
+def _pitch_shift_same_length(pcm, rate, semitones):
+    """Change a copy's pitch without changing its word and pause positions."""
+    n_fft = min(1024, len(pcm))
+    hop = max(1, n_fft // 4)
+    _, _, spectrum = stft(pcm, fs=rate, nperseg=n_fft,
+                          noverlap=n_fft - hop, boundary='zeros', padded=True)
+    speed = 2 ** (-semitones / 12)
+    steps = np.arange(0, spectrum.shape[1] - 1, speed)
+    phases = np.angle(spectrum[:, 0])
+    advance = 2 * np.pi * hop * np.arange(spectrum.shape[0]) / n_fft
+    shifted = np.empty((spectrum.shape[0], len(steps)), dtype=np.complex64)
+    for column, step in enumerate(steps):
+        left = int(step)
+        fraction = step - left
+        first, second = spectrum[:, left], spectrum[:, left + 1]
+        magnitude = (1 - fraction) * np.abs(first) + fraction * np.abs(second)
+        shifted[:, column] = magnitude * np.exp(1j * phases)
+        delta = np.angle(second) - np.angle(first) - advance
+        phases += advance + (delta + np.pi) % (2 * np.pi) - np.pi
+    _, stretched = istft(shifted, fs=rate, nperseg=n_fft,
+                          noverlap=n_fft - hop, input_onesided=True, boundary=True)
+    return resample(stretched, len(pcm)).astype(np.float32)
+
+
+def synchronized_layers(take, layers):
+    """Layer one reading on a shared timeline for a drill-style unison.
+
+    Independent TTS seeds vary the pace *inside* a sentence. Aligning only the
+    first sound cannot fix that. Here every layer has exactly the same words and
+    pauses. Different pitches and small delays make the copies distinguishable
+    without letting one voice finish a syllable ahead of the others.
+    """
+    if not 2 <= layers <= 4:
+        raise ValueError('整齐群口需要同一声音叠 2–4 层。')
+    pcm, rate, source_metrics = take
+    original = np.asarray(pcm, dtype=np.float32)
+    if original.ndim != 1 or not len(original) or not np.isfinite(original).all():
+        raise ValueError('群口原音无效。')
+    base = original[_onset(original, rate):]
+    if not len(base):
+        raise ValueError('群口原音为空。')
+    voices = [base]
+    pitches = (0, -.7, .55, 1.0)
+    base_rms = float(np.sqrt(np.mean(base.astype(np.float64) ** 2)))
+    for index in range(1, layers):
+        varied = _pitch_shift_same_length(base, rate, pitches[index])
+        varied_rms = float(np.sqrt(np.mean(varied.astype(np.float64) ** 2)))
+        if varied_rms > 0:
+            varied *= base_rms / varied_rms
+        fixed = rate * (2.5 * index) / 1000
+        depth = rate * .45 / 1000
+        tail = int(np.ceil(fixed + depth)) + 2
+        timeline = np.arange(len(base) + tail, dtype=np.float64)
+        # A slow fractional delay softens phase locking; the maximum offset
+        # between layers remains under ten milliseconds.
+        delay = fixed + depth * np.sin(2 * np.pi * (.55 + .13 * index)
+                                       * timeline / rate + index)
+        shifted = np.interp(timeline - delay, np.arange(len(base)), varied,
+                            left=0.0, right=0.0).astype(np.float32)
+        voices.append(shifted)
+    output = np.zeros(max(map(len, voices)), dtype=np.float32)
+    for voice in voices:
+        output[:len(voice)] += voice
+    peak = float(np.max(np.abs(output))) or 1.0
+    output *= (float(np.max(np.abs(base))) or 1.0) / peak
+    metrics = dict(source_metrics or {})
+    metrics.update(chorus_voices=layers, chorus_mode='tight',
+                   chorus_alignment=SHARED_TAKE_VERSION, chorus_synthesis_takes=1)
+    return output, rate, metrics
 
 # 最后更新：2026-09-22 · Claude Hera

@@ -132,3 +132,59 @@ def test_one_voice_layered_is_a_chorus_of_its_own_takes(tmp_path):
         assert line['status'] == 'ready'
         seeds = [sd for v, sd in engine.seen if v == 'Vivian']
         assert len(set(seeds)) >= 3 and len(seeds) % 3 == 0                # three different seeds a line
+
+
+def test_tight_one_voice_layers_keep_every_syllable_on_one_timeline(tmp_path):
+    import numpy as np
+    from runtime.chorus import _pitch_shift_same_length, synchronized_layers
+    from runtime.core import fingerprint
+
+    rate = 24000
+    source = np.zeros(rate * 2, dtype=np.float32)
+    for second in (.1, .42, .81, 1.31):
+        start = round(second * rate)
+        t = np.arange(rate // 25) / rate
+        source[start:start + len(t)] = .4 * np.sin(2 * np.pi * 190 * t)
+    mixed, actual_rate, metrics = synchronized_layers((source, rate, {'seed': 1}), 4)
+    assert actual_rate == rate and metrics['chorus_voices'] == 4
+    assert metrics['chorus_alignment'] == 'shared-take-v2' and metrics['chorus_synthesis_takes'] == 1
+    assert len(mixed) - len(source) < rate * .01
+    assert np.isfinite(mixed).all() and np.max(np.abs(mixed)) <= .401
+    # Every word stays near the source's time, including the last one.
+    for second in (.1, .42, .81, 1.31):
+        center = round((second - .1 + .015) * rate)
+        assert np.max(np.abs(mixed[center:center + rate // 13])) > .15
+    assert not np.array_equal(mixed[:len(source)], source)
+    steady = np.sin(2 * np.pi * 220 * np.arange(rate * 2) / rate).astype(np.float32)
+    lowered = _pitch_shift_same_length(steady, rate, -.7)
+    assert len(lowered) == len(steady)
+    center = lowered[rate // 2:rate * 3 // 2]
+    spectrum = np.abs(np.fft.rfft(center))
+    frequency = np.fft.rfftfreq(len(center), 1 / rate)[np.argmax(spectrum)]
+    assert abs(frequency - 220 * 2 ** (-.7 / 12)) < 2
+
+    class Counting(FixtureEngine):
+        calls = []
+        def synthesize(self, text, voice, language, seed=260909):
+            self.calls.append((text, voice, seed))
+            return super().synthesize(text, voice, language, seed)
+
+    engine = Counting()
+    with TestClient(create_app(tmp_path, engine), base_url='http://127.0.0.1:8765', headers=HEADERS) as c:
+        p = create(c, 'zh')
+        speaker = p['segments'][0]['speaker']
+        p = c.post('/api/projects/' + p['id'] + '/crowd', json={
+            'revision': p['revision'], 'speaker': speaker, 'pool': ['Vivian'],
+            'together': True, 'sync': 'tight', 'layers': 4,
+        }).json()
+        line = next(s for s in p['segments'] if s['speaker'] == speaker)
+        assert fingerprint(p, line, engine) != fingerprint(p, {**line, 'voice': 'chorus:x4/Vivian'}, engine)
+        from unittest.mock import patch
+        with patch('runtime.chorus.SHARED_TAKE_VERSION', 'previous-algorithm'):
+            previous = fingerprint(p, line, engine)
+        assert fingerprint(p, line, engine) != previous   # an old cached mix becomes pending
+        p = generate(c, p)
+        line = next(s for s in p['segments'] if s['id'] == line['id'])
+        assert line['audio']['chorus_alignment'] == 'shared-take-v2'
+        assert line['audio']['chorus_synthesis_takes'] == 1
+        assert len([call for call in engine.calls if call[0] == line['text']]) == 1
