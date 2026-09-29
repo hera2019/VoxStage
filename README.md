@@ -22,16 +22,11 @@ guaranteed intact.
 
 ---
 
-## Hear group voices
+## Listen to the results
 
-Hear the difference between two group-voice effects. **In unison** layers one
-take so every voice speaks in step; **crowd chatter** overlaps different takes.
-The clips were made in VoxStage with synthetic voices and no manual audio editing.
-
-| Effect | English | Chinese |
-|---|---|---|
-| In unison | [▶ Play](https://houjun.dev/voxstage/media/chorus-en-unison-20260929b.mp3) | [▶ Play](https://houjun.dev/voxstage/media/chorus-zh-unison-20260929.mp3) |
-| Crowd chatter | [▶ Play](https://houjun.dev/voxstage/media/chorus-en-chatter-20260929b.mp3) | [▶ Play](https://houjun.dev/voxstage/media/chorus-zh-chatter-20260929.mp3) |
+The [website's Listen section](https://houjun.dev/voxstage/#listen) starts with
+two longer samples: *Pride and Prejudice*, chapter 1, and *Hard cases in Chinese*.
+Short English and Chinese group-voice comparisons follow below them.
 
 ## What you can make with it
 

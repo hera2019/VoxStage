@@ -11,14 +11,9 @@
 
 ---
 
-## 听听群口效果
+## 试听成品
 
-直接听两种群口效果的区别：**整齐同步**用同一次朗读叠出多人齐声；**七嘴八舌**让不同朗读交错混合。四段均由 VoxStage 用合成声线制作，没有人工修音。
-
-| 效果 | 中文 | English |
-|---|---|---|
-| 整齐同步 | [▶ 试听](https://houjun.dev/voxstage/media/chorus-zh-unison-20260929.mp3) | [▶ 试听](https://houjun.dev/voxstage/media/chorus-en-unison-20260929b.mp3) |
-| 七嘴八舌 | [▶ 试听](https://houjun.dev/voxstage/media/chorus-zh-chatter-20260929.mp3) | [▶ 试听](https://houjun.dev/voxstage/media/chorus-en-chatter-20260929b.mp3) |
+打开[网站的「Listen」试听区](https://houjun.dev/voxstage/#listen)：最前面两个较长样本是《Pride and Prejudice, chapter 1》和《Hard cases in Chinese》；往下才是中英文群口效果的短试听。
 
 ## 能用来做什么
 
