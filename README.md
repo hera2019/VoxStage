@@ -22,6 +22,17 @@ guaranteed intact.
 
 ---
 
+## Hear group voices
+
+These four short clips were made in VoxStage with synthetic voices and no
+manual audio editing. **In unison** layers one take so the group speaks
+together; **crowd chatter** mixes different takes around the same line.
+
+| Style | English | Chinese |
+|---|---|---|
+| In unison | [▶ Listen to the officers](site/media/chorus-en-unison-20260929.mp3) | [▶ 听众将齐声](site/media/chorus-zh-unison-20260929.mp3) |
+| Crowd chatter | [▶ Listen to the soldiers](site/media/chorus-en-chatter-20260929.mp3) | [▶ 听众兵士七嘴八舌](site/media/chorus-zh-chatter-20260929.mp3) |
+
 ## What you can make with it
 
 - **Audiobooks** — a novel, a short story or a whole book as a narrated,

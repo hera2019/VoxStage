@@ -60,6 +60,8 @@ figcaption{font-size:13px;color:var(--faint);margin-top:10px}
 .listen{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px}
 .listen audio{width:100%;margin-top:10px}
 .listen p{margin:6px 0 0;color:var(--muted);font-size:14px}
+.listen-group-title{margin:32px 0 8px}
+.listen .quote{color:var(--ink);font-size:15px;line-height:1.55}
 .limits li,.plain li{margin:6px 0;color:var(--muted)}
 .tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:999px;background:var(--sage);color:var(--green);margin-right:6px;vertical-align:1px}
 table{border-collapse:collapse;width:100%;font-size:15px}

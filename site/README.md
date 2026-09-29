@@ -24,9 +24,10 @@ that is already gone mid-upload.
 
 - `media/*.jpg`: screenshots of VoxStage in English, taken from a throwaway
   data folder holding only public-domain or self-written text.
-- `media/*.mp3`: unedited synthetic output — *Pride and Prejudice*, chapter 1
-  (public domain) and self-written Chinese hard cases — the same files as
-  `examples/`.
+- `media/*.mp3`: synthetic output — *Pride and Prejudice*, chapter 1 (public
+  domain), self-written Chinese hard cases, and the author's four approved
+  Chinese/English group-voice examples. The group examples use the app's
+  built-in mixing; they have not been manually edited.
 - `media/og-card.jpg`: 1200×630 share image cut from the workspace screenshot.
 When an image or audio file changes, change its name: they are cached for a
 long time.
