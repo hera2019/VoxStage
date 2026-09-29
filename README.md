@@ -24,15 +24,14 @@ guaranteed intact.
 
 ## Hear group voices
 
-These short clips were made in VoxStage with synthetic voices and no manual
-audio editing. **In unison** layers one take so the group speaks together;
-**crowd chatter** mixes different takes around the same line. The English
-clips come from the author's final *Group voice test English* project.
+Hear the difference between two group-voice effects. **In unison** layers one
+take so every voice speaks in step; **crowd chatter** overlaps different takes.
+The clips were made in VoxStage with synthetic voices and no manual audio editing.
 
-| Style | English | Chinese |
+| Effect | English | Chinese |
 |---|---|---|
-| In unison | [▶ Listen to the officers](https://houjun.dev/voxstage/media/chorus-en-unison-20260929b.mp3) | [▶ 听众将齐声](https://houjun.dev/voxstage/media/chorus-zh-unison-20260929.mp3) |
-| Crowd chatter | [▶ Listen to the soldiers](https://houjun.dev/voxstage/media/chorus-en-chatter-20260929b.mp3) | [▶ 听众兵士七嘴八舌](https://houjun.dev/voxstage/media/chorus-zh-chatter-20260929.mp3) |
+| In unison | [▶ Play](https://houjun.dev/voxstage/media/chorus-en-unison-20260929b.mp3) | [▶ Play](https://houjun.dev/voxstage/media/chorus-zh-unison-20260929.mp3) |
+| Crowd chatter | [▶ Play](https://houjun.dev/voxstage/media/chorus-en-chatter-20260929b.mp3) | [▶ Play](https://houjun.dev/voxstage/media/chorus-zh-chatter-20260929.mp3) |
 
 ## What you can make with it
 

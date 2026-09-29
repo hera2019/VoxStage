@@ -13,12 +13,12 @@
 
 ## 听听群口效果
 
-下面是 VoxStage 用合成声线生成的成品，没有人工修音。**整齐同步**用同一次朗读叠出多人齐声；**七嘴八舌**让不同朗读围绕同一句话交错混合。英文片段来自本人最终选定的「Group voice test English」工程。
+直接听两种群口效果的区别：**整齐同步**用同一次朗读叠出多人齐声；**七嘴八舌**让不同朗读交错混合。四段均由 VoxStage 用合成声线制作，没有人工修音。
 
-| 方式 | 中文 | English |
+| 效果 | 中文 | English |
 |---|---|---|
-| 整齐同步 | [▶ 听众将齐声](https://houjun.dev/voxstage/media/chorus-zh-unison-20260929.mp3) | [▶ 听军官齐声](https://houjun.dev/voxstage/media/chorus-en-unison-20260929b.mp3) |
-| 七嘴八舌 | [▶ 听众兵士](https://houjun.dev/voxstage/media/chorus-zh-chatter-20260929.mp3) | [▶ 听士兵们](https://houjun.dev/voxstage/media/chorus-en-chatter-20260929b.mp3) |
+| 整齐同步 | [▶ 试听](https://houjun.dev/voxstage/media/chorus-zh-unison-20260929.mp3) | [▶ 试听](https://houjun.dev/voxstage/media/chorus-en-unison-20260929b.mp3) |
+| 七嘴八舌 | [▶ 试听](https://houjun.dev/voxstage/media/chorus-zh-chatter-20260929.mp3) | [▶ 试听](https://houjun.dev/voxstage/media/chorus-en-chatter-20260929b.mp3) |
 
 ## 能用来做什么
 
