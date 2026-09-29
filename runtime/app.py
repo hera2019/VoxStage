@@ -258,7 +258,7 @@ class CrowdRequest(BaseModel):
     pool: list[str] = Field(min_length=1, max_length=40)
     seed: int = Field(default=260909, ge=0)
     together: bool = False                                         # 群口: the pool says every line together, mixed, instead of one voice a line
-    sync: Literal['loose', 'tight'] = 'loose'                      # loose: voices start a little apart (a crowd); tight: all on the same beat (口令、万岁)
+    sync: Literal['loose', 'tight'] = 'loose'                      # loose: stagger and center independent takes; tight: one shared reading
     layers: int = Field(default=1, ge=1, le=4)                     # 群口: each voice read this many times (different seeds) and layered — one voice doubled or tripled
 
 class ScriptRequest(BaseModel):
@@ -3292,6 +3292,8 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
         for v in pool:
             if v not in VOICES and not (is_custom(v) and library.label(v)):
                 raise ValueError(f'没有这个音色：{v}')
+        if body.together and body.sync == 'tight' and len(pool) != 1:
+            raise ValueError('整齐同步只能选一个音色；七嘴八舌可以选多个音色。')
         if body.together and len(pool) * body.layers < 2:
             raise ValueError('群口至少要两条声音：勾两个音色，或一个音色叠两次以上。')
         if not body.together and len(pool) < 2:
@@ -3590,7 +3592,9 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
                                 from .chorus import mix, synchronized_layers, chorus_mode, chorus_layers, LAYER_SEED_STEP
                                 chorus = voice_of(work, work_segment)
                                 pool, mode, layers = chorus_pool(chorus), chorus_mode(chorus), chorus_layers(chorus)
-                                if mode == 'tight' and len(pool) == 1 and layers > 1:
+                                if mode == 'tight':
+                                    if len(pool) != 1 or layers < 2:
+                                        raise ValueError('旧群口配置不符合整齐同步规则：请选择一个音色叠 2–4 遍，再重新应用群口。')
                                     def read(text): return synchronized_layers(read_voice(text, pool[0]), layers)
                                 else:
                                     def read(text): return mix([read_voice(text, v, k * LAYER_SEED_STEP) for v in pool for k in range(layers)], mode)

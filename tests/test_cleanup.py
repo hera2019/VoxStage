@@ -60,7 +60,7 @@ def test_a_chorus_reads_a_line_with_the_whole_pool_at_once_as_one_asset(tmp_path
     b = (np.r_[np.zeros(100), np.full(500, .5, dtype=np.float32)], 24000, {'x': 2})
     pcm, rate, metrics = mix([a, b])
     assert rate == 24000 and len(pcm) == max(1100, 600 + int(24000 * .035))     # the second voice starts 35 ms later
-    assert abs(float(np.max(np.abs(pcm))) - .5) < 1e-5 and metrics == {'x': 1, 'chorus_voices': 2, 'chorus_mode': 'loose'}
+    assert abs(float(np.max(np.abs(pcm))) - .5) < 1e-5 and metrics == {'x': 1, 'chorus_voices': 2, 'chorus_mode': 'loose', 'chorus_alignment': 'centered-v1'}
     assert is_chorus(chorus_voice(['Vivian', 'Dylan'])) and chorus_pool('chorus:Vivian+Dylan') == ['Vivian', 'Dylan']
     # 本人 2026-09-22: tight — an answered order, 万岁 in unison: each take cut to its onset, all on the same beat
     from runtime.chorus import chorus_mode
@@ -72,9 +72,20 @@ def test_a_chorus_reads_a_line_with_the_whole_pool_at_once_as_one_asset(tmp_path
     with TestClient(create_app(tmp_path, FixtureEngine()), base_url='http://127.0.0.1:8765', headers=HEADERS) as c:
         p = create(c, 'zh')
         speaker = p['segments'][0]['speaker']
+        rejected = c.post('/api/projects/' + p['id'] + '/crowd', json={
+            'revision': p['revision'], 'speaker': speaker,
+            'pool': ['Vivian', 'Dylan'], 'together': True, 'sync': 'tight', 'layers': 2,
+        })
+        assert rejected.status_code == 400 and '只能选一个音色' in rejected.text
         p = c.post('/api/projects/' + p['id'] + '/crowd', json={'revision': p['revision'], 'speaker': speaker, 'pool': ['Vivian', 'Dylan', 'Serena'], 'together': True}).json()
         assert p['crowds'][speaker] == {'pool': ['Vivian', 'Dylan', 'Serena'], 'seed': 260909, 'together': True, 'sync': 'loose', 'layers': 1}
         assert all(s['voice'] == 'chorus:Vivian+Dylan+Serena' for s in p['segments'] if s['speaker'] == speaker)
+        from runtime.core import fingerprint
+        from unittest.mock import patch
+        line = next(s for s in p['segments'] if s['speaker'] == speaker)
+        with patch('runtime.chorus.LOOSE_MIX_VERSION', 'previous-alignment'):
+            old_fingerprint = fingerprint(p, line, c.app.state.engine)
+        assert fingerprint(p, line, c.app.state.engine) != old_fingerprint
         p = generate(c, p)
         line = next(s for s in p['segments'] if s['speaker'] == speaker)
         assert line['status'] == 'ready'
@@ -82,6 +93,19 @@ def test_a_chorus_reads_a_line_with_the_whole_pool_at_once_as_one_asset(tmp_path
         single = next(s for s in p['segments'] if s['speaker'] != speaker)
         solo = sf.info(tmp_path / p['id'] / 'audio' / (single['audio']['fingerprint'] + '.wav'))
         assert info.frames > solo.frames                      # two extra voices start 35 ms later each: longer than one voice's take
+
+
+def test_loose_chorus_centers_shorter_takes_even_when_input_is_unsorted():
+    import numpy as np
+    from runtime.chorus import mix
+    rate = 24000
+    short = (np.full(rate // 2, .3, dtype=np.float32), rate, {'name': 'short'})
+    long = (np.full(rate * 2, .1, dtype=np.float32), rate, {'name': 'long'})
+    medium = (np.full(rate, .2, dtype=np.float32), rate, {'name': 'medium'})
+    pcm, _, metrics = mix([short, long, medium], 'loose')
+    assert len(pcm) == rate * 2
+    assert 0 < pcm[0] < pcm[rate // 2] < pcm[rate * 3 // 4]
+    assert metrics['name'] == 'long' and metrics['chorus_alignment'] == 'centered-v1'
 
 
 def test_a_lines_tone_reaches_the_preset_engine_and_the_fingerprint_but_not_a_cloned_voice(tmp_path):

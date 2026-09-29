@@ -186,10 +186,12 @@ def fingerprint(project, segment, engine, library=None):
             'language':project['language'], 'engine':(engine.identity_for(project.get('preset_model','0.6B')) if hasattr(engine,'identity_for') else engine.identity), 'seed':260909+segment.get('take',0),
             **generation_parameters(project['language']),
             'runtime':'mlx-audio-0.5.1', 'processing':PROCESSING_VERSION}
-    from .chorus import is_chorus, chorus_mode, chorus_pool, chorus_layers, SHARED_TAKE_VERSION
+    from .chorus import is_chorus, chorus_mode, chorus_pool, chorus_layers, SHARED_TAKE_VERSION, LOOSE_MIX_VERSION
     if (is_chorus(voice) and chorus_mode(voice) == 'tight'
             and len(chorus_pool(voice)) == 1 and chorus_layers(voice) > 1):
         data['chorus_alignment'] = SHARED_TAKE_VERSION
+    elif is_chorus(voice) and chorus_mode(voice) == 'loose':
+        data['chorus_alignment'] = LOOSE_MIX_VERSION
     # The ellipsis pause reaches the fingerprint only where it changes the
     # reading — a line with a pause mark inside it — so switching it on
     # regenerates those lines and no others.

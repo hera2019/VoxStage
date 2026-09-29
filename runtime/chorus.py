@@ -6,12 +6,13 @@ import numpy as np
 from scipy.signal import istft, resample, stft
 
 PREFIX = 'chorus:'
-OFFSET_MS = 35          # loose: each voice starts a little after the one before — a crowd never starts on the same sample
-MODES = ('loose', 'tight')   # tight (本人 2026-09-22: 军队应答口令、群臣山呼万岁): every voice starts on the same sample, leading silence trimmed
+OFFSET_MS = 35          # loose: at least this much stagger between successive voices
+MODES = ('loose', 'tight')
 
 
 LAYER_SEED_STEP = 7919   # loose mode and mixed voice pools still render separate takes
 SHARED_TAKE_VERSION = 'shared-take-v2'
+LOOSE_MIX_VERSION = 'centered-v1'
 
 
 def chorus_voice(pool, mode='loose', layers=1):
@@ -61,11 +62,22 @@ def _onset(pcm, rate, floor=0.02, keep_ms=15):
     return max(0, int(above[0]) - int(rate * keep_ms / 1000))
 
 
+def _speech_window(pcm, rate):
+    """Keep a little pre/post-roll while excluding long TTS edge silences."""
+    peak = float(np.max(np.abs(pcm))) or 1.0
+    audible = np.flatnonzero(np.abs(pcm) >= .01 * peak)
+    if not len(audible):
+        return pcm
+    start = max(0, int(audible[0]) - round(rate * .015))
+    end = min(len(pcm), int(audible[-1]) + 1 + round(rate * .04))
+    return pcm[start:end]
+
+
 def mix(takes, mode='loose'):
-    """takes: [(pcm, rate, metrics)] one per voice, mono float. Loose: each
-    starts a little later than the one before. Tight: every take is cut to its
-    onset and all start together. The sum is scaled so the mix peaks like a
-    single voice; the metrics are the longest take's."""
+    """Mix independent takes. Loose: longest speech starts first; shorter takes
+    start near the middle of its span, at least 35 ms apart. Tight is retained
+    for legacy multi-voice projects; new tight mixes use synchronized_layers.
+    The sum peaks like a single voice; metrics come from the longest take."""
     if not takes:
         raise ValueError('群口没有声音。')
     rate = takes[0][1]
@@ -75,9 +87,15 @@ def mix(takes, mode='loose'):
     if mode == 'tight':
         pcms = [p[_onset(p, rate):] for p in pcms]
         starts = [0] * len(pcms)
+        longest_take = max(takes, key=lambda t: len(np.asarray(t[0])))
     else:
+        ordered = sorted(((_speech_window(p, rate), take) for p, take in zip(pcms, takes)),
+                         key=lambda pair: len(pair[0]), reverse=True)
+        pcms = [pcm for pcm, _ in ordered]
+        longest_take = ordered[0][1]
         step = int(rate * OFFSET_MS / 1000)
-        starts = [i * step for i in range(len(pcms))]
+        longest_length = len(pcms[0])
+        starts = [max(i * step, (longest_length - len(p)) // 2) for i, p in enumerate(pcms)]
     total = max(len(p) + st for p, st in zip(pcms, starts))
     out = np.zeros(total, dtype=np.float32)
     for pcm, st in zip(pcms, starts):
@@ -85,9 +103,10 @@ def mix(takes, mode='loose'):
     peak_single = max(float(np.max(np.abs(np.asarray(t[0], dtype=np.float32)))) for t in takes) or 1.0
     peak_mix = float(np.max(np.abs(out))) or 1.0
     out *= peak_single / peak_mix
-    longest = max(takes, key=lambda t: len(np.asarray(t[0])))
-    metrics = dict(longest[2] or {})
+    metrics = dict(longest_take[2] or {})
     metrics['chorus_voices'] = len(takes); metrics['chorus_mode'] = mode
+    if mode == 'loose':
+        metrics['chorus_alignment'] = LOOSE_MIX_VERSION
     return out, rate, metrics
 
 
