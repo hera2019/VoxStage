@@ -103,8 +103,10 @@ build/
 !site/media/zh-hard-cases.mp3
 !site/media/chorus-zh-unison-20260929.mp3
 !site/media/chorus-zh-chatter-20260929.mp3
-!site/media/chorus-en-unison-20260929.mp3
-!site/media/chorus-en-chatter-20260929.mp3
+!site/media/chorus-en-unison-20260929b.mp3
+!site/media/chorus-en-chatter-20260929b.mp3
+!site/media/scene-en-narrator-gate-20260929.mp3
+!site/media/scene-en-narrator-soldiers-20260929.mp3
 # 默认音色库（本人 2026-09-23 选定、打包供人下载）：只放这 14 个合成声线，逐个列出，别的声音不会被带进来。
 !voicepack/default/01.flac
 !voicepack/default/02.flac
