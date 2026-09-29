@@ -26,7 +26,7 @@ that is already gone mid-upload.
   data folder holding only public-domain or self-written text.
 - `media/*.mp3`: synthetic output — *Pride and Prejudice*, chapter 1 (public
   domain), self-written Chinese hard cases, two Chinese group-voice lines and
-  the four-line English scene from the author's final test project. The group
+  two group-voice lines from the author's final English test project. The group
   examples use the app's built-in mixing; none was manually edited.
 - `media/og-card.jpg`: 1200×630 share image cut from the workspace screenshot.
 When an image or audio file changes, change its name: they are cached for a

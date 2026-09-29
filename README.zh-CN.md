@@ -20,8 +20,6 @@
 | 整齐同步 | [▶ 听众将齐声](https://houjun.dev/voxstage/media/chorus-zh-unison-20260929.mp3) | [▶ 听军官齐声](https://houjun.dev/voxstage/media/chorus-en-unison-20260929b.mp3) |
 | 七嘴八舌 | [▶ 听众兵士](https://houjun.dev/voxstage/media/chorus-zh-chatter-20260929.mp3) | [▶ 听士兵们](https://houjun.dev/voxstage/media/chorus-en-chatter-20260929b.mp3) |
 
-同一英文场景还有两句旁白：[城门前](https://houjun.dev/voxstage/media/scene-en-narrator-gate-20260929.mp3)和[军官身后](https://houjun.dev/voxstage/media/scene-en-narrator-soldiers-20260929.mp3)。
-
 ## 能用来做什么
 
 - **有声书**：小说、短篇或整本书，旁白加每个角色一个声音，一章一章做，导出 MP3 或 WAV，附字幕。

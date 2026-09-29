@@ -34,8 +34,6 @@ clips come from the author's final *Group voice test English* project.
 | In unison | [▶ Listen to the officers](https://houjun.dev/voxstage/media/chorus-en-unison-20260929b.mp3) | [▶ 听众将齐声](https://houjun.dev/voxstage/media/chorus-zh-unison-20260929.mp3) |
 | Crowd chatter | [▶ Listen to the soldiers](https://houjun.dev/voxstage/media/chorus-en-chatter-20260929b.mp3) | [▶ 听众兵士七嘴八舌](https://houjun.dev/voxstage/media/chorus-zh-chatter-20260929.mp3) |
 
-The same English scene also has two narrator lines: [at the city gate](https://houjun.dev/voxstage/media/scene-en-narrator-gate-20260929.mp3) and [behind the officers](https://houjun.dev/voxstage/media/scene-en-narrator-soldiers-20260929.mp3).
-
 ## What you can make with it
 
 - **Audiobooks** — a novel, a short story or a whole book as a narrated,
