@@ -176,6 +176,10 @@ VoxStage 源于一次本地模型研究中发现的具体故障：一段声音�
 
 版权所有 © 2026 Houjun Co., Ltd.。VoxStage 以 [GNU AGPL-3.0](LICENSE)（AGPL-3.0-only）开源；做闭源产品或提供服务而无法遵守 AGPL 的，可购买商业授权，见 [LICENSING.md](LICENSING.md)，联系 support@houjun.dev。贡献条款见 [CONTRIBUTING.md](CONTRIBUTING.md)。语音与语言模型单独下载，各有自己的许可（Apache-2.0），记录在权重旁边——**不要由它推断本应用的许可，反之亦然**。
 
+## 定制开发
+
+Houjun Co., Ltd. 也承接本地 AI 系统的开发与集成：让语音、语言和图像模型在你自己的硬件上运行。想把 VoxStage 集成进你的产品，或做类似的本地 AI 项目，请联系 support@houjun.dev。
+
 ---
 
 基于 Apple Silicon，使用 llama.cpp、MLX 与 whisper.cpp 构建。

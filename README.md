@@ -349,6 +349,13 @@ downloaded separately and keep their own licences (Apache-2.0), recorded next
 to the weights — do not infer this application's licence from them, or the
 reverse.
 
+## Custom work
+
+Houjun Co., Ltd. also builds and integrates local AI systems — speech,
+language and image models running on your own hardware. To build VoxStage
+into your product, or for a similar on-device project, contact
+support@houjun.dev.
+
 ---
 
 Built on Apple Silicon with llama.cpp, MLX and whisper.cpp.
