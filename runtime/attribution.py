@@ -11,6 +11,7 @@ import urllib.error
 import urllib.request
 import uuid
 from pathlib import Path
+from .paths import data_dir
 from evals.speaker_attribution.source_units import source_units, bind_labels, PAIRS
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -72,16 +73,17 @@ def book_examples(siblings, exclude_text, limit=2, max_chars=360):
     return out
 
 
+# Relative model paths are resolved against data_dir() at lookup time.
 ROLE_MODELS = {
     'qwen3-4b-instruct-2507-q8': {
         'label': 'Qwen3-4B-Instruct-2507 · Q8（评测过）',
         'sha256': MODEL_SHA, 'minimum_memory_gb': 8,
-        'paths': [ROOT/'user-data/models/role-qwen3-4b/qwen3-4b-instruct-2507-q8_0.gguf',
+        'paths': [Path('models/role-qwen3-4b/qwen3-4b-instruct-2507-q8_0.gguf'),
                   ROOT.parent/'AI-Models/generators/qwen3-4b-instruct-2507/qwen3-4b-instruct-2507-q8_0.gguf']},
     'qwen3-4b-instruct-2507-abliterated-q8': {
         'label': 'Qwen3-4B-Instruct-2507 去审查版 · Q8（huihui-ai 微调）',
         'sha256': 'f3b6a790d226efadd863152415713d4d177a22e80eb37bc54537dab110062f31', 'minimum_memory_gb': 8,
-        'paths': [ROOT/'user-data/models/role-qwen3-4b-abliterated/Huihui-Qwen3-4B-Instruct-2507-abliterated.Q8_0.gguf']},
+        'paths': [Path('models/role-qwen3-4b-abliterated/Huihui-Qwen3-4B-Instruct-2507-abliterated.Q8_0.gguf')]},
     # Removed 2026-09-17 with the author's consent (「鸡肋」): the two Qwen3.5-9B
     # (slow, balked), the abliterated 14B (worse than the plain), the abliterated
     # 30B-A3B (worse both ways). Their measurements stay in the ai-lab notes.
@@ -91,7 +93,7 @@ ROLE_MODELS = {
         # where the memory allows it (32 GB: 9 GB weights + 5 GB of context).
         'label': 'Qwen3-14B 普通版 · Q4_K_M（Qwen 官方 GGUF）',
         'sha256': '500a8806e85ee9c83f3ae08420295592451379b4f8cf2d0f41c15dffeb6b81f0',
-        'paths': [ROOT/'user-data/models/role-qwen3-14b/Qwen3-14B-Q4_K_M.gguf'],
+        'paths': [Path('models/role-qwen3-14b/Qwen3-14B-Q4_K_M.gguf')],
         'recommended_gb': 32, 'minimum_memory_gb': 16},
     'qwen3-30b-a3b-instruct-2507-q4km': {
         # Attribution plan step 5 (Fable's suggestion, 2026-09-16): a mixture of
@@ -102,7 +104,7 @@ ROLE_MODELS = {
         # balks on a web-novel chapter with sensitive content — hence the fallback chain.
         'label': 'Qwen3-30B-A3B Instruct-2507 · Q4_K_M（unsloth GGUF）',
         'sha256': '6c997b8af17debdfb01d890214400ccbab00db6acc0ba8da5de1cc906c4774d0',
-        'paths': [ROOT/'user-data/models/role-qwen3-30b-a3b/Qwen3-30B-A3B-Instruct-2507-Q4_K_M.gguf'],
+        'paths': [Path('models/role-qwen3-30b-a3b/Qwen3-30B-A3B-Instruct-2507-Q4_K_M.gguf')],
         # Conservative batch policy after the reported 151-unit ID mismatch.
         # Consumed by the upcoming batch adapter; not a measured accuracy guarantee.
         'max_units': 100, 'max_context': 20480, 'recommended_gb': 32, 'minimum_memory_gb': 24},
@@ -124,6 +126,10 @@ def default_role_model():
     for m in PREFERRED_ROLE_MODELS:
         spec = ROLE_MODELS[m]
         if gb >= spec.get('recommended_gb', 0) - 0.5 and RoleDraftEngine.path_for(m):
+            return m
+    # The installer minimum set may have only the lightweight community model.
+    for m in FALLBACK_ROLE_MODELS:
+        if gb >= ROLE_MODELS[m].get('minimum_memory_gb', 0)-0.5 and RoleDraftEngine.path_for(m):
             return m
     return DEFAULT_ROLE_MODEL
 
@@ -305,7 +311,7 @@ class RoleDraftEngine:
         """The installed file for a registered model, or None. VOXSTAGE_ROLE_MODEL
         overrides the default model's location, as it always has."""
         spec = ROLE_MODELS[model_id]
-        candidates = list(spec['paths'])
+        candidates = [Path(p) if Path(p).is_absolute() else data_dir()/p for p in spec['paths']]
         if model_id == DEFAULT_ROLE_MODEL and os.environ.get('VOXSTAGE_ROLE_MODEL'):
             candidates.insert(0, Path(os.environ['VOXSTAGE_ROLE_MODEL']))
         return next((p for p in candidates if p.is_file()), None)
@@ -322,7 +328,7 @@ class RoleDraftEngine:
         if model_id not in ROLE_MODELS:
             raise ValueError('没有这个分角色模型。')
         self.model_id = model_id
-        self.model = self.path_for(model_id) or ROLE_MODELS[model_id]['paths'][0]
+        self.model = self.path_for(model_id) or data_dir()/ROLE_MODELS[model_id]['paths'][0]
         self.sha256 = ROLE_MODELS[model_id]['sha256']
         self.ready = self.model.is_file() and self.server.is_file()
 

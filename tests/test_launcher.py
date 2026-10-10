@@ -30,11 +30,14 @@ def prepared(tmp_path, monkeypatch):
     return tmp_path
 
 
-def test_missing_optional_models_allow_editing(prepared):
+def test_missing_optional_models_allow_editing(prepared, monkeypatch):
+    # Independent of whether this Mac has llama-server or a speaker model installed.
+    from runtime import attribution
+    monkeypatch.setattr(attribution, 'role_server', lambda: prepared/'missing-llama-server')
     report = launcher.inspect_environment(prepared, dependency_probe=False)
     assert report['ready']
     assert {x['name'] for x in report['checks'] if x['status'] == 'warning'} == {
-        '预设声音', '固定角色声线', '文字检查'}
+        '预设声音', '固定角色声线', '分角色模型', '文字检查'}
 
 
 def test_missing_page_blocks_startup(prepared):

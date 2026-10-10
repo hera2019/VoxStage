@@ -5,8 +5,11 @@ import json
 import os
 import uuid
 from pathlib import Path
+import sys
 
 ROOT=Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+from runtime.paths import data_dir
 TOKENIZER_SHA='836b7b357f5ea43e889936a3709af68dfe3751881acefe4ecf0dbd30ba571258'
 MODELS={
     'preset':{'folder':'qwen-customvoice','repo':'mlx-community/Qwen3-TTS-12Hz-0.6B-CustomVoice-bf16',
@@ -81,7 +84,7 @@ def write_json(path, value):
 
 def prepare(kind, root=ROOT, verify_only=False, downloader=None):
     spec=MODELS[kind]
-    folder=Path(root)/'user-data/models'/spec['folder']
+    folder=data_dir(root)/'models'/spec['folder']
     problems=verify_files(folder,spec)
     provenance={k:spec[k] for k in ('repo','revision','sha256')}
     record=folder/'voxstage-model.json'
@@ -100,7 +103,7 @@ def prepare(kind, root=ROOT, verify_only=False, downloader=None):
         raise ValueError('共享模型链接不完整或登记不匹配，请修复共享来源；未覆盖链接或目标。\n'+'\n'.join(problems))
     downloaded=False
     if problems:
-        os.environ['HF_HOME']=str(Path(root)/'user-data/hf-cache')
+        os.environ['HF_HOME']=str(data_dir(root)/'hf-cache')
         if downloader is None:
             from huggingface_hub import snapshot_download
             downloader=snapshot_download
@@ -113,8 +116,8 @@ def prepare(kind, root=ROOT, verify_only=False, downloader=None):
         problems=verify_files(folder,spec)
         if problems:raise ValueError('模型未通过校验，未登记为可用：\n'+'\n'.join(problems))
     if kind in ('preset','preset-large','design') and not folder.is_symlink():write_json(record,provenance)
-    # Registry stays in this checkout even when weights are in a shared directory.
-    write_json(Path(root)/'user-data/model-installations'/(kind+'.json'),provenance)
+    # Registry stays in the configured data directory even when weights are in a shared directory.
+    write_json(data_dir(root)/'model-installations'/(kind+'.json'),provenance)
     return {'model':kind,'ready':True,'problems':[],'downloaded':downloaded,'read_only':False}
 
 

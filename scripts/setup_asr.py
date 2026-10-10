@@ -1,7 +1,10 @@
 """Install pinned local transcription weights and register an existing CLI. Astra, 2026-09-09."""
 import argparse,hashlib,json,os,shutil,subprocess
 from pathlib import Path
+import sys
 ROOT=Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+from runtime.paths import data_dir
 REPO='ggerganov/whisper.cpp'
 REVISION='5359861c739e955e79d9a303bcbc70fb988958b1'
 NAME='ggml-large-v3-turbo-q5_0.bin'
@@ -17,15 +20,15 @@ def main():
     if not cli.is_file() or not os.access(cli,os.X_OK):parser.error('The CLI is not executable.')
     version=subprocess.run([str(cli),'--version'],capture_output=True,text=True,timeout=20)
     if version.returncode:parser.error('The CLI version check failed.')
-    folder=ROOT/'user-data/models/whisper';folder.mkdir(parents=True,exist_ok=True)
+    folder=data_dir()/'models/whisper';folder.mkdir(parents=True,exist_ok=True)
     model=folder/NAME
     if not model.exists():
-        os.environ['HF_HOME']=str(ROOT/'user-data/hf-cache')
+        os.environ['HF_HOME']=str(data_dir()/'hf-cache')
         from huggingface_hub import hf_hub_download
         hf_hub_download(REPO,NAME,revision=REVISION,local_dir=folder)
     if digest(model)!=SHA:raise SystemExit('Model checksum mismatch; installation was not registered.')
     (folder/'provenance.json').write_text(json.dumps({'repo':REPO,'revision':REVISION,'file':NAME,'sha256':SHA},indent=2))
-    settings=ROOT/'user-data/asr-settings.json'
+    settings=data_dir()/'asr-settings.json'
     temp=settings.with_suffix('.tmp')
     temp.write_text(json.dumps({'cli':str(cli),'model':str(model),'cli_version':(version.stdout+version.stderr).strip(),'cli_sha256':digest(cli)},indent=2))
     temp.replace(settings)

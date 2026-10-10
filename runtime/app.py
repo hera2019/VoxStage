@@ -26,6 +26,9 @@ from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, Redirect
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 from .launcher import workspace_id
+from .paths import data_dir
+from .model_manager import ModelManager
+from .legacy_import import LegacyImporter
 from .tempo import ffmpeg_path, valid_regions, valid_cuts, edit_status, change_tempo, VERSION as TEMPO_VERSION
 from .audio import process_audio, export_audio, prepare_segment
 from .clips import clip_plan, validate_clips
@@ -396,7 +399,7 @@ def _splice_source(project, segment, text):
 
 
 def create_app(data_root=None, engine=None, frontend=None, checker=None, role_engine=None, lan_key=None, voicepack_dir=None):
-    store = Store(data_root or ROOT/'user-data/projects')
+    store = Store(data_root if data_root is not None else data_dir()/'projects')
     from .books import Books
     from .core import Templates
     books = Books(store.root.parent/'books')
@@ -441,8 +444,8 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
     workspace = store.root.parent
     library = VoiceLibrary(workspace/'voices')
     store.library = library
-    engine = engine or MlxEngine(os.environ.get('VOXSTAGE_MODEL', ROOT/'user-data/models/qwen-customvoice'))
-    checker = checker or WhisperChecker(ROOT/'user-data/asr-settings.json')
+    engine = engine or MlxEngine(os.environ.get('VOXSTAGE_MODEL', data_dir()/'models/qwen-customvoice'))
+    checker = checker or WhisperChecker(data_dir()/'asr-settings.json')
     role_engine = role_engine or RoleDraftEngine()
     project_service = ProjectService(
         store, books,
@@ -539,15 +542,20 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
     cancel = threading.Event()
     active = {'project_id':None}
 
+    models = ModelManager(data_dir())
+    legacy_importer = LegacyImporter(store,books,library,drafts)
+
     @asynccontextmanager
     async def lifespan(app):
         yield
         cancel.set()
+        models.close()
         executor.shutdown(wait=True)
 
     app = FastAPI(title='VoxStage', docs_url=None, redoc_url=None, openapi_url=None, lifespan=lifespan)
     app.state.store, app.state.engine, app.state.checker = store, engine, checker
     app.state.book_export = book_export
+    app.state.models = models
 
     @app.middleware('http')
     async def local_only(request: Request, call_next):
@@ -637,6 +645,86 @@ def create_app(data_root=None, engine=None, frontend=None, checker=None, role_en
         cap = __import__('runtime.capacity',fromlist=['draft_limits','TOKEN_SAFETY_RATIO'])
         return {'engine':engine.label, 'engine_id':engine.identity, 'ready':engine.ready,
                 'attribution_ready':role_engine.ready, 'role_models':(role_engine.installed() if hasattr(role_engine,'installed') else []), 'role_model':getattr(role_engine,'model_id',None), 'role_context':token_budget['context'], 'role_token_safe_total':int(token_budget['context']*cap.TOKEN_SAFETY_RATIO), 'speed_ready':bool(ffmpeg_path()),'checker_ready':checker.ready, 'checker_id':checker.identity, 'voices':VOICES, 'fixed_voice_ready':getattr(engine,'reference_ready',False), 'preset_models':['0.6B']+(['1.7B'] if getattr(engine,'large_identity',None) else []), 'default_preset_model':('1.7B' if getattr(engine,'large_identity',None) else '0.6B'), 'design_ready':getattr(engine,'design_ready',False), 'local_only':True, 'synthetic_audio':True, 'draft_limits':cap.draft_limits(), 'clone_models':['0.6B']+(['1.7B'] if getattr(engine,'large_reference_ready',False) else []), 'default_clone_model':default_clone()}
+
+    def model_access(request):
+        from .lan import is_loopback
+        if not request.client or not is_loopback(request.client.host):
+            raise HTTPException(403, '模型管理仅限这台 Mac。')
+
+    def native_access(request):
+        model_access(request)
+        token = os.environ.get('VOXSTAGE_NATIVE_TOKEN')
+        if not token or not hmac.compare_digest(request.headers.get('x-voxstage-native',''), token):
+            raise HTTPException(403, '请在安装版中选择旧数据文件夹。')
+
+    @app.get('/api/desktop/network')
+    def desktop_network(request: Request):
+        native_access(request)
+        from .lan import addresses
+        return {'urls':[f'http://{address}:{request.url.port}/' for address in addresses()], 'key':lan_key}
+
+    @app.post('/api/legacy-import/preview')
+    def preview_legacy_import(request: Request, body: dict):
+        native_access(request)
+        folder=body.get('folder')
+        if not isinstance(folder,str):
+            raise ValueError('请选择旧数据文件夹。')
+        return legacy_importer.preview(folder)
+
+    @app.post('/api/legacy-import/{identifier}/commit')
+    def commit_legacy_import(identifier: str, request: Request, body: dict):
+        model_access(request)
+        with store.lock:
+            if active['project_id'] or model_tasks()['tasks']:
+                raise RuntimeError('请等待本机任务结束后再导入旧数据。')
+            try:
+                return legacy_importer.commit(identifier, as_copy=body.get('copy') is True, consent=body.get('consent') is True)
+            except packages.Conflict as exc:
+                raise HTTPException(409, '已有同编号工程，请选择作为副本导入。') from exc
+            except packages.NeedsConsent as exc:
+                raise HTTPException(409, '请确认参考录音的声音使用权后再导入。') from exc
+
+    @app.get('/api/models')
+    def list_models(request: Request):
+        model_access(request)
+        return models.snapshot()
+
+    @app.post('/api/models/pause')
+    def pause_model_download(request: Request):
+        model_access(request)
+        models.pause()
+        return models.snapshot()
+
+    @app.post('/api/models/activate')
+    def activate_models(request: Request):
+        model_access(request)
+        with store.lock:
+            if models.process or active['project_id'] or model_tasks()['tasks']:
+                raise RuntimeError('请等待本机任务结束后再启用模型。')
+            # Keep the same engine/checker objects: export and project views share them.
+            # No model is loaded by these constructors. All managed versions are immutable.
+            if isinstance(engine, MlxEngine):
+                refreshed = MlxEngine(engine.path, engine.base_path, engine.large_path, engine.design_path)
+                for key in ('ready', 'identity', 'reference_ready', 'large_reference_ready',
+                            'large_identity', 'design_identity'):
+                    setattr(engine, key, getattr(refreshed, key))
+            if isinstance(checker, WhisperChecker):
+                checker.__dict__.update(WhisperChecker(data_dir()/'asr-settings.json').__dict__)
+            if isinstance(role_engine, RoleDraftEngine):
+                from .attribution import default_role_model
+                chosen = settings_file().get('role_model')
+                role_engine.select(chosen if chosen in ROLE_MODELS else default_role_model())
+        return config()
+
+    @app.post('/api/models/{kind}/download')
+    def download_model(kind: str, request: Request):
+        model_access(request)
+        return models.start(kind)
+
+    @app.post('/api/models/{kind}/verify')
+    def verify_model(kind: str, request: Request):
+        model_access(request)
+        return models.start(kind, verify_only=True)
 
     @app.post('/api/attribution/estimate')
     def estimate_role_draft(body: RoleEstimateRequest):
@@ -4074,14 +4162,14 @@ def main():
     import uvicorn
     from . import lan as lan_module
     from .launcher import L
-    key = lan_module.load_or_create_key(ROOT/'user-data', new=args.new_key) if args.lan else None
+    key = lan_module.load_or_create_key(data_dir(), new=args.new_key) if args.lan else None
     if key:
         where = lan_module.addresses() or [L('<这台 Mac 的局域网地址>', "<this Mac's network address>")]
         print(L('局域网访问已开启。在同一 WiFi 的设备上打开：', 'Network access is on. On a device on the same Wi-Fi, open:'), flush=True)
         for address in where:
             print(f'    http://{address}:{args.port}/', flush=True)
         print(L(f'访问口令：{key}（每台设备输入一次，记住 30 天）', f'Access key: {key} (typed once per device, remembered 30 days)'), flush=True)
-        print(L('口令存在 user-data/lan-key.txt；换口令用 --lan --new-key。', 'The key is kept in user-data/lan-key.txt; --lan --new-key makes a new one.'), flush=True)
+        print(L(f'口令存在 {data_dir()/"lan-key.txt"}；换口令用 --lan --new-key。', f'The key is kept in {data_dir()/"lan-key.txt"}; --lan --new-key makes a new one.'), flush=True)
     uvicorn.run(create_app(engine=FixtureEngine() if args.fixture else None, lan_key=key, voicepack_dir=ROOT/'voicepack'/'default'),
                 host='0.0.0.0' if args.lan else '127.0.0.1', port=args.port)
 

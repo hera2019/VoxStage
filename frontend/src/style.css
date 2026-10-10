@@ -456,3 +456,13 @@ main>footer audio{height:34px}
 .engine .lang-switch{margin-top:4px;font-size:11px}
 .package-link{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 8px;padding:8px 10px;border:1px solid #cfdcc6;border-radius:8px;background:#eef3e8;font-size:12px}
 .package-link a{font-weight:600;word-break:break-all}
+
+/* Installer model picker — GPT (Codex), 2026-09-30. */
+.model-manager-backdrop[hidden]{display:none}.model-manager-backdrop{position:fixed;inset:0;background:#0007;z-index:1000;display:flex;align-items:center;justify-content:center;padding:16px}
+.model-manager{background:var(--paper,#fff);color:var(--ink,#222);width:min(900px,100%);max-height:92dvh;overflow:auto;border-radius:12px;padding:24px;box-shadow:0 16px 64px #0004}
+.model-manager header{height:auto;padding:0;background:transparent;border:0;display:flex;align-items:flex-start;justify-content:space-between;gap:16px}.model-manager h2{margin:0}.model-manager footer{height:auto;padding:0;background:transparent;border:0}.model-manager header p{margin:8px 0}
+.model-summary{font-weight:600}.model-selection,.model-actions,.model-manager footer{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:12px 0}
+.model-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(320px,100%),1fr));gap:12px}.model-card{border:1px solid #8884;border-radius:8px;padding:16px;min-width:0}
+.model-card label{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.model-card label input{width:auto}.model-card p{margin:8px 0}.model-card small{overflow-wrap:anywhere}
+.model-card progress{display:block;width:100%;margin:8px 0}.model-status{margin-top:10px;font-size:.9rem}.model-manager [role=alert]{color:#b33030}
+@media(max-width:600px){.model-manager{padding:16px;max-height:96dvh}.model-manager-backdrop{padding:8px}}

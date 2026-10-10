@@ -11,6 +11,7 @@ import subprocess
 import sys
 import time
 from pathlib import Path
+from .paths import data_dir
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -47,7 +48,10 @@ NAMES = {'电脑': 'Computer', '运行依赖': 'Dependencies', '网页': 'Web pa
 
 def workspace_id(root):
     # D32: identify the checkout without returning its personal filesystem path.
-    return hashlib.sha256(str(Path(root).resolve()).encode()).hexdigest()
+    identity = str(Path(root).resolve())
+    if os.environ.get('VOXSTAGE_DATA_DIR'):
+        identity += '\0' + str(data_dir(root))
+    return hashlib.sha256(identity.encode()).hexdigest()
 
 
 def service_state(port, root=ROOT, expected_pid=None):
@@ -105,7 +109,7 @@ def inspect_environment(root=ROOT, dependency_probe=True):
     page = root/'frontend/dist/index.html'
     add('网页', 'ok' if page.is_file() else 'error', L('网页文件已生成。', 'The web page is built.') if page.is_file() else
         L('缺少网页文件。请在 frontend 目录执行 npm ci 和 npm run build。', 'The web page is missing. Run npm ci and npm run build in the frontend folder.'))
-    preset = Path(os.environ.get('VOXSTAGE_MODEL', root/'user-data/models/qwen-customvoice'))
+    preset = Path(os.environ.get('VOXSTAGE_MODEL', data_dir(root)/'models/qwen-customvoice'))
     provenance = preset/'voxstage-model.json'
     if provenance.exists():
         try:
@@ -125,9 +129,9 @@ def inspect_environment(root=ROOT, dependency_probe=True):
                 ['model.safetensors', 'config.json', 'speech_tokenizer/model.safetensors'])
     add('固定角色声线', 'ok' if ready else 'warning', L('模型文件在位，首次生成时核验权重。', 'Model files are in place; the weights are verified on first use.') if ready else
         L('模型未备齐或链接失效。请按 README 安装 Base 模型；预设声音仍可使用。', 'The model is incomplete or its link is broken. Install the cloning (base) model as the install guide says; built-in voices still work.'))
-    from .attribution import ROLE_MODELS, role_server
+    from .attribution import ROLE_MODELS, RoleDraftEngine, role_server
     server = role_server()
-    role_ready = [m for m, spec in ROLE_MODELS.items() if any(Path(x).is_file() for x in spec.get('paths', []))]
+    role_ready = [m for m in ROLE_MODELS if RoleDraftEngine.path_for(m) is not None]
     add('分角色模型', 'ok' if server.is_file() and role_ready else 'warning',
         L('识别说话人的模型和 llama-server 在位。', 'The speaker model and llama-server are in place.') if server.is_file() and role_ready else
         (L('缺少 llama-server（brew install llama.cpp）。', 'llama-server is missing (brew install llama.cpp). ') if not server.is_file() else '') +
@@ -136,7 +140,7 @@ def inspect_environment(root=ROOT, dependency_probe=True):
     from .tempo import ffmpeg_path
     add('FFmpeg', 'ok' if ffmpeg_path() else 'warning', L('在位：可调语速，可导入 mp3/m4a 录音。', 'In place: speeds can change, and mp3/m4a recordings import.') if ffmpeg_path() else
         L('未找到（brew install ffmpeg）：语速只能原速，录音只收 WAV。', 'Not found (brew install ffmpeg): normal speed only, and recordings must be WAV.'))
-    settings_path = root/'user-data/asr-settings.json'
+    settings_path = data_dir(root)/'asr-settings.json'
     if not settings_path.exists():
         add('文字检查', 'warning', L('尚未设置；生成与试听仍可使用。请按 README 设置本地识别。', 'Not set up; generating and listening still work. Set up local recognition as the install guide says.'))
     else:
@@ -159,7 +163,7 @@ def inspect_environment(root=ROOT, dependency_probe=True):
 
 
 def save_report(report, root=ROOT):
-    folder = Path(root)/'user-data'
+    folder = data_dir(root)
     folder.mkdir(parents=True, exist_ok=True)
     # Each run gets its own file so concurrent launch attempts cannot overwrite it.
     path = folder/f'environment-check-{time.time_ns()}.json'
@@ -199,7 +203,7 @@ def print_lan(port, root=ROOT):
     (本人 2026-09-22). The service prints this too; the launcher hides the
     service's output in a log, so it is repeated where the person can see it."""
     from . import lan
-    key = lan.load_or_create_key(Path(root)/'user-data')
+    key = lan.load_or_create_key(data_dir(root))
     print(L('局域网访问已开启。同一 WiFi 的设备上打开：', 'Network access is on. On a device on the same Wi-Fi, open:'), flush=True)
     for address in lan.addresses() or [L('<这台 Mac 的局域网地址>', "<this Mac's network address>")]:
         print(f'    http://{address}:{port}/', flush=True)
@@ -228,7 +232,7 @@ def launch(port=8765, root=ROOT, browser=True, startup_timeout=45, network=False
     if not report['ready']:
         print(L('请处理上方“需处理”项目，再重新启动。', 'Fix the items marked above, then start again.'), flush=True)
         return 1
-    logs = root/'user-data/logs'
+    logs = data_dir(root)/'logs'
     logs.mkdir(parents=True, exist_ok=True)
     log_path = logs/f'startup-{time.time_ns()}.log'
     env = dict(os.environ, HF_HUB_OFFLINE='1', PYTHONUNBUFFERED='1')

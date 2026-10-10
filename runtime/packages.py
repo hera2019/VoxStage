@@ -116,8 +116,9 @@ def _made_by():
     """The program that made a package: its commit when it runs from a checkout."""
     try:
         import subprocess
-        commit = subprocess.run(['git', 'rev-parse', '--short', 'HEAD'], cwd=Path(__file__).resolve().parent.parent,
-                                capture_output=True, text=True, timeout=5).stdout.strip()
+        root = Path(__file__).resolve().parent.parent
+        commit = subprocess.run(['git', 'rev-parse', '--short', 'HEAD'], cwd=root,
+                                capture_output=True, text=True, timeout=5).stdout.strip() if (root/'.git').exists() else ''
     except (OSError, ValueError):
         commit = ''
     return {'app': 'VoxStage', 'commit': commit or None}
@@ -274,7 +275,7 @@ def read(path):
             if digest.hexdigest() != sha:
                 raise ValueError(f'工程包里的文件校验不一致：{name[:80]}')
         ids = [p.get('id') for p in manifest.get('projects') or []]
-        if not ids or any(not isinstance(i, str) or not re.fullmatch(HEX, i) for i in ids):
+        if (not ids and manifest['kind'] != 'book') or any(not isinstance(i, str) or not re.fullmatch(HEX, i) for i in ids):
             raise ValueError('工程包的清单无法读取。')
         if manifest['kind'] == 'book' and not (isinstance(manifest.get('book_id'), str) and re.fullmatch(HEX, manifest['book_id']) and 'book.json' in files):
             raise ValueError('工程包的清单无法读取。')
@@ -292,14 +293,14 @@ def restore(path, *, store, books, library, drafts_root, as_copy=False, consent=
     with store.lock:
         if not as_copy:
             here = [p['name'] or p['id'] for p in manifest['projects'] if (store.root / p['id']).exists()]
-            if book_id and (books.root / f'{book_id}.json').exists():
+            if book_id and ((books.root / f'{book_id}.json').exists() or (books.root / f'{book_id}.assets').exists()):
                 here.insert(0, manifest.get('title') or book_id)
             if here:
                 raise Conflict(here)
         needing = [v['name'] for v in manifest.get('voices') or [] if v['source'] == 'provided' and not (library.root / f"{v['id']}.json").exists()]
         if needing and not consent:
             raise NeedsConsent(needing)
-        remap = {old: uuid.uuid4().hex for old in pids + ([book_id] if book_id else [])} if as_copy else {}
+        remap = {old: uuid.uuid4().hex for old in pids + ([book_id] if book_id else []) + manifest.get('drafts', [])} if as_copy else {}
 
         def swap(text):
             for old, new in remap.items():
@@ -369,14 +370,16 @@ def restore(path, *, store, books, library, drafts_root, as_copy=False, consent=
                         added += 1
                 Path(drafts_root).mkdir(parents=True, exist_ok=True)
                 for did in manifest.get('drafts') or []:
-                    target = Path(drafts_root) / f'{did}.json'
+                    target = Path(drafts_root) / f'{remap.get(did, did)}.json'
                     if not target.exists():
-                        target.write_bytes(archive.read(f'drafts/{did}.json'))
+                        target.write_text(swap(archive.read(f'drafts/{did}.json').decode('utf-8')), encoding='utf-8')
         except BaseException:
             for folder in placed:
                 shutil.rmtree(folder, ignore_errors=True)
             if book_path is not None:
                 book_path.unlink(missing_ok=True)
+            if assets_path is not None:
+                shutil.rmtree(assets_path, ignore_errors=True)
             raise
         finally:
             shutil.rmtree(staging, ignore_errors=True)
