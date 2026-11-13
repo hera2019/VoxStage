@@ -3,9 +3,16 @@
 *[中文](setup-zh.md)*
 
 VoxStage runs entirely on one Mac: the scripts, the models and the audio stay
-on it. This page takes a Mac from nothing to a working install. It is a
-developer install — a terminal and about half an hour, most of it downloading
-models — not a signed app.
+on it.
+
+**Most people should use the installer instead of this page**: download
+[VoxStage-1.1.0-arm64.dmg](https://github.com/hera2019/VoxStage/releases/download/v1.1.0/VoxStage-1.1.0-arm64.dmg) (211 MB; Apple Silicon, macOS 26.2 or later),
+drag VoxStage into Applications, open it, and choose the models it suggests
+for your Mac's memory. No terminal is needed.
+
+The rest of this page is the install from source, for developers: it takes a
+Mac from nothing to a working checkout with a terminal in about half an hour,
+most of it downloading models.
 
 A Mac that is already set up needs none of it: double-click
 `Start VoxStage.command`.

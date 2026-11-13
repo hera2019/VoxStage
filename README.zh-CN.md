@@ -2,12 +2,12 @@
 
 **Mac 上离线运行的 AI 有声书制作与多角色配音工具。**把小说或剧本变成每个角色都有自己声音的朗读——有声书、视频配音旁白、广播剧、播客——全程在你自己的电脑上完成。免费开源。
 
-**网站：<https://houjun.dev/voxstage/>**（英文）· *[English](README.md)*
+**[下载 Mac 安装包](https://github.com/hera2019/VoxStage/releases/download/v1.1.0/VoxStage-1.1.0-arm64.dmg)**（211 MB，Apple 芯片，macOS 26.2 或更新）· **网站：<https://houjun.dev/voxstage/>**（英文）· *[English](README.md)*
 
 面向 Apple Silicon Mac 的本地脚本配音工作台。把小说原文原样贴进去——一章、没有角色标注——得到一段多角色朗读：
 可以逐句试听、修正、重做、导出，每一句都会被转写回来与原文核对，**原文保证不被改写**。
 
-> **VoxStage 1.0。**整条流程——导入、角色复核、配音、生成、检查、编辑、导出、工程打包——已经完成，有 574 项自动测试覆盖。安装目前只在开发用的 Mac 上验证过；如果按[安装说明](docs/public/setup-zh.md)在你的 Mac 上装不起来，请提 issue。人工试听只覆盖了一部分——见[试听覆盖了什么](#试听覆盖了什么)。
+> **VoxStage 1.1。**整条流程——导入、角色复核、配音、生成、检查、编辑、导出、工程打包——已经完成，有 628 项自动测试覆盖。1.1 新增经 Apple 公证的签名安装包：不用终端，第一次打开时选择并下载模型。安装包目前只在开发用的 Mac 上验证过；如果在你的 Mac 上装不起来，请提 issue。人工试听只覆盖了一部分——见[试听覆盖了什么](#试听覆盖了什么)。
 
 ---
 
@@ -70,9 +70,15 @@ VoxStage 就是为不能、也不愿交给云服务的内容而做的：还没�
 
 ## 快速开始
 
-在配置好的 Mac 上双击 **Start VoxStage.command**。用 **Check VoxStage.command** 查看环境报告，它不下载任何东西。
+**用安装包**（Apple 芯片，macOS 26.2 或更新；免费）：
 
-新的 Mac 请按 **[安装 VoxStage](docs/public/setup-zh.md)**：需要什么机器（Apple 芯片；小模型 16 GB，推荐 32 GB）、装哪些工具、按内存选哪些模型、怎么启动。界面有中文和英文，侧栏底部可以切换。装好后看[第一次试用](docs/public/quickstart-zh.md)：从一段小说到多角色录音。
+1. 下载 [VoxStage-1.1.0-arm64.dmg](https://github.com/hera2019/VoxStage/releases/download/v1.1.0/VoxStage-1.1.0-arm64.dmg)（211 MB），校验值见[发布说明](https://github.com/hera2019/VoxStage/releases/latest)。
+2. 打开它，把 VoxStage 拖进「应用程序」，然后打开。
+3. 第一次打开时，它按这台 Mac 的内存推荐一套模型（16 GB 的 Mac 约 8 GB，32 GB 的约 36 GB），从 Hugging Face 下载；下载可以续传，并会校验。
+
+比 macOS 26.2 更早的系统打不开安装版；在旧系统上用源码安装没有测试过，也不提供支持。
+
+**用源码**：已经配置好的 Mac 双击 **Start VoxStage.command**；**Check VoxStage.command** 给出环境报告，不下载任何东西。新的 Mac 请按 **[安装 VoxStage](docs/public/setup-zh.md)**：需要什么机器（Apple 芯片；小模型 16 GB，推荐 32 GB）、装哪些工具、按内存选哪些模型、怎么启动。界面有中文和英文，侧栏底部可以切换。装好后看[第一次试用](docs/public/quickstart-zh.md)：从一段小说到多角色录音。
 
 ## 三份完整样例
 
@@ -160,8 +166,8 @@ VoxStage 源于一次本地模型研究中发现的具体故障：一段声音�
 - 字幕使用基于能量的语音边界估计，需要人工复核，**不是强制对齐**。
 - 峰值归一化，不是响度标准合规。
 - 取消在句间生效，当前正在生成的句子会完成。
-- 安装只在开发用的 Mac（M2 Max，32 GB）上验证过；在全新 Mac 上完整安装、Homebrew 版的 llama.cpp 与 whisper.cpp 都还没验证。
-- 仅限 Mac，没有安装包签名和自动更新。服务默认只在本机监听；用 `--lan` 启动才向局域网开放，每台设备输入一次访问口令。手机在普通 HTTP 下不能录音，改为上传录音文件。
+- 安装包和源码安装都只在开发用的 Mac（M2 Max，32 GB）上验证过；全新的 Mac、16 GB 的 Mac、Homebrew 版的 llama.cpp 与 whisper.cpp 都还没验证。
+- 仅限 Apple 芯片的 Mac；安装包需要 macOS 26.2 或更新。没有自动更新，新版本需要重新下载。服务默认只在本机监听；用 `--lan` 启动才向局域网开放，每台设备输入一次访问口令。手机在普通 HTTP 下不能录音，改为上传录音文件。
 - 内容核对忽略普通标点和大小写，但保留否定、数字和有意义的符号。同音字和数字读法差异会造成误报。**不宣称任何准确率**——没有测过。
 
 ## 伦理

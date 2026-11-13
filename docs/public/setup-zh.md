@@ -2,7 +2,11 @@
 
 *[English](setup.md)*
 
-VoxStage 整个跑在一台 Mac 上：稿件、模型、音频都留在本机。这一页讲怎么从零装好。这是开发者安装方式：要用终端，大约半小时，大部分时间在下载模型；还不是签名的安装包。
+VoxStage 整个跑在一台 Mac 上：稿件、模型、音频都留在本机。
+
+**多数人请直接用安装包，不需要看这一页**：下载 [VoxStage-1.1.0-arm64.dmg](https://github.com/hera2019/VoxStage/releases/download/v1.1.0/VoxStage-1.1.0-arm64.dmg)（211 MB；Apple 芯片，macOS 26.2 或更新），把 VoxStage 拖进「应用程序」，打开后按这台 Mac 的内存选择它推荐的模型，全程不用终端。
+
+这一页余下的内容是面向开发者的源码安装：要用终端，大约半小时，大部分时间在下载模型。
 
 已经装好的 Mac 不需要看这页，双击 `Start VoxStage.command` 即可。
 

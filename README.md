@@ -5,7 +5,7 @@ story or a script into narrated audio with a voice for every character —
 audiobooks, video voice-overs, audio dramas and podcasts — entirely on your own
 computer. Free and open source.
 
-**Website: <https://houjun.dev/voxstage/>** · *[中文说明](README.zh-CN.md)*
+**[Download for Mac](https://github.com/hera2019/VoxStage/releases/download/v1.1.0/VoxStage-1.1.0-arm64.dmg)** (211 MB, Apple Silicon, macOS 26.2 or later) · **Website: <https://houjun.dev/voxstage/>** · *[中文说明](README.zh-CN.md)*
 
 A local script-to-voice workstation for Apple Silicon Macs. Paste prose as
 it is written — a chapter, no speaker labels — and get a multi-character
@@ -13,11 +13,12 @@ reading you can audition line by line, correct, redo and export, with every
 line transcribed back and checked against its text, and the source text
 guaranteed intact.
 
-> **VoxStage 1.0.** The whole workflow — import, speaker review, voices,
+> **VoxStage 1.1.** The whole workflow — import, speaker review, voices,
 > generation, checks, editing, export and packages — is complete and covered by
-> 574 automated tests. Installation has so far been verified on the development
-> Mac only; if the [install guide](docs/public/setup.md) fails on yours, please
-> open an issue. Listening review covers specific things and not others — see
+> 628 automated tests. 1.1 adds a signed installer, notarized by Apple: no
+> terminal, and the models are chosen and downloaded on the first start. The
+> installer has so far been verified on the development Mac only; if it fails
+> on yours, please open an issue. Listening review covers specific things and not others — see
 > [What listening has covered](#what-listening-has-covered).
 
 ---
@@ -135,10 +136,19 @@ to plug in the same way rather than be built in.
 
 ## Quick start
 
-On a configured Mac, double-click **Start VoxStage.command**. Use
-**Check VoxStage.command** for an environment report that downloads nothing.
+**With the installer** (Apple Silicon, macOS 26.2 or later; free):
 
-On a new Mac, follow **[Installing VoxStage](docs/public/setup.md)**: what
+1. Download [VoxStage-1.1.0-arm64.dmg](https://github.com/hera2019/VoxStage/releases/download/v1.1.0/VoxStage-1.1.0-arm64.dmg) (211 MB). The checksum is in the
+   [release notes](https://github.com/hera2019/VoxStage/releases/latest).
+2. Open it, drag VoxStage into Applications and open it.
+3. The first start suggests a set of models for your Mac's memory — about
+   8 GB on a 16 GB Mac, about 36 GB on 32 GB — and downloads it from Hugging
+   Face. Downloads resume and are checked.
+
+On a system older than macOS 26.2 the app does not open; running from source
+there is untested and unsupported.
+
+**From source**, follow **[Installing VoxStage](docs/public/setup.md)**: what
 the Mac needs (Apple Silicon; 16 GB for the small models, 32 GB recommended),
 the tools, which models to download for your memory, and how to start. In
 short:
@@ -153,7 +163,9 @@ npm --prefix frontend ci && npm --prefix frontend run build
 ```
 
 The interface is in English or Chinese (the switch is at the bottom of the
-sidebar). Then [the first run](docs/public/quickstart.md): from a passage of prose to a
+sidebar). A Mac already set up from source starts with
+**Start VoxStage.command**; **Check VoxStage.command** gives an environment
+report that downloads nothing. Then [the first run](docs/public/quickstart.md): from a passage of prose to a
 multi-voice recording. Every model is Apache-2.0 and pinned to a revision;
 nothing leaves the Mac.
 
@@ -300,10 +312,11 @@ is recorded with its scoring and its limits in
   not forced alignment.
 - Peak normalisation, not loudness-standard compliance.
 - Cancellation takes effect between sentences.
-- Installation has been verified on the development Mac only (M2 Max, 32 GB);
-  a complete install on a fresh Mac, and Homebrew's llama.cpp and whisper.cpp
-  builds, are not yet verified.
-- Mac only; no installer signing or updates. The service listens on this
+- The installer and the install from source have been verified on the
+  development Mac only (M2 Max, 32 GB); a fresh Mac, a 16 GB Mac, and
+  Homebrew's llama.cpp and whisper.cpp builds are not yet verified.
+- Mac only, Apple Silicon; the installer needs macOS 26.2 or later. There are
+  no automatic updates: a new version is a new download. The service listens on this
   machine alone unless started with `--lan`, which opens it to the local
   network behind a key typed once per device (the browser keeps it); recording
   from a phone is not possible over plain HTTP, so a phone supplies a
